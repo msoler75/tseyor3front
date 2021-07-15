@@ -1,0 +1,708 @@
+<template>
+  <div class="main-wrapper relative surface-0 w-full h-full flex-grow font-sans">
+    <!-- Navigation starts -->
+    <nav id="main-menu" 
+    class="transition duration-200 font-serif font-bold z-30 w-full mx-auto bg-white dark:bg-gray-900 text-gray-blue-800 dark:text-gray-200 dark:hover:text-gray-50  shadow select-none sticky top-0" 
+    :submenu="currentTab !== ''">
+ <div
+        class="flex justify-between items-center xs:grid transition duration-200 uppercase w-full px-6 mx-auto border-gray-200 dark:border-gray-900"
+        style="grid-template-columns: 1fr 110px 1fr"
+      >
+        <div class="flex items-center h-full justify-between">
+          <div class="xl:hidden flex items-center text-2xl">
+              <i class="fas fa-bars cursor-pointer" @click="showSideMenu" />
+          </div>
+          <ul class="h-full hidden xl:flex ml-auto">
+            <li
+              v-for="item of menuIzquierdo"
+              :key="item.href"
+              :current="inPath(item.href)"
+              :active="currentTab === item.href"
+              class="transition duration-200 menuitem hover:text-black dark:hover:text-white px-3 cursor-pointer h-full flex items-center text-sm tracking-normal border-b-4 border-blue-500"
+              @click="menuClick(item)"
+            >
+              <icon v-if="!item.name" :icon="item.icon" /> 
+              {{ item.name }}
+            </li>
+          </ul>
+        </div>
+        <div class="z-10 hidden xs:block">
+          <svg
+          class="w-10 h-10 md:w-14 md:h-14 transition duration-300 hover:transform-gpu translate-y-1 scale-125 hover:scale-150 cursor-pointer mx-auto items-center p-0.5 bg-white border-white rounded-full mt-2 shadow"
+          @click="menuClick({ href: '/' })"
+            version="1.1"
+            viewBox="0 0 50 50"
+            :xmlns="xmlns"
+          >
+            <circle cx="25" cy="25" r="25" fill="#18419d" />
+            <circle cx="25" cy="25" r="17.794" fill="#aec6ec" />
+            <path d="m10.91 33.092 28.332-0.03719-14.189-24.513z" fill="#fff" />
+            <circle cx="25.002" cy="24.997" r="6.4045" fill="#5087d8" />
+            <circle cx="35.678" cy="6.4102" r="2" fill="#e5eafe" />
+            <circle cx="43.705" cy="14.373" r="2" fill="#e5eafe" />
+            <circle cx="46.577" cy="25.14" r="2" fill="#e5eafe" />
+            <circle cx="43.613" cy="35.962" r="2" fill="#e5eafe" />
+            <circle cx="35.772" cy="43.808" r="2" fill="#e5eafe" />
+            <circle cx="24.953" cy="46.658" r="2" fill="#e5eafe" />
+            <circle cx="14.257" cy="43.862" r="2" fill="#e5eafe" />
+            <circle cx="6.2549" cy="35.904" r="2" fill="#e5eafe" />
+            <circle cx="3.3874" cy="25.136" r="2" fill="#e5eafe" />
+            <circle cx="6.3487" cy="14.313" r="2" fill="#e5eafe" />
+            <circle cx="14.19" cy="6.4722" r="2" fill="#e5eafe" />
+            <circle cx="25.008" cy="3.6157" r="2" fill="#e5eafe" />
+          </svg>
+        </div>
+        <div class="flex items-center h-full">
+          <ul class="h-full hidden xl:flex">
+            <li
+              v-for="item of menuDerecho"
+              v-show="!item.left"
+              :key="item.href"
+              :current="inPath(item.href)"
+              :active="currentTab === item.href"
+              class="transition duration-200 menuitem hover:text-black dark:hover:text-white px-3 cursor-pointer h-full flex items-center text-sm tracking-normal border-b-4 border-blue-500"
+              @click="menuClick(item)"
+            >
+              <icon v-if="!item.name" :icon="item.icon" /> 
+              {{ item.name }}
+            </li>
+          </ul>
+          <div class="flex items-center ml-auto whitespace-nowrap">
+            <div
+              :title="
+                $colorMode.value === 'light'
+                  ? 'Cambiar a modo oscuro'
+                  : 'Cambiar a modo claro'
+              "
+              @click="changeColorMode"
+              class="w-8 md:w-12 p-0 md:p-1 transition duration-200 flex justify-center items-center rounded-full mr-3 xs:mr-6 hover:bg-gray-100dark:hover:bg-gray-800 cursor-pointer"
+            >
+              <div alt="theme-icon" v-html="iconMode" class="w-full" />
+            </div>
+            <div class="hidden md:flex items-center text-sm font-sans">
+              <PLink compact to="/login" class="btn bg-light-blue dark:bg-blue-dark py-0.5 md:py-1 xl:py-2" icon="fas fa-sign-in-alt">
+              <span class="hidden md:inline">Miembros</span></PLink>
+            </div> 
+            <NLink compact to="/login" class="md:hidden btn bg-light-blue dark:bg-blue-dark w-8 h-8 flex justify-center items-center p-2 rounded-full">
+              <i class="fas fa-sign-in-alt"/></NLink>
+          </div>
+        </div>
+      </div>
+      <!-- SUBMENU -->
+      <nav
+        id="submenu"
+        class="absolute w-full hidden xl:block shadow text-gray-800 bg-gray-100 dark:bg-gray-900 dark:text-gray-200 text-sm overflow-y-auto"
+        style="max-height: calc(100vh - 72px)"
+      >
+        <template v-for="item of rutasMenu">
+          <div
+            v-show="currentTab == item.href"
+            v-if="item.items"
+            :key="item.href"
+            class="flex p-4 justify-center"
+          >
+            <div class="mx-auto grid grid-flow-row max-w-6xl grid-cols-3 auto-rows-min gap-2">
+              <template v-for="elem of $store.getters.buildRoutes(item.items)">
+                <NLink
+                  :key="elem.href"
+                  :to="elem.href"
+                  :class="
+                    'menu-subitem transition duration-200 place-items-center flex w-full h-full p-2 hover:bg-white dark:hover:bg-black ' +
+                    elem.bg
+                  "
+                  @click.native="currentTab = ''"
+                >
+                  <div
+                    :class="
+                      'icon w-auto text-5xl flex justify-center transition-all duration-200 opacity-60 ' +
+                      elem.bgIcon
+                    "
+                    style="min-width: 6rem"
+                  >
+                    <icon :icon="elem.icon" />
+                  </div>
+                  <div class="title-right transition-all duration-200">
+                    <div class="title transition duration-200 text-xl">
+                      {{ elem.name }}
+                    </div>
+                    <p class="description transition duration-200 text-gray">
+                      {{ elem.description }}
+                    </p>
+                  </div>
+                </NLink>
+                <template v-if="elem.items">
+                  <template v-for="leaf of $store.getters.buildRoutes(elem.items)">
+                    <NLink
+                      :key="leaf.href"
+                      :to="leaf.href"
+                      :class="
+                        'menu-subitem transition duration-200 place-items-center flex w-full h-full p-2 hover:bg-white dark:hover:bg-black ' +
+                        leaf.bg
+                      "
+                      @click.native="currentTab = ''"
+                    >
+                      <div
+                        :class="
+                          'icon w-auto text-5xl flex justify-center transition-all duration-200 opacity-60 ' +
+                          leaf.bgIcon
+                        "
+                        style="min-width: 6rem"
+                      >
+                        <icon :icon="leaf.icon" />
+                      </div>
+                      <div class="title-right transition-all duration-200">
+                        <div class="title transition duration-200 text-xl">
+                          {{ leaf.name }}
+                        </div>
+                        <p
+                          class="description transition duration-200 text-gray"
+                        >
+                          {{ leaf.description }}
+                        </p>
+                      </div>
+                    </NLink>
+                  </template>
+                </template>
+              </template>
+            </div>
+          </div>
+        </template>
+        <!-- submenu de búsqueda -->
+        <div
+          v-show="currentTab == '/buscar'"
+          class="w-full flex p-4 justify-center"
+        >
+          <div>
+            <div class="relative text-gray-600 focus-within:text-gray-400">
+                <SearchInput class="w-full max-w-xl mx-auto" 
+                v-model="buscarPor"
+                :placeholder="fraseBuscar"
+                autocomplete="off"
+              />
+            </div>
+
+            <div
+              class="w-full mt-12 grid grid-flow-row grid-cols-3 auto-rows-min gap-2"
+            >
+              <div
+                v-for="item of searchitems"
+                :key="item.value"
+                class="flex items-center transition duration-200 hover:bg-white dark:hover:bg-black pl-5 rounded"
+              >
+                <input
+                  :id="'s-' + item.value"
+                  type="radio"
+                  name="category"
+                  :checked="item.value == 'general'"
+                  :value="item.value"
+                  class="mr-5"
+                  style="font-size: 10rem; transform: scale(2)"
+                  @click="fraseBuscar = item.placeholder"
+                />
+                <label :for="'s-' + item.value">
+                  <p class="strong text-lg">{{ item.name }}</p>
+                  <p class="description text-gray">
+                    {{ item.description }}
+                  </p></label
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </nav>
+    <!-- Page title starts -->
+    <!-- Navigation ends -->
+    <div
+      class="mt-5 mb-3 lg:mt-6 lg:mb-5 container xs:px-1 sm:px-3 md:px-6 mx-auto flex flex-col lg:flex-row items-start lg:items-center justify-between pb-4 border-gray-300"
+      @click="currentTab = ''"
+    >
+      <div>
+        <Breadcrumb class="text-xs xl:text-sm" />
+        <h4 class="text-2xl font-bold leading-tight text-gray-800 dark:text-gray-200">
+          <div v-if="false">
+            {{ getTitle() }}
+          </div>
+        </h4>
+      </div>
+      <!--
+      <div class="mt-6 lg:mt-0">
+        <button
+          class="mx-2 my-2 bg-white transition duration-150 ease-in-out focus:outline-none hover:bg-gray-100 rounded text-indigo-700 px-6 py-2 text-sm "
+        >
+          Back
+        </button>
+        <button
+          class="transition duration-150 ease-in-out hover:bg-indigo-600 focus:outline-none border bg-indigo-700 rounded text-white px-8 py-2 text-sm "
+        >
+          Edit Profile
+        </button>
+      </div>
+      -->
+    </div>
+    <!-- Page title ends -->
+    <div @click="currentTab = ''"
+    :class="pageInContainer?'container xs:px-1 sm:px-3 md:px-6 mx-auto':''">
+      <div class="w-full">
+        <!-- Place your content here -->
+        <nuxt class="mx-auto" 
+        :class="pageInContainer?'mb-5':''" />
+      </div>
+    </div>
+
+    <Sidebar v-model="showSidebar" :items="rutasMenu" class="xl:hidden"/>
+    <Footer class="mt-auto"
+    :class="pageInContainer?'pt-9':''" />
+  </div>
+</template>
+
+<script>
+import iconMoon from "~/assets/svg/icons/moon.svg?raw";
+import iconSun from "~/assets/svg/icons/sun.svg?raw";
+export default {
+  /* watch: {
+    showSidebar: {
+      immediate: true,
+      handler(isOpen) {
+        if (process.client) {
+          if (isOpen) document.body.style.setProperty("overflow", "hidden");
+          else document.body.style.removeProperty("overflow");
+        }
+      }
+    }
+  }, */
+  data() {
+    return {
+      buscarPor: '',
+      showSidebar: false,
+      currentTab: "",
+      menuitems: [
+        /* { 
+          left: true, 
+          name: '',
+          href: '/' 
+        }, */
+        {left: true, 
+          href:'/novedades',
+          name:'',
+          sidebarName: 'Novedades',
+          sidebarClass: 'order-2',
+        },
+        {
+          left: true,
+          // name:  'Novedades',
+          href: "/publicaciones",
+          sidebarClass: 'order-3',
+          items: [
+            {
+              href: "/novedades",
+              noCurrent: true,
+              hideInSidebar: true
+            },
+            "/noticias",
+            "/comunicados",
+            { 
+              noCurrent: true,
+              href: "/libros",
+            },
+            "/blogs",
+            "/boletines"
+          ],
+        },
+        {
+          left: true,
+          href: "/recursos",
+          sidebarClass: 'order-3',
+          items: [
+            "/biblioteca",
+            "/audios",
+            "/libros",
+            "/biblioteca/comunicados",
+            {
+              href: "/videos",
+              bgIcon: "red-on-hover",
+            },
+            "/cuadernos",
+            "/radio",
+            "/muul",
+            "/redes",
+            "/archivos",
+            "/reuniones",
+            "/recursos/listados",
+            "/usuarios",
+            "/recursos/estatutos",
+            "/recursos/normativas",
+            "/recursos/legal",
+          ],
+        },
+        {
+          name:'Quienes Somos',
+          href: "/presentacion",
+          sidebarClass: 'order-3',
+          items: [
+            "/presentacion/visita",
+             "/guias_estelares",
+             "/preguntas_frecuentes",
+             "/mapa",
+            {
+              href: "/cursos",
+              bg: "text-yellow-900 shadow ring-2 ring-yellow-500 bg-yellow-200 hover:text-yellow-900 hover:bg-yellow-100 dark:text-yellow-800 dark:hover:text-yellow-900",
+            },
+            {
+              href: "/contactar",
+              noCurrent: true,
+            }
+            ]
+          },
+        {
+          left: true,
+          // name:  'Participa',
+          // description: 'Ahora puedes participar en las actividades del grupo',
+          href: "/actividades",
+          sidebarClass: 'order-3',
+          items: [
+            "/agenda",
+            "/eventos",
+            "/equipos",
+            "/meditar",
+            {
+              href: "/actividades/guia",
+              bg: "text-blue-800 shadow ring-2 ring-blue-500 bg-light-blue-50 hover:bg-white dark:text-blue-100 dark:hover:text-blue-900",
+            },
+            "/leer",
+            "/telegram-whatsapp",
+            "/formularios/experiencias",
+            "/muular",
+          ],
+        },
+        {
+          href: "/organizacion",
+          sidebarClass: 'order-3',
+          items: [
+            "/ong",
+            "/asociacion",
+            "/universidad",
+            "/comision",
+             "/agora",
+             "/organizacion",
+          ],
+        },
+        {
+          name:  'Ayuda',
+          href: "/ayuda",
+          sidebarClass: 'order-3',
+          items: [
+             "/contactar",
+              "/pulsar",
+              "/paltalk",
+              "/donar",         
+             
+          ],
+        },
+        {
+          name: '',
+          href: "/buscar",
+          sidebarName: 'Buscar',
+          sidebarClass: 'order-1',
+          items: [], // para que se active el submenu
+        },
+      ],
+      fraseBuscar: "Buscar...",
+      // selección de tipo de búsqueda:
+      searchitems: [
+        {
+          // icon: 'fas fa-search',
+          // name:  'General',
+          description: 'Buscar en toda la web',
+          href: "/buscar",
+          value: "general",
+          placeholder: "Buscar...",
+        },
+        {
+          // icon: 'fas fa-file-alt',
+          // name:  'Comunicados',
+          description:
+            "Buscar un comunicado por número, título o palabras clave",
+          value: "comunicados",
+          placeholder: "Buscar por número o palabras clave...",
+        },
+        {
+          // icon: 'fas fa-book',
+          // name:  'Libros',
+          description: 'Buscar libros por número, título o palabras clave',
+          value: "libros",
+          placeholder: "Buscar por título o palabras clave...",
+        },
+        {
+          // icon: 'fas fa-comments',
+          // name:  'Reuniones',
+          description: 'Buscar en actas, órdenes del día, anexos',
+          value: "reuniones",
+          placeholder:
+            "Buscar por fecha (ejemplo: 21-enero) o palabras clave...",
+        },
+        {
+          // icon: 'fas fa-music',
+          // name:  'Audios',
+          description: 'Buscar audios de meditaciones, talleres, cuentos',
+          value: "audios",
+          placeholder: "Buscar por título o descripción del audio...",
+        },
+        {
+          // icon: 'fas fa-sitemap',
+          // name:  'Web',
+          description: 'Buscar en páginas o secciones del sitio web',
+          value: "web",
+          placeholder: "Buscar por título o palabras clave...",
+        },
+      ],
+      xmlns: "http://www.w3.org/2000/svg",
+      xlink: "http://www.w3.org/1999/xlink",
+    };
+  },
+  head() {
+    return {
+      title: this.title,
+      meta: [
+        {
+          charset: "utf-8",
+        },
+        {
+          name:  'viewport',
+          content:
+            "width=device-width, initial-scale=1, user-scalable=1, maximum-scale=2",
+        },
+        {
+          hid: "description",
+          name:  'description',
+          content: "Grupo TSEYOR",
+        },
+        // TO-DO:
+        // https://huleos.com/buenas-practicas-de-seo-para-optimizar-tu-web-con-nuxt/
+        // Open Graph
+        /*
+      { 
+        hid: 'og:url', 
+        property: 'og:url', 
+        content: `https://huleos.com${this.post.path}` 
+      },
+      {
+        hid: 'og:title',
+        property: 'og:title',
+        content: this.post.title
+      },
+      {
+        hid: 'og:description',
+        property: 'og:description',
+        content: this.post.description
+      },*/
+      ],
+    };
+  },
+  computed: {
+    iconMode() {
+      return this.$colorMode.value === "light" ? iconSun : iconMoon;
+    },
+    title() {
+      return (this.$ucFirst(this.$route.name) + " — TSEYOR").replace(
+        /^Index.*/,
+        "TSEYOR"
+      );
+    },
+    rutasMenu () {
+      return this.$store.getters.buildRoutes(this.menuitems)
+    },
+    menuIzquierdo() {
+      return this.rutasMenu.filter(x=>x.left)
+    },
+    menuDerecho() {
+      return this.rutasMenu.filter(x=>!x.left)
+    },
+    pageInContainer () {
+      return this.$store.getters.pageContained()
+    }
+    /*
+    backgroundImage() {
+      return 'bg-dark.jpg'
+    },
+    backgroundUrl () {
+      //return require(`~ximages/${this.backgroundImage}.jpg`)
+      return ''
+    } */
+  },
+  methods: {
+    changeColorMode() {
+      this.$colorMode.preference =
+        this.$colorMode.value === "light" ? "dark" : "light";
+    },
+    getIcon(path) {
+      return this.$store.getters.getIcon(path);
+    },
+    getTitle() {
+      console.log("layout.getTitle");
+      const title = this.$store.getters.title;
+      console.log("layout.getTitle title=", title);
+      if (title) return title;
+      console.log("layout.getTitle returning", this.$ucFirst(this.$route.name));
+      return this.$ucFirst(this.$route.name);
+    },
+    menuClick(item) {
+      if (!item.items) {
+        this.currentTab = "";
+        this.$router.push(item.href);
+      } else {
+        this.currentTab = this.currentTab === item.href ? "" : item.href;
+      }
+    },
+    inPath(url) {
+      const path = this.$route.path;
+      // console.log('inPath de', url, 'estando en path=', path)
+      if (url === "/") return path === "/";
+      if (url === path) return true
+      for (const item of this.rutasMenu) {
+        if (item.href !== url) {
+          continue;
+        }
+        if (path.startsWith(item.href)) {
+          return true;
+        }
+        if (item.items) {
+          for (const elem of this.$store.getters.buildRoutes(item.items)) {
+            if(elem.noCurrent) continue
+            if (path.startsWith(elem.href)) {
+              // console.log('path startsWith elem.href=', elem.href)
+              return true;
+            }
+            if (elem.items) {
+              for (const leaf of this.$store.getters.buildRoutes(elem.items)) {
+                if(leaf.noCurrent) continue
+                // console.log('path startsWith leaf.href=', leaf.href)
+                if (path.startsWith(leaf.href)) {
+                  return true;
+                }
+              }
+            }
+          }
+        }
+      }
+      return false;
+    },
+    showSideMenu() {
+      this.showSidebar = true;
+      this.currentTab = "";
+    },
+  },
+};
+</script>
+
+<style scoped>
+
+nav#main-menu li[current="true"].menuitem {
+  border-top-color: transparent;
+  border-left-color: transparent;
+  border-right-color: transparent;
+}
+nav#main-menu[submenu="true"] li[current="true"][active="true"],
+nav#main-menu li:not([current="true"]).menuitem {
+  border-color: transparent;
+}
+nav#main-menu:not([submenu="true"]) {
+  border-bottom: 1px solid #aaa;
+}
+nav#main-menu[submenu="true"] {
+  @apply bg-gray-300;
+}
+nav#main-menu[submenu="true"] li[active="true"].menuitem {
+  @apply bg-gray-100;
+}
+.dark nav#main-menu[submenu="true"] {
+  background: #333;
+}
+.dark nav#main-menu[submenu="true"] li[active="true"].menuitem {
+  @apply bg-gray-900;
+}
+.menu-subitem:hover {
+  box-shadow: 0 0 10px 5px white;
+}
+.menu-subitem:hover .title-right {
+  transform: translateX(0.2em);
+}
+.menu-subitem:hover .icon {
+  @apply text-blue-900;
+  transform: translateY(0em) scale(1.17);
+}
+.menu-subitem:hover .title {
+  @apply text-blue-900;
+}
+.menu-subitem:hover .description {
+  @apply text-gray-dark-600;
+}
+.dark nav#main-menu:not([submenu="true"]) {
+  border-bottom: 1px solid #111;
+}
+.dark .menu-subitem:hover {
+  box-shadow: 0 0 10px 5px black;
+}
+.dark .menu-subitem:hover .icon {
+  @apply text-blue-600;
+}
+.dark .menu-subitem:hover .title {
+  @apply text-blue-300;
+}
+.dark .menu-subitem:hover .description {
+  @apply text-gray-dark-300;
+}
+.menu-subitem:hover .red-on-hover {
+  @apply text-red-900 opacity-100;
+}
+nav#submenu {
+  box-shadow: 0 0.35em 0.3em rgba(0, 0, 0, 0.3);
+}
+nav#submenu >>> svg {
+  width: 4rem;
+  fill: currentColor;
+  stroke: currentColor;
+}
+</style>
+
+<style>
+#__layout {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.main-wrapper:before {
+  content: "";
+  @apply fixed left-0 top-0 w-screen h-screen bg-center bg-no-repeat bg-cover bg-fixed;
+  z-index:-1;
+  background-color:aliceblue;
+}
+.dark .main-wrapper:before {
+  background-color: black;
+}
+
+@screen sm {
+  .main-wrapper:before {
+    background-image: url(~ximages/bg-light.jpg);
+  }
+  .dark .main-wrapper:before {
+    background-image: url(~ximages/bg-dark.jpg);
+  }
+}
+
+.bg-dark-theme {
+  @apply relative;
+}
+.bg-dark-theme:before {
+  content: "";
+  @apply absolute left-0 top-0 w-full h-full bg-black bg-top bg-no-repeat bg-cover bg-fixed;
+  background-image: url(~ximages/bg-dark.jpg);
+  z-index:-1;
+}
+
+/* .main-wrapper[obscure='true'] {
+  opacity: 0.2;
+}*/
+
+</style>

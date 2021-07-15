@@ -1,0 +1,17 @@
+export default {
+  setTitle (state, titulo) {
+    console.log('store.setTitle', titulo)
+    state.tituloPagina = titulo
+  },
+  /**
+   * Reproduce el audio
+   * @param {*} payload que contiene { title, artist, src, pic }
+   */
+  setAudioPlay(state, payload) {
+    state.audioPlaying = { ...state.audioPlaying, title: payload.title, artist: payload.artist, src: payload.src, pic: payload.pic }
+  },
+
+  setContained(state, payload) {
+    state.pageInContainer = payload
+  }
+}

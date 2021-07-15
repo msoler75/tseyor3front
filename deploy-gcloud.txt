@@ -1,0 +1,53 @@
+Deploying a Nuxt.js (v2) App to Google App Engine (Google Cloud Platform)
+Pascal Luther
+Pascal Luther
+
+Nov 14, 2018·3 min read
+
+This article will help you deplyoing a Nuxt 2.0 application to Google’s App Engine — in no time 🔥.
+❗️️Update: I now also updated the official Nuxt documentation with a guide for Google App Engine, check it out: https://nuxtjs.org/faq/appengine-deployment
+2) Setting Up the App on App Engine
+⏭ skip to section 3 if you already have the set up your App Engine App ⏭
+❗️️If you haven’t set up a Google Cloud account and a project yet, please do so now on console.cloud.google.com. This is documented well in Google’s documentation and is not covered in this article.
+Now visit https://console.cloud.google.com/appengine and click on “Enable App Engine”. You go through a very short setup process and should have your App Engine enabled and see this screen:
+
+Done, your App Engine application is ready to be deployed to.
+3) Downloading & Installing the Cloud CLI
+⏭ skip to section 4 if you already have Google’s Cloud CLI up and running ⏭
+Visit https://cloud.google.com/sdk and follow the instructions there to download and init the CLI on your local machine with your Google Cloud account.
+4) Deploying your App to App Engine
+Now the interesting part. Back in your Nuxt applications main folder, create a file called app.yaml with the following content:
+runtime: nodejs10
+instance_class: F2
+handlers:
+  - url: /_nuxt
+    static_dir: .nuxt/dist/client
+    secure: always
+  - url: /(.*\.(gif|png|jpg|ico|txt))$
+    static_files: static/\1
+    upload: static/.*\.(gif|png|jpg|ico|txt)$
+    secure: always
+  - url: /.*
+    script: auto
+    secure: always
+env_variables:
+  HOST: '0.0.0.0'
+  NODE_ENV: 'production'
+That’s already it when it comes to setup! Now run the following command in your CLI:
+npm run build
+This will run “nuxt build” and build your current project into the “.nuxt” folder. The app is now ready to be uploaded and deployed to the App Engine.
+Run the following command:
+gcloud app deploy app.yaml -project <project-id>
+❗️️ Make sure to replace “<project-id>” with your App Engine project-id! Your App has a name and an ID, which can be totally different. Make sure here to put in the app’s ID , not the app’s name.
+
+Click on the link provided in the CLI and… tadaaa! Your app is up and running on the Google App Engine! 🎉🎉🎉
+Now just make sure to always build your project before uploading it, the App Engine does not automatically build it for you in this case. :)
+More
+I am using the second cheapest instance F2 here because the 128 MB of memory provided in the F1 instance does not seem to suffice for a Nuxt application. Be aware that this instance is not free to be run 24/7.
+Links:
+See entire code on GitHub:
+https://github.com/lupas/nuxt2-appengine
+Thanks to:
+The amazing Nuxt.js framework
+Google & its App Engine
+nuxt/create-nuxt-app
