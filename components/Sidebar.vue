@@ -1,0 +1,127 @@
+<template>
+  <div class="z-40">
+    <!-- layout -->
+    <fade-transition>
+      <div
+        v-if="showSidebar"
+        class="ease-in-out transition duration-300 fixed top-0 left-0 z-40 w-screen h-screen bg-black bg-opacity-70"
+        @click="showSidebar = false"
+      ></div>
+    </fade-transition>
+
+    <aside
+      ref="aside"
+      class="md:text-xl select-none transform surface-0 bg-white dark:bg-gray-dark-800 shadow top-0 left-0 sm:flex sm:w-112 md:w-140 lg:w-250 max-w-full fixed h-full overflow-y-auto ease-in-out transition-all duration-300 z-50 py-4"
+      :class="showSidebar ? 'translate-x-0' : '-translate-x-full'"
+    >
+      <div class="flex flex-col w-full m-0 p-0 sm:w-40 md:w-52">
+        <div
+          v-for="item of items"
+          v-show="!item.hideInSidebar"
+          :key="item.href"
+          class="transition duration-200 hover:text-black hover:bg-orange-200 dark:hover:text-white dark:hover:bg-orange-900 text-gray-dark-700 dark:text-gray-300 cursor-pointer items-center tracking-normal"
+          :class="item.sidebarClass || ''"
+        >
+          <span
+            class="relative items-center leading-8 md:leading-10 inline-block py-1 px-4 shadow-sm w-full"
+            @click="clickSideBar(item)"
+          >
+            <icon :icon="item.icon" />
+            {{ item.name || item.sidebarName }}
+          </span>
+          <div
+            v-if="item.items"
+            v-show="currentTab === item.href"
+            class="bg-gray-200 dark:bg-black sm:fixed sm:top-0 sm:bottom-0 sm:z-50 sm:flex sm:flex-col sm:justify-center sm:w-72 md:w-88 lg:w-200 sm:left-40 md:left-52 lg:p-7 lg:grid grid-gap-3 lg:grid-cols-2 lg:justify-start lg:items-center"
+            style="grid-template-rows: repeat(auto-fill, minmax(70px, 1fr))"
+          >
+            <div
+              v-for="elem of $store.getters.buildRoutes(item.items)"
+              v-show="!elem.hideInSidebar"
+              :key="elem.name"
+              class="transition duration-200 hover:text-black hover:bg-orange-200 dark:hover:text-white dark:hover:bg-orange-900 text-gray-dark-700 dark:text-gray-300 cursor-pointer items-center tracking-normal"
+            >
+              <span class="relative items-center block">
+                <NLink
+                  @click.native="clickElem(elem)"
+                  :to="elem.href"
+                  class="inline-block py-1 px-4"
+                >
+                  <icon :icon="elem.icon" />
+                  {{ elem.name }}
+                </NLink>
+              </span>
+              <div
+                v-if="elem.items"
+                class="bg-gray-400 dark:bg-gray-dark-600"
+              >
+                <div
+                  v-for="leaf of $store.getters.buildRoutes(elem.items)"
+                  v-show="!leaf.hideInSidebar"
+                  :key="leaf.name"
+                  class="transition duration-200 hover:text-black dark:hover:text-white text-gray-dark-700 dark:text-gray-300 cursor-pointer items-center tracking-normal"
+                >
+                  <span class="relative items-center block py-1">
+                    <NLink
+                      @click="clickElem(leaf)"
+                      :to="leaf.href"
+                      class="inline-block py-1 px-4"
+                    >
+                      <icon :icon="leaf.icon" />
+                      {{ leaf.name }}
+                    </NLink>
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </aside>
+  </div>
+</template>
+
+<script>
+export default {
+  props: {
+    value: {},
+    items: {}
+  },
+  data() {
+    return {
+      showSidebar: this.value,
+      currentTab: ""
+    };
+  },
+  watch: {
+    showSidebar(value) {
+      this.$emit("input", value);
+      if (!value) this.currentTab = "";
+    },
+    value(value) {
+      this.showSidebar = value;
+    }
+  },
+  methods: {
+    clickSideBar(item) {
+      this.currentTab = item.href;
+      if (!item.items && item.href) {
+        this.$router.push(item.href);
+        this.showSidebar = false;
+      }
+    },
+    clickElem(item) {
+      // this.currentTab = ""
+      // this.$router.push(item.href);
+      this.showSidebar = false;
+    }
+  }
+};
+</script>
+
+<style scoped>
+aside >>> .svg-container,
+aside i {
+  @apply inline-block w-6 text-center text-gray-600 dark:text-gray-400;
+}
+</style>

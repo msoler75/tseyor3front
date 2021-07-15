@@ -1,0 +1,186 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+*,
+*:before,
+*:after {
+  @apply box-border m-0;
+}
+
+@layer base {
+  html,
+  body {
+    font-size: 18px;
+  }
+  h1 {
+    @apply font-serif font-bold capitalize leading-tight text-xl sm:text-2xl md:text-3xl lg:text-4xl mt-8 mb-3 lg:mb-6 xl:mb-7;
+  }
+  h2 {
+    @apply font-serif font-bold capitalize leading-tight text-lg sm:text-xl md:text-2xl lg:text-3xl mt-7 mb-2 lg:mb-4 xl:mb-6;
+  }
+  h3 {
+    @apply font-serif font-bold leading-tight sm:text-lg md:text-xl lg:text-2xl mt-7 mb-4;
+  }
+  h1:first-of-type,
+  h2:first-of-type,
+  h3:first-of-type {
+    margin-top: 0;
+  }
+
+  p {
+    @apply my-1 max-w-xl
+  }
+
+  
+  .surface-0 {
+    @apply text-blue-gray-700 dark:text-gray-300;
+  }
+
+  .card,
+  .surface {
+    @apply bg-white dark:bg-gray-dark-900 text-gray-dark-700 dark:text-gray-300;
+    max-width: 100vw;
+  }
+
+  .card{
+    @apply transition duration-500 shadow-lg
+  }
+
+  .surface-0 .text-diminished {
+    @apply text-blue-gray-500 dark:text-gray;
+  }
+
+  .card .text-diminished,
+  .surface .text-diminished {
+    @apply text-gray;
+  }
+
+  .btn {
+    @apply cursor-pointer select-none transition duration-200  active:translate-y-px hover:shadow-lg font-semibold py-2 px-4 border rounded-md shadow;
+    @apply bg-primary hover:bg-blue-700 active:bg-blue-600 border-blue-800 text-blue-contrast;
+    height: fit-content;
+  }
+
+  .btn-gray {
+    @apply bg-gray-200 hover:bg-gray-100 active:bg-gray-50 hover:shadow-lg text-gray-800 border-gray-400;
+  }
+
+
+  .btn-error {
+    @apply bg-error hover:bg-red-600 active:bg-red-400 border-red-900 text-red-contrast;
+  }
+
+  blockquote {
+    @apply max-w-2xl text-xl  bg-white dark:bg-black p-8 pl-14 rounded relative font-serif italic;
+  }
+  blockquote:before {
+    position: absolute;
+    content: '\201c';
+    font-family: Georgia, serif;
+    @apply left-4 top-4 text-6xl text-blue-gray-300;
+  }
+
+  input[type='text'], input[type='number'], input[type='search']:not(.search-input), input[type='password'], input[type='email'], input[type='tel'], input[type='url'], textarea {
+   @apply transition duration-150 appearance-none border border-blue-gray-900 border-opacity-20 focus:border-orange rounded-lg w-full p-3  text-gray-dark-800 font-light leading-tight placeholder-gray-dark-800 ring-deep-orange-400 focus:placeholder-gray-500 focus:outline-none focus:ring 
+  }
+}
+
+
+@layer utilities {
+
+    .text-shadow	  { --tw-shadow: #000; text-shadow: 0px 0px 1px var(--tw-shadow) }
+    .text-shadow-sm	{ --tw-shadow: #000; text-shadow: 1px 1px 3px var(--tw-shadow)  }
+    .text-shadow-md	{ --tw-shadow: #000; text-shadow: 0px 1px 2px var(--tw-shadow), 1px 2px 4px var(--tw-shadow) }
+    .text-shadow-lg	{ --tw-shadow: #000; text-shadow: 3px 3px 6px var(--tw-shadow), 0   0   5px var(--tw-shadow) }
+    .text-shadow-xl	{ --tw-shadow: #000; text-shadow: 1px 1px 3px var(--tw-shadow), 2px 4px 7px var(--tw-shadow) }
+    .text-shadow-none	{ text-shadow: none }
+    .text-glow	  { --tw-shadow: #000; text-shadow: 0px 0px 4px var(--tw-shadow), 0 0 12px var(--tw-shadow) }
+    .text-glow-dense{ --tw-shadow: #000; text-shadow: 0px 0px 4px var(--tw-shadow), -3px 0 6px var(--tw-shadow), 3px 0 6px var(--tw-shadow), 0 -3px 6px var(--tw-shadow), 0 3px 6px var(--tw-shadow), -3px -3px 6px var(--tw-shadow), 3px -3px 6px var(--tw-shadow), -3px 3px 6px var(--tw-shadow), 3px 3px 6px var(--tw-shadow) }
+
+  @variants responsive {
+    
+
+    .min-w-40 {
+      min-width: 10rem;
+    }
+
+    .grid-cols-fit-w-10   {grid-template-columns: repeat(auto-fit, minmax( 2.5rem, 1fr))	}  /* 40px */
+    .grid-cols-fit-w-11   {grid-template-columns: repeat(auto-fit, minmax( 2.75rem, 1fr))}  /* 44px */
+    .grid-cols-fit-w-12   {grid-template-columns: repeat(auto-fit, minmax( 3rem	 , 1fr)) }  /* 48px */
+    .grid-cols-fit-w-14   {grid-template-columns: repeat(auto-fit, minmax( 3.5rem, 1fr))	}  /* 56px */
+    .grid-cols-fit-w-16   {grid-template-columns: repeat(auto-fit, minmax( 4rem	 , 1fr)) }  /* 64px */
+    .grid-cols-fit-w-20   {grid-template-columns: repeat(auto-fit, minmax( 5rem	 , 1fr)) }  /* 80px */
+    .grid-cols-fit-w-24   {grid-template-columns: repeat(auto-fit, minmax( 6rem	 , 1fr)) }  /* 96px */
+    .grid-cols-fit-w-28   {grid-template-columns: repeat(auto-fit, minmax( 7rem	 , 1fr))  } /* 112px */
+    .grid-cols-fit-w-32   {grid-template-columns: repeat(auto-fit, minmax( 8rem	 , 1fr))  } /* 128px */
+    .grid-cols-fit-w-36   {grid-template-columns: repeat(auto-fit, minmax( 9rem	 , 1fr))  } /* 144px */
+    .grid-cols-fit-w-40   {grid-template-columns: repeat(auto-fit, minmax( 10rem	 , 1fr))} /* 160px */
+    .grid-cols-fit-w-44   {grid-template-columns: repeat(auto-fit, minmax( 11rem	 , 1fr))} /* 176px */
+    .grid-cols-fit-w-48   {grid-template-columns: repeat(auto-fit, minmax( 12rem	 , 1fr))} /* 192px */
+    .grid-cols-fit-w-52   {grid-template-columns: repeat(auto-fit, minmax( 13rem	 , 1fr))} /* 208px */
+    .grid-cols-fit-w-56   {grid-template-columns: repeat(auto-fit, minmax( 14rem	 , 1fr))} /* 224px */
+    .grid-cols-fit-w-60   {grid-template-columns: repeat(auto-fit, minmax( 15rem	 , 1fr))} /* 240px */
+    .grid-cols-fit-w-64   {grid-template-columns: repeat(auto-fit, minmax( 16rem	 , 1fr))} /* 256px */
+    .grid-cols-fit-w-72   {grid-template-columns: repeat(auto-fit, minmax( 18rem	 , 1fr))} /* 288px */
+    .grid-cols-fit-w-80   {grid-template-columns: repeat(auto-fit, minmax( 20rem	 , 1fr))} /* 320px */
+    .grid-cols-fit-w-96   {grid-template-columns: repeat(auto-fit, minmax( 24rem	 , 1fr))} /* 384px */
+    .grid-cols-fit-w-96   {grid-template-columns: repeat(auto-fit, minmax( 24rem	 , 1fr))} /* 384px */
+    .grid-cols-fit-w-100  {grid-template-columns: repeat(auto-fit, minmax( 25rem	 , 1fr))} 
+    .grid-cols-fit-w-112  {grid-template-columns: repeat(auto-fit, minmax( 28rem	 , 1fr))} 
+    .grid-cols-fit-w-128  {grid-template-columns: repeat(auto-fit, minmax( 32rem	 , 1fr))} 
+    .grid-cols-fit-w-144  {grid-template-columns: repeat(auto-fit, minmax( 36rem	 , 1fr))} 
+    .grid-cols-fit-w-150  {grid-template-columns: repeat(auto-fit, minmax( 37.5rem , 1fr))} 
+
+    .grid-cols-fill-w-10  {grid-template-columns: repeat(auto-fill, minmax( 2.5rem, 1fr))	}  /* 40px */
+    .grid-cols-fill-w-11  {grid-template-columns: repeat(auto-fill, minmax( 2.75rem, 1fr))}  /* 44px */
+    .grid-cols-fill-w-12  {grid-template-columns: repeat(auto-fill, minmax( 3rem	 , 1fr)) }  /* 48px */
+    .grid-cols-fill-w-14  {grid-template-columns: repeat(auto-fill, minmax( 3.5rem, 1fr))	}  /* 56px */
+    .grid-cols-fill-w-16  {grid-template-columns: repeat(auto-fill, minmax( 4rem	 , 1fr)) }  /* 64px */
+    .grid-cols-fill-w-20  {grid-template-columns: repeat(auto-fill, minmax( 5rem	 , 1fr)) }  /* 80px */
+    .grid-cols-fill-w-24  {grid-template-columns: repeat(auto-fill, minmax( 6rem	 , 1fr)) }  /* 96px */
+    .grid-cols-fill-w-28  {grid-template-columns: repeat(auto-fill, minmax( 7rem	 , 1fr))  } /* 112px */
+    .grid-cols-fill-w-32  {grid-template-columns: repeat(auto-fill, minmax( 8rem	 , 1fr))  } /* 128px */
+    .grid-cols-fill-w-36  {grid-template-columns: repeat(auto-fill, minmax( 9rem	 , 1fr))  } /* 144px */
+    .grid-cols-fill-w-40  {grid-template-columns: repeat(auto-fill, minmax( 10rem	 , 1fr))} /* 160px */
+    .grid-cols-fill-w-44  {grid-template-columns: repeat(auto-fill, minmax( 11rem	 , 1fr))} /* 176px */
+    .grid-cols-fill-w-48  {grid-template-columns: repeat(auto-fill, minmax( 12rem	 , 1fr))} /* 192px */
+    .grid-cols-fill-w-52  {grid-template-columns: repeat(auto-fill, minmax( 13rem	 , 1fr))} /* 208px */
+    .grid-cols-fill-w-56  {grid-template-columns: repeat(auto-fill, minmax( 14rem	 , 1fr))} /* 224px */
+    .grid-cols-fill-w-60  {grid-template-columns: repeat(auto-fill, minmax( 15rem	 , 1fr))} /* 240px */
+    .grid-cols-fill-w-64  {grid-template-columns: repeat(auto-fill, minmax( 16rem	 , 1fr))} /* 256px */
+    .grid-cols-fill-w-72  {grid-template-columns: repeat(auto-fill, minmax( 18rem	 , 1fr))} /* 288px */
+    .grid-cols-fill-w-80  {grid-template-columns: repeat(auto-fill, minmax( 20rem	 , 1fr))} /* 320px */
+    .grid-cols-fill-w-96  {grid-template-columns: repeat(auto-fill, minmax( 24rem	 , 1fr))} /* 384px */
+    .grid-cols-fill-w-100 {grid-template-columns: repeat(auto-fill, minmax( 25rem	 , 1fr))} 
+    .grid-cols-fill-w-112 {grid-template-columns: repeat(auto-fill, minmax( 28rem	 , 1fr))} 
+    .grid-cols-fill-w-128 {grid-template-columns: repeat(auto-fill, minmax( 32rem	 , 1fr))} 
+    .grid-cols-fill-w-144 {grid-template-columns: repeat(auto-fill, minmax( 36rem	 , 1fr))} 
+    .grid-cols-fill-w-150 {grid-template-columns: repeat(auto-fill, minmax( 37.5rem , 1fr))} 
+  }
+}
+
+/*
+@layer components {
+  .tab {
+    @apply transition duration-200 card text-center cursor-pointer py-2 px-4 border-b-4 font-semibold rounded-md mr-2 mb-2 xl:mr-0 xl:mb-0 xl:rounded-none first:rounded-l-md last:rounded-r-md border-gray bg-gray-100 dark:bg-gray-dark-800 overflow-hidden shadow;
+  }
+  .tabs.normal .tab {
+    @apply lg:min-w-40 
+  }
+  .tab:not(.group) {
+    @apply rounded-md mr-2 mb-2 xl:mr-2 xl:mb-2 xl:rounded-md;
+  }
+  .tab.active {
+    @apply border-b-0 bg-white shadow-sm dark:bg-orange dark:text-red-900 dark:border-red-900;
+  }
+}
+*/
+
+
+@media (min-width: 320px){  .container {max-width: 100% }}
+@media (min-width: 640px){  .container {max-width: 100% }}
+@media (min-width: 1024px){  .container {max-width: 1024px }}
+@media (min-width: 1280px){  .container {max-width: 1280px }}
+@media (min-width: 1536px){  .container {max-width: 1536px }}
+@media (min-width: 1600px){  .container {max-width: 1600px }}
