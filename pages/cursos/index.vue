@@ -23,9 +23,7 @@
                 <div class="youtube-embed">
                     <iframe src="https://www.youtube.com/embed/AkOZbfGdXbU" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen=""
                     class="youtube-video bg-black  
-                    ">
-                    <!-- width="560" height="315" -->
-                    </iframe>
+                    "/>
                 </div>
             </div>
 
