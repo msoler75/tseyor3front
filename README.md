@@ -1,5 +1,7 @@
 # tseyor3_frontend
 
+Front End para tseyor.org con Nuxt js y Tailwind Css
+
 ## Build Setup
 
 ```bash
