@@ -6,6 +6,6 @@
 
 <style scoped>
 .grid:not([class*='grid-cols-']) {
-    @apply grid-cols-fill-w-64;
+    grid-template-columns: repeat(auto-fit, minmax( 16rem	 , 1fr))
 }
 </style>

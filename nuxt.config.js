@@ -5,7 +5,7 @@ export default {
   target: 'static',
 
   router: {
-    base: '/web3/',
+    // base: '/web3/',
     prefetchLinks: false,
     middleware: 'route'
   },
@@ -13,6 +13,15 @@ export default {
   // https://nuxtjs.org/docs/2.x/directory-structure/nuxt-config#publicruntimeconfig
   publicRuntimeConfig: {
     // baseURL: process.env.BASE_URL || 'https://tseyor.org'
+  },
+
+  // https://nuxtjs.org/docs/2.x/configuration-glossary/configuration-server
+  server: {
+    port: 8080, // default: 3000
+    host: '0.0.0.0', // default: localhost,
+    timing: {
+      total: true
+    }
   },
 
   // Global page headers: https://go.nuxtjs.dev/config-head
