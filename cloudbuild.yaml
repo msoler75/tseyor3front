@@ -1,12 +1,12 @@
 steps:
  # build the container 
  - name: 'gcr.io/cloud-builders/docker'
-   args: ['build', '--network=cloudbuild','-t', 'gcr.io/tseyor3f/server', '.']
+   args: ['build', '--network=cloudbuild','-t', 'gcr.io/$PROJECT_ID/nuxt', '.']
  # push the container image to Container Registry
  - name: 'gcr.io/cloud-builders/docker'
-   args: ['push', 'gcr.io/tseyor3f/server']
+   args: ['push', 'gcr.io/$PROJECT_ID/nuxt']
  # Deploy container image to Cloud Run
  - name: 'gcr.io/cloud-builders/gcloud'
-   args: ['run', 'deploy', 'tseyor3demo', '--image', 'gcr.io/tseyor3f/server', '--region', 'us-central1', '--platform', 'managed', '--allow-unauthenticated']
+   args: ['run', 'deploy', 'tseyor3nuxt', '--image', 'gcr.io/$PROJECT_ID/nuxt', '--region', 'us-central1', '--platform', 'managed', '--allow-unauthenticated']
 images: 
-- 'gcr.io/tseyor3f/server'
+- 'gcr.io/$PROJECT_ID/nuxt'
