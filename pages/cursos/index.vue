@@ -186,7 +186,7 @@
 </template>
 
 <script>
-import doorImage from "~/assets/svg/door-space.svg?raw";
+//import doorImage from "~/assets/svg/door-space.svg?raw";
 import calendarIcon from "~/assets/svg/icons/calendar.svg?raw";
 export default {
   asyncData({ app }) {
@@ -223,17 +223,17 @@ export default {
   },
   data() {
       return {
-          doorImage,
-          calendarIcon,
-          // form
-          errorPwd: false,
-      someError: false,
-      errorMessage: "algun error",
-      nombre: "",
-      email: "",
-      telefono: "",
-      pais: "",
-      mensaje: "",
+        // doorImage,
+        calendarIcon,
+        // form
+        errorPwd: false,
+        someError: false,
+        errorMessage: "algun error",
+        nombre: "",
+        email: "",
+        telefono: "",
+        pais: "",
+        mensaje: "",
       }
   },
   computed: {
@@ -279,7 +279,7 @@ export default {
 }
 @screen xl {
     .first-container {
-        grid-template-columns: .9fr 1fr
+        grid-template-columns: .9fr 1fr;
     }
 }
 </style>

@@ -12,4 +12,5 @@ ENV PORT=8080
 
 RUN npm run build
 
+#start the service
 CMD [ "npm", "run", "start" ]
