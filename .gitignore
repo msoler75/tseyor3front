@@ -53,6 +53,10 @@ typings/
 # Output of 'npm pack'
 *.tgz
 
+# compressed files
+*.rar
+*.zip
+
 # Yarn Integrity file
 .yarn-integrity
 
@@ -88,3 +92,6 @@ sw.*
 
 # Vim swap files
 *.swp
+
+#static font awesome developing folder
+static/fontawesome-free-5.15.1-web/

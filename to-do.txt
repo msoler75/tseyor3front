@@ -1,2 +1,5 @@
 https://www.vuemastery.com/blog/why-nuxtjs-is-the-perfect-framework-for-building-static-websites/
 https://nuxt-lifecycle.krutiepatel.com/
+
+
+https://codeburst.io/the-perfect-mix-of-static-hosting-and-ssr-nuxt-js-on-google-cloud-81338ac3b904
