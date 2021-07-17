@@ -114,7 +114,7 @@ export default {
     // '@nuxt/content',
     '@nuxt/image',
     '@nuxtjs/dayjs',
-    ['nuxt-gmaps', {key: 'AIzaSyBn-Hv43lWqPgHlvzB9UsFPFV2fJ1rJlT8',
+    ['nuxt-gmaps', {key: process.env.MAPS_API_KEY,
       //you can use libraries: ['places']
     }],
     'nuxt-compress',
