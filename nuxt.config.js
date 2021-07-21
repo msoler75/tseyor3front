@@ -2,12 +2,12 @@ import { resolve } from 'path'
 
 export default {
 
-  target: 'static',
+  target: 'server',
 
   router: {
     // base: '/web3/',
     prefetchLinks: false,
-    middleware: 'route'
+    // middleware: 'route'
   },
 
   // https://nuxtjs.org/docs/2.x/directory-structure/nuxt-config#publicruntimeconfig
