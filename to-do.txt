@@ -2,8 +2,12 @@ https://www.vuemastery.com/blog/why-nuxtjs-is-the-perfect-framework-for-building
 https://nuxt-lifecycle.krutiepatel.com/
 
 
+<<<<<<< HEAD
 https://codeburst.io/the-perfect-mix-of-static-hosting-and-ssr-nuxt-js-on-google-cloud-81338ac3b904
 
 
 google cloud build managed 
 https://cloud.google.com/build/docs/deploying-builds/deploy-cloud-run#fully-managed_1
+=======
+https://codeburst.io/the-perfect-mix-of-static-hosting-and-ssr-nuxt-js-on-google-cloud-81338ac3b904
+>>>>>>> 5b926bc2a1de7e3a306baf12ce3b4a592763b686

@@ -2,12 +2,20 @@ import { resolve } from 'path'
 
 export default {
 
+<<<<<<< HEAD
   target: 'server',
+=======
+  target: 'static',
+>>>>>>> 5b926bc2a1de7e3a306baf12ce3b4a592763b686
 
   router: {
     // base: '/web3/',
     prefetchLinks: false,
+<<<<<<< HEAD
     // middleware: 'route'
+=======
+    middleware: 'route'
+>>>>>>> 5b926bc2a1de7e3a306baf12ce3b4a592763b686
   },
 
   // https://nuxtjs.org/docs/2.x/directory-structure/nuxt-config#publicruntimeconfig
