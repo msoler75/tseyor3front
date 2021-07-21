@@ -2,11 +2,6 @@ steps:
  # build the container 
  - name: 'gcr.io/cloud-builders/docker'
    args: ['build', '--network=cloudbuild','-t', 'gcr.io/$PROJECT_ID/nuxt', '.']
- - name: node:10.15.1
-   entrypoint: npm
-   args: ["run", "create-env"]
-   env:
-     - 'MAPS_API_KEY=${_MAPS_API_KEY}'
  # push the container image to Container Registry
  - name: 'gcr.io/cloud-builders/docker'
    args: ['push', 'gcr.io/$PROJECT_ID/nuxt']
