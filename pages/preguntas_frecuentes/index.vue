@@ -9,7 +9,7 @@
           class="w-full py-6 border-gray-200 border-solid border-b"
         >
           <div class="flex justify-between items-center">
-            <h3 class="text-gray-800 text-base md:text-xl xl:text-2xl w-10/12"
+            <h3 class="cursor-pointer text-gray-800 text-base md:text-xl xl:text-2xl w-10/12"
             @click="pregunta.show=!pregunta.show">
               {{ pregunta.title }}
             </h3>
