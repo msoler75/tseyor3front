@@ -18,7 +18,7 @@
       <aside class="sticky top-32 mb-6 text-xs 5xl:text-sm flex flex-col">
           <div class="my-3"><icon class="5xl:w-4" icon="far fa-heart" /> {{entrada.likes}}</div>
           <a class="scrollactive-item my-3" href="#comentarios"><icon class="5xl:w-4" icon="far fa-comment" /> {{entrada.comentarios}}</a>
-          <div><icon class="my-3 5xl:w-4" icon="fas fa-share-alt" /></div>
+          <div class="cursor-pointer my-3 5xl:w-4" @click="viendoCompartir=true"><icon class="ml-3" icon="fas fa-share-alt" /></div>
       </aside>
     </div>
 
@@ -38,7 +38,7 @@
         <div class="4xl:hidden flex ml-auto">
           <div><icon class="ml-3" icon="far fa-heart" />  {{entrada.likes}}</div>
           <a class="scrollactive-item ml-3" href="#comentarios"><icon icon="far fa-comment" /> {{entrada.comentarios}}</a>
-          <div><icon class="ml-3" icon="fas fa-share-alt" /></div>
+          <div class="cursor-pointer" @click="viendoCompartir=true"><icon class="ml-3" icon="fas fa-share-alt" /></div>
         </div>
 
       </div>
@@ -84,19 +84,13 @@
 
 
 <section class="my-7">
-  <ShareNetwork
-      network="twitter"
-      :url="$config.baseUrl+$route.fullPath"
-      title="Os comparto esta información..."
-      description="desc"
-      hashtags="tseyor,blogs"
-      twitterUser="alondra"
-      class="bg-light-blue"
-    >
-       <i class="fab fah fa-lg fa-facebook"></i>
-    <span>Compartir on Twitter</span>
-  </ShareNetwork>
-
+  <Comparte v-model="viendoCompartir"/>
+  <div>
+    <div class="btn" @click="viendoCompartir=true">
+      <icon class="mr-4" icon="fas fa-share-alt" />
+    Comparte este contenido
+    </div>
+  </div>
 </section>
 
 
@@ -122,6 +116,11 @@
 <script>
 import vercontenidomixin from '@/mixins/vercontenido.js'
 export default {
+  data(){
+    return {
+      viendoCompartir: false
+    }
+  },
 mixins: [vercontenidomixin],
 asyncData ({ app, route }) {
   // const noticiasGuays = await $strapi.$noticias.find({ id: 1 })
