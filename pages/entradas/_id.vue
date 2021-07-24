@@ -110,7 +110,7 @@
   <div id="comentarios" class="container mx-auto my-9">
     <h3 v-if="entrada.comentarios" class="text-center">{{entrada.comentarios}} Comentarios</h3>
     <h3 v-else class="text-center">Coméntalo</h3>
-    <Comentarios :uxid="'entrada-'+id"/>
+    <Comentarios :uid="'entrada-'+id" class="px-1 xs:px-2"/>
   </div>
 
 </div>

@@ -1,24 +1,26 @@
 <template>
     <div class="max-w-xl mx-auto"
     :class="$device.isMobileOrTablet?'touch':'mouse'">
-        <Card v-for="comentario of comentariosFiltrados" :key="comentario.id" class="comment flex flex-col mb-3 p-1 sm:p-5">
+        <div v-for="comentario of comentariosFiltrados" :key="comentario.id" class="comment flex flex-col mb-5">
             <div class="flex w-full">
-                <Avatar :data="comentario.autor" class="text-3xl w-16 h-16 mr-6"/>
+                <Avatar :data="comentario.autor" class="text-3xl w-8 h-8 sm:w-16 sm:h-16 mr-2 sm:mr-3 lg:mr-5"/>
                 <section>
-                  <div class="flex justify-start items-baseline text-sm text-blue-gray">
-                      <NLink v-if="comentario.autor.id" :to="'/usuarios/'+comentario.autor.id" class="font-bold">{{comentario.autor.nombre}}</NLink> 
-                      <span v-else class="font-bold">{{comentario.autor.nombre}}</span> 
-                      <span class="mx-2 opacity-50">•</span>
-                      <span class="text-xs">{{ $dayjs(comentario.fecha).fromNow() }}</span>
-                  </div>
-                  <div class="text-justify" v-html="comentario.texto"/>
-                  <div class="actions mt-2 flex items-center text-xs">
-                    <icon icon="far fa-heart mr-3"/>
-                    <span class="link">Responder</span>
+                  <Card class="w-full p-1 xs:p-2 sm:p-4">
+                    <div class="flex justify-start items-baseline text-xs lg:text-sm text-blue-gray">
+                        <NLink v-if="comentario.autor.id" :to="'/usuarios/'+comentario.autor.id" class="font-bold mb-1">{{comentario.autor.nombre}}</NLink> 
+                        <span v-else class="font-bold">{{comentario.autor.nombre}}</span> 
+                        <span class="mx-2 opacity-50">•</span>
+                        <span class="text-xs">{{ $dayjs(comentario.fecha).fromNow() }}</span>
+                    </div>
+                    <div class="text-justify text-sm lg:text-base" v-html="comentario.texto"/>
+                  </Card>
+                  <div class="actions mt-2 flex justify-start items-center text-xs px-2">
+                    <icon icon="far fa-heart" class="cursor-pointer mr-5"/>
+                    <span class="link cursor-pointer">Responder</span>
                   </div>
                 </section>
             </div>
-        </Card>
+        </div>
 
         <Card class="p-5">
           <form @submit.prevent="onSubmit">
