@@ -13,9 +13,9 @@
            <h2 class="text-xl">{{ pagina.nombre }}</h2>
         </div>
           <div class="mt-auto flex w-full items-end justify-end">
-            <a target="_blank" :href="pagina.href" class="btn"
-              ><i class="fas fa-link mr-2" /> Visitar</a
-            >
+            <a target="_blank" :href="pagina.href" class="btn">
+              <icon icon="link" class="mr-2" /> Visitar
+            </a>
           </div>
       </Card>
     </Grid>

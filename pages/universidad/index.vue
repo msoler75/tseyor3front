@@ -20,21 +20,21 @@
           <Card class="px-5 py-7">
               <h3>Departamentos de la UTG</h3>
               <PLink to="/universidad/departamentos" class="btn mt-auto">Listado de Departamentos</PLink>
-              <p class="text-diminished mt-4"><i class="fas fa-info-circle"/> Listado completo de los equipos</p>
+              <p class="text-diminished mt-4"><icon icon="info-circle"/> Listado completo de los equipos</p>
           </Card>
           <Card class="px-5 py-7">
               <h3>Donar</h3>
               <PLink to="/donar" class="btn mt-auto" icon="fas fa-donate">Apóyanos</PLink>
-              <p class="text-diminished mt-4"><i class="fas fa-info-circle"/> Nuestros proyectos</p>
+              <p class="text-diminished mt-4"><icon icon="info-circle"/> Nuestros proyectos</p>
           </Card>
     </Grid>
 
      <Card class="px-5 py-7 w-full my-7">
         <h2 class="text-center">Objetivos</h2>
         <ul class="list-none ml-6">
-          <li><i class="fas fa-check-circle rounded-full text-blue-400 mr-3"/>Divulgar el mensaje de las estrellas que hemos recibido a través del canal Chac-Mool Puente.</li>
-          <li><i class="fas fa-check-circle rounded-full text-blue-400 mr-3"/>Ayudar a todos los interesados en un proceso de auto-despertar.</li>
-          <li><i class="fas fa-check-circle rounded-full text-blue-400 mr-3"/>Promover actividades de intercambios de bienes y servicios a través del muular.</li>
+          <li><icon icon="check-circle" class="rounded-full text-blue-400 mr-3"/>Divulgar el mensaje de las estrellas que hemos recibido a través del canal Chac-Mool Puente.</li>
+          <li><icon icon="check-circle" class="rounded-full text-blue-400 mr-3"/>Ayudar a todos los interesados en un proceso de auto-despertar.</li>
+          <li><icon icon="check-circle" class="rounded-full text-blue-400 mr-3"/>Promover actividades de intercambios de bienes y servicios a través del muular.</li>
           <li>...</li>
         </ul>
         <section class="text-center mt-3 mb-8">

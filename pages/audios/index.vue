@@ -30,7 +30,7 @@
             @click.native="play(audio)"
             class="p-2 mt-2 cursor-pointer"
           >
-             <div> <i class="fas fa-music text-gray mr-1" /> {{ audio.titulo }}</div>
+             <div> <icon icon="music" class="text-gray mr-1" /> {{ audio.titulo }}</div>
           </Card>
         </div>
       </div>

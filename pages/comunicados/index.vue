@@ -11,7 +11,7 @@
       </div>
       <div class="ml-auto">
         <NLink to="/biblioteca/comunicados" class="btn py-3"
-          ><i class="fas fa-arrow-right mr-2" /> Archivo de Comunicados</NLink
+          ><icon icon="arrow-right" class="mr-2" /> Archivo de Comunicados</NLink
         >
       </div>
     </div>

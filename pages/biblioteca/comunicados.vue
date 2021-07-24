@@ -6,7 +6,7 @@
             <p>Todos los comunicados archivados desde el año 2004 excepto <NLink to="/comunicados">los más recientes</NLink></p>
         </div>
         <div class="ml-auto">
-            <NLink to="/comunicados" class="btn py-3"><i class="fas fa-arrow-right mr-2"/> Últimos comunicados</NLink>
+            <NLink to="/comunicados" class="btn py-3"><icon icon="arrow-right mr-2"/> Últimos comunicados</NLink>
         </div>
     </div>
     
@@ -20,7 +20,7 @@
         <div :key="idx+'c'">{{com.fechalarga}}</div>
         <div :key="idx+'d'">{{com.titulo}}</div>
         <div :key="idx+'e'"><a :href="'https://tseyor.org/biblioteca/comunicados/pdf1/TSEYOR '+com.pdf+'.pdf'" class="btn btn-error" download>
-        <i class="fas fa-file-pdf mr-2"/>PDF</a></div>
+        <icon icon="file-pdf" class="mr-2"/>PDF</a></div>
         <div :key="idx+'f'" class="flex overflow-x-auto">
             <div v-for="audio of com.mp3" :key="audio.src" class="btn mr-2"
             @click="play(audio.src)">{{audio.title}}</div>

@@ -13,7 +13,7 @@
         </p>
       </div>
       <div class="text-3xl flex justify-center items-center ml-auto pl-4 text-gray-300" style="width: 2.2em; transform: scale(1.2)">
-        <i class="fas fa-chevron-right" />
+        <icon icon="chevron-right" />
       </div>
     </NLink>
   </div>

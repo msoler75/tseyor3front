@@ -20,7 +20,7 @@
           </section>
           <section class="flex mt-7 justify-end">
               <a download href="/libro.pdf"
-              class="btn btn-error"><i class="fas fa-download mr-2"/>Descargar</a>
+              class="btn btn-error"><icon icon="download" class="mr-2"/>Descargar</a>
           </section>
         </section>
       </section>

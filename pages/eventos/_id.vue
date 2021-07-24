@@ -17,9 +17,9 @@
     </Card>
     <div class="order-5 md:order-3 xl:order-4 flex justify-center items-start">
       <Card class="p-5 m-5 whitespace-nowrap text-gray-700 flex flex-wrap lg:flex-col">
-        <p><i class="fas fa-calendar-alt mr-2 text-gray"/> 26 de enero</p>
-        <p><i class="fas fa-globe mr-2 text-gray"/> evento online</p>
-        <p><i class="fas fa-hourglass mr-2 text-gray"/> 3 días</p>
+        <p><icon icon="calendar-alt" class="mr-2 text-gray"/> 26 de enero</p>
+        <p><icon icon="globe" class="mr-2 text-gray"/> evento online</p>
+        <p><icon icon="hourglass" class="mr-2 text-gray"/> 3 días</p>
       </Card>
     </div>
   </div>

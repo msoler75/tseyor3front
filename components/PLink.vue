@@ -4,7 +4,7 @@
     <Icon v-if="icon" :icon="icon" class="mr-2"/><slot />
   </nuxt-link>
   <div v-else class="bg-error">
-    <i class="fas fa-exclamation" /> <span>Enlace Incorrecto</span>
+    <icon icon="exclamation" /> <span>Enlace Incorrecto</span>
   </div>
 </template>
 

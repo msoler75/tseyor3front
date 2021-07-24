@@ -38,23 +38,23 @@
                 <Card class="p-3 sm:p-7">
                 <h3 class="text-blue-gray-800 font-bold text-center mb-4 uppercase">De las estrellas...</h3>
                 <ul class="list-none mx-auto max-w-[480px] sm:max-w-[640px]">
-                    <li><i class="fas fa-check-circle rounded-full text-blue-400 mr-3"/>La Confederación de Mundos</li>
-                    <li><i class="fas fa-check-circle rounded-full text-blue-400 mr-3"/>El Cosmos holográfico</li>
-                    <li><i class="fas fa-check-circle rounded-full text-blue-400 mr-3"/>El Error Atlante</li>
-                    <li><i class="fas fa-check-circle rounded-full text-blue-400 mr-3"/>El Próximo Salto Cuántico</li>
-                    <li><i class="fas fa-check-circle rounded-full text-blue-400 mr-3"/>El Rayo sincronizador</li>
-                    <li><i class="fas fa-check-circle rounded-full text-blue-400 mr-3"/>Las futuras Sociedades armónicas</li>
+                    <li><icon icon="check-circle" class="rounded-full text-blue-400 mr-3"/>La Confederación de Mundos</li>
+                    <li><icon icon="check-circle" class="rounded-full text-blue-400 mr-3"/>El Cosmos holográfico</li>
+                    <li><icon icon="check-circle" class="rounded-full text-blue-400 mr-3"/>El Error Atlante</li>
+                    <li><icon icon="check-circle" class="rounded-full text-blue-400 mr-3"/>El Próximo Salto Cuántico</li>
+                    <li><icon icon="check-circle" class="rounded-full text-blue-400 mr-3"/>El Rayo sincronizador</li>
+                    <li><icon icon="check-circle" class="rounded-full text-blue-400 mr-3"/>Las futuras Sociedades armónicas</li>
                 </ul>
                 </Card>
                 <Card class="p-3 sm:p-7">
                 <h3 class="text-blue-gray-800 font-bold text-center mb-4 uppercase">Trabajo interior</h3>
                 <ul class="list-none mx-auto max-w-[480px] sm:max-w-[640px]">
-                    <li><i class="fas fa-check-circle rounded-full text-blue-400 mr-3"/>La Nave interdimensional Tseyor</li>
-                    <li><i class="fas fa-check-circle rounded-full text-blue-400 mr-3"/>Perfeccionamiento del pensamiento</li>
-                    <li><i class="fas fa-check-circle rounded-full text-blue-400 mr-3"/>Equilibrio, fluir y humildad</li>
-                    <li><i class="fas fa-check-circle rounded-full text-blue-400 mr-3"/>Los Mundos paralelos</li>
-                    <li><i class="fas fa-check-circle rounded-full text-blue-400 mr-3"/>La Unidad de Pensamiento</li>
-                    <li><i class="fas fa-check-circle rounded-full text-blue-400 mr-3"/>La Extrapolacion mental</li>
+                    <li><icon icon="check-circle" class="rounded-full text-blue-400 mr-3"/>La Nave interdimensional Tseyor</li>
+                    <li><icon icon="check-circle" class="rounded-full text-blue-400 mr-3"/>Perfeccionamiento del pensamiento</li>
+                    <li><icon icon="check-circle" class="rounded-full text-blue-400 mr-3"/>Equilibrio, fluir y humildad</li>
+                    <li><icon icon="check-circle" class="rounded-full text-blue-400 mr-3"/>Los Mundos paralelos</li>
+                    <li><icon icon="check-circle" class="rounded-full text-blue-400 mr-3"/>La Unidad de Pensamiento</li>
+                    <li><icon icon="check-circle" class="rounded-full text-blue-400 mr-3"/>La Extrapolacion mental</li>
                 </ul>
                 </Card>
             </Grid>
@@ -168,7 +168,7 @@
                         class="text-lg transition duration-150 w-full text-center btn font-bold py-4 px-4 rounded-xl focus:outline-none focus:shadow-outline"
                         type="submit"
                     >
-                        <i class="fas fa-check mr-4 text-deep-orange md:text-xl xl:text-2xl"/><span class="sm:text-xl">Quiero Hacer el Curso</span>
+                        <icon icon="check mr-4 text-deep-orange md:text-xl xl:text-2xl"/><span class="sm:text-xl">Quiero Hacer el Curso</span>
                     </button>
                 </div>
             </PForm>

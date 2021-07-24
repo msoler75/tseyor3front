@@ -18,12 +18,12 @@
          <navigation slot="hooper-addons">
            <template #hooper-next>
              <div class="hover:bg-orange p-4 transition duration-200">
-                <i class="fas fa-chevron-right" title="Siguiente"/>
+                <icon icon="chevron-right" title="Siguiente"/>
              </div>
              </template>
              <template #hooper-prev>
              <div class="hover:bg-orange p-4 transition duration-200" v-show="currentSlide>0">
-                <i class="fas fa-chevron-left" title="Anterior"/>
+                <icon icon="chevron-left" title="Anterior"/>
              </div>
              </template>
          </navigation>

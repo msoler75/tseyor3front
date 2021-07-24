@@ -21,7 +21,7 @@
     </div>
     <div class="">
       <button class="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline btn text-lg">
-      <i class="fas fa-sign-in-alt mr-3"/> Registrarse
+      <icon icon="sign-in-alt" class="mr-3"/> Registrarse
       </button>
     </div>
     </PForm>

@@ -33,28 +33,28 @@
             <div class="flex flex-col justify-center items-center">
               <div class="uppercase font-bold text-sm">miembros</div>
               <span
-                ><i class="fas fa-user mr-2 text-gray" />
+                ><icon icon="user" class="mr-2 text-gray" />
                 {{ equipo.miembros }}</span
               >
             </div>
             <div class="flex flex-col justify-center items-center">
               <div class="uppercase font-bold text-sm">reuniones</div>
               <span
-                ><i class="fas fa-calendar-day mr-2 text-gray" />
+                ><icon icon="calendar-day" class="mr-2 text-gray" />
                 {{ equipo.reuniones }}</span
               >
             </div>
             <div class="flex flex-col justify-center items-center">
               <div class="uppercase font-bold text-sm">anexos</div>
               <span
-                ><i class="fas fa-paperclip mr-2 text-gray" />
+                ><icon icon="paperclip" class="mr-2 text-gray" />
                 {{ equipo.anexos }}</span
               >
             </div>
             <div class="flex flex-col justify-center items-center">
               <div class="uppercase font-bold text-sm">actas</div>
               <span
-                ><i class="fas fa-file-alt mr-2 text-gray" />
+                ><icon icon="file-alt" class="mr-2 text-gray" />
                 {{ equipo.actas }}</span
               >
             </div>

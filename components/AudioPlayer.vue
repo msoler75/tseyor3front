@@ -125,7 +125,7 @@
   -->
 
       <a download :href="src" class="mx-auto flex justify-center items-center" title="Descargar audio">
-        <i class="fas fa-download" />
+        <icon icon="download" />
       </a>
     </div>
   </div>
