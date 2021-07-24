@@ -16,6 +16,11 @@ export default {
             type: Boolean,
             required: false,
             default: true
+        },
+        breadcrumb: {
+            type: Boolean,
+            required: false,
+            default: true
         }
     },
     mounted() {
@@ -23,6 +28,8 @@ export default {
             this.$store.commit('setContained', false)
         if(!this.background)
             this.$store.commit('setBackground', false)
+        if(!this.breadcrumb)
+            this.$store.commit('setBreadcrumb', false)
     }
 }
 </script>

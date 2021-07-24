@@ -10,6 +10,7 @@ export default () => ({
   },
   pageInContainer : true,
   pageBackground : true,
+  pageBreadCrumb: true,
   breadcrumbs: {
     "/": {
       icon: "fas fa-home"

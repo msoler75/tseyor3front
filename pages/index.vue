@@ -1,5 +1,8 @@
 <template>
   <div class="max-w-lg mx-auto">
+
+    <Config :breadcrumb="false" />
+
     <NLink v-for="item of items" :key="item.name" :to="item.url" :class="'flex w-full my-5 shadow rounded p-3 ' + (item.bg?item.bg:' card')">
       <div :class="'text-5xl sm:text-3xl flex justify-center items-center pr-4 '+item.color" style="width: 2.8em; transform: scale(1.2)">
         <icon :icon="item.icon" />

@@ -17,5 +17,9 @@ export default {
 
   setBackground(state, payload) {
     state.pageBackground = payload
+  },
+
+  setBreadcrumb(state, payload) {
+    state.pageBreadcrumb = payload
   }
 }

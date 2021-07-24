@@ -73,6 +73,10 @@ export default {
 
   pageBackground: state => () => {
     return state.pageBackground
+  },
+
+  pageBreadcrumb: state => () => {
+    return state.pageBreadcrumb
   }
 
 }

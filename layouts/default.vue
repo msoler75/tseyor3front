@@ -198,7 +198,8 @@
       @click="currentTab = ''"
     >
       <div>
-        <Breadcrumb class="text-xs xl:text-sm" />
+        <Breadcrumb v-if="pageBreadcrumb" class="text-xs xl:text-sm" />
+
         <h4 class="text-2xl font-bold leading-tight text-gray-800 dark:text-gray-200">
           <div v-if="false">
             {{ getTitle() }}
@@ -505,6 +506,9 @@ export default {
     },
     pageBackground () {
       return this.$store.getters.pageBackground()
+    },
+    pageBreadcrumb () {
+      return this.$store.getters.pageBreadcrumb()
     }
   },
   methods: {
