@@ -32,7 +32,7 @@
     </div>
 
     <client-only>
-      <aplayer
+      <AudioPlayer
         v-if="currentAudio && currentAudio.src"
         autoplay
         :float="true"
@@ -46,9 +46,7 @@
 </template>
 
 <script>
-import Aplayer from "vue-aplayer";
 export default {
-  components: { Aplayer },
   data() {
     const r = {
       beginOffset: 0,

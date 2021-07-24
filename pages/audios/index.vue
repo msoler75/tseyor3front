@@ -42,9 +42,7 @@
 </template>
 
 <script>
-import Aplayer from "vue-aplayer";
 export default {
-  components: { Aplayer },
   asyncData({ app }) {
     const audios = [];
     for (let i = 1; i < 56; i++) {
