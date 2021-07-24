@@ -22,8 +22,10 @@
       </aside>
     </div>
 
-    <!-- article content -->
+    <!-- article wrapper -->
     <section>
+
+      <!-- article heading -->
       <h1 class="">{{ ctitle }}</h1>
       
       <div class="w-full flex mb-5 items-center justify-start text-xs sm:text-sm">
@@ -44,7 +46,9 @@
 
       <!-- <nuxt-img :src="'./images/' + entrada.imagen" /> -->
       <nuxt-img :src="cimage" />
-      <article class="my-9 text-justify" v-html="$md.render(ctext)" />
+
+      <!-- article content -->
+      <Article class="my-9 text-justify" v-html="$md.render(ctext)" />
     </section>
 
     </scrollactive>
@@ -81,17 +85,16 @@
 
 <section class="my-7">
   <ShareNetwork
-      network="facebook"
+      network="twitter"
       :url="$config.baseUrl+$route.fullPath"
       title="Os comparto esta información..."
       description="desc"
-      quote="The hot reload is so fast it\'s near instant. - Evan You"
       hashtags="tseyor,blogs"
-      twitterUser="youyuxi"
+      twitterUser="alondra"
       class="bg-light-blue"
     >
        <i class="fab fah fa-lg fa-facebook"></i>
-    <span>Share on facebook</span>
+    <span>Compartir on Twitter</span>
   </ShareNetwork>
 
 </section>
@@ -158,20 +161,3 @@ asyncData ({ app, route }) {
 }
 }
 </script>
-
-<style scoped>
-article >>> h1,
-article >>> h2,
-article >>> h3,
-article >>> h4,
-article >>> h5,
-article >>> h6,
-article >>> hr,
-article >>> p {
-    @apply max-w-[30rem] mx-auto;
-  }
-
-  article >>> p {
-    @apply my-2;
-  }
-</style>
