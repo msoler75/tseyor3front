@@ -9,7 +9,7 @@
         class="p-4 flex-row"
       >
         <div class="mr-5 flex items-center">
-          <i :class="'text-5xl mr-6 fab fa-' + dameRed(pagina.href)" />
+          <icon :icon="'fab fa-' + dameRed(pagina.href)" class="text-5xl mr-6" />
            <h2 class="text-xl">{{ pagina.nombre }}</h2>
         </div>
           <div class="mt-auto flex w-full items-end justify-end">

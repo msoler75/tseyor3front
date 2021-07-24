@@ -99,7 +99,7 @@
         class="bg-orange-800 mx-auto rounded-full border-white border w-12 h-12 flex justify-center items-center"
         @click="playPauseBtn"
       >
-        <i :class="playStateIcon" class="text-lg" />
+        <icon :icon="playStateIcon" class="text-lg" />
       </button>
       <button type="button" class="mx-auto" @click="stepForward">
         <svg width="34" height="39" fill="none">

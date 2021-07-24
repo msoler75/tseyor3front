@@ -12,7 +12,7 @@
                 <div class="flex justify-center mt-8 space-x-6">
                     <a v-for="red of redes" :key="red.href" target="_blank" :href="red.href" class="text-gray-400 hover:text-gray-500">
                         <span class="sr-only">Facebook</span>
-                        <i :class="red.icon" />
+                        <icon :icon="red.icon" />
                     </a>
                 </div>
                 <section class="mt-8 text-base leading-6 text-center text-gray-400">
@@ -63,7 +63,7 @@
 
             <a v-for="red of redes" :key="red.href" target="_blank" :href="red.href" class="text-gray-500 transition-colors duration-300 hover:text-teal-accent-400">
                 <span class="sr-only">Facebook</span>
-                <i :class="red.icon" />
+                <icon :icon="red.icon" />
             </a>
         </div>
       </div>
