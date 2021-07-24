@@ -34,7 +34,7 @@
             </ul>
           </div>
         </div>
-        <div class="md:max-w-md lg:col-span-2">
+        <div class="md:max-w-md lg:col-span-2 mt-9 lg:mt-0">
           <span class="text-base font-medium tracking-wide dark:text-gray-300">{{invitacionSuscribirse}}</span>
           <form class="flex flex-col mt-4 md:flex-row">
             <input
@@ -89,6 +89,19 @@ export default {
                         { nombre: 'Portada', href: '/'},
                         { nombre: 'Contactar', href: '/contactar'},
                         { nombre: 'Donde estamos', href: '/mapa'},
+                    ]
+                },
+                { nombre: 'Almacenes',
+                    enlaces: [
+                        { nombre: 'Portada', href: '/'},
+                        { nombre: 'Contactar', href: '/contactar'},
+                        { nombre: 'Donde estamos', href: '/mapa'},
+                    ]
+                },
+                { nombre: 'Centros',
+                    enlaces: [
+                        { nombre: 'ONG', href: '/ong'},
+                        { nombre: 'Universidad', href: '/universidad'},
                     ]
                 },
                 { nombre: 'Organización',
