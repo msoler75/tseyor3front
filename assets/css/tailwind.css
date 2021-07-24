@@ -9,10 +9,34 @@
 }
 
 @layer base {
-  html,
-  body {
-    font-size: 18px;
+  html{
+    font-size: 14px
   }
+
+  @screen xs {
+    html{
+      font-size: 16px
+    }
+  }
+
+  @screen sm {
+    html{
+      font-size: 17px
+    }
+  }
+
+  @screen lg {
+    html{
+      font-size: 18px
+    }
+  }
+
+  @screen xl {
+    html{
+      font-size: 19px
+    }
+  }
+  
   h1 {
     @apply font-serif font-bold capitalize leading-tight text-xl sm:text-2xl md:text-3xl lg:text-4xl mt-8 mb-3 lg:mb-6 xl:mb-7;
   }
