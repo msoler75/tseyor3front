@@ -1,6 +1,7 @@
 <template>
   <div class="main-wrapper relative surface-0 w-full h-full flex-grow font-sans"
   :class="pageBackground?'':'no-background'">
+
     <!-- Navigation starts -->
     <nav id="main-menu" 
     class="transition duration-200 font-serif font-bold z-30 w-full mx-auto bg-white dark:bg-gray-900 text-gray-blue-800 dark:text-gray-200 dark:hover:text-gray-50  shadow select-none sticky top-0" 
@@ -11,7 +12,7 @@
       >
         <div class="flex items-center h-full justify-between">
           <div class="xl:hidden flex items-center text-2xl">
-              <i class="fas fa-bars cursor-pointer" @click="showSideMenu" />
+              <icon icon="bars" class="cursor-pointer" @click="showSideMenu" />
           </div>
           <ul class="h-full hidden xl:flex ml-auto">
             <li
@@ -63,7 +64,7 @@
               <span class="hidden md:inline">Miembros</span></PLink>
             </div> 
             <NLink compact to="/login" class="md:hidden btn bg-light-blue dark:bg-blue-dark w-8 h-8 flex justify-center items-center p-2 rounded-full">
-              <i class="fas fa-sign-in-alt"/></NLink>
+              <icon icon="sign-in-alt"/></NLink>
           </div>
         </div>
       </div>

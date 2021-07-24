@@ -40,36 +40,9 @@ export default {
       ''
       }
     ],
-    link: process.env.NODE_ENV === 'production'
-      ? [
-          { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
-        ]
-      : [
-          { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
-          {
-            hid: '',
-            rel: 'stylesheet',
-            href: '/fontawesome-free-5.15.1-web/css/all.min.css'
-          },
-          {
-            rel: 'stylesheet',
-            href: 'https://unicons.iconscout.com/release/v4.0.0/css/thinline.css'
-          },
-          {
-            rel: 'stylesheet',
-            href: 'https://unicons.iconscout.com/release/v4.0.0/css/line.css'
-          }
-        ],
-    script:
-      process.env.NODE_ENV === 'production'
-        ? [
-           {
-              hid: 'fontawesome',
-              src: 'https://kit.fontawesome.com/eb9a85c3fc.js',
-              defer: true
-            }
-          ]
-        : []
+    link: [
+      { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
+    ]
   },
 
   // Global CSS: https://go.nuxtjs.dev/config-css
@@ -99,7 +72,7 @@ export default {
     // https://github.com/nuxt-community/device-module
     '@nuxtjs/device',
     // https://github.com/nuxt-community/fontawesome-module
-    // '@nuxtjs/fontawesome',
+    '@nuxtjs/fontawesome',
   ],
 
   // Modules: https://go.nuxtjs.dev/config-modules
@@ -277,17 +250,15 @@ export default {
   },
 
   fontawesome: {
-    component: 'fa',
-      suffix: true,
+      component: 'fa',
+      // suffix: true,
       icons: { 
         // list the icons you want to add, not listed icons will be tree-shaked
-        solid: [
-          'faHome',
-          'faHeart'
-        ],
+        solid: ['faBars', 'faHeart', 'faDownload', 'faPlay', 'faPause', 'faChevronRight', 'faChevronLeft', 'faExclamation', 'faSearch', 'faSignInAlt', 'faFileAlt', 'faBook', 'faComments', 'faMusic', 'faSitemap', 'faRoute', 'faBolt', 'faHeadphones', 'faBroadcastTower', 'faLink', 'faBalanceScale', 'faScroll', 'faArrowRight', 'faFilePdf', 'faHome', 'faUser', 'faMapMarkedAlt', 'faThLarge', 'faCheckCircle', 'faInfoCircle', 'faCheck', 'faShareAlt', 'faCalendarDay', 'faPaperclip', 'faCalendarAlt', 'faGlobe', 'faHourglass', 'faDonate', 'faQuestion', 'faQuestionCircle', 'faTree', 'faBookOpen', 'faFolderOpen', 'faUsers', 'faGavel', 'faFileSignature', 'faWalking', 'faMapSigns', 'faCalendarWeek', 'faPeopleCarry', 'faLocationArrow', 'faCircle', 'faUserAstronaut', 'faEdit', 'faNewspaper', 'faBullhorn', 'faPenAlt', 'faRss', 'faFastBackward', 'faGlobeAmericas', 'faGraduationCap', 'faHandsHelping', 'faChessRook', 'faUniversity', 'faPlayCircle', 'faExchangeAlt', 'faEnvelopeOpenText', 'faBriefcaseMedical', 'faChalkboardTeacher'],
+        regular: ['faHeart', 'faComments', 'faClipboard', 'faFrown', 'faComment', 'faCalendarAlt', 'faUser'],
         // include all icons. But dont do this.
-        regular: [],
-        brands: ['']
+        //regular: true,
+        brands: ['faFacebook', 'faTwitter', 'faYoutube', 'faWhatsapp', 'faTelegram', 'faInstagram', 'faPinterest', 'faBlogger']
       }
   },
 
