@@ -70,16 +70,25 @@
         </section>
       </div>
 
-      <section class="my-7">
+      <section class="my-7 lg:my-16">
+        <!-- modal -->
         <Comparte v-model="viendoCompartir" />
-        <div class="flex justify-center">
-          <div class="btn" @click="viendoCompartir = true">
-            <icon class="mr-4" icon="fas fa-share-alt" />
-            Comparte este contenido
+
+        <!-- buttons -->
+        <Grid class="w-full px-3 sm:px-5 grid-cols-1 sm:grid-cols-3">
+          
+          <div class="max-w-xs mx-auto min-w-40 btn flex items-center justify-center">
+            <icon class="mr-2 xs:mr-4" icon="fas fa-heart" />
+            Me Gusta
+          </div>
+          
+          <div class="max-w-xs mx-auto min-w-40 btn flex items-center justify-center" @click="viendoCompartir = true">
+            <icon class="mr-2 xs:mr-4" icon="fas fa-share-alt" />
+            Comparte
           </div>
 
-          <a class="hidden md:block ml-9 btn scrollactive-item" href="#comentarios">
-            <icon class="mr-4" icon="far fa-comment" />
+          <a class="max-w-xs mx-auto min-w-40 btn flex items-center justify-center scrollactive-item" href="#comentarios">
+            <icon class="mr-2 xs:mr-4" icon="far fa-comment" />
             <span v-if="entrada.comentarios">
               {{ entrada.comentarios }} Comentarios</span
             >
@@ -87,7 +96,7 @@
               Coméntalo
             </span>
           </a>
-        </div>
+        </Grid>
       </section>
     </scrollactive>
 
