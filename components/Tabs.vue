@@ -1,5 +1,5 @@
 <template>
-  <div class="tabs mb-4 flex flex-wrap select-none uppercase text-sm md:tracking-wide lg:tracking-wider xl:tracking-widest font-sans"
+  <div class="tabs mb-4 flex max-w-full overflow-x-auto select-none uppercase text-xs sm:text-sm md:tracking-wide lg:tracking-wider xl:tracking-widest font-sans"
   :class="compact?'compact':'normal'">
     <div
       v-for="(label, index) of labels"
@@ -79,7 +79,8 @@ export default {
 <style scoped>
 
   .tab {
-    @apply transition duration-200 text-center cursor-pointer py-2 px-4 border-b-4 font-semibold border-gray bg-gray-100 dark:bg-gray-dark-800 overflow-hidden shadow;
+    @apply transition duration-200 text-center cursor-pointer p-1 sm:py-2 sm:px-4 border-b-4 font-semibold border-gray bg-gray-100 dark:bg-gray-dark-800 overflow-hidden shadow;
+    min-width: fit-content;
   }
   .tab.auto-group {
     @apply rounded-md mr-2 mb-2 xl:mr-0 xl:mb-0 xl:rounded-none first:rounded-l-md last:rounded-r-md
@@ -88,12 +89,14 @@ export default {
     @apply mr-0 mb-0 rounded-none first:rounded-l-md last:rounded-r-md
   }
   .tab:not(.auto-group):not(.fixed-group) {
-    @apply rounded-md mr-2 mb-2
+    @apply rounded-sm sm:rounded-md mr-2 mb-2
   }
   .tab.active {
     @apply shadow-sm border border-opacity-50 border-red-900 bg-orange-300 dark:bg-orange text-red-900 
   }
-  .tabs.normal .tab {
-    min-width: 10rem
+  @screen xl {
+    .tabs.normal .tab {
+      min-width: 10rem
+  }
   }
 </style>
