@@ -17,6 +17,7 @@
               v-model="viendoCategoria"
               :labels="categorias"
               :group="false"
+              class="xl:flex-wrap"
             />
             <div class="xl:ml-auto">
               <SearchInput v-model="buscarPor" class="w-64 xl:mb-0" placeholder="Buscar audio..."/>
