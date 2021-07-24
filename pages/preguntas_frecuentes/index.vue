@@ -14,8 +14,8 @@
               {{ pregunta.title }}
             </h3>
             <div class="cursor-pointer text-xl text-gray-400">
-              <i v-show="!pregunta.show" class="fas fa-chevron-down" @click.prevent="pregunta.show=true"/>
-              <i v-show="pregunta.show" class="fas fa-chevron-up" @click.prevent="pregunta.show=false"/>
+              <icon v-show="!pregunta.show" icon="chevron-down" @click.prevent="pregunta.show=true"/>
+              <icon v-show="pregunta.show" icon="chevron-up" @click.prevent="pregunta.show=false"/>
             </div>
           </div>
             <Accordion duration=".2s" :expanded="pregunta.show">

@@ -82,7 +82,7 @@
         <h2 class="text-center text-white text-glow-dense">Próximos Cursos</h2>
         <div v-if="!cursosProximos.length" class="flex justify-center">
             <Card class="w-full max-w-lg rounded-xl p-5 text-center text-xl">
-                <div><i class="far fa-frown mr-2"/>Lo sentimos. No hay cursos programados.</div>
+                <div><icon icon="far fa-frown" class="mr-2"/>Lo sentimos. No hay cursos programados.</div>
             </Card>
         </div>
         <div v-else class="cursos flex flex-col space-y-3 items-center">
