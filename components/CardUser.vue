@@ -25,7 +25,7 @@ export default {
   mixins: [CardMix],
   computed: {
       cimage () {
-          return '/assets/images/usuarios/' + (this.image || this.data.image || this.data.imagen)
+          return '/images/usuarios/' + (this.image || this.data.image || this.data.imagen)
       }
   }
 };

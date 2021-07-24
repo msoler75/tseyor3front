@@ -63,7 +63,7 @@
     <section class="px-1 sm:px-0 my-16">
         <Card class="w-full px-1 xm:px-4 sm:px-9 max-w-3xl mx-auto py-4 sm:py-7 md:py-9">
             <div class="block sm:flex">
-                <Book3D class="mx-auto book-md md:book-lg lg:book-xl" src="/assets/images/portadas/imagen1.jpg"/>
+                <Book3D class="mx-auto book-md md:book-lg lg:book-xl" src="/images/portadas/imagen1.jpg"/>
                 <div class="sm:w-7/12 flex justify-center items-center text-center px-1 sm:px-4 md:px-7 lg:px-10 lg:text-xl">
                     <div class="py-4">
                         <h3 class="text-2xl mb-4">Libro del Curso</h3>

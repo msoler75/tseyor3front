@@ -5,7 +5,7 @@
           <div class="book-container my-4 mx-auto xs:my-0 xs:mr-4 lg:mr-20 flex-shrink-0 flex-grow-0">
             <div class="book">
         <nuxt-img
-          :src="'/assets/images/portadas/' + libro.imagen"
+          :src="'/images/portadas/' + libro.imagen"
           sizes="xs:40px sm:80px md:150px lg:200px"
         />
         </div>

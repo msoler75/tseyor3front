@@ -49,8 +49,8 @@
             <nuxt-img class="rounded-full" width="50" height="50" 
             :src="
               location.clase === 'centros'
-                ? '/assets/images/' + location.imagen
-                : '/assets/images/usuarios/' + location.imagen
+                ? '/images/' + location.imagen
+                : '/images/usuarios/' + location.imagen
             "
             />
             <p class="font-bold text-sm">
@@ -74,8 +74,8 @@
           <nuxt-img
             :src="
               contacto.clase === 'centros'
-                ? '/assets/images/' + contacto.imagen
-                : '/assets/images/usuarios/' + contacto.imagen
+                ? '/images/' + contacto.imagen
+                : '/images/usuarios/' + contacto.imagen
             "
             class="mx-auto mb-3 w-20 h-20 rounded-full"
           />

@@ -106,12 +106,6 @@ export default {
     ['nuxt-tailvue', {modal: true, toast: true}],
   ],
 
-
-  alias: {
-    'ximages': resolve(__dirname, './assets/images'),
-    'svg': resolve(__dirname, './assets/svg'),
-  },
-
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
   axios: {
     // baseURL: process.env.API_AUTH_URL
@@ -187,35 +181,8 @@ export default {
   // https://image.nuxtjs.org/api/options/
   image: {
     // format: 'webp',
-    presets: {
-      vcard: {
-        modifiers: {
-          fit: 'cover',
-          width: 380,
-          heigt: 200
-        }
-      },
-      hcard: {
-        modifiers: {
-          fit: 'cover',
-          width: 200,
-          heigt: 380
-        }
-      },
-      avatar: {
-        modifiers: {
-          width: 150,
-          height: 150
-        }
-      }
-    },
-    dir: 'assets/images',
+    //dir: '',
     provider: 'ipx'
-  },
-
-  // https://image.nuxtjs.org/providers/ipx/
-  serverMiddleware: {
-    '/_ipx': '~/server/middleware/ipx.js'
   },
 
   // Optional

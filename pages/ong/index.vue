@@ -2,7 +2,7 @@
   <div class="max-w-3xl">
 
     <Card class="px-5 py-7 w-full items-center">
-        <nuxt-img src="/assets/images/ong-logo.jpg" sizes="100% sm:709px" class="mx-auto mb-6" />
+        <nuxt-img src="/images/ong-logo.jpg" sizes="100% sm:709px" class="mx-auto mb-6" />
    
       <h1 class="text-center">ONG Mundo Armónico Tseyor</h1>
       <blockquote>
@@ -61,7 +61,7 @@
 
      <Card class="px-5 py-7 w-full my-7 text-center items-center">
         <h2>El Muular</h2>
-        <nuxt-img src="/assets/images/muular.jpg"/>
+        <nuxt-img src="/images/muular.jpg"/>
         
         <p>El muular es el nombre que recibe la moneda de intercambio de bienes y servicios dentro de la comunidad TSEYOR.</p>
         <section class="p-4">

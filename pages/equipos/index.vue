@@ -16,7 +16,7 @@
         <div class="flex items-center whitespace-nowrap">
           <div class="w-14 h-14 mr-5 flex-shrink-0">
             <nuxt-img
-              :src="'./assets/images/' + equipo.imagen"
+              :src="'./images/' + equipo.imagen"
               class="w-full h-full rounded-full"
               fit="cover"
             ></nuxt-img>

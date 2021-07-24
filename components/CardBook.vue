@@ -5,8 +5,8 @@
       <section class="flex-grow sm:pt-2">
         <Book3D class="mx-auto"
         :class="sizeBook"
-         :src="'/assets/images/portadas/' + data.imagen"/>
-        <!-- <nuxt-img class="block xs:hidden max-w-8" :src="'/assets/images/portadas/' + data.imagen"/> -->
+         :src="'/images/portadas/' + data.imagen"/>
+        <!-- <nuxt-img class="block xs:hidden max-w-8" :src="'/images/portadas/' + data.imagen"/> -->
       </section>
       <section class="px-1 pb-4 xs:px-6 text-center"
       :class="landscape?'flex flex-col justify-center':''">

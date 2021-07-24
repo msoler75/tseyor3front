@@ -42,7 +42,7 @@
       </div>
       
 
-      <!-- <nuxt-img :src="'./assets/images/' + entrada.imagen" /> -->
+      <!-- <nuxt-img :src="'./images/' + entrada.imagen" /> -->
       <nuxt-img :src="cimage" />
       <article class="my-9 text-justify" v-html="$md.render(ctext)" />
     </section>
@@ -61,7 +61,7 @@
             class="max-w-full w-32 rounded-full overflow-hidden"
           >
             <nuxt-img
-              :src="'./assets/images/' + entrada.blog.imagen"
+              :src="'./images/' + entrada.blog.imagen"
               class="w-full block"
             />
           </nuxt-link>

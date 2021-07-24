@@ -6,7 +6,7 @@
         <nuxt-img
           loading="lazy"
           :alt="guia"
-          :src="'/assets/images/guias/' + guia.toLowerCase().replace(' ', '') + '.jpg'"
+          :src="'images/guias/' + guia.toLowerCase().replace(' ', '') + '.jpg'"
           width="200px"
           height="320px"
           class="hidden sm:block mx-auto"

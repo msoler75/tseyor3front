@@ -1,5 +1,8 @@
 <template>
+<div>
+  <nuxt-img src="sello-utg.jpg"/>
   <div v-html="hello"></div>
+</div>
 </template>
 
 <script>

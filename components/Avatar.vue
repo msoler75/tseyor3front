@@ -89,7 +89,7 @@ export default {
         {
             const image = this.data.image || this.data.imagen
             if(image)
-                return './assets/images/usuarios/'+image
+                return './images/usuarios/'+image
         }
         return this.image
     },

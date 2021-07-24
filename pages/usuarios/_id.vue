@@ -67,7 +67,7 @@ export default {
   },
   computed: {
     cimage() {
-      return "/assets/images/usuarios/" + this.contenido.imagen;
+      return "/images/usuarios/" + this.contenido.imagen;
     },
   },
 };

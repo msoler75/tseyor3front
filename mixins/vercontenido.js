@@ -54,7 +54,7 @@ export default {
     cimage() {
       const src = this.image || this.contenido.image || this.contenido.imagen;
       if (src && src.search("/") > -1) return src;
-      return "./assets/images/" + src;
+      return "./images/" + src;
     }
   },
   watch: {

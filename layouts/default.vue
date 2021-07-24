@@ -506,14 +506,6 @@ export default {
     pageBackground () {
       return this.$store.getters.pageBackground()
     }
-    /*
-    backgroundImage() {
-      return 'bg-dark.jpg'
-    },
-    backgroundUrl () {
-      //return require(`~ximages/${this.backgroundImage}.jpg`)
-      return ''
-    } */
   },
   methods: {
     changeColorMode() {
@@ -675,10 +667,10 @@ nav#submenu {
 
 @screen sm {
   .main-wrapper:before {
-    background-image: url(~ximages/bg-light.jpg);
+    background-image: url(/images/bg-light.jpg);
   }
   .dark .main-wrapper:before {
-    background-image: url(~ximages/bg-dark.jpg);
+    background-image: url(/images/bg-dark.jpg);
   }
 }
 
@@ -688,7 +680,7 @@ nav#submenu {
 .bg-dark-theme:before {
   content: "";
   @apply absolute left-0 top-0 w-full h-full bg-black bg-top bg-no-repeat bg-cover bg-fixed;
-  background-image: url(~ximages/bg-dark.jpg);
+  background-image: url(/images/bg-dark.jpg);
   z-index:-1;
 }
 

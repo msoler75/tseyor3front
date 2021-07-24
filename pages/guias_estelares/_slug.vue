@@ -77,7 +77,7 @@ export default {
     },
     imagen() {
       var str = this.slug.replace(/[^a-z]/g, "");
-      return "/assets/images/guias/" + str + ".jpg";
+      return "/images/guias/" + str + ".jpg";
     },
   },
 };

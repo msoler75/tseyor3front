@@ -120,7 +120,7 @@ export default {
     cimage() {
       const src = this.image || this.data.image || this.data.imagen;
       if (src.search("/") > -1) return src;
-      return "./assets/images/" + src;
+      return "./images/" + src;
     }
   }
 };

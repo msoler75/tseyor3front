@@ -35,7 +35,7 @@
         </div>
       </div>
       <div class="hidden lg:block">
-        <img src="~ximages/meditando.png" class="w-full" />
+        <img src="/images/meditando.png" class="w-full" />
       </div>
     </section>
   </section>
