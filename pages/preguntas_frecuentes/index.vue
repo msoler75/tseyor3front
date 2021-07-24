@@ -10,12 +10,13 @@
         >
           <div class="flex justify-between items-center">
             <h3 class="text-gray-800 text-base md:text-xl xl:text-2xl w-10/12"
-            @click="pregunta.show=!pregunta.show ">
+            @click="pregunta.show=!pregunta.show">
               {{ pregunta.title }}
             </h3>
-            <div class="cursor-pointer text-xl text-gray-400">
-              <icon v-show="!pregunta.show" icon="chevron-down" @click.prevent="pregunta.show=true"/>
-              <icon v-show="pregunta.show" icon="chevron-up" @click.prevent="pregunta.show=false"/>
+            <div class="cursor-pointer text-xl text-gray-400"
+            @click="pregunta.show=!pregunta.show">
+              <icon v-show="!pregunta.show" icon="chevron-down"/>
+              <icon v-show="pregunta.show" icon="chevron-up" />
             </div>
           </div>
             <Accordion duration=".2s" :expanded="pregunta.show">
