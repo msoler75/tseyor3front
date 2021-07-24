@@ -16,8 +16,8 @@
 
     <div class="hidden 4xl:block absolute right-0 translate-x-3 5xl:translate-x-10 h-full">
       <aside class="sticky top-32 mb-6 text-xs 5xl:text-sm flex flex-col">
-          <div><icon class="my-3 5xl:w-4" icon="far fa-heart" /> {{entrada.likes}}</div>
-          <a class="scrollactive-item" href="#comentarios"><icon class="my-3 5xl:w-4" icon="far fa-comment" /> {{entrada.comentarios}}</a>
+          <div class="my-3"><icon class="5xl:w-4" icon="far fa-heart" /> {{entrada.likes}}</div>
+          <a class="scrollactive-item my-3" href="#comentarios"><icon class="5xl:w-4" icon="far fa-comment" /> {{entrada.comentarios}}</a>
           <div><icon class="my-3 5xl:w-4" icon="fas fa-share-alt" /></div>
       </aside>
     </div>
