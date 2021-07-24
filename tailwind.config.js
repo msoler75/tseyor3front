@@ -19,11 +19,13 @@ module.exports = {
       'lg': '1024px',
       'xl': '1280px',
       '2xl': '1536px',
-      '3xl': '1600px'
+      '3xl': '1600px',
+      '4xl': '56rem',
+      '5xl': '64rem',
     },
     fontFamily: {
       sans: ['Calibri', 'Graphik', 'Segoe UI', 'sans-serif'],
-      serif: ['Georgia', 'Garamond', 'Cambria', 'Helvetica', 'Helvetica Light', 'Tahoma', 'Roman', 'serif']
+      serif: ['-apple-system', 'system-UI', 'BlinkMacSystemFont', "Segoe UI", 'Roboto', "Helvetica Neue", 'Arial', 'sans-serif']
     },
     darkSelector: '.dark-mode',
     colors: {

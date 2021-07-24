@@ -27,11 +27,6 @@
   h3:first-of-type {
     margin-top: 0;
   }
-
-  p {
-    @apply my-1 max-w-xl
-  }
-
   
   .surface-0 {
     @apply text-blue-gray-700 dark:text-gray-300;

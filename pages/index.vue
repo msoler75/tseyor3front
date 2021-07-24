@@ -34,7 +34,7 @@ export default {
           url: '/presentacion/visita'
         },
         {
-          icon: 'fas fa-fire-alt',
+          icon: 'fas fa-bolt',
           color: 'text-red',
           name: 'Novedades',
           description: 'Noticias, blogs, eventos y otras publicaciones',

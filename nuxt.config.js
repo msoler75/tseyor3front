@@ -4,15 +4,17 @@ export default {
 
   target: 'server',
 
+  dev: process.env.NODE_ENV !== 'production',
+
   router: {
     // base: '/web3/',
     prefetchLinks: false,
-    // middleware: 'route'
+    middleware: 'route'
   },
 
   // https://nuxtjs.org/docs/2.x/directory-structure/nuxt-config#publicruntimeconfig
   publicRuntimeConfig: {
-    // baseURL: process.env.BASE_URL || 'https://tseyor.org'
+    baseUrl: process.env.BASE_URL || 'http://tseyor.org',
   },
 
   // https://nuxtjs.org/docs/2.x/configuration-glossary/configuration-server
@@ -94,6 +96,10 @@ export default {
     '@nuxtjs/color-mode',
     // https://github.com/nuxt-community/stylelint-module
     //'@nuxtjs/stylelint-module'
+    // https://github.com/nuxt-community/device-module
+    '@nuxtjs/device',
+    // https://github.com/nuxt-community/fontawesome-module
+    // '@nuxtjs/fontawesome',
   ],
 
   // Modules: https://go.nuxtjs.dev/config-modules
@@ -119,7 +125,11 @@ export default {
     }],
     'nuxt-compress',
     // https://github.com/nuxt-community/robots-module
-    '@nuxtjs/robots'
+    '@nuxtjs/robots',
+    // https://www.npmjs.com/package/vue-social-sharing
+    'vue-social-sharing/nuxt',
+    // https://github.com/nuxt-community/markdownit-module
+    '@nuxtjs/markdownit',
   ],
 
 
@@ -259,5 +269,39 @@ export default {
   robots: {
     UserAgent: '*',
     Disallow: '/admin'
-  }
+  },
+
+  // https://github.com/nuxt-community/device-module
+  device: {
+    refreshOnResize: true
+  },
+
+  fontawesome: {
+    component: 'fa',
+      suffix: true,
+      icons: { 
+        // list the icons you want to add, not listed icons will be tree-shaked
+        solid: [
+          'faHome',
+          'faHeart'
+        ],
+        // include all icons. But dont do this.
+        regular: [],
+        brands: ['']
+      }
+  },
+
+  // [optional] markdownit options
+  // See https://github.com/markdown-it/markdown-it
+  markdownit: {
+    runtime: true, // Support `$md()`
+    preset: 'default',
+    linkify: true,
+    breaks: true,
+    use: [
+      'markdown-it-div',
+      '@gerhobbelt/markdown-it-attrs'
+    ]
+  },
+
 }

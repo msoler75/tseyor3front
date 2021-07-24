@@ -13,5 +13,9 @@ export default {
 
   setContained(state, payload) {
     state.pageInContainer = payload
+  },
+
+  setBackground(state, payload) {
+    state.pageBackground = payload
   }
 }

@@ -69,6 +69,10 @@ export default {
 
   pageContained: state => () => {
     return state.pageInContainer
+  },
+
+  pageBackground: state => () => {
+    return state.pageBackground
   }
 
 }

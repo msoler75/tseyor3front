@@ -9,6 +9,7 @@ export default () => ({
     eyeClosed: eyeClosed
   },
   pageInContainer : true,
+  pageBackground : true,
   breadcrumbs: {
     "/": {
       icon: "fas fa-home"

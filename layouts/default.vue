@@ -1,5 +1,6 @@
 <template>
-  <div class="main-wrapper relative surface-0 w-full h-full flex-grow font-sans">
+  <div class="main-wrapper relative surface-0 w-full h-full flex-grow font-sans"
+  :class="pageBackground?'':'no-background'">
     <!-- Navigation starts -->
     <nav id="main-menu" 
     class="transition duration-200 font-serif font-bold z-30 w-full mx-auto bg-white dark:bg-gray-900 text-gray-blue-800 dark:text-gray-200 dark:hover:text-gray-50  shadow select-none sticky top-0" 
@@ -26,31 +27,9 @@
             </li>
           </ul>
         </div>
-        <div class="z-10 hidden xs:block">
-          <svg
-          class="w-10 h-10 md:w-14 md:h-14 transition duration-300 hover:transform-gpu translate-y-1 scale-125 hover:scale-150 cursor-pointer mx-auto items-center p-0.5 bg-white border-white rounded-full mt-2 shadow"
+        <div class="z-10 hidden xs:block w-10 h-10 md:w-14 md:h-14 transition duration-300 hover:transform-gpu translate-y-1 scale-125 hover:scale-150 cursor-pointer mx-auto items-center p-0.5 bg-white border-white rounded-full mt-2 shadow"
           @click="menuClick({ href: '/' })"
-            version="1.1"
-            viewBox="0 0 50 50"
-            :xmlns="xmlns"
-          >
-            <circle cx="25" cy="25" r="25" fill="#18419d" />
-            <circle cx="25" cy="25" r="17.794" fill="#aec6ec" />
-            <path d="m10.91 33.092 28.332-0.03719-14.189-24.513z" fill="#fff" />
-            <circle cx="25.002" cy="24.997" r="6.4045" fill="#5087d8" />
-            <circle cx="35.678" cy="6.4102" r="2" fill="#e5eafe" />
-            <circle cx="43.705" cy="14.373" r="2" fill="#e5eafe" />
-            <circle cx="46.577" cy="25.14" r="2" fill="#e5eafe" />
-            <circle cx="43.613" cy="35.962" r="2" fill="#e5eafe" />
-            <circle cx="35.772" cy="43.808" r="2" fill="#e5eafe" />
-            <circle cx="24.953" cy="46.658" r="2" fill="#e5eafe" />
-            <circle cx="14.257" cy="43.862" r="2" fill="#e5eafe" />
-            <circle cx="6.2549" cy="35.904" r="2" fill="#e5eafe" />
-            <circle cx="3.3874" cy="25.136" r="2" fill="#e5eafe" />
-            <circle cx="6.3487" cy="14.313" r="2" fill="#e5eafe" />
-            <circle cx="14.19" cy="6.4722" r="2" fill="#e5eafe" />
-            <circle cx="25.008" cy="3.6157" r="2" fill="#e5eafe" />
-          </svg>
+         v-html="tseyorLogo">
         </div>
         <div class="flex items-center h-full">
           <ul class="h-full hidden xl:flex">
@@ -75,7 +54,7 @@
                   : 'Cambiar a modo claro'
               "
               @click="changeColorMode"
-              class="w-8 md:w-12 p-0 md:p-1 transition duration-200 flex justify-center items-center rounded-full mr-3 xs:mr-6 hover:bg-gray-100dark:hover:bg-gray-800 cursor-pointer"
+              class="w-8 md:w-12 p-0 md:p-1 transition duration-200 flex justify-center items-center rounded-full mr-3 xs:mr-6 hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer"
             >
               <div alt="theme-icon" v-html="iconMode" class="w-full" />
             </div>
@@ -91,7 +70,7 @@
       <!-- SUBMENU -->
       <nav
         id="submenu"
-        class="absolute w-full hidden xl:block shadow text-gray-800 bg-gray-100 dark:bg-gray-900 dark:text-gray-200 text-sm overflow-y-auto"
+        class="absolute w-full hidden xl:block shadow text-gray-800 bg-gray-50 dark:bg-gray-900 dark:text-gray-200 text-sm overflow-y-auto"
         style="max-height: calc(100vh - 72px)"
       >
         <template v-for="item of rutasMenu">
@@ -114,7 +93,7 @@
                 >
                   <div
                     :class="
-                      'icon w-auto text-5xl flex justify-center transition-all duration-200 opacity-60 ' +
+                      'icon w-auto text-4xl flex justify-center transition-all duration-200 opacity-60 ' +
                       elem.bgIcon
                     "
                     style="min-width: 6rem"
@@ -122,10 +101,10 @@
                     <icon :icon="elem.icon" />
                   </div>
                   <div class="title-right transition-all duration-200">
-                    <div class="title transition duration-200 text-xl">
+                    <div class="title transition duration-200 text-md">
                       {{ elem.name }}
                     </div>
-                    <p class="description transition duration-200 text-gray">
+                    <p class="description">
                       {{ elem.description }}
                     </p>
                   </div>
@@ -143,7 +122,7 @@
                     >
                       <div
                         :class="
-                          'icon w-auto text-5xl flex justify-center transition-all duration-200 opacity-60 ' +
+                          'icon w-auto text-4xl flex justify-center transition-all duration-200 opacity-60 ' +
                           leaf.bgIcon
                         "
                         style="min-width: 6rem"
@@ -155,7 +134,7 @@
                           {{ leaf.name }}
                         </div>
                         <p
-                          class="description transition duration-200 text-gray"
+                          class="description"
                         >
                           {{ leaf.description }}
                         </p>
@@ -257,6 +236,7 @@
 </template>
 
 <script>
+import tseyorLogo from "~/assets/svg/sello-tseyor.svg?raw";
 import iconMoon from "~/assets/svg/icons/moon.svg?raw";
 import iconSun from "~/assets/svg/icons/sun.svg?raw";
 export default {
@@ -276,6 +256,7 @@ export default {
       buscarPor: '',
       showSidebar: false,
       currentTab: "",
+      tseyorLogo,
       menuitems: [
         /* { 
           left: true, 
@@ -520,6 +501,9 @@ export default {
     },
     pageInContainer () {
       return this.$store.getters.pageContained()
+    },
+    pageBackground () {
+      return this.$store.getters.pageBackground()
     }
     /*
     backgroundImage() {
@@ -613,7 +597,7 @@ nav#main-menu[submenu="true"] {
   @apply bg-gray-300;
 }
 nav#main-menu[submenu="true"] li[active="true"].menuitem {
-  @apply bg-gray-100;
+  @apply bg-gray-50;
 }
 .dark nav#main-menu[submenu="true"] {
   background: #333;
@@ -627,12 +611,18 @@ nav#main-menu[submenu="true"] li[active="true"].menuitem {
 .menu-subitem:hover .title-right {
   transform: translateX(0.2em);
 }
+.menu-subitem .icon {
+  @apply text-blue-gray dark:text-blue-300;
+}
 .menu-subitem:hover .icon {
-  @apply text-blue-900;
+  @apply text-blue-500 dark:text-blue-600;
   transform: translateY(0em) scale(1.17);
 }
 .menu-subitem:hover .title {
   @apply text-blue-900;
+}
+.menu-subitem .description {
+   @apply text-sm transition duration-200 text-gray
 }
 .menu-subitem:hover .description {
   @apply text-gray-dark-600;
@@ -658,11 +648,11 @@ nav#main-menu[submenu="true"] li[active="true"].menuitem {
 nav#submenu {
   box-shadow: 0 0.35em 0.3em rgba(0, 0, 0, 0.3);
 }
-nav#submenu >>> svg {
+/* nav#submenu >>> svg {
   width: 4rem;
   fill: currentColor;
   stroke: currentColor;
-}
+} */
 </style>
 
 <style>
@@ -701,6 +691,9 @@ nav#submenu >>> svg {
   z-index:-1;
 }
 
+.main-wrapper.no-background:before {
+  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=) !important;
+}
 /* .main-wrapper[obscure='true'] {
   opacity: 0.2;
 }*/
