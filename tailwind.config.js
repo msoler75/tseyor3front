@@ -5,6 +5,9 @@ module.exports = {
   // These paths are just examples, customize them to match your project structure
   mode: 'jit',
   darkMode: 'class',
+  content: [
+    'node_modules/tv-*/dist/tv-*.umd.min.js',
+  ],
   theme: {
     /* screens: {
       xs: '320px',
