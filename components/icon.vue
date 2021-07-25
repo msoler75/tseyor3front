@@ -1,5 +1,5 @@
 <template>
-  <div v-if="svg || icon.startsWith('svg')" class="svg-container inline-block" v-html="getSvg(icon)" />
+  <div v-if="svg || (icon && icon.startsWith('svg'))" class="svg-container inline-block" v-html="getSvg(icon)" />
   <fa v-else-if="icon && farotate && !faflip" :icon="faicon" :rotation="farotate" :spin="faspin"/>
   <fa v-else-if="icon && !farotate && faflip " :icon="faicon" :flip="faflip" :spin="faspin"/>
   <fa v-else-if="icon && farotate && faflip" :icon="faicon" :rotation="farotate" :flip="faflip" :spin="faspin"/>

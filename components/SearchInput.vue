@@ -1,5 +1,5 @@
 <template>
-   <div class="relative flex w-full items-stretch mb-4">
+   <div class="relative flex w-full items-stretch">
   <span class="z-10 h-full leading-snug font-normal absolute text-center text-blueGray-300 bg-transparent rounded text-base items-center justify-center w-8 pl-3 py-3">
     <icon icon="search"/>
   </span>
