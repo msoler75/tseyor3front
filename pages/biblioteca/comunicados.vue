@@ -6,7 +6,7 @@
             <p>Todos los comunicados archivados desde el año 2004 excepto <NLink to="/comunicados">los más recientes</NLink></p>
         </div>
         <div class="ml-auto">
-            <NLink to="/comunicados" class="btn py-3"><icon icon="arrow-right mr-2"/> Últimos comunicados</NLink>
+            <NLink to="/comunicados" class="btn py-3 whitespace-nowrap"><icon icon="arrow-right" class="mr-2"/> Últimos comunicados</NLink>
         </div>
     </div>
     
