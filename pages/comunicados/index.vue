@@ -1,21 +1,15 @@
 <template>
   <div class="container max-w-4xl mx-auto">
-    <div class="flex mb-5 items-center">
-      <div class="mr-4">
+    <div class="px-1 xs:px-3 sm:px-7">
+      <div class="mb-7">
         <h1>Comunicados Recientes</h1>
         <p>
           Aquí se publican los últimos comunicados, que progresivamente se van archivando en nuestro
-          <NLink to="/biblioteca/comunicados" class="whitespace-nowrap font-bold">archivo de comunicados</NLink>, donde puedes
-          encontrarlos todos.
+          <NLink to="/biblioteca/comunicados" class="btn btn-gray py-1 px-2 inline-block whitespace-nowrap">archivo de comunicados</NLink>
         </p>
       </div>
-      <div class="ml-auto">
-        <NLink to="/biblioteca/comunicados" class="btn py-3"
-          ><icon icon="arrow-right" class="mr-2" /> Archivo de Comunicados</NLink
-        >
-      </div>
     </div>
-  <divider/>
+
     <div class="w-full flex flex-wrap">
       <div class="lg:w-2/3 flex-shrink lg:pr-12">
         <Card

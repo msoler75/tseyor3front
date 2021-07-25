@@ -1,20 +1,14 @@
 <template>
   <div class="container max-w-4xl mx-auto">
     <Config :contained="false" />
-    <div class="px-responsive px-1 xs:px-3 sm:px-7">
-      <div class="flex mb-5 items-center">
-        <div class="mr-4">
-          <h1>Archivo de Comunicados</h1>
-          <p>
-            Todos los comunicados archivados desde el año 2004 excepto
-            <NLink to="/comunicados">los más recientes</NLink>
-          </p>
-        </div>
-        <div class="ml-auto">
-          <NLink to="/comunicados" class="btn py-3 whitespace-nowrap"
-            ><icon icon="arrow-right" class="mr-2" /> Últimos comunicados</NLink
-          >
-        </div>
+
+    <div class="px-1 xs:px-3 sm:px-7">
+      <div class="mb-7">
+        <h1>Archivo de Comunicados</h1>
+        <p>
+          Todos los comunicados archivados desde el año 2004 excepto 
+          <NLink to="/comunicados" class="btn btn-gray py-1 px-2 inline-block whitespace-nowrap">los más recientes</NLink>
+        </p>
       </div>
     </div>
 
