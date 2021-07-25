@@ -605,6 +605,9 @@ module.exports = {
       'blue-gray-900-contrast': 'white'
     },
     extend: {
+      zIndex: {
+        '-10': '-10',
+      },
       colors: {
         primary: '#18419d',
         secondary: '#aec6ec',

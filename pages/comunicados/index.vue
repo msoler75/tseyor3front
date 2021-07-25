@@ -5,7 +5,7 @@
         <h1>Comunicados Recientes</h1>
         <p>
           Aquí se publican los últimos comunicados, que progresivamente se van archivando en nuestro
-          <NLink to="/biblioteca/comunicados" class="btn btn-gray py-1 px-2 inline-block whitespace-nowrap">archivo de comunicados</NLink>
+          <NLink to="/biblioteca/comunicados" class="btn btn-gray py-1 px-2 inline-block whitespace-nowrap font-light">archivo de comunicados</NLink>
         </p>
       </div>
     </div>

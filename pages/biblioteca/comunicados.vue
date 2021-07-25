@@ -7,7 +7,7 @@
         <h1>Archivo de Comunicados</h1>
         <p>
           Todos los comunicados archivados desde el año 2004 excepto 
-          <NLink to="/comunicados" class="btn btn-gray py-1 px-2 inline-block whitespace-nowrap">los más recientes</NLink>
+          <NLink to="/comunicados" class="btn btn-gray py-1 px-2 inline-block whitespace-nowrap font-light">los más recientes</NLink>
         </p>
       </div>
     </div>
