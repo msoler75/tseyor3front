@@ -41,7 +41,7 @@
           <label for="toggle" class="text-xs sm:text-sm md:text-base text-gray-700"><span class="hidden md:inline">Ver </span>Recientes</label>
         </div>
         <div class="flex justify-end items-center">
-          <SearchInput class="!w-32 xm:!w-full md:!w-60" placeholder="Filtrar por número, título, tipo..." v-model="filtrarPor"/>
+          <SearchInput class="!w-32 xm:!w-full md:!w-60" placeholder="Buscar número, título, tipo..." v-model="filtrarPor"/>
         </div>
       </div>
       <table
