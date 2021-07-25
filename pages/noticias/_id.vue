@@ -89,7 +89,14 @@
       </section>
     </scrollactive>
 
-    
+
+  <SuscriptionSection
+    title="Noticias TSEYOR"
+    description="Noticias de la comunidad Tseyor"
+    to="/novedades"
+    image="./images/imagen2.jpg"
+    class="bg-blue-gray-900 w-full"
+   />    
 
     <!-- contenido relacionado -->
     <div class="container mx-auto my-9">

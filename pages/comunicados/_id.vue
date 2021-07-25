@@ -89,7 +89,13 @@
       </section>
     </scrollactive>
 
-    
+   <SuscriptionSection
+    title="Comunicados TSEYOR"
+    description="Comunicaciones recibidas de los hermanos de las estrellas"
+    to="/comunicados"
+    image="./images/imagen1.jpg"
+    class="bg-blue-gray-900 w-full"
+   />
 
     <!-- contenido relacionado -->
     <div class="container mx-auto my-9">
