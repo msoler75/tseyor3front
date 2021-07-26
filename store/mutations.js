@@ -21,5 +21,19 @@ export default {
 
   setBreadcrumb(state, payload) {
     state.pageBreadcrumb = payload
+  },
+
+  setLoggedIn(state, payload) {
+    state.loggedIn = payload
+    if(payload)
+    {
+      const i = Math.ceil(Math.random()*92)
+      state.user = {
+        id: (i*177)%255,
+        clase: "usuarios",
+        imagen: "usuario" + ((i % 8) + 1) + ".jpg",
+        nombre: this.$lorem(1, 1, 3).slice(0, -1)
+      }
+    }
   }
 }

@@ -60,12 +60,17 @@
             >
               <div alt="theme-icon" v-html="iconMode" class="w-full" />
             </div>
-            <div class="hidden md:flex items-center text-sm font-sans">
-              <PLink compact to="/login" class="btn bg-light-blue dark:bg-blue-dark py-0.5 md:py-1 xl:py-2" icon="fas fa-sign-in-alt">
-              <span class="hidden md:inline">Miembros</span></PLink>
-            </div> 
-            <NLink compact to="/login" class="md:hidden btn bg-light-blue dark:bg-blue-dark w-8 h-8 flex justify-center items-center p-2 rounded-full">
-              <icon icon="sign-in-alt"/></NLink>
+            <template v-if="$store.state.loggedIn">
+              <Avatar :data="$store.state.user" class="text-3xl w-8 h-8"/>
+            </template>
+            <template v-else>
+              <div class="hidden md:flex items-center text-sm font-sans">
+                <PLink compact to="/login" class="btn bg-light-blue dark:bg-blue-dark py-0.5 md:py-1 xl:py-2" icon="fas fa-sign-in-alt">
+                <span class="hidden md:inline">Miembros</span></PLink>
+              </div> 
+              <NLink compact to="/login" class="md:hidden btn bg-light-blue dark:bg-blue-dark w-8 h-8 flex justify-center items-center p-2 rounded-full">
+                <icon icon="sign-in-alt"/></NLink>
+            </template>
           </div>
         </div>
       </div>

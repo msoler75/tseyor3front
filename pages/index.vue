@@ -1,24 +1,34 @@
 <template>
-  <div class="max-w-lg mx-auto">
+  <div class="max-w-xl mx-auto">
 
     <Config :breadcrumb="false" />
 
-    <NLink v-for="item of items" :key="item.name" :to="item.url" :class="'flex w-full my-5 shadow rounded p-3 ' + (item.bg?item.bg:' card')">
-      <div :class="'text-5xl sm:text-3xl flex justify-center items-center pr-4 '+item.color" style="width: 2.8em; transform: scale(1.2)">
-        <icon :icon="item.icon" />
-      </div>
-      <div>
-        <h3 :class="item.color">
-          {{ item.name }}
-        </h3>
-        <p class="text-gray">
-          {{ item.description }}
-        </p>
-      </div>
-      <div class="text-3xl flex justify-center items-center ml-auto pl-4 text-gray-300" style="width: 2.2em; transform: scale(1.2)">
-        <icon icon="chevron-right" />
-      </div>
-    </NLink>
+    <div v-if="$store.state.loggedIn" class="mx-auto max-w-sm mb-9">
+      <div class="flex flex-col">
+        <textarea v-model="estado" class="mb-3" placeholder="Comparte tu pensamiento con el universo..."/>
+        <button class="btn">Compartir</button>
+        </div>
+    </div>
+
+    <Grid class="grid-cols-1 sm:grid-cols-2 gap-3 lg:gap-5 xl:gap-7">
+      <NLink v-for="item of items" :key="item.name" :to="item.url" :class="'flex w-full shadow rounded p-3 ' + (item.bg?item.bg:' card')">
+        <div class="text-4xl w-16 sm:text-3xl sm:w-12 flex-shrink-0 flex justify-center items-center pr-4"
+        :class="item.color">
+          <icon :icon="item.icon" />
+        </div>
+        <div>
+          <h3 class="mb-2 sm:text-base" :class="item.color">
+            {{ item.name }}
+          </h3>
+          <p class="text-gray text-xs">
+            {{ item.description }}
+          </p>
+        </div>
+        <div class="text-lg flex justify-center items-center ml-auto pl-4 text-gray-300">
+          <icon icon="chevron-right" />
+        </div>
+      </NLink>
+    </Grid>
   </div>
 </template>
 
@@ -26,6 +36,7 @@
 export default {
   data () {
     return {
+      estado: "",
       items: [
         {
           hero: true,

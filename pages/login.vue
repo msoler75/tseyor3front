@@ -13,7 +13,7 @@
       :class="someError?'visible':'invisible'">{{errorMessage}}</p>
     </div>
     <div class="flex items-center justify-between">
-      <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="button">
+      <button @click="logIn" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="button">
         Entrar
       </button>
       <NLink to="/recuperacion" class="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800" href="#">
@@ -43,6 +43,12 @@ export default {
             useremail: '',
             pwd:''
         }
+    },
+    methods: {
+      logIn() {
+        this.$store.commit("setLoggedIn", true)
+        this.$router.push("/")
+      }
     }
 }
 </script>
