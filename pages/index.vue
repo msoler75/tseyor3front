@@ -5,7 +5,7 @@
 
     <div v-if="$store.state.loggedIn" class="mx-auto max-w-sm mb-9">
       <div class="flex flex-col">
-        <textarea rows="1" v-model="estado" ref="ta" class="mb-3 placeholder-gray resize-none" placeholder="Comparte tu pensamiento con el universo..."
+        <textarea rows="1" v-model="estado" ref="statusMessage" class="mb-3 placeholder-gray resize-none" placeholder="Comparte tu pensamiento con el universo..."
         @focus="resizeTextarea" @keyup="resizeTextarea"
         />
         <button class="btn" @click="compartir">Compartir</button>
@@ -13,7 +13,7 @@
     </div>
 
     <Grid class="grid-cols-1 sm:grid-cols-2 gap-3 lg:gap-5 xl:gap-7">
-      <NLink v-for="item of items" :key="item.name" :to="item.url" :class="'flex w-full shadow rounded p-3 ' + (item.bg?item.bg:' card')">
+      <NLink v-for="item of secciones" :key="item.name" :to="item.url" class="card flex w-full shadow rounded p-3" :class="item.class">
         <div class="text-4xl w-16 sm:text-3xl sm:w-12 flex-shrink-0 flex justify-center items-center pr-4"
         :class="item.color">
           <icon :icon="item.icon" />
@@ -38,14 +38,15 @@
 export default {
   methods: {
     resizeTextarea() {
-        const { ta } = this.$refs;
-        ta.style.height = ta.scrollHeight + 1 + 'px';
+        const { statusMessage } = this.$refs;
+        statusMessage.style.height = statusMessage.scrollHeight + 1 + 'px';
     },
     compartir () {
-      const { ta } = this.$refs;
-      ta.value = ""
+      const { statusMessage } = this.$refs;
+      statusMessage.value = ""
+      const that = this
       this.$nextTick(() => {
-        this.resizeTextarea()
+        that.resizeTextarea()
       })
       this.$toast.success("¡Pensamiento enviado!", {
         position: "bottom-right",
@@ -69,7 +70,7 @@ export default {
       items: [
         {
           hero: true,
-          bg: 'bg-amber-50',
+          class: this.$store.state.loggedIn?'hidden':'bg-amber-50',
           icon: 'fas fa-route',
           color: 'text-amber-800',
           name: 'Conocer Tseyor',
@@ -112,6 +113,11 @@ export default {
           url: '/agenda?reuniones'
         }
       ]
+    }
+  },
+  computed: {
+    secciones() {
+      return this.items
     }
   }
 }

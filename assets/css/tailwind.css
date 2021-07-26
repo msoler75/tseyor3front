@@ -76,7 +76,7 @@
   }
 
   .btn {
-    @apply cursor-pointer select-none transition duration-200  active:translate-y-px hover:shadow-lg font-semibold py-2 px-4 border rounded-md shadow;
+    @apply cursor-pointer select-none transition duration-200  active:translate-y-px hover:shadow-lg font-semibold py-2 px-4 border rounded-lg shadow;
     @apply bg-primary hover:bg-blue-700 active:bg-blue-600 border-blue-800 text-blue-contrast;
     height: fit-content;
   }
