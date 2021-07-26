@@ -104,6 +104,8 @@ export default {
     // https://github.com/nuxt-community/markdownit-module
     '@nuxtjs/markdownit',
     // ['nuxt-tailvue', {modal: true, toast: true}],
+    // https://github.com/Maronato/vue-toastification
+    "vue-toastification/nuxt"
   ],
 
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
@@ -245,5 +247,11 @@ export default {
       '@gerhobbelt/markdown-it-attrs'
     ]
   },
+
+  // https://github.com/Maronato/vue-toastification
+  toast: {
+    timeout: 5000,
+    closeOnClick: true
+  }  
 
 }

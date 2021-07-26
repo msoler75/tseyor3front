@@ -38,6 +38,7 @@
     "vue-scrollactive": "^0.9.3",
     "vue-select": "^3.11.2",
     "vue-social-sharing": "^3.0.8",
+    "vue-toastification": "^1.7.11",
     "vue2-touch-events": "^3.2.2"
   },
   "devDependencies": {

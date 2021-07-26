@@ -5,8 +5,10 @@
 
     <div v-if="$store.state.loggedIn" class="mx-auto max-w-sm mb-9">
       <div class="flex flex-col">
-        <textarea v-model="estado" class="mb-3" placeholder="Comparte tu pensamiento con el universo..."/>
-        <button class="btn">Compartir</button>
+        <textarea rows="1" v-model="estado" ref="ta" class="mb-3 placeholder-gray resize-none" placeholder="Comparte tu pensamiento con el universo..."
+        @focus="resizeTextarea" @keyup="resizeTextarea"
+        />
+        <button class="btn" @click="compartir">Compartir</button>
         </div>
     </div>
 
@@ -34,6 +36,33 @@
 
 <script>
 export default {
+  methods: {
+    resizeTextarea() {
+        const { ta } = this.$refs;
+        ta.style.height = ta.scrollHeight + 1 + 'px';
+    },
+    compartir () {
+      const { ta } = this.$refs;
+      ta.value = ""
+      this.$nextTick(() => {
+        this.resizeTextarea()
+      })
+      this.$toast.success("¡Pensamiento enviado!", {
+        position: "bottom-right",
+        timeout: 5000,
+        closeOnClick: true,
+        pauseOnFocusLoss: true,
+        pauseOnHover: true,
+        draggable: true,
+        draggablePercent: 0.6,
+        showCloseButtonOnHover: false,
+        hideProgressBar: true,
+        closeButton: "button",
+        icon: true,
+        rtl: false
+      });
+    }
+  },
   data () {
     return {
       estado: "",
