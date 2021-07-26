@@ -153,8 +153,11 @@ export default {
 
   // PWA module configuration: https://go.nuxtjs.dev/pwa
   pwa: {
+    meta: {
+      author: 'Pigmalión',
+    },
     manifest: {
-      lang: 'es'
+      lang: 'es',
     }
   },
 
