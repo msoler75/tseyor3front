@@ -4,6 +4,7 @@
 
   <nuxt-img :src="cimage" class="fixed top-[48px] sm:top-[51px] md:top-[68px] lg:top-[72px] xl:top-[76px] left-0 w-screen h-auto"
   fit="cover"
+  sizes="xl:100vw lg:100vw md:100vw sm:100vw xs:100vw"
   style="min-height:200px; z-index:-1" />
 
   <section class="h-image"/>
