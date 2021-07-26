@@ -103,7 +103,7 @@ export default {
     'vue-social-sharing/nuxt',
     // https://github.com/nuxt-community/markdownit-module
     '@nuxtjs/markdownit',
-    ['nuxt-tailvue', {modal: true, toast: true}],
+    // ['nuxt-tailvue', {modal: true, toast: true}],
   ],
 
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
