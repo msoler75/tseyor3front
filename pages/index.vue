@@ -5,8 +5,8 @@
 
     <div v-if="$store.state.loggedIn" class="mx-auto max-w-sm mb-9">
       <div class="flex flex-col">
-        <textarea rows="1" v-model="estado" ref="statusMessage" class="mb-3 placeholder-gray resize-none" placeholder="Comparte tu pensamiento con el universo..."
-        @focus="resizeTextarea" @keyup="resizeTextarea"
+        <textarea rows="1" v-model="estado" ref="statusMessage" class="transition-all duration-100 mb-3 placeholder-gray resize-none" placeholder="Comparte tu pensamiento con el universo..."
+        @focus="resizeTextarea" @keydown="resizeTextarea"
         />
         <button class="btn" @click="compartir">Compartir</button>
         </div>
