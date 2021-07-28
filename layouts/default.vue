@@ -78,7 +78,7 @@
       <nav
         id="submenu"
         class="absolute w-full hidden xl:block shadow text-gray-800 bg-gray-50 dark:bg-gray-900 dark:text-gray-200 text-sm overflow-y-auto"
-        style="max-height: calc(100vh - 72px)"
+        style="max-height: calc(100vh - 72px); top:76px"
       >
         <template v-for="item of rutasMenu">
           <div
