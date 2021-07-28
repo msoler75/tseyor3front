@@ -1,7 +1,6 @@
 <template>
   <div class="main-wrapper relative surface-0 w-full h-full flex-grow font-sans"
   :class="pageBackground?'':'no-background'">
-
     <!-- Navigation starts -->
     <nav id="main-menu" 
     class="flex transition duration-200 font-serif z-30 w-full mx-auto bg-white dark:bg-gray-900 text-gray-blue-800 dark:text-gray-200 dark:hover:text-gray-50  shadow select-none sticky top-0" 
@@ -12,8 +11,9 @@
         style="grid-template-columns: 1fr 110px 1fr"
       >
         <div class="flex items-center h-full justify-between">
-          <div class="xl:hidden flex items-center text-2xl">
-              <icon icon="bars" class="cursor-pointer" @click="showSideMenu" />
+          <div class="xl:hidden flex items-center text-2xl"
+            @click="showSideMenu">
+              <icon icon="bars" class="cursor-pointer" />
           </div>
           <ul class="h-full hidden xl:flex ml-auto">
             <li

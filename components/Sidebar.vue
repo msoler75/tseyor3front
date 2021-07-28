@@ -1,10 +1,11 @@
 <template>
   <div class="z-40">
+    
     <!-- layout -->
     <fade-transition>
       <div
         v-if="showSidebar"
-        class="ease-in-out transition duration-300 fixed top-0 left-0 z-40 w-screen h-screen bg-black bg-opacity-70"
+        class="ease-in-out transition duration-300 fixed top-0 left-0 z-40 w-screen h-screen backdrop-brightness-50 backdrop-filter backdrop-blur-sm"
         @click="showSidebar = false"
       ></div>
     </fade-transition>
