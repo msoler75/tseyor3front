@@ -1,6 +1,9 @@
 <template>
-  <div class="z-40">
-    
+  <div class="z-40"
+  @touchstart="touchStart"
+  @touchend="touchEnd"
+  @touchmove="touchEnd">
+
     <!-- layout -->
     <fade-transition>
       <div
@@ -91,7 +94,8 @@ export default {
   data() {
     return {
       showSidebar: this.value,
-      currentTab: ""
+      currentTab: "",
+      touchstartX: 0,
     };
   },
   watch: {
@@ -104,6 +108,15 @@ export default {
     }
   },
   methods: {
+    touchStart(event) {
+      this.touchstartX = event.changedTouches[0].screenX
+      console.log(this.touchstartX)
+    },
+    touchEnd(event) {
+      const touchendX = event.changedTouches[0].screenX;
+      if(touchendX + 50 < this.touchstartX)
+        this.showSidebar = false
+    },
     clickSideBar(item) {
       this.currentTab = item.href;
       if (!item.items && item.href) {

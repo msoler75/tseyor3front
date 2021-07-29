@@ -1,6 +1,11 @@
 <template>
   <div class="main-wrapper relative surface-0 w-full h-full flex-grow font-sans"
-  :class="pageBackground?'':'no-background'">
+  :class="pageBackground?'':'no-background'"
+  
+  
+  
+  
+  >
     <!-- Navigation starts -->
     <nav id="main-menu" 
     class="flex transition duration-200 font-serif z-30 w-full mx-auto bg-white dark:bg-gray-900 text-gray-blue-800 dark:text-gray-200 dark:hover:text-gray-50  shadow select-none sticky top-0" 
