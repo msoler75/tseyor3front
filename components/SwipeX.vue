@@ -53,9 +53,9 @@ export default {
             if(dy>dx)
                 return
             if(x1 + this.threshold < this.x0)
-                this.prev()
-            else if(x1 - this.threshold > this.x0)
                 this.next()
+            else if(x1 - this.threshold > this.x0)
+                this.prev()
         },
         prev() {
             this.add(-1)      
