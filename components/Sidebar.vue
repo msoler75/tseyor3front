@@ -135,7 +135,8 @@ export default {
 
 <style scoped>
 aside >>> .svg-container,
+aside >>> svg,
 aside i {
-  @apply inline-block w-6 text-center text-gray-600 dark:text-gray-400;
+  @apply inline-block !w-4 !h-4 mr-2 text-center text-light-blue-600 dark:text-blue-700;
 }
 </style>
