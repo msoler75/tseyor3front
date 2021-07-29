@@ -32,21 +32,30 @@ export default {
     },
     data() {
         return  {
-            touchstartX: -1,
+            x0: -1,
+            y0: -1,
             localValue: this.value
         }
     },
     methods: {
         touchStart(event) {
-            this.touchstartX = event.changedTouches[0].screenX
+            this.x0 = event.changedTouches[0].screenX
+            this.y0 = event.changedTouches[0].screenY
         },
         touchEnd(event) {
-            if(this.touchstartX === -1) return
-            const touchendX = event.changedTouches[0].screenX;
-            if(touchendX + this.threshold < this.touchstartX)
+            if(this.x0 === -1) return
+            const x1 = event.changedTouches[0].screenX
+            const y1 = event.changedTouches[0].screenY
+            const dy = Math.abs(y1-this.y0)
+            const dx = Math.abs(x1-this.x0)
+            // console.log(Math.round(dx), Math.round(dy), )
+            // check if major movement is in X axis
+            if(dy>dx)
+                return
+            if(x1 + this.threshold < this.x0)
                 this.prev()
-            else if(touchendX - this.threshold > this.touchstartX)
-            this.next()
+            else if(x1 - this.threshold > this.x0)
+                this.next()
         },
         prev() {
             this.add(-1)      
@@ -59,7 +68,7 @@ export default {
             if(idx===-1) idx = 0
             idx = (idx + a + this.values.length)%this.values.length
             this.localValue = this.values[idx]
-            this.touchstartX = -1
+            this.x0 = -1
         }
     }
 }
