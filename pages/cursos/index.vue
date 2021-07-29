@@ -16,7 +16,7 @@
                             bezier-easing-value=".5,0,.35,1"
                             :duration="800"
                         >
-                        <a href="#cursos" class="flex justify-center items-center rounded-xl px-7 py-4 scrollactive-item btn"><span>Ver Agenda de Cursos</span><i class="ml-3 fas fa-chevron-right text-deep-orange text-xl"/></a>
+                        <a href="#cursos" class="flex justify-center items-center rounded-xl px-7 py-4 scrollactive-item btn"><span>Ver Agenda de Cursos</span><icon icon="fas fa-chevron-right" class="ml-3 text-deep-orange text-xl"/></a>
                         </scrollactive>
                     </section>
                 </Card>
@@ -68,7 +68,7 @@
                     <div class="py-4">
                         <h3 class="text-2xl mb-4">Libro del Curso</h3>
                         <p class="">Libro de lectura amena para la comprensión de la filosofía de Tseyor que llegó desde las estrellas.</p>
-                        <p class="text-center mt-7"><PLink compact class="btn rounded-xl px-7 py-4 flex justify-center items-center" to="/libros/2"><span>Ver Libro</span><i class="ml-6 fas fa-chevron-right text-deep-orange text-xl"/></PLink></p>
+                        <p class="text-center mt-7"><PLink compact class="btn rounded-xl px-7 py-4 flex justify-center items-center" to="/libros/2"><span>Ver Libro</span><icon icon="fas fa-chevron-right" class="ml-6 text-deep-orange text-xl"/></PLink></p>
                     </div>
                 </div>
             </div>
@@ -168,7 +168,7 @@
                         class="text-lg transition duration-150 w-full text-center btn font-bold py-4 px-4 rounded-xl focus:outline-none focus:shadow-outline"
                         type="submit"
                     >
-                        <icon icon="check mr-4 text-deep-orange md:text-xl xl:text-2xl"/><span class="sm:text-xl">Quiero Hacer el Curso</span>
+                        <icon icon="check" class="mr-4 text-deep-orange md:text-xl xl:text-2xl"/><span class="sm:text-xl">Quiero Hacer el Curso</span>
                     </button>
                 </div>
             </PForm>
