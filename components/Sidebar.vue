@@ -15,7 +15,7 @@
 
     <aside
       ref="aside"
-      class="md:text-xl select-none transform surface-0 bg-white dark:bg-gray-dark-800 shadow top-0 left-0 sm:flex sm:w-112 md:w-140 lg:w-250 max-w-full fixed h-full overflow-y-auto ease-in-out transition-all duration-300 z-50 py-4"
+      class="md:text-xl select-none transform surface-0 bg-white dark:bg-gray-dark-800 shadow top-0 left-0 sm:flex w-72 sm:w-112 md:w-140 lg:w-250 max-w-full fixed h-full overflow-y-auto ease-in-out transition-all duration-300 z-50 py-4"
       :class="showSidebar ? 'translate-x-0' : '-translate-x-full'"
     >
       <div class="flex flex-col w-full m-0 p-0 sm:w-40 md:w-52">
@@ -36,7 +36,7 @@
           <div
             v-if="item.items"
             v-show="currentTab === item.href"
-            class="bg-gray-200 dark:bg-black sm:fixed sm:top-0 sm:bottom-0 sm:z-50 sm:flex sm:flex-col sm:justify-center sm:w-72 md:w-88 lg:w-200 sm:left-40 md:left-52 lg:p-7 lg:grid grid-gap-3 lg:grid-cols-2 lg:justify-start lg:items-center"
+            class="py-4 bg-gray-200 dark:bg-black sm:fixed sm:top-0 sm:bottom-0 sm:z-50 sm:flex sm:flex-col sm:justify-start sm:w-72 md:w-88 lg:w-200 sm:left-40 md:left-52 lg:p-7 lg:grid grid-gap-3 lg:grid-cols-2 lg:justify-start lg:items-center"
             style="grid-template-rows: repeat(auto-fill, minmax(70px, 1fr))"
           >
             <div
