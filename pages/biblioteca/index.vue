@@ -18,7 +18,7 @@
         <div
           class="text-gray w-auto text-5xl h-20 icon transition duration-200"
         >
-          <i v-if="item.icon" :class="item.icon" />
+          <icon v-if="item.icon" :icon="item.icon" />
           <div
             class="svg-container flex"
             v-else-if="item.svg"

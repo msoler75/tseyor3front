@@ -9,9 +9,9 @@
     -->
     <h1 class="mb-5">Catálogo de Libros</h1>
     <div class="w-full block xl:flex justify-between">
-      <Tabs v-model="viendoCategoria" :labels="categorias"/>
+      <Tabs v-model="viendoCategoria" :labels="categorias" class="mr-2"/>
       <div class="ml-left">
-        <SearchInput v-model="buscarPor" class="w-64 xl:mb-0" placeholder="Buscar por título o descripción..."/>
+        <SearchInput v-model="buscarPor" class="w-64 mb-3" placeholder="Buscar por título o descripción..."/>
       </div>
     </div>
     <Grid class="grid-cols-fill-w-64 text-center">
