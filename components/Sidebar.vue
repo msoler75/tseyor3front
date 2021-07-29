@@ -36,7 +36,7 @@
           <div
             v-if="item.items"
             v-show="currentTab === item.href"
-            class="py-4 bg-gray-200 dark:bg-black sm:fixed sm:top-0 sm:bottom-0 sm:z-50 sm:flex sm:flex-col sm:justify-start sm:w-72 md:w-88 lg:w-200 sm:left-40 md:left-52 lg:p-7 lg:grid grid-gap-3 lg:grid-cols-2 lg:justify-start lg:items-center"
+            class="sm:py-4 bg-gray-200 dark:bg-black sm:fixed sm:top-0 sm:bottom-0 sm:z-50 sm:flex sm:flex-col sm:justify-start sm:w-72 md:w-88 lg:w-200 sm:left-40 md:left-52 lg:p-7 lg:grid grid-gap-3 lg:grid-cols-2 lg:justify-start lg:items-center"
             style="grid-template-rows: repeat(auto-fill, minmax(70px, 1fr))"
           >
             <div
