@@ -5,6 +5,11 @@ export default {
       required: false,
       default: ""
     },
+    imageSizes: {
+      type: String,
+      required: false,
+      default: "xs:100vw xm:100vw"
+    },
     title: {
       type: String,
       required: false,

@@ -40,7 +40,7 @@ export default {
   },
   data() {
     return {
-      viendoCategoria: "Todo",
+      viendoCategoria: "Noticias",
       categorias: ["Todo", "Noticias", "Comunicados", "Eventos", "Libros", "Otros"]
     };
   },

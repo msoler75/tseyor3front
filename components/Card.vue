@@ -4,7 +4,7 @@
     <slot>
       <div v-if="cimage" class="max-w-full h-40 overflow-hidden">
         <img v-if="cimage.match(/^data:image/)" :src="cimage" class="w-full" />
-        <nuxt-img v-else :src="cimage" class="w-full" :alt="ctitle"></nuxt-img>
+        <nuxt-img v-else :src="cimage" :sizes="imageSizes" class="w-full" :alt="ctitle"></nuxt-img>
       </div>
       <div class="px-6 py-4">
         <NLink :to="chref">

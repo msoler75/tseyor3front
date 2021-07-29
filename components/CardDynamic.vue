@@ -2,6 +2,7 @@
   <NuxtDynamic v-if="data" :component="currentComponent" 
   class="card flex flex-col rounded shadow-lg overflow-hidden"
   :image="image"
+  :imageSizes="imageSizes"
   :title="title"
   :text="text"
   :noText="noText"
