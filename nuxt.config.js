@@ -53,7 +53,7 @@ export default {
     '~plugins/global.js',
     { src: '~plugins/scrollactive.js', mode: 'client' },
     // { src: '~plugins/nuxt-hammer.js', mode: 'client' },
-    { src: '~plugins/vue-touch.js', mode: 'client' },
+    // { src: '~plugins/vue-touch.js', mode: 'client' },
   ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components

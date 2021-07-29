@@ -9,7 +9,10 @@
         class="max-w-md mx-auto"
         />
     </client-only>
-    <section class="flex mt-6">
+    <SwipeX
+    v-model="viendoCategoria"
+    :values="categorias" 
+   class="flex mt-6">
       <div class="w-full md:w-2/3">
         <div class="w-full flex mb-3">
           <div class="block xl:flex w-full">
@@ -38,8 +41,8 @@
       <div class="hidden lg:block">
         <img src="/images/meditando.png" class="w-full" />
       </div>
+  </SwipeX>
     </section>
-  </section>
 </template>
 
 <script>

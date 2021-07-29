@@ -1,5 +1,8 @@
 <template>
-  <section>
+  <SwipeX
+    v-model="viendoCategoria"
+    :values="categorias"
+  >
     <tabs compact group="fixed" v-model="viendoCategoria" :labels="categorias" class=""/>
     <divider class="mt-0" />
     <section class="flex justify-evenly">
@@ -77,7 +80,7 @@
           :data="evento"
         />
 </Grid>
-  </section>
+  </SwipeX>
 </template>
 
 <script>

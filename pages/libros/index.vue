@@ -1,10 +1,12 @@
 <template>
-  <div>
+  <SwipeX
+    v-model="viendoCategoria"
+    :values="categorias"
+  >
     <!-- 
     <h2>Novedades</h2>
        <HCarousel :items="nuevos" class="mb-10" /> 
     -->
-
     <h1 class="mb-5">Catálogo de Libros</h1>
     <div class="w-full block xl:flex justify-between">
       <Tabs v-model="viendoCategoria" :labels="categorias"/>
@@ -15,7 +17,7 @@
     <Grid class="grid-cols-fill-w-64 text-center">
         <CardBook book-size="book-sm" v-for="libro of librosFiltrados" :key="libro.id" :data="libro" :noText="true"/>
     </Grid>
-  </div>
+  </SwipeX>
 </template>
 
 <script>

@@ -1,19 +1,18 @@
 <template>
-  <div>
-    <tabs ref="tabs" v-model="viendoCategoria" :labels="categorias"/>
+  <SwipeX
+    v-model="viendoCategoria"
+    :values="categorias" 
+  >
+    <Tabs ref="tabs" v-model="viendoCategoria" :labels="categorias"/>
     <Grid class="grid-cols-fill-w-72 text-center">
       <template v-for="item of novedadesFiltradas(viendoCategoria)">
         <CardDynamic          
-            :key="item.categoria+'-'+item.id"
+          :key="item.categoria+'-'+item.id"
           :data="item"
-          v-touch:swipe.left="swipeLeft()"
-          />
-          <!-- v-hammer:swipe.left="$refs.tabs.prev()"
-          v-hammer:swipe.right="$refs.tabs.next()" 
-          -->
-          </template>
+        />
+      </template>
     </Grid>
-  </div>
+  </SwipeX>
 </template>
 
 <script>
@@ -45,10 +44,7 @@ export default {
       categorias: ["Todo", "Noticias", "Comunicados", "Eventos", "Libros", "Otros"]
     };
   },
-  mounted () {
-    console.warn(this.$refs.tabs)
-  },
-  methods: {
+  methods:{
     novedadesFiltradas(categoria) {
       if (!categoria || categoria === "Todo") return this.novedades;
       if (!categoria === "Otros")
@@ -57,11 +53,6 @@ export default {
         );
       return this.novedades.filter(x => this.$ucFirst(x.clase) === categoria );
     },
-    swipeLeft() {
-
-      console.log('SwipeLeft')
-      //this.$refs.tabs.prev()
-    }
   }
 };
 </script>

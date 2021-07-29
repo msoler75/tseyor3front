@@ -1,5 +1,7 @@
 <template>
-  <section>
+  <SwipeX
+   v-model="viendoSeccion"
+    :values="secciones">
     <section class="block lg:flex">
       <div class="lg:mr-10">
         <h1 class="capitalize">{{ nombre }}</h1>
@@ -31,7 +33,7 @@
         <nuxt-img :src="imagen" />
       </div>
     </section>
-  </section>
+  </SwipeX>
 </template>
 
 <script>
