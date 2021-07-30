@@ -70,16 +70,16 @@ export default {
       items: [
         {
           hero: true,
-          class: this.$store.state.loggedIn?'hidden':'bg-amber-50',
+          class: this.$store.state.loggedIn?'hidden':'bg-green-50',
           icon: 'fas fa-route',
-          color: 'text-amber-800',
+          color: 'text-green-800',
           name: 'Conocer Tseyor',
           description: 'Visita guiada para conocer Tseyor',
           url: '/presentacion/visita'
         },
         {
           icon: 'fas fa-bolt',
-          color: 'text-red',
+          color: 'text-yellow-800',
           name: 'Novedades',
           description: 'Noticias, blogs, eventos y otras publicaciones',
           url: '/novedades'
