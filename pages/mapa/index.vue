@@ -4,8 +4,10 @@
     <div class="flex flex-wrap text-center items-stretch justify-center">
       <div v-for="info of infoClases" :key="info.titulo" class="p-2 max-w-sm">
         <Card class="p-5 rounded-xl h-full">
-          <i class="text-3xl my-2 text-gray"
-          :class="info.icon"/>
+          <icon 
+          :icon="info.icon"
+          class="mx-auto text-3xl my-2 text-gray"
+          />
         <h2>{{info.title}}</h2>
         <p>
           {{info.text}}
