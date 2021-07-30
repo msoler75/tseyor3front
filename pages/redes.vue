@@ -9,7 +9,7 @@
         class="p-4 flex-row"
       >
         <div class="mr-5 flex items-center">
-          <icon :icon="'fab fa-' + dameRed(pagina.href)" class="text-5xl mr-6" />
+          <icon :icon="'fab fa-' + dameRed(pagina.href).icon" class="text-5xl mr-6" :class="dameRed(pagina.href).class" />
            <h2 class="text-xl">{{ pagina.nombre }}</h2>
         </div>
           <div class="mt-auto flex w-full items-end justify-end">
@@ -26,12 +26,12 @@
 export default {
   data() {
     return {
-      redes: [
-        "facebook text-blue-600",
-        "twitter text-light-blue-400",
-        "instagram text-gray-400",
-        "youtube text-red"
-      ],
+      redes: {
+        facebook: "text-blue-600",
+        twitter: "text-light-blue-400",
+        instagram: "text-gray-400",
+        youtube: "text-red"
+      },
       paginas: [
         {
           nombre: "Página principal de Tseyor en Facebook",
@@ -46,7 +46,7 @@ export default {
           href: "https://www.facebook.com/muulasterio.tseyor.la.libelula"
         },
         {
-          nombre: "@TSEYOR en   Twitter",
+          nombre: "@TSEYOR en Twitter",
           href: "https://www.twitter.com/TSEYOR"
         },
         {
@@ -58,9 +58,13 @@ export default {
   },
   methods: {
     dameRed(url) {
-      for (const red of this.redes)
-        if (url.search(red.replace(/\s.*$/, "")) > -1) return red;
-      return "";
+      for (const red in this.redes)
+        {
+          const parts = red.split(" ")
+          if(url.indexOf(red)>-1)
+            return {icon: red, class: this.redes[red]}
+        }
+      return {icon:'facebook', class:''}
     }
   }
 };
