@@ -44,7 +44,7 @@ export default {
   },
   data() {
     return {
-      viendoCategoria: "Noticias",
+      viendoCategoria: "Todo",
       categorias: ["Todo", "Noticias", "Comunicados", "Eventos", "Libros", "Otros"]
     };
   },
