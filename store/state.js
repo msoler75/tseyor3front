@@ -144,13 +144,6 @@ export default () => ({
       description: "Listado de todos los equipos de Tseyor",
       parent: "/actividades"
     },
-    "/centros": {
-      name: "Centros",
-      icon: "fas fa-location-arrow",
-      description: 'Casas Tseyor y Muulasterios en el mundo',
-      parent: "/actividades"
-    },
-
 
     "/biblioteca/comunicados": {
       name: "Archivo de Comunicados",

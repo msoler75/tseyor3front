@@ -194,7 +194,7 @@ export default {
               this.$slugify(contacto.pais).search(bp) > -1)
         )
         .filter((contacto) => vc === "ambos" || vc === contacto.clase)
-        .map(x=>{return {...x, href: `/${x.clase}/${x.id}`
+        .map(x=>{return {...x, href: `/${x.clase.replace('centros', 'mapa')}/${x.id}`
         }})
     },
     locations() {
