@@ -277,7 +277,7 @@ export default {
         {left: true, 
           href:'/novedades',
           name:'',
-          iconClass: 'text-yellow-800',
+          iconClass: '!text-yellow-800',
           sidebarName: 'Novedades',
           sidebarClass: 'order-2',
         },

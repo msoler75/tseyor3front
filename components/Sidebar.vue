@@ -30,7 +30,7 @@
             class="relative items-center leading-8 md:leading-10 inline-block py-1 px-4 shadow-sm w-full"
             @click="clickSideBar(item)"
           >
-            <icon :icon="item.icon" />
+            <icon :icon="item.icon" :class="item.iconClass"/>
             {{ item.name || item.sidebarName }}
           </span>
           <div
