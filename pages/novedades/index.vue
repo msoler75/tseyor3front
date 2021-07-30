@@ -3,7 +3,11 @@
     v-model="viendoCategoria"
     :values="categorias" 
   >
-    <Tabs ref="tabs" v-model="viendoCategoria" :labels="categorias"/>
+    <Config :breadcrumb="false" />
+    
+    <h1 class="text-center"><icon icon="bolt" class="text-yellow-800 mr-3"/> Novedades</h1>
+
+    <Tabs ref="tabs" v-model="viendoCategoria" :labels="categorias" class="justify-center"/>
     <Grid class="grid-cols-fill-w-72 text-center">
       <template v-for="item of novedadesFiltradas(viendoCategoria)">
         <CardDynamic          

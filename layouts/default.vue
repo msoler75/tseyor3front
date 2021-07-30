@@ -29,7 +29,7 @@
               class="transition duration-200 menuitem hover:text-black dark:hover:text-white px-3 cursor-pointer h-full flex items-center text-sm tracking-normal border-b-4 border-blue-500"
               @click="menuClick(item)"
             >
-              <icon v-if="!item.name" :icon="item.icon" /> 
+              <icon v-if="!item.name" :icon="item.icon" :class="item.iconClass"/> 
               {{ item.name }}
             </li>
           </ul>
@@ -97,10 +97,8 @@
                 <NLink
                   :key="elem.href"
                   :to="elem.href"
-                  :class="
-                    'menu-subitem transition duration-200 place-items-center flex w-full h-full p-2 hover:bg-white dark:hover:bg-black ' +
-                    elem.bg
-                  "
+                  class="menu-subitem transition duration-200 place-items-center flex w-full h-full p-2 hover:bg-white dark:hover:bg-black"
+                  :class="elem.class"
                   @click.native="currentTab = ''"
                 >
                   <div
@@ -110,7 +108,7 @@
                     "
                     style="min-width: 6rem"
                   >
-                    <icon :icon="elem.icon" />
+                    <icon :icon="elem.icon" :class="elem.iconClass" />
                   </div>
                   <div class="title-right transition-all duration-200">
                     <div class="title transition duration-200 text-md">
@@ -279,6 +277,7 @@ export default {
         {left: true, 
           href:'/novedades',
           name:'',
+          iconClass: 'text-yellow-800',
           sidebarName: 'Novedades',
           sidebarClass: 'order-2',
         },
@@ -290,6 +289,7 @@ export default {
           items: [
             {
               href: "/novedades",
+              iconClass: '!text-yellow-800',
               noCurrent: true,
               hideInSidebar: true
             },
@@ -340,7 +340,7 @@ export default {
              "/mapa",
             {
               href: "/cursos",
-              bg: "text-yellow-900 shadow ring-2 ring-yellow-500 bg-yellow-200 hover:text-yellow-900 hover:bg-yellow-100 dark:text-yellow-800 dark:hover:text-yellow-900",
+              class: "text-yellow-900 shadow ring-2 ring-yellow-500 bg-yellow-200 hover:text-yellow-900 hover:bg-yellow-100 dark:text-yellow-800 dark:hover:text-yellow-900",
             },
             {
               href: "/contactar",
@@ -361,7 +361,7 @@ export default {
             "/meditar",
             {
               href: "/actividades/guia",
-              bg: "text-blue-800 shadow ring-2 ring-blue-500 bg-light-blue-50 hover:bg-white dark:text-blue-100 dark:hover:text-blue-900",
+              class: "text-blue-800 shadow ring-2 ring-blue-500 bg-light-blue-50 hover:bg-white dark:text-blue-100 dark:hover:text-blue-900",
             },
             "/leer",
             "/telegram-whatsapp",
