@@ -55,7 +55,8 @@ export default {
         if(crumb && (crumb.name || crumb.icon)) {
           if(path!=='/')
             r = this.crumbsRecursive(crumb.parent?crumb.parent:'/')
-          r.push(crumb)
+          if(crumb.href!=="/")
+            r.push(crumb)
           return r
         }
         return []
