@@ -53,6 +53,7 @@ export default {
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
   plugins: [
     '~plugins/global.js',
+    '~plugins/axios',
     { src: '~plugins/scrollactive.js', mode: 'client' },
     // { src: '~plugins/nuxt-hammer.js', mode: 'client' },
     // { src: '~plugins/vue-touch.js', mode: 'client' },

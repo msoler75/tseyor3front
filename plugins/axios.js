@@ -19,11 +19,13 @@ export default function ({ $axios, redirect }) {
     const data = response.data
     switch (statusCode) {
       case 401:
-        redirect('/session-expired')
+        redirect('/login')
+        break
+      case 403:
+        redirect('/403')
         break
       case 404:
-        const path = '/404'
-        redirect(path)
+        redirect('/404')
         break
       case 500:
         return this.$nuxt.error({ statusCode })
