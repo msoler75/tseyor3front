@@ -1,8 +1,8 @@
 <template>
   <div class="w-full mx-auto max-w-xs">
     
-    <Notification type="success" :message="success" />
-    <Notification type="danger" :message="error" />
+    <Notification type="success" :message="success" :close="false"/>
+    <Notification type="danger" :message="error" :close="false"/>
     
     <Card v-if="!success" class="mb-4">
       <form 
