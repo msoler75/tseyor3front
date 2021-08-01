@@ -20,7 +20,6 @@
             v-model="password"
             type="password"
             placeholder="Contraseña"
-            :class="errorPwd ? 'border-red-500' : ''"
             required
           />
         </div>
