@@ -1,12 +1,12 @@
 <template>
   <div
-    v-if="!closed && message"
-    class="relative rounded-md p-5"
+    v-show="!closed && message"
+    class="relative shadow rounded-md p-5"
     :class="cclass"
   >
     <span
       v-if="close"
-      class="absolute right-2 top-2 w-5 h-5 text-xs cursor-pointer rounded-full text-white bg-black bg-opacity-20 flex justify-center items-center"
+      class="absolute right-2 top-2 w-6 h-6 text-xs cursor-pointer rounded-full text-white bg-black bg-opacity-20 flex justify-center items-center"
       @click="closed = true"
     >
       ✖
@@ -37,7 +37,7 @@ export default {
   data() {
     return {
       closed: false,
-    };
+    }
   },
   watch: {
     message(newValue) {
@@ -51,10 +51,10 @@ export default {
     cclass() {
       return (
         (this.type === "success"
-          ? "bg-green-400-accent text-green-contrast"
+          ? "bg-green-100-accent text-green-900"
           : "bg-red-500 text-red-contrast") + (this.close ? " pr-3" : "")
       );
     },
   },
-};
+}
 </script>
