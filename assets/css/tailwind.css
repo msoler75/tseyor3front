@@ -103,6 +103,10 @@
   input[type='text'], input[type='number'], input[type='search']:not(.search-input), input[type='password'], input[type='email'], input[type='tel'], input[type='url'], textarea {
    @apply transition duration-150 appearance-none border border-blue-gray-900 border-opacity-20 focus:border-orange rounded-lg w-full p-3  text-gray-dark-800 font-light leading-tight placeholder-gray-dark-800 ring-deep-orange-400 focus:placeholder-gray-500 focus:outline-none focus:ring 
   }
+
+  .regular-form {
+    @apply max-w-lg w-full mx-auto px-1 py-4 sm:px-4 md:px-7 sm:py-8 bg-blue-gray-50 text-blue-gray select-none;
+  }
 }
 
 

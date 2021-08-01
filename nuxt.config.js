@@ -1,5 +1,7 @@
 import { resolve } from 'path'
 
+// require("dotenv").config();
+
 export default {
 
   target: 'server',
@@ -87,7 +89,7 @@ export default {
     '@nuxtjs/strapi',
     // Doc: https://github.com/nuxt-community/dotenv-module
     // '@nuxtjs/dotenv',
-    // '@nuxtjs/auth',
+    '@nuxtjs/auth',
     // https://www.npmjs.com/package/@nuxtjs/svg
     '@nuxtjs/svg',
     // '@nuxt/content',
@@ -110,7 +112,7 @@ export default {
 
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
   axios: {
-    // baseURL: process.env.API_AUTH_URL
+    baseURL: process.env.API_AUTH_URL || 'http://localhost:1337'
   },
 
   apollo: {

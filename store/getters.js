@@ -1,13 +1,14 @@
 import state from "./state"
 
 export default {
-  /* isAuthenticated (state) {
+  // nuxt/auth
+  isAuthenticated (state) {
     return state.auth.loggedIn
   },
-
   loggedInUser (state) {
     return state.auth.user
-  }, */
+  },
+
   getIconRoute: state => (path) => {
     if(!path) {
       return ''

@@ -65,8 +65,9 @@
             >
               <div alt="theme-icon" v-html="iconMode" class="w-full" />
             </div>
-            <template v-if="$store.state.loggedIn">
-              <Avatar :data="$store.state.user" class="text-3xl w-8 h-8"/>
+            <template v-if="isAuthenticated">
+              {{loggedInUser}}
+              <!-- <Avatar :data="$store.state.user" class="text-3xl w-8 h-8"/> -->
             </template>
             <template v-else>
               <div class="hidden md:flex items-center text-sm font-sans">
@@ -247,6 +248,7 @@
 </template>
 
 <script>
+import { mapGetters } from "vuex";
 import tseyorLogo from "~/assets/svg/sello-tseyor.svg?raw";
 import iconMoon from "~/assets/svg/icons/moon.svg?raw";
 import iconSun from "~/assets/svg/icons/sun.svg?raw";
@@ -494,6 +496,7 @@ export default {
     };
   },
   computed: {
+    ...mapGetters(["isAuthenticated", "loggedInUser"]),
     iconMode() {
       return this.$colorMode.value === "light" ? iconSun : iconMoon;
     },
