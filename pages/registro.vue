@@ -1,10 +1,10 @@
 <template>
-  <div class="w-full mx-auto max-w-xs">
+  <div class="w-full mx-auto max-w-xs mb-4">
     
     <Notification type="success" :message="success" :close="false"/>
     <Notification type="danger" :message="error" :close="false"/>
     
-    <Card v-if="!success" class="mb-4">
+    <Card v-if="!success">
       <form 
       class="regular-form"
       method="post" @submit.prevent="register">
@@ -64,6 +64,7 @@
 
 <script>
 export default {
+  middleware: "invitado",
   data() {
     return {
       nombreSimbolico: "",

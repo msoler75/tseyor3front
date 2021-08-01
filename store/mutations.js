@@ -23,17 +23,8 @@ export default {
     state.pageBreadcrumb = payload
   },
 
-  setLoggedIn(state, payload) {
-    state.loggedIn = payload
-    if(payload)
-    {
-      const i = Math.ceil(Math.random()*92)
-      state.user = {
-        id: (i*177)%255,
-        clase: "usuarios",
-        imagen: "usuario" + ((i % 7) + 1) + ".jpg",
-        nombre: this.$lorem(1, 1, 3).slice(0, -1)
-      }
-    }
-  }
+  setMenuUsuario(state, payload) {
+    state.menuUsuario = payload
+  },
+
 }

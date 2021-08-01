@@ -1,10 +1,6 @@
 <template>
   <div class="main-wrapper relative surface-0 w-full h-full flex-grow font-sans"
   :class="pageBackground?'':'no-background'"
-  
-  
-  
-  
   >
     <!-- Navigation starts -->
     <nav id="main-menu" 
@@ -66,8 +62,9 @@
               <div alt="theme-icon" v-html="iconMode" class="w-full" />
             </div>
             <template v-if="isAuthenticated">
-              {{loggedInUser}}
-              <!-- <Avatar :data="$store.state.user" class="text-3xl w-8 h-8"/> -->
+              <Avatar :data="loggedInUser" class="text-3xl w-8 h-8 cursor-pointer"
+              :to="false"
+              @click.native="mostrarMenuUsuario=!mostrarMenuUsuario"/>
             </template>
             <template v-else>
               <div class="hidden md:flex items-center text-sm font-sans">
@@ -100,7 +97,7 @@
                   :to="elem.href"
                   class="menu-subitem transition duration-200 place-items-center flex w-full h-full p-2 hover:bg-white dark:hover:bg-black"
                   :class="elem.class"
-                  @click.native="currentTab = ''"
+                  @click.native="clickOff"
                 >
                   <div
                     :class="
@@ -129,7 +126,7 @@
                         'menu-subitem transition duration-200 place-items-center flex w-full h-full p-2 hover:bg-white dark:hover:bg-black ' +
                         leaf.bg
                       "
-                      @click.native="currentTab = ''"
+                      @click.native="clickOff"
                     >
                       <div
                         :class="
@@ -201,11 +198,23 @@
         </div>
       </nav>
     </nav>
+
+    <Card v-if="isAuthenticated"
+    v-show="menuUsuario"
+    class="py-3 px-5 w-52 fixed right-0">
+      <ul class="list-none">
+        <li v-for="item of userMenuItems" :key="item.href">
+          <NLink v-if="item.href" :to="item.href" class="block py-1"><icon v-if="item.icon" :icon="item.icon" class="!w-4 mr-3 text-gray"/>{{item.name}}</NLink>
+          <div v-else-if="item.click" @click="item.click" class="cursor-pointer block py-1"><icon v-if="item.icon" :icon="item.icon" class="!w-4 mr-3 text-gray"/>{{item.name}}</div>
+        </li>
+        <li></li>
+      </ul>
+    </Card>
     <!-- Page title starts -->
     <!-- Navigation ends -->
     <div
       class="mt-5 mb-3 lg:mt-6 lg:mb-5 container xs:px-1 sm:px-3 md:px-6 mx-auto flex flex-col lg:flex-row items-start lg:items-center justify-between pb-4 border-gray-300"
-      @click="currentTab = ''"
+      @click="clickOff"
     >
       <div>
         <Breadcrumb v-if="pageBreadcrumb" class="text-xs xl:text-sm" />
@@ -232,18 +241,18 @@
       -->
     </div>
     <!-- Page title ends -->
-    <div @click="currentTab = ''"
-    :class="pageInContainer?'container xs:px-1 sm:px-3 md:px-6 mx-auto':''">
+    <div @click="clickOff"
+    :class="pageContained?'container xs:px-1 sm:px-3 md:px-6 mx-auto':''">
       <div class="w-full">
         <!-- Place your content here -->
         <nuxt class="mx-auto" 
-        :class="pageInContainer?'mb-5':''" />
+        :class="pageContained?'mb-5':''" />
       </div>
     </div>
 
     <Sidebar v-model="showSidebar" :items="rutasMenu" class="xl:hidden"/>
     <Footer class="mt-auto"
-    :class="pageInContainer?'pt-9':''" />
+    :class="pageContained?'pt-9':''" />
   </div>
 </template>
 
@@ -264,8 +273,28 @@ export default {
       }
     }
   }, */
+  watch: {
+    mostrarMenuUsuario (newValue) {
+      this.$store.commit('setMenuUsuario', newValue)
+    }
+  },
   data() {
     return {
+      mostrarMenuUsuario: false,
+      userMenuItems: [
+        {
+          icon: "fas fa-user",
+          name: "Ver Perfil",
+          href: "/perfil"
+        },
+        {
+          icon: "fas fa-sign-out-alt",
+          name: "Cerrar Sesión",
+          click: () => {
+            this.logout()
+          }
+        },
+      ],
       buscarPor: '',
       showSidebar: false,
       currentTab: "",
@@ -496,7 +525,8 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(["isAuthenticated", "loggedInUser"]),
+    ...mapGetters(["isAuthenticated", "loggedInUser", "pageContained", "pageBackground", "pageBreadcrumb", "menuUsuario"]),
+
     iconMode() {
       return this.$colorMode.value === "light" ? iconSun : iconMoon;
     },
@@ -514,21 +544,19 @@ export default {
     },
     menuDerecho() {
       return this.rutasMenu.filter(x=>!x.left)
-    },
-    pageInContainer () {
-      return this.$store.getters.pageContained()
-    },
-    pageBackground () {
-      return this.$store.getters.pageBackground()
-    },
-    pageBreadcrumb () {
-      return this.$store.getters.pageBreadcrumb()
     }
   },
   methods: {
+    async logout() {
+      await this.$auth.logout()
+    },
+    clickOff() {
+      this.currentTab = ''
+      this.mostrarMenuUsuario = false
+    },
     changeColorMode() {
       this.$colorMode.preference =
-        this.$colorMode.value === "light" ? "dark" : "light";
+      this.$colorMode.value === "light" ? "dark" : "light";
     },
     getIcon(path) {
       return this.$store.getters.getIcon(path);
@@ -542,6 +570,7 @@ export default {
       return this.$ucFirst(this.$route.name);
     },
     menuClick(item) {
+      this.mostrarMenuUsuario = false
       if (!item.items) {
         this.currentTab = "";
         this.$router.push(item.href);
@@ -584,7 +613,8 @@ export default {
     },
     showSideMenu() {
       this.showSidebar = true;
-      this.currentTab = "";
+      this.currentTab = ""
+      this.mostrarMenuUsuario = false
     },
   },
 };

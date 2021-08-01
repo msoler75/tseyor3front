@@ -6,6 +6,7 @@ export default function ({ res, store }) {
     store.commit('setContained', true)
     store.commit('setBackground', true)
     store.commit('setBreadcrumb', true)
+    store.commit('setMenuUsuario', false)
     
     
     // res.timing.end('midd')

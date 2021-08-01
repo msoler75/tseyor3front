@@ -61,23 +61,27 @@ export default {
     }
     return r
   },
-  title: state => () => {
+  title (state) {
     return state.tituloPagina
   },
-  audioPlaying: state => () => {
+  audioPlaying (state) {
     return state.audioPlaying
   },
 
-  pageContained: state => () => {
+  pageContained (state) {
     return state.pageInContainer
   },
 
-  pageBackground: state => () => {
+  pageBackground (state) {
     return state.pageBackground
   },
 
-  pageBreadcrumb: state => () => {
+  pageBreadcrumb (state) {
     return state.pageBreadcrumb
-  }
+  },
+
+  menuUsuario (state) {
+    return state.menuUsuario
+  },
 
 }

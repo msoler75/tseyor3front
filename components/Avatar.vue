@@ -32,8 +32,9 @@ export default {
       default: null,
     },
     to: {
-      type: String,
+      type: String | Boolean,
       required: false,
+      default: null
     },
     color: {
       type: String,
@@ -78,6 +79,8 @@ export default {
           return this.data?this.data.id:null
       },
       cto (){
+        if(this.to===false)
+        return null
           if(this.to)
             return this.to
           if(this.cid)
@@ -95,7 +98,7 @@ export default {
     },
     cname() {
         if(this.data)
-            return this.data.name || this.data.nombre || this.data.user ||this.data.usuario || this.data.email.replace(/@.*/, '')
+            return this.data.name || this.data.nombreSimbolico || this.data.username || this.data.nombre || this.data.user ||this.data.usuario || this.data.email.replace(/@.*/, '')
         return this.name || 'Anónimo'
     },
     initials() {
