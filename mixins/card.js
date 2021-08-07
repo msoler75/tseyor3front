@@ -107,9 +107,12 @@ export default {
       return this.data?this.data.clase:'default'
     },
     cimage() {
-      const src = this.image || this.data.image || this.data.imagen;
+      let src = this.image || this.data.image || this.data.imagen;
+      if(src && typeof src === 'object')
+         src = src.url
       if (src && src.search("/") > -1) return src;
-      return "./images/" + src;
+      if(!src) src = null
+      return src;
     }
   }
 }

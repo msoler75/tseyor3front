@@ -95,3 +95,4 @@ sw.*
 
 #static font awesome developing folder
 static/fontawesome-free-5.15.1-web/
+static/uploads

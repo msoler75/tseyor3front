@@ -1,11 +1,12 @@
 <template>
   <Card class="card-book"
-  :class="(landscape ? 'landscape' : '')+(big?' big-wrap':'')">
+  :class="landscape ? 'landscape' : ''">
     <section :class="landscape ? 'xm:flex' : ''">
       <section class="flex-grow sm:pt-2">
         <Book3D class="mx-auto"
-        :class="sizeBook"
-         :src="'/images/portadas/' + data.imagen"/>
+          :class="sizeBook"
+          :src="cimage"
+         />
         <!-- <nuxt-img class="block xs:hidden max-w-8" :src="'/images/portadas/' + data.imagen"/> -->
       </section>
       <section class="px-1 pb-4 xs:px-6 text-center"
@@ -38,7 +39,7 @@ export default {
   mixins: [CardMix],
   props: {
     landscape: { type: Boolean, required: false, default: false },
-    big: { type: Boolean, required: false, default: false },
+    // big: { type: Boolean, required: false, default: false },
     bookSize: {
       type: String,
       required: false,

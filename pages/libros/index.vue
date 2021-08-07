@@ -15,16 +15,17 @@
       </div>
     </div>
     <Grid class="grid-cols-fill-w-64 text-center">
-        <CardBook book-size="book-sm" v-for="libro of librosFiltrados" :key="libro.id" :data="libro" :noText="true"/>
+       <CardBook book-size="book-sm" v-for="libro of librosFiltrados" :key="libro.id" :data="libro" :noText="true"/>
     </Grid>
   </SwipeX>
 </template>
 
 <script>
 export default {
-  asyncData({app}) {
-    const libros = [];
-    for (let i = 0; i < 23; i++) {
+  async asyncData({$strapi}) {
+    const libros = await $strapi.find('libros')
+    /* const libros = [];
+     for (let i = 0; i < 23; i++) {
       const tags = [];
       if (i % 3 === 2) tags.push("monografías");
       if (i % 4 === 0) tags.push("obras de consulta");
@@ -39,7 +40,7 @@ export default {
         descripcion: app.$lorem(3),
         tags
       });
-    }
+    } */
     return { libros };
   },
   data() {

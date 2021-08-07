@@ -2,7 +2,7 @@
 <div class="book-wrapper">
     <!-- xs:w-32 xs:h-24 sm:w-52 sm:h-36 md:w-64 md:h-48 lg:w-80 lg:h-56 xl:w-[21rem] xl:h-64 -->
   <div class="book">
-    <nuxt-img :src="src" class="mx-auto w-1/2" 
+    <nuxt-img v-if="src" :src="src" class="mx-auto w-1/2" 
     :sizes="imageSizes"
     />
   </div>

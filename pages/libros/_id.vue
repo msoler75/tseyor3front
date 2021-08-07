@@ -5,7 +5,7 @@
           <div class="book-container my-4 mx-auto xs:my-0 xs:mr-4 lg:mr-20 flex-shrink-0 flex-grow-0">
             <div class="book">
         <nuxt-img
-          :src="'/images/portadas/' + libro.imagen"
+          :src="libro.imagen.url"
           sizes="xs:40px sm:80px md:150px lg:200px"
         />
         </div>
@@ -13,8 +13,8 @@
         <section class="flex-shrink md:max-w-sm">
           <h1 class="break-all sm:break-normal">{{ ctitle }}</h1>
           <div class="hidden lg:block mt-4" v-html="ctext"/>
-          <section class="mt-3 text-diminished text-sm">
-            <span> Edición: {{libro.edicion}}</span> 
+          <section class="mt-3 text-diminished text-xs">
+            <span> {{libro.edicionNumero}}ª edición</span><span v-if="libro.edicionFecha">, {{libro.edicionFecha}}</span>
             &nbsp;—&nbsp;
             <span>{{libro.paginas}} páginas</span> 
           </section>
@@ -24,7 +24,7 @@
           </section>
         </section>
       </section>
-      <section class="lg:hidden mt-4" v-html="libro.texto"/>
+      <section class="lg:hidden mt-4 text-justify" v-html="libro.descripcion"/>
   </Card>
   <divider/>
   <section>
@@ -45,26 +45,20 @@ import HCarousel from '~/components/HCarousel.vue';
 export default {
   components: { HCarousel },
   mixins: [vercontenidomixin],
-  asyncData({ app, route }) {
+  async asyncData({ app, $strapi, route, redirect }) {
+    const id = route.params.id
+    const libros = await $strapi.find('libros', id.match(/\d+/)?{id}:{slug:id})
     // const noticiasGuays = await $strapi.$noticias.find({ id: 1 })
-    const id = parseInt(route.params.id);
-    const contenido = {
-      id,
-      titulo: app.$lorem(1),
-      imagen: "imagen" + ((id % 7) + 1) + ".jpg",
-      texto: app.$lorem(4),
-      paginas: Math.ceil(Math.random()*300),
-      edicion: Math.ceil(Math.random()*3)+'ª'
-    };
+    const contenido = libros[0]
     const relacionados = []
-    for(var i=0;i<8;i++) {
+    /*for(var i=0;i<8;i++) {
       relacionados.push({
         id: i,
         clase: 'libros',
         titulo: app.$lorem(1),
         imagen: "imagen" + (((i+2) % 7) + 1) + ".jpg",
       })
-    }
+    }*/
     return { contenido, libro: contenido, relacionados };
   },
 };
