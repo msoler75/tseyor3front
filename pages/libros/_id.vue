@@ -19,7 +19,7 @@
             <span>{{libro.paginas}} páginas</span> 
           </section>
           <section class="flex mt-7 justify-end">
-              <a download href="/libro.pdf"
+              <a download :href="libro.documento.url"
               class="btn btn-error"><icon icon="download" class="mr-2"/>Descargar</a>
           </section>
         </section>

@@ -17,56 +17,57 @@
     <Grid class="grid-cols-fill-w-64 text-center">
        <CardBook book-size="book-sm" v-for="libro of librosFiltrados" :key="libro.id" :data="libro" :noText="true"/>
     </Grid>
+    <div v-observe-visibility="cargarMas">
+      ...
+    </div>
   </SwipeX>
 </template>
 
 <script>
+
 export default {
   async asyncData({$strapi}) {
-    const libros = await $strapi.find('libros')
-    /* const libros = [];
-     for (let i = 0; i < 23; i++) {
-      const tags = [];
-      if (i % 3 === 2) tags.push("monografías");
-      if (i % 4 === 0) tags.push("obras de consulta");
-      if (i % 5 === 1) tags.push("resúmenes");
-      if (i % 11 === 4) tags.push("cuentos");
-      if (i % 7 === 3) tags.push("otros");
-      libros.push({
-        id: i,
-        clase: "libros",
-        imagen: "imagen" + ((i % 8) + 1) + ".jpg",
-        titulo: app.$lorem(1),
-        descripcion: app.$lorem(3),
-        tags
-      });
-    } */
-    return { libros };
+    const filters = {
+        _start: 0,
+        _limit: 20, 
+        _sort:'updated_at:DESC'
+    }
+
+    const etiquetas = await $strapi.find('etiquetas', {taxonomia: 'libros'}) 
+    const categorias = ['Nuevos']
+    for(const e of etiquetas)
+      categorias.push(e.nombre)
+
+    const libros = await $strapi.find('libros', filters)
+
+    var hayMas = libros.length === filters._limit
+    return { categorias, filters, libros, hayMas }
   },
   data() {
+    console.warn('data', this)
     return {
       buscarPor: "",
-      viendoCategoria: "Todos",
-      categorias: ["Todos", "Monografías", "Resúmenes", "Cuentos", "Otros"]
+      viendoCategoria: "Nuevos"
     };
   },
-  computed: {
-    nuevos() {
-      return this.libros.slice(0, 12);
-    },
-    librosFiltrados() {
-      const v = this.viendoCategoria.toLowerCase();
-      const bp = this.slugify(this.buscarPor);
-      return this.libros.filter(
-        libro => 
-          (v === "todos" || libro.tags.includes(v)) &&
-          (bp === "" ||
-            this.slugify(libro.titulo).search(bp)>-1 ||
-            this.slugify(libro.descripcion).search(bp)>-1)
-      );
+  watch: {
+    viendoCategoria(newValue) {
+      this.hayMas = true
+      this.filter._start = 0
+      this.cargarMas(true)
     }
   },
   methods: {
+    async cargarMas(keepStart) {
+      if(!this.hayMas) return
+      if(!keepStart)
+        this.filter._start = this.libros.length
+        const filtro =this.viendoCategoria!=='Nuevos'? {etiquetas:{nombre:viendoCategoria}} : this.filter
+      const cargando = await this.$strapi.find('libros', filtro)
+      this.hayMas = cargando.length===this.filters._limit
+      for(const libro of cargando)
+        this.libros.push(libro)
+    },
     slugify(str) {
       str = str.replace(/^\s+|\s+$/g, ""); // trim
       str = str.toLowerCase();
@@ -85,7 +86,23 @@ export default {
 
       return str;
     }
-  }
+  },
+  computed: {
+    nuevos() {
+      return this.libros.slice(0, 12);
+    },
+    librosFiltrados() {
+      const v = this.viendoCategoria.toLowerCase();
+      const bp = this.slugify(this.buscarPor);
+      return this.libros.filter(
+        libro => 
+          (v === "nuevos" || libro.tags.includes(v)) &&
+          (bp === "" ||
+            this.slugify(libro.titulo).search(bp)>-1 ||
+            this.slugify(libro.descripcion).search(bp)>-1)
+      );
+    }
+  },
 };
 </script>
 

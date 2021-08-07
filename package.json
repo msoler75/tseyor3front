@@ -36,6 +36,7 @@
     "markdown-it-div": "^1.1.0",
     "nuxt": "^2.15.7",
     "nuxt-gmaps": "^1.2.10",
+    "vue-observe-visibility": "^1.0.0",
     "vue-scrollactive": "^0.9.3",
     "vue-select": "^3.11.2",
     "vue-social-sharing": "^3.0.8",
