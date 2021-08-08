@@ -1,5 +1,5 @@
 <template>
-  <div class="tabs mb-4 flex max-w-full select-none uppercase text-xs sm:text-sm md:tracking-wide lg:tracking-wider xl:tracking-widest font-sans"
+  <div class="tabs flex max-w-full select-none uppercase text-xs sm:text-sm md:tracking-wide lg:tracking-wider xl:tracking-widest font-sans"
   :class="compact?'compact':'normal'">
     <div
       v-for="(label, index) of labels"

@@ -5,7 +5,7 @@
   >
     <h1 class="mb-5">Catálogo de Libros</h1>
     <div class="w-full block xl:flex justify-between">
-      <Tabs v-model="viendoCategoria" :labels="categorias" class="mr-2 flex-wrap" :compact="true" :group="false" />
+      <Tabs v-model="viendoCategoria" :labels="categorias" class="overflow-x-auto md:flex-wrap mr-2 mb-4" :compact="true" :group="false" />
       <div class="ml-left">
         <SearchInput v-model="buscarPor" class="w-64 mb-3" placeholder="Buscar por título o descripción..."/>
       </div>
