@@ -46,8 +46,7 @@ export default {
   position: absolute;
   filter: saturate(90%);
 }
-.book:before,
-.book:after {
+.book:before {
   content: "";
   position: absolute;
   top: 0;
@@ -91,24 +90,6 @@ export default {
   background-size: 100% 100%, 100% 100%, 100% 100%, 100% 0.4em, 94% 0.2em,
     100% 100%;
   background-position: 0 0, 0 0, 0 0, 0 95.8%, 0 100%, 0 0;
-}
-.book:after {
-  width: 100%;
-  height: 100%;
-  background-repeat: no-repeat;
-  background-image: linear-gradient(
-      to right,
-      transparent 2%,
-      rgba(0, 0, 0, 0.1) 3%,
-      rgba(0, 0, 0, 0.1) 4%,
-      transparent 5%
-    ),
-    linear-gradient(-50deg, rgba(0, 0, 0, 0.1) 20%, transparent 100%),
-    linear-gradient(-50deg, rgba(0, 0, 0, 0.2) 20%, transparent 100%),
-    linear-gradient(to bottom, rgba(0, 0, 0, 0.1) 20%, transparent 100%),
-    linear-gradient(to bottom, rgba(0, 0, 0, 0.1) 20%, transparent 100%);
-  background-size: 100% 100%, 2% 20%, 1% 20%, 2% 20%, 1% 20%;
-  background-position: 0 0, 2.2% 100%, 3% 100%, 2.2% 0, 3% 0;
 }
 
 .book-wrapper {
@@ -272,5 +253,5 @@ export default {
     }
 }
 
-
+.book img {min-height: 100%; background-color: white}
 </style>
