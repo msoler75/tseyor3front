@@ -37,7 +37,7 @@ export default {
     const etiquetas = await $strapi.find('etiquetas', {taxonomia: 'libros'})
     const categorias = ['Nuevos']
     for(const e of etiquetas)
-      categorias.push(e.nombre)
+      categorias.push(e)
 
     const libros = await $strapi.find('libros', filters)
 
