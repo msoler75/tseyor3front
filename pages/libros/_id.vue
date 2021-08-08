@@ -32,6 +32,7 @@
     <HCarousel center
     :items="relacionados"
     :noText="true"
+    collection="libros"
    />
   </section>
   <section>
@@ -52,7 +53,7 @@ export default {
     const categoria = contenido.etiquetas.length?contenido.etiquetas[0].nombre:null
     const filtro = categoria?{'etiquetas.nombre':categoria}:{}
     const relacionados = await $strapi.find('libros', {...filtro, _limit: 8})
-    return { contenido, libro: contenido, relacionados: relacionados.map(x=>{return{...x,clase:'libros'}}) };
+    return { contenido, libro: contenido, relacionados };
   },
 };
 </script>

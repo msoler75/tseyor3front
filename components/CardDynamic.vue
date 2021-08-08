@@ -12,7 +12,8 @@
   :data="data"
   :center="center"
   book-size="book-sm"
-  :class="data.clase==='libros'?'py-5 text-center':''"
+  :class="ccollection==='libros'?'py-5 text-center':''"
+  :collection="collection"
   />
 </template>
 
@@ -22,10 +23,9 @@ export default {
   mixins: [CardMix],
   computed: {
     currentComponent () {
-      if(!this.data) return 'Card'
-      if(this.data.clase === 'libros') return 'CardBook'
-      if(this.data.clase === 'eventos') return 'CardEvent'
-      if(this.data.clase === 'cursos') return 'CardEvent'
+      if(this.ccollection === 'libros') return 'CardBook'
+      if(this.ccollection === 'eventos') return 'CardEvent'
+      if(this.ccollection === 'cursos') return 'CardEvent'
       return 'Card'
     }
   }

@@ -42,10 +42,10 @@ export default {
       required: false,
       default: false
     },
-    type: {
+    collection: {
         type: String,
         required: false,
-        default: ''
+        default: undefined
     },
     center: {
         type: Boolean,
@@ -71,13 +71,12 @@ export default {
         this.data.nombre
       );
     },
-    cclase() {
+    ccollection() {
         return (
-        this.type || 
-        this.data.class ||
-        this.data.table ||
-        this.data.tabla ||
-        this.data.clase )
+        this.collection || 
+        this.data.collection || 
+        this.data.colleccion
+        )        
     },
     chref() {
       const r =
