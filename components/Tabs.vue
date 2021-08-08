@@ -1,5 +1,5 @@
 <template>
-  <div class="tabs mb-4 flex max-w-full overflow-x-auto select-none uppercase text-xs sm:text-sm md:tracking-wide lg:tracking-wider xl:tracking-widest font-sans"
+  <div class="tabs mb-4 flex max-w-full select-none uppercase text-xs sm:text-sm md:tracking-wide lg:tracking-wider xl:tracking-widest font-sans"
   :class="compact?'compact':'normal'">
     <div
       v-for="(label, index) of labels"
@@ -11,6 +11,7 @@
           (index === currentTab || getLabel(label) === currentTab ? ' active' : '') +
           (group === true || group==='auto'? ' auto-group' : (group==='fixed'?' fixed-group':''))
       "
+      :title="getDescription(label)"
     >
       <Icon v-if="label.icon" :icon="label.icon" class="mr-1"/> 
       {{ $ucFirst(getLabel(label)) }}
@@ -71,6 +72,12 @@ export default {
     {
       if(typeof label === 'string') return label
       return (label.label||label.name||label.nombre||label.etiqueta||label.title||label.titulo)
+    },
+    getDescription (label)
+    {
+      if(typeof label ==='object')
+        return label.description || label.descripcion
+      return null
     }
   }
 };
@@ -79,7 +86,7 @@ export default {
 <style scoped>
 
   .tab {
-    @apply transition duration-200 text-center cursor-pointer p-1 sm:py-2 sm:px-4 border-b-4 font-semibold border-gray bg-gray-100 dark:bg-gray-dark-800 overflow-hidden shadow;
+    @apply flex justify-center items-center transition duration-200 text-center cursor-pointer p-1 sm:py-2 sm:px-4 border-b-4 font-semibold border-gray bg-gray-100 dark:bg-gray-dark-800 overflow-hidden shadow;
     min-width: fit-content;
   }
   .tab.auto-group {
@@ -92,7 +99,7 @@ export default {
     @apply rounded-sm sm:rounded-md mr-2 mb-2
   }
   .tab.active {
-    @apply shadow-sm border border-opacity-50 border-red-900 bg-orange-300 dark:bg-orange text-red-900 
+    @apply shadow-sm bg-orange-300 dark:bg-orange text-red-900 
   }
   @screen xl {
     .tabs.normal .tab {

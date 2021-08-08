@@ -3,13 +3,9 @@
     v-model="viendoCategoria"
     :values="categorias"
   >
-    <!-- 
-    <h2>Novedades</h2>
-       <HCarousel :items="nuevos" class="mb-10" /> 
-    -->
     <h1 class="mb-5">Catálogo de Libros</h1>
     <div class="w-full block xl:flex justify-between">
-      <Tabs v-model="viendoCategoria" :labels="categorias" class="mr-2"/>
+      <Tabs v-model="viendoCategoria" :labels="categorias" class="mr-2 flex-wrap" :compact="true" :group="false" />
       <div class="ml-left">
         <SearchInput v-model="buscarPor" class="w-64 mb-3" placeholder="Buscar por título o descripción..."/>
       </div>
@@ -17,8 +13,13 @@
     <Grid class="grid-cols-fill-w-64 text-center">
        <CardBook book-size="book-sm" v-for="libro of librosFiltrados" :key="libro.id" :data="libro" :noText="true"/>
     </Grid>
-    <div v-observe-visibility="cargarMas">
-      ...
+    <div v-show="hayMas && !cargando" v-observe-visibility="cargarMas" class="mt-3 flex justify-center">
+      <!-- <button @click="cargarMas" class="btn">Cargar Más...</button> -->
+    </div>
+    <div v-show="cargando" class="mt-16 h-10 flex justify-center">
+      <span class="text-xs">
+        Cargando...
+      </span>
     </div>
   </SwipeX>
 </template>
@@ -33,7 +34,7 @@ export default {
         _sort:'updated_at:DESC'
     }
 
-    const etiquetas = await $strapi.find('etiquetas', {taxonomia: 'libros'}) 
+    const etiquetas = await $strapi.find('etiquetas', {taxonomia: 'libros'})
     const categorias = ['Nuevos']
     for(const e of etiquetas)
       categorias.push(e.nombre)
@@ -41,32 +42,34 @@ export default {
     const libros = await $strapi.find('libros', filters)
 
     var hayMas = libros.length === filters._limit
-    return { categorias, filters, libros, hayMas }
+    return { categorias, filters, libros, hayMas, ordenarPor:'fecha' }
   },
   data() {
-    console.warn('data', this)
     return {
       buscarPor: "",
-      viendoCategoria: "Nuevos"
+      viendoCategoria: "Nuevos",
+      cargando: false
     };
   },
   watch: {
     viendoCategoria(newValue) {
       this.hayMas = true
-      this.filter._start = 0
-      this.cargarMas(true)
     }
   },
   methods: {
     async cargarMas(keepStart) {
       if(!this.hayMas) return
-      if(!keepStart)
-        this.filter._start = this.libros.length
-        const filtro =this.viendoCategoria!=='Nuevos'? {etiquetas:{nombre:viendoCategoria}} : this.filter
-      const cargando = await this.$strapi.find('libros', filtro)
-      this.hayMas = cargando.length===this.filters._limit
-      for(const libro of cargando)
-        this.libros.push(libro)
+      this.filters._start = this.librosFiltrados.length
+      const filtro = this.viendoCategoria!=='Nuevos'? {'etiquetas.nombre':this.viendoCategoria} : this.filters
+      this.cargando = true
+      const libros = await this.$strapi.find('libros', filtro)
+      this.hayMas = libros.length===this.filters._limit
+      for(const libro of libros)
+      {
+        if(!this.libros.find(x=>x.id===libro.id))
+          this.libros.push(libro)
+      }
+      this.cargando = false
     },
     slugify(str) {
       str = str.replace(/^\s+|\s+$/g, ""); // trim
@@ -88,19 +91,25 @@ export default {
     }
   },
   computed: {
-    nuevos() {
-      return this.libros.slice(0, 12);
-    },
     librosFiltrados() {
-      const v = this.viendoCategoria.toLowerCase();
-      const bp = this.slugify(this.buscarPor);
+      const cat = this.viendoCategoria
+      const bp = this.slugify(this.buscarPor)
       return this.libros.filter(
         libro => 
-          (v === "nuevos" || libro.tags.includes(v)) &&
+          (cat === "Nuevos" || libro.etiquetas.find(x=>x.nombre===cat)) &&
           (bp === "" ||
             this.slugify(libro.titulo).search(bp)>-1 ||
             this.slugify(libro.descripcion).search(bp)>-1)
       );
+    },
+    librosOrdenados() {
+      const ob = this.ordenarPor
+      return this.librosFiltrados
+      // .map(x=>{if(!x.timestamp)x.timestamp = this.$dayjs(x.updated_at)})
+      .sort((a,b)=>{
+        return /* ob==='fecha'?a.timestamp-b.timestamp: */
+        a-b // a.nombre.localeCompare(b.nombre)
+      })
     }
   },
 };
