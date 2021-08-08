@@ -52,9 +52,12 @@ export default {
       return this.contenido?this.contenido.clase:'default'
     },
     cimage() {
-      const src = this.image || this.contenido.image || this.contenido.imagen;
-      if (src && src.search("/") > -1) return src;
-      return "./images/" + src;
+      var src = this.image || this.contenido.image || this.contenido.imagen;
+      if(typeof src === 'object')
+        src = src.url 
+      // if (src && src.search("/") > -1) return src;
+      // return "./images/" + src;
+      return src
     }
   },
   watch: {

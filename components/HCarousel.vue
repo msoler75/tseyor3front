@@ -13,7 +13,7 @@
           :index="idx"
           class="w-56 p-2"
         >
-          <CardDynamic :center="center" :data="item" class="h-full"/>
+          <CardDynamic :center="center" :data="item" class="h-full" :noText="noText"/>
         </slide>
          <navigation slot="hooper-addons">
            <template #hooper-next>
@@ -56,7 +56,12 @@ export default {
       type: Boolean,
       required: false,
       default: false
-    }
+    },
+    noText: {
+      type: Boolean,
+      required: false,
+      default: false
+    },
   },
   computed: {
     preset () {

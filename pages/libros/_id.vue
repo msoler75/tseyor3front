@@ -5,14 +5,14 @@
           <div class="book-container my-4 mx-auto xs:my-0 xs:mr-4 lg:mr-20 flex-shrink-0 flex-grow-0">
             <div class="book">
         <nuxt-img
-          :src="libro.imagen.url"
+          :src="cimage"
           sizes="xs:40px sm:80px md:150px lg:200px"
         />
         </div>
         </div>
         <section class="flex-shrink md:max-w-sm">
           <h1 class="break-all sm:break-normal">{{ ctitle }}</h1>
-          <div class="hidden lg:block mt-4" v-html="ctext"/>
+          <div class="hidden lg:block mt-4 text-justify" v-html="ctext"/>
           <section class="mt-3 text-diminished text-xs">
             <span> {{libro.edicionNumero}}ª edición</span><span v-if="libro.edicionFecha">, {{libro.edicionFecha}}</span>
             &nbsp;—&nbsp;
@@ -31,6 +31,7 @@
     <h2>Y además...</h2>
     <HCarousel center
     :items="relacionados"
+    :noText="true"
    />
   </section>
   <section>
@@ -41,25 +42,17 @@
 
 <script>
 import vercontenidomixin from "@/mixins/vercontenido.js";
-import HCarousel from '~/components/HCarousel.vue';
 export default {
-  components: { HCarousel },
   mixins: [vercontenidomixin],
   async asyncData({ app, $strapi, route, redirect }) {
     const id = route.params.id
     const libros = await $strapi.find('libros', id.match(/\d+/)?{id}:{slug:id})
     // const noticiasGuays = await $strapi.$noticias.find({ id: 1 })
     const contenido = libros[0]
-    const relacionados = []
-    /*for(var i=0;i<8;i++) {
-      relacionados.push({
-        id: i,
-        clase: 'libros',
-        titulo: app.$lorem(1),
-        imagen: "imagen" + (((i+2) % 7) + 1) + ".jpg",
-      })
-    }*/
-    return { contenido, libro: contenido, relacionados };
+    const categoria = contenido.etiquetas.length?contenido.etiquetas[0].nombre:null
+    const filtro = categoria?{'etiquetas.nombre':categoria}:{}
+    const relacionados = await $strapi.find('libros', {...filtro, _limit: 8})
+    return { contenido, libro: contenido, relacionados: relacionados.map(x=>{return{...x,clase:'libros'}}) };
   },
 };
 </script>
