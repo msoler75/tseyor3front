@@ -7,15 +7,14 @@
         <nuxt-img v-else :src="cimage" :sizes="imageSizes" class="w-full" :alt="ctitle"></nuxt-img>
       </div>
       <div class="px-6 py-4">
+
+        {{cimage}}
         <NLink :to="chref">
           <section class="font-bold text-xl mb-2"
           >{{ ctitle }}</section>
         </NLink>
-        <p
-          v-if="!noText && ctext"
-          class="text-gray-700 text-base"
-          v-html="ctext"
-        />
+        <v-clamp v-if="!noText && ctext" autoresize :max-lines="5"
+        class="text-gray-700 text-base">{{cteaser}}</v-clamp>
       </div>
       <div v-if="showTags" class="px-6 pt-4 pb-2 mt-auto">
         <span
@@ -31,8 +30,10 @@
 </template>
 
 <script>
+import VClamp from 'vue-clamp'
 import CardMix from '@/mixins/card'
 export default {
+  components: { VClamp },
   mixins: [CardMix]
 }
 </script>

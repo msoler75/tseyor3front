@@ -43,15 +43,15 @@ export default {
       default: false
     },
     collection: {
-        type: String,
-        required: false,
-        default: undefined
+      type: String,
+      required: false,
+      default: undefined
     },
     center: {
-        type: Boolean,
-        required: false,
-        default: false
-      },
+      type: Boolean,
+      required: false,
+      default: false
+    },
     data: {
       type: Object,
       required: false,
@@ -72,21 +72,13 @@ export default {
       );
     },
     ccollection() {
-        return (
-        this.collection || 
-        this.data.collection || 
-        this.data.colleccion
-        )        
+      return this.collection || this.data.collection || this.data.colleccion;
     },
     chref() {
       const r =
         this.href || this.data.href || this.data.url || this.data.enlace;
       if (!r && this.data) {
-        return '/' + (
-          this.cclase +
-          "/" +
-          this.data.id
-        );
+        return "/" + (this.ccollection + "/" + this.data.id);
       }
       return r;
     },
@@ -99,19 +91,26 @@ export default {
         this.data.descripcion
       );
     },
+    cteaser() {
+      var t = this.teaser || this.data.description || this.data.descripcion;
+      if (!t) t = this.$md.render(this.ctext);
+      if (t.indexOf("</") > -1)
+        t = t.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ")
+      t = t.substr(0, 1024)
+      return t
+    },
     ctags() {
       return this.tags || this.data.tags || this.data.etiquetas;
     },
-    cclase () {
-      return this.data?this.data.clase:'default'
+    cclase() {
+      return this.data ? this.data.clase : "default";
     },
     cimage() {
       let src = this.image || this.data.image || this.data.imagen;
-      if(src && typeof src === 'object')
-         src = src.url
+      if (src && typeof src === "object") src = src.url;
       if (src && src.search("/") > -1) return src;
-      if(!src) src = null
+      if (!src) src = null;
       return src;
     }
   }
-}
+};

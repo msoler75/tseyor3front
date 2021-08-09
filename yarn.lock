@@ -14526,6 +14526,11 @@
   "resolved" "https://registry.npmjs.org/reserved-words/-/reserved-words-0.1.2.tgz"
   "version" "0.1.2"
 
+"resize-detector@^0.3.0":
+  "integrity" "sha512-R/tCuvuOHQ8o2boRP6vgx8hXCCy87H1eY9V5imBYeVNyNVpuL9ciReSccLj2gDcax9+2weXy3bc8Vv+NRXeEvQ=="
+  "resolved" "https://registry.npmjs.org/resize-detector/-/resize-detector-0.3.0.tgz"
+  "version" "0.3.0"
+
 "resolve-cwd@^3.0.0":
   "integrity" "sha512-OrZaX2Mb+rJCpH/6CpSqt9xFVpN++x01XnN2ie9g6P5/3xelLAkXWVADpdz1IHD/KFfEXyE6V0U01OQ3UO2rEg=="
   "resolved" "https://registry.npmjs.org/resolve-cwd/-/resolve-cwd-3.0.0.tgz"
@@ -16908,6 +16913,13 @@
     "serialize-javascript" "^4.0.0"
     "throttle-debounce" "^2.1.0"
 
+"vue-clamp@^0.4.0":
+  "integrity" "sha512-r8mw6Hpy2YDv9U/pJg13TZB2GNuDFo+sOwSLnyWU7yzVzA7SjU7t157+vOwEwSPKS/Tg9g0T0CkCnDLSPOOm6w=="
+  "resolved" "https://registry.npmjs.org/vue-clamp/-/vue-clamp-0.4.0.tgz"
+  "version" "0.4.0"
+  dependencies:
+    "resize-detector" "^0.3.0"
+
 "vue-cli-plugin-apollo@^0.22.2":
   "integrity" "sha512-HatlgKTChTnaSFTU2rdYDlL6Ui8t8Lzl9aqWiEd4vpbylZA/OlMFSbuNH33UoIgyJl783yo1WFod7FqNTj2zsg=="
   "resolved" "https://registry.npmjs.org/vue-cli-plugin-apollo/-/vue-cli-plugin-apollo-0.22.2.tgz"
@@ -17084,7 +17096,7 @@
   "resolved" "https://registry.npmjs.org/vue-toastification/-/vue-toastification-1.7.11.tgz"
   "version" "1.7.11"
 
-"vue@^2.0.0", "vue@^2.6.10", "vue@^2.6.12", "vue@^2.x", "vue@~2", "vue@2.x":
+"vue@^2.0.0", "vue@^2.5.17", "vue@^2.6.10", "vue@^2.6.12", "vue@^2.x", "vue@~2", "vue@2.x":
   "integrity" "sha512-x2284lgYvjOMj3Za7kqzRcUSxBboHqtgRE2zlos1qWaOye5yUmHn42LB1250NJBLRwEcdrB0JRwyPTEPhfQjiQ=="
   "resolved" "https://registry.npmjs.org/vue/-/vue-2.6.14.tgz"
   "version" "2.6.14"

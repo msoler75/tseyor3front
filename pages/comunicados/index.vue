@@ -16,6 +16,7 @@
           v-for="comunicado of comunicados"
           :data="comunicado"
           :key="comunicado.id"
+          collection="comunicados"
           class="mb-7 max-w-lg mx-auto"
         />
       </div>
@@ -38,22 +39,21 @@
 
 <script>
 export default {
-  asyncData({ app }) {
-    const comunicados = [];
-    for (let i = 0; i < 30; i++) {
-      comunicados.push({
-        id: i,
-        clase: "comunicados",
-        imagen: "imagen" + ((i % 8) + 1) + ".jpg",
-        titulo: app.$lorem(1, 7, 20),
-        texto: app.$lorem(7)
-      });
+  async asyncData({$strapi}) {
+    const filters = {
+        _start: 0,
+        _limit: 10, 
+        _sort:'published_at:DESC'
     }
-    return { comunicados };
+
+    const comunicados = await $strapi.find('comunicados', filters)
+
+    var hayMas = true
+    return { comunicados, filters, hayMas, ordenarPor:'fecha' }
   },
   computed: {
     comunicadosListado() {
-      return this.comunicados.slice(0, 10)
+      return this.comunicados
     }
   }
 };
