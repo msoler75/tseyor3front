@@ -10,6 +10,11 @@ export default {
       required: false,
       default: "xs:100vw xm:100vw"
     },
+    imageHeight: {
+      type: String,
+      required: false,
+      default: "md"
+    },
     title: {
       type: String,
       required: false,
@@ -111,6 +116,14 @@ export default {
       if (src && src.search("/") > -1) return src;
       if (!src) src = null;
       return src;
+    },
+    imageBg () {
+      const imgUrl = this.$img(this.cimage, {sizes: this.imageSizes})
+      return {
+        backgroundImage: `url('${imgUrl}')`,
+        backgroundPosition: 'center',
+        backgroundSize: 'cover'
+      }
     }
   }
 };

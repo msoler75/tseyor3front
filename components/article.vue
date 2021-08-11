@@ -19,4 +19,9 @@
   .article >>> p {
     @apply my-2;
   }
+
+  .article >>> img {
+    @apply mx-auto;
+    max-height: 90vh;
+  }
 </style>

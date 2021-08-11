@@ -249,10 +249,13 @@ export default {
   // [optional] markdownit options
   // See https://github.com/markdown-it/markdown-it
   markdownit: {
+    html: true, // Enable HTML tags in source
     runtime: true, // Support `$md()`
-    preset: 'default',
+    // preset: 'default',
+    xhtmlOut: true,
     linkify: true,
     breaks: true,
+    typographer:  true, // ... → …    (c) => ©     (tm) (TM) → ™
     use: [
       'markdown-it-div',
       '@gerhobbelt/markdown-it-attrs'

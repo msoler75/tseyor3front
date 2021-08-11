@@ -2,13 +2,14 @@
   <div class="card flex flex-col rounded overflow-hidden"
   :class="center?'text-center':''">
     <slot>
-      <div v-if="cimage" class="max-w-full h-40 overflow-hidden">
+      <!-- 
+      <div v-if="cimage" class="card-img max-w-full h-40 overflow-hidden">
         <img v-if="cimage.match(/^data:image/)" :src="cimage" class="w-full" />
         <nuxt-img v-else :src="cimage" :sizes="imageSizes" class="w-full" :alt="ctitle"></nuxt-img>
       </div>
+      -->
+      <div v-if="cimage" :style="imageBg" class="card-img max-w-full h-40"/>
       <div class="px-6 py-4">
-
-        {{cimage}}
         <NLink :to="chref">
           <section class="font-bold text-xl mb-2"
           >{{ ctitle }}</section>
@@ -37,3 +38,4 @@ export default {
   mixins: [CardMix]
 }
 </script>
+

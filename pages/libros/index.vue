@@ -24,8 +24,8 @@
   </SwipeX>
 </template>
 
-<script>
 
+<script>
 export default {
   async asyncData({$strapi}) {
     const filters = {
@@ -57,7 +57,7 @@ export default {
     }
   },
   methods: {
-    async cargarMas(keepStart) {
+    async cargarMas() {
       if(!this.hayMas) return
       this.filters._start = this.librosFiltrados.length
       const filtro = this.viendoCategoria!=='Nuevos'? {'etiquetas.nombre':this.viendoCategoria} : this.filters
@@ -71,38 +71,20 @@ export default {
       }
       this.cargando = false
     },
-    slugify(str) {
-      str = str.replace(/^\s+|\s+$/g, ""); // trim
-      str = str.toLowerCase();
-
-      // remove accents, swap ñ for n, etc
-      const from = "àáäâèéëêìíïîòóöôùúüûñç·/_,:;";
-      const to = "aaaaeeeeiiiioooouuuunc------";
-
-      for (let i = 0, l = from.length; i < l; i++)
-        str = str.replace(new RegExp(from.charAt(i), "g"), to.charAt(i));
-
-      str = str
-        .replace(/[^a-z0-9 -]/g, "") // remove invalid chars
-        .replace(/\s+/g, "-") // collapse whitespace and replace by -
-        .replace(/-+/g, "-"); // collapse dashes
-
-      return str;
-    }
   },
   computed: {
     librosFiltrados() {
       const cat = this.viendoCategoria
-      const bp = this.slugify(this.buscarPor)
+      const bp = this.$slugify(this.buscarPor)
       return this.libros.filter(
         libro => 
           (cat === "Nuevos" || libro.etiquetas.find(x=>x.nombre===cat)) &&
           (bp === "" ||
-            this.slugify(libro.titulo).search(bp)>-1 ||
-            this.slugify(libro.descripcion).search(bp)>-1)
+            this.$slugify(libro.titulo).search(bp)>-1 ||
+            this.$slugify(libro.descripcion).search(bp)>-1)
       );
     },
-    librosOrdenados() {
+    librosListados() {
       const ob = this.ordenarPor
       return this.librosFiltrados
       // .map(x=>{if(!x.timestamp)x.timestamp = this.$dayjs(x.updated_at)})
@@ -111,8 +93,8 @@ export default {
         a-b // a.nombre.localeCompare(b.nombre)
       })
     }
-  },
-};
+  }
+}
 </script>
 
 
