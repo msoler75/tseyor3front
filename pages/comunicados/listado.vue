@@ -1,31 +1,34 @@
 <template>
-    <div>
-        <h1>Listado de comunicados en formato web</h1>
-        <ul class="list-disc">
-          <li v-for="comunicado of comunicados" :key="comunicado.id">
-            <NLink :to="'/comunicados/' + comunicado.id">
-              {{ comunicado.titulo }}
-            </NLink>
-          </li>
-        </ul>
+  <div>
+    <h1>Listado de comunicados de lectura web</h1>
+    <Card class="p-4">
+    <ul class="list-none">
+      <li v-for="comunicado of comunicados" :key="comunicado.id" class="flex justify-between">
+        <NLink :to="'/comunicados/' + comunicado.id">
+          {{ comunicado.titulo }}
+        </NLink>
+        <div>
+          {{$dayjs(comunicado.fechaComunicado).format("DD/MMM/YYYY")}}
         </div>
+      </li>
+    </ul>
+    </Card>
+  </div>
 </template>
-
 
 <script>
 export default {
-  asyncData({ app }) {
-    const comunicados = [];
-    for (let i = 0; i < 300; i++) {
-      comunicados.push({
-        id: i,
-        clase: "comunicados",
-        imagen: "imagen" + ((i % 8) + 1) + ".jpg",
-        titulo: i + '. ' + app.$lorem(1, 7, 20),
-        texto: app.$lorem(7)
-      });
-    }
-    return { comunicados };
-  },
-};
+  async asyncData({ $strapi }) {
+    const comunicados = await $strapi.graphql({
+      query: `query { 
+        comunicados(sort: "fechaComunicado:desc") {
+          fechaComunicado
+          titulo
+          id
+        }
+      }`
+    });
+    return comunicados
+  }
+}
 </script>
