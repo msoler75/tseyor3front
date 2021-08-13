@@ -67,6 +67,23 @@ const numComunicadosInicial = 5
 
 export default {
   async asyncData({$strapi}) {
+
+// TO-DO: https://strapi.io/documentation/developer-docs/latest/development/plugins/graphql.html#customize-the-graphql-schema
+    /*const resultado = await $strapi.graphql({
+      query: `query comunicados {
+        comunicados(limit: 3, sort: "fechaComunicado:desc")  {
+          titulo
+          id: 
+          descripcion
+          imagen {
+            url
+          }
+        }
+      }`
+    })
+    return {comunicados: resultado.comunicados, hayMas: true, filters}
+    */
+
     const filters = {
         _start: 0,
         _limit: 5, 
