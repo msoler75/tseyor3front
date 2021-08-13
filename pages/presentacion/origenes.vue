@@ -21,7 +21,9 @@
               class="text-justify text-xs flex-shrink sm:text-sm md:text-base order-3 lg:order-1 lg:w-1/2 h-auto md:ml-2 p-2 lg:p-6 lg:mr-3 lg:ml-10 md:mr-7 xl:mr-10 lg:text-lg xl:text-xl"
             />
             <div class="w-full flex-grow lg:w-1/2 pb-7 max-h-1/2 lg:max-h-full lg:h-full order-2 pr-1 flex flex-col justify-center items-center lg:p-10">
-                <img :src="'/images/presentaciones/historia/' + slide.imagen" alt="slide.imagen" class="max-w-full max-h-full mx-auto"/>
+                <nuxt-img :src="'/images/presentaciones/origenes/' + slide.imagen" :alt="slide.caption" class="max-w-full max-h-full mx-auto"
+                sizes="xs:100vw xm:100vw sm:50vw md:25vw lg:50vw xl:50vw"
+                />
                 <p class="text-xs md:text-sm lg:text-base text-center mt-3">{{slide.caption}}</p>
             </div>
           </div>
@@ -69,14 +71,14 @@ export default {
         caption: 'Melinus',
         texto: `
           El primer contacto fue hace más de 40 años, a través de una experiencia de hipnosis, con un ser llamado *Melinus*, de *Ganímedes*, quien tiene una apariencia humana.
-          Melinus aprovechó durante unas sesiones de practicantes de hipnosis para *comunicarse telepáticamente* e invitó a los presentes a iniciar una ronda de conversaciones amistosas.
+          Melinus aprovechó durante unas sesiones de practicantes de hipnosis para *comunicarse telepáticamente* e invitar a los presentes a iniciar una ronda de conversaciones amistosas.
         `
       },
       {
         imagen: 'puente.jpg',
         caption: 'Nuestro amigo Josep - Puente',
         texto: `
-          Nuestro amigo y hermano *Josep*, de Cataluña, España, estuvo presente en esas sesiones de conversación con *Melinus*.
+          Nuestro amigo *Josep*, de Barcelona, España, estuvo presente en esas sesiones de conversación con *Melinus*.
           (Con el tiempo nuestro amigo recibiría la formación necesaria para ser hoy día el *canal de comunicación oficial* del grupo Tseyor)
         `
       },
@@ -91,7 +93,7 @@ export default {
         imagen: 'avistamientos.png',
         caption: 'Fotografía tomada el 31 de Agosto de 1982',
         texto: `
-          Nuestro hermano Josep, junto con otros hombres y mujeres, tuvieron en años sucesivos múltiples experiencias de *avistamientos de naves*, previa cita con los seres de las estrellas quienes determinaban un día, hora, y lugar, y aparecían con sus naves señalándoles que efectivamente *el contacto extraterrestre era auténtico*.
+          Nuestro canalizador *Josep*, junto con otros hombres y mujeres, tuvieron en años sucesivos múltiples experiencias de *avistamientos de naves*, previa cita con los seres de las estrellas quienes determinaban un día, hora, y lugar, y aparecían con sus naves señalándoles que efectivamente *el contacto extraterrestre era auténtico*.
         `
       },
       {
@@ -105,7 +107,7 @@ export default {
         imagen: 'silinur-olion.png',
         caption: 'Sili-Nur de Venus y Olión de Ganímedes',
         texto: `
-        Ostracita daría paso a *Sili-Nur*, psicóloga transpersonal de *Venus*, quien siguió alimentando ese fuego de inquietudes, conversaciones e interés por otros mundos y otros pensamientos, que en el fondo era todo parte de un proceso regenerador espiritual de gran calado. 
+        *Ostracita* daría paso a *Sili-Nur*, psicóloga transpersonal de *Venus*, quien siguió alimentando ese fuego de inquietudes, conversaciones e interés por otros mundos y otros pensamientos, siendo en el fondo todo parte de un proceso regenerador espiritual de gran calado. 
         También se les presentaría a *Olión*, de Ganímedes, cuyos bisabuelos son de origen terrestre.
         `
       },
@@ -136,7 +138,7 @@ export default {
       },
        {
         imagen: 'entidades.png',
-        caption: '',
+        caption: 'Los 3 pilares del proyecto: Asociación Tseyor Centro de Estudios Socioculturales, ONG Mundo Armónicao Tseyor, y Universidad Tseyor de Granada',
         texto: `
         Junto a nuevos miembros del grupo crearon la *Asociación Tseyor Centro de Estudios Socioculturales*.
         Años más tarde se unieron muchas más personas y se creó la *Universidad Tseyor de Granada*, y posteriormente la *ONG Mundo Armónico Tseyor*.
@@ -199,7 +201,7 @@ export default {
 }
 .h-carousel >>> svg {
   width: 100%;
-  height: auto;
+  /* height: auto; */
 }
 .card-img {
   width: 100%;
