@@ -8,12 +8,7 @@ export default {
     imageSizes: {
       type: String,
       required: false,
-      default: "xs:100vw xm:100vw"
-    },
-    imageHeight: {
-      type: String,
-      required: false,
-      default: "md"
+      default: "xs:100vw xm:100vw sm:100vw md:100vw lg:100vw"
     },
     title: {
       type: String,
@@ -113,8 +108,6 @@ export default {
     cimage() {
       let src = this.image || this.data.image || this.data.imagen;
       if (src && typeof src === "object") src = src.url;
-      if (src && src.search("/") > -1) return src;
-      if (!src) src = null;
       return src;
     },
     imageBg () {
@@ -126,4 +119,4 @@ export default {
       }
     }
   }
-};
+}

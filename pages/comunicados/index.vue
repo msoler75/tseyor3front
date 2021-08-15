@@ -21,9 +21,9 @@
     <div class="w-full flex flex-wrap">
       <div 
       class="lg:w-2/3 flex-shrink lg:pr-12">
-          <div 
+        <div 
           v-if="comunicadosListados.length"
-          >
+        >
         <Card
           v-for="comunicado of comunicadosListados"
           :data="comunicado"
