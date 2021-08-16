@@ -75,7 +75,11 @@ export default {
   renderMarkdown(md) {
     var html = this.$md.render(md)
     console.warn(html)
-    html = html.replace(/<p>(?:<strong>)?(<img[^>]+>)(?:<\/strong>)?<\/p>/gm, '$1').replace(/<p>(<img[^>]+>)<br\s*\/?>\n(.+?)<\/p>/g, '<figure>$1<figcaption>$2</figcaption></figure>')
+    html = html
+      .replace(/(<img[^>]+>)<br \/>\n(<img)/gm, '$1\n$2')
+      .replace(/(<img[^>]+>)<br \/>\n(<img)/gm, '$1\n$2')
+      .replace(/<p>(?:<strong>)?((?:<img[^>]+>\n?)+)(?:<\/strong>)?<\/p>/gm, '$1')
+      .replace(/<p>(<img[^>]+>)<br\s*\/?>\n(.+?)<\/p>/g, '<figure>$1<figcaption>$2</figcaption></figure>')
     return html
   }
 }
