@@ -180,8 +180,4 @@ export default {
 
 <style scoped>
   section >>> .article h2:first-of-type {display: none}
-  section >>> .article p {
-    @apply mb-4;
-    /* text-indent: 2rem; */
-  }
 </style>

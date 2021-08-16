@@ -63,7 +63,7 @@
           </div>
 
           <!-- <nuxt-img :src="'./images/' + entrada.imagen" /> -->
-          <nuxt-img :src="cimage" />
+          <!-- <nuxt-img :src="cimage" /> -->
 
           <!-- article content -->
           <Article class="my-9 text-justify" v-html="renderMarkdown(entrada.texto)" />
@@ -140,3 +140,7 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+  section >>> .article h2:first-of-type {display: none}
+</style>
