@@ -84,8 +84,8 @@ export default {
       {
         const data = p0.match(/src=['"]([^'"]+)['"]/)
         if(!data||!data[1]) return p0
-        const src = this.$img(data[1], {sizes: "xs:100vw xm:100vw sm:100vw md:100vw lg:100vw xl:100vw"})
-        if(!src) return p0
+        // const src = this.$img(data[1], {sizes: "xs:100vw xm:100vw sm:100vw md:100vw lg:100vw xl:100vw"})
+        // if(!src) return p0
         const xs = this.$img(data[1], {width: 320})
         const xm = this.$img(data[1], {width: 480})
         const sm = this.$img(data[1], {width: 640})
