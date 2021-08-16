@@ -707,7 +707,7 @@ nav#submenu {
   content: "";
   @apply fixed left-0 top-0 w-screen h-screen bg-center bg-no-repeat bg-cover bg-fixed;
   z-index:-1;
-  background-color:aliceblue;
+  background-color:#f9fcff;
 }
 .dark .main-wrapper:before {
   background-color: black;
