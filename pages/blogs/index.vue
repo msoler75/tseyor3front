@@ -25,7 +25,7 @@ export default {
   async asyncData({$strapi}) {
       const filters = {
           _start: 0,
-          _limit: 10, 
+          _limit: 12, 
           _sort:'updated_at:DESC'
       }
 

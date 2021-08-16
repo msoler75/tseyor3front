@@ -135,43 +135,13 @@ export default {
     };
   },
   mixins: [vercontenidomixin],
-  asyncData({ app, route }) {
-    // const noticiasGuays = await $strapi.$noticias.find({ id: 1 })
-    const id = parseInt(route.params.id);
-    const relacionados = [];
-
-    for (var i = 0; i < 9; i++) {
-      relacionados.push({
-        id: i + 1,
-        clase: "entradas",
-        titulo: app.$lorem(1),
-        imagen: "imagen" + (((i + 1) % 6) + 1) + ".jpg"
-      });
-    }
-
-    const contenido = {
-      id,
-      clase: "entradas",
-      titulo: app.$lorem(1),
-      imagen: "imagen" + ((id % 6) + 1) + ".jpg",
-      texto:
-        "# titulo\n\n" +
-        app
-          .$lorem(-15)
-          .replace(/<p>/g, "\n")
-          .replace(/<\/p>/g, ""),
-      comentarios: Math.round(Math.random() * 33),
-      likes: Math.round(Math.random() * 77),
-      blog: {
-        id: ((id * 3 + 5) % 3) + 1,
-        nombre: "blog " + (((id * 3 + 5) % 3) + 1),
-        imagen: "imagen" + (((id * 3 + 5) % 3) + 1) + ".jpg",
-        descripcion: app.$lorem(3),
-        clase: "blogs"
-      },
-      relacionados
-    };
+  async asyncData({ app, $strapi, route, redirect }) {
+    const id = route.params.id
+    const entradas = await $strapi.find('entradas', id.match(/\d+/)?{id}:{slug:id})
+    const contenido = entradas[0]
+    contenido.likes = 3
+    contenido.comentarios = 3
     return { contenido, entrada: contenido };
-  }
+  },
 };
 </script>
