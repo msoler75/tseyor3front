@@ -76,10 +76,10 @@ export default {
     var html = this.$md.render(md)
     console.warn(html)
     html = html
-      .replace(/(<img[^>]+>)<br \/>\n(<img)/gm, '$1\n$2')
-      .replace(/(<img[^>]+>)<br \/>\n(<img)/gm, '$1\n$2')
-      .replace(/<p>(?:<strong>)?((?:<img[^>]+>\n?)+)(?:<\/strong>)?<\/p>/gm, '$1')
-      .replace(/<p>(<img[^>]+>)<br\s*\/?>\n(.+?)<\/p>/g, '<figure>$1<figcaption>$2</figcaption></figure>')
+      .replace(/(<img[^>]+>)<br \/>\n?\s*(<img)/gm, '$1\n$2')
+      .replace(/(<img[^>]+>)<br \/>\n?\s*(<img)/gm, '$1\n$2')
+      .replace(/<p[^>]*>(?:<strong>)?((?:\s*<img[^>]+>[\s\n]*)+)(?:<\/strong>)?<\/p>/gm, '$1')
+      .replace(/<p[^>]*>(<img[^>]+>)<br\s*\/?>\n(.+?)<\/p>/g, '<figure>$1<figcaption>$2</figcaption></figure>')
     return html
   }
 }
