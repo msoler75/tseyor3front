@@ -129,11 +129,6 @@
 <script>
 import vercontenidomixin from "@/mixins/vercontenido.js";
 export default {
-  data() {
-    return {
-      viendoCompartir: false
-    };
-  },
   mixins: [vercontenidomixin],
   async asyncData({ app, $strapi, route, redirect }) {
     const id = route.params.id

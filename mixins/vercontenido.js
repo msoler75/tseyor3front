@@ -4,6 +4,11 @@ export default {
       title: this.$teaser(this.title, 48) + ' — TSEYOR'
     }
   },
+  data() {
+    return {
+      viendoCompartir: false
+    };
+  },
   computed: {
     id () {
       return parseInt(this.$route.params.id)
