@@ -70,5 +70,12 @@ export default {
       console.log('noticias_id, watch title =', value)
       // this.$store.commit('setTitle', this.title)
     }
+  },
+  methods: {
+  renderMarkdown(md) {
+    var html = this.$md.render(md)
+    html = html.replace(/<p>(<img[^>]+>)<\/p>/g, '$1')
+    return html
   }
+}
 }

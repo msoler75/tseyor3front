@@ -140,11 +140,6 @@ export default {
       const filtro = { id_ne: id, id_lt: id+10, id_gt: id-10 }
       this.relacionados = await $strapi.find('comunicados', {...filtro, _limit: 7})
     },
-    renderMarkdown(md) {
-      var html = this.$md.render(md)
-      html = html.replace(/<p>(<img[^>]+>)<\/p>/g, '$1')
-      return html
-    }
   },
   data() {
     return {

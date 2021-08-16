@@ -55,7 +55,7 @@
           <nuxt-img :src="cimage" />
 
           <!-- article content -->
-          <Article class="my-9 text-justify" v-html="$md.render(ctext)" />
+          <Article class="my-9 text-justify" v-html="renderMarkdown(comunicado.texto)" />
         </section>
       </div>
 
