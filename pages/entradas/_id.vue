@@ -66,7 +66,7 @@
           <nuxt-img :src="cimage" />
 
           <!-- article content -->
-          <Article class="my-9 text-justify" v-html="renderMarkdown(comunicado.texto)" />
+          <Article class="my-9 text-justify" v-html="renderMarkdown(entrada.texto)" />
         </section>
       </div>
 
