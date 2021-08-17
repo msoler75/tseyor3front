@@ -1,5 +1,5 @@
 import Path from 'path';
-import sizeOf from "image-size";
+// import sizeOf from "image-size";
 import { LoremIpsum } from "lorem-ipsum";
 
 export default ({ app, $config, $md, $img }, inject) => {
@@ -57,7 +57,7 @@ export default ({ app, $config, $md, $img }, inject) => {
 
   const renderMarkdownServer = (md) => {
     var html = $md.render(md)
-    // console.warn(html)
+    console.warn(html)
     html = html
       .replace(/(<img[^>]+>)<br \/>\n?\s*(<img)/gm, '$1\n$2')
       .replace(/(<img[^>]+>)<br \/>\n?\s*(<img)/gm, '$1\n$2')
@@ -69,7 +69,7 @@ export default ({ app, $config, $md, $img }, inject) => {
         if(!data||!data[1]) return p0
         const src = data[1]
         var sizes = 'xs:100vw xm:100vw sm:100vw md:100vw lg:100vw'
-        if(src.charAt(0)==='/') {
+        if(false && src.charAt(0)==='/') {
           // console.warn('publicFolder', $config)
           const file = Path.resolve($config.publicFolder, src.substr(1))
           // console.log('file', file)

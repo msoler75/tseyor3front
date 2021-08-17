@@ -265,9 +265,11 @@ export default {
     linkify: true,
     breaks: true,
     typographer:  true, // ... → …    (c) => ©     (tm) (TM) → ™
+    autofill: true, // for markdown-it-imsize
     use: [
       'markdown-it-div',
-      '@gerhobbelt/markdown-it-attrs'
+      '@gerhobbelt/markdown-it-attrs',
+      '@jochenlinnemann/markdown-it-imsize'
     ]
   },
 

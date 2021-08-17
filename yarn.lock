@@ -1788,6 +1788,11 @@
     "@types/yargs" "^15.0.0"
     "chalk" "^4.0.0"
 
+"@jochenlinnemann/markdown-it-imsize@^2.0.1-style2":
+  "integrity" "sha512-+2py2HuwPmWww3GNspqqwWyhjbSVY29LaCUr65KOkqLqUotEGzfQfpXuF7Y3ci80QgGzGIAmo1IiQAwEydlq9g=="
+  "resolved" "https://registry.npmjs.org/@jochenlinnemann/markdown-it-imsize/-/markdown-it-imsize-2.0.1-style2.tgz"
+  "version" "2.0.1-style2"
+
 "@josephg/resolvable@^1.0.0":
   "integrity" "sha512-CtzORUwWTTOTqfVtHaKRJ0I1kNQd1bpn3sUh8I3nJDVY+5/M/Oe1DnEWzPQvqq/xPIIkzzzIP7mfCoAjFRvDhg=="
   "resolved" "https://registry.npmjs.org/@josephg/resolvable/-/resolvable-1.0.1.tgz"
@@ -9315,13 +9320,6 @@
   "resolved" "https://registry.npmjs.org/image-meta/-/image-meta-0.0.1.tgz"
   "version" "0.0.1"
 
-"image-size@^1.0.0":
-  "integrity" "sha512-JLJ6OwBfO1KcA+TvJT+v8gbE6iWbj24LyDNFgFEN0lzegn6cC6a/p3NIDaepMsJjQjlUWqIC7wJv8lBFxPNjcw=="
-  "resolved" "https://registry.npmjs.org/image-size/-/image-size-1.0.0.tgz"
-  "version" "1.0.0"
-  dependencies:
-    "queue" "6.0.2"
-
 "immutable@~3.7.6":
   "integrity" "sha1-E7TTyxK++hVIKib+Gy665kAHHks="
   "resolved" "https://registry.npmjs.org/immutable/-/immutable-3.7.6.tgz"
@@ -14030,13 +14028,6 @@
   "integrity" "sha512-NuaNSa6flKT5JaSYQzJok04JzTL1CA6aGhv5rfLW3PgqA+M2ChpZQnAC8h8i4ZFkBS8X5RqkDBHA7r4hej3K9A=="
   "resolved" "https://registry.npmjs.org/queue-microtask/-/queue-microtask-1.2.3.tgz"
   "version" "1.2.3"
-
-"queue@6.0.2":
-  "integrity" "sha512-iHZWu+q3IdFZFX36ro/lKBkSvfkztY5Y7HMiPlOUjhupPcG2JMfst2KKEpu5XndviX/3UhFbRngUPNKtgvtZiA=="
-  "resolved" "https://registry.npmjs.org/queue/-/queue-6.0.2.tgz"
-  "version" "6.0.2"
-  dependencies:
-    "inherits" "~2.0.3"
 
 "quick-lru@^5.1.1":
   "integrity" "sha512-WuyALRjWPDGtt/wzJiadO5AXY+8hZ80hVpe6MyivgraREW751X3SbhRvG3eLKOYN+8VEvqLcf3wdnt44Z4S4SA=="

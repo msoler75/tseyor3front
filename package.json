@@ -14,6 +14,7 @@
   "dependencies": {
     "@blokwise/dynamic": "^1.4.1",
     "@gerhobbelt/markdown-it-attrs": "^4.0.0-22",
+    "@jochenlinnemann/markdown-it-imsize": "^2.0.1-style2",
     "@nuxt/content": "^1.14.0",
     "@nuxtjs/apollo": "^4.0.1-rc.5",
     "@nuxtjs/auth": "^4.9.1",
@@ -31,7 +32,6 @@
     "graphql": "^15.5.0",
     "graphql-tag": "^2.12.4",
     "hooper": "^0.3.4",
-    "image-size": "^1.0.0",
     "ipx": "^0.7.1",
     "lorem-ipsum": "^2.0.3",
     "markdown-it": "^12.1.0",
