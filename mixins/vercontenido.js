@@ -84,27 +84,20 @@ export default {
       {
         const data = p0.match(/src=['"]([^'"]+)['"]/)
         if(!data||!data[1]) return p0
-        const xs = this.$img(data[1], {width: 320})
-        const xm = this.$img(data[1], {width: 480})
-        const sm = this.$img(data[1], {width: 640})
-        const md = this.$img(data[1], {width: 768})
-        const lg = this.$img(data[1], {width: 1024})
-        return  `<picture loading='lazy'>
-  <source media="(min-width: 320px)"
-          sizes="100vw"
-          srcset="${xs} 320w,
-                  ${xm} 480w,
-                  ${sm} 640w,
-                  ${md} 768w,
-                  ${lg} 1024w">
-  <img src="${lg}" loading='lazy'
-       sizes="100vw"
-       srcset="${xs} 320w,
-              ${xm} 480w,
-              ${sm} 640w,
-              ${md} 768w,
-              ${lg} 1024w">
-</picture>`
+        const src = data[1]
+        const img = this.$img.getSizes(src, {
+          sizes: 'xs:100vw xm:100vw sm:100vw md:100vw lg:100vw',
+          modifiers: {
+            format: 'webp',
+            quality: 90,
+            //height: 500,
+          }})
+        console.warn(img)       
+        return  `<img
+        src="${this.$img(src, { quality: 70 })}"
+        srcset="${img.srcset}"
+        sizes="${img.sizes}"
+      >`
       })
     return html
   }

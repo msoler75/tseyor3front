@@ -66,7 +66,7 @@
           <!-- <nuxt-img :src="cimage" /> -->
 
           <!-- article content -->
-          <Article class="my-9 text-justify" v-html="renderMarkdown(entrada.texto)" />
+          <Article class="my-9 text-justify" v-html="entrada.textoHTML" />
         </section>
       </div>
 
@@ -134,6 +134,7 @@ export default {
     const id = route.params.id
     const entradas = await $strapi.find('entradas', id.match(/\d+/)?{id}:{slug:id})
     const contenido = entradas[0]
+    contenido.textoHTML = app.$renderMarkdownServer(contenido.texto)
     contenido.likes = 3
     contenido.comentarios = 3
     return { contenido, entrada: contenido };
