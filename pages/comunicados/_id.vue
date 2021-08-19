@@ -53,7 +53,7 @@
           </div>
 
           <!-- article content -->
-          <Article class="my-9 text-justify" v-html="renderMarkdown(comunicado.texto)" />
+          <Article class="my-9 text-justify" v-html="comunicado.textoHTML" />
         </section>
       </div>
 
@@ -120,17 +120,7 @@ export default {
     const id = route.params.id
     const comunicados = await $strapi.find('comunicados', id.match(/\d+/)?{id}:{slug:id})
     const contenido = comunicados[0]
-    // const filtro = { id_ne: id, id_lt: id+10, id_gt: id-10 }
-    // const relacionados = [] // await $strapi.find('comunicados', {...filtro, _limit: 16})
-    /*const relacionados = await $strapi.graphql({
-  query: `query {
-    comunicados {
-      id
-      titulo
-      imagen
-    }
-  }`}
-    ); */
+    contenido.textoHTML = app.$renderMarkdownServer(contenido.texto, contenido.imagenes)
     contenido.likes = 3
     contenido.comentarios = 3
     return { contenido, comunicado: contenido };

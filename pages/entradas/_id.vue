@@ -136,7 +136,7 @@ export default {
       const id = route.params.id
     const entradas = await $strapi.find('entradas', id.match(/\d+/)?{id}:{slug:id})
     const contenido = entradas[0]
-    contenido.textoHTML = app.$renderMarkdownServer(contenido.texto)
+    contenido.textoHTML = app.$renderMarkdownServer(contenido.texto, contenido.imagenes)
     contenido.likes = 3
     contenido.comentarios = 3
     return { contenido, entrada: contenido };
