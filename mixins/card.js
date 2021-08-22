@@ -8,7 +8,7 @@ export default {
     imageSizes: {
       type: String,
       required: false,
-      default: "xs:100vw xm:100vw sm:100vw md:100vw lg:100vw"
+      default: "sizes"
     },
     title: {
       type: String,
@@ -111,7 +111,7 @@ export default {
       return src;
     },
     imageBg () {
-      const imgUrl = this.$img(this.cimage, {sizes: this.imageSizes})
+      const imgUrl = this.$img(this.cimage, {width: 640, format: 'webp', quality: 90})
       return {
         backgroundImage: `url('${imgUrl}')`,
         backgroundPosition: 'center',
