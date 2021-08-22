@@ -63,61 +63,66 @@
 
 <script>
 const minLengthBuscar = 2
-const numComunicadosInicial = 5
+const query_comunicados = `comunicados(start: %start, limit: %limit, sort: "fechaComunicado:desc" %where)  {
+          id
+          slug
+          fechaComunicado
+          titulo
+          descripcion
+          imagen {
+            url
+            width
+            height
+          }
+        }`
+
+const query_where = `, where: { _or: [{ titulo_contains: "%search" }, { texto_contains: "%search" }] }`
 
 export default {
   async asyncData({$strapi}) {
 
-// TO-DO: https://strapi.io/documentation/developer-docs/latest/development/plugins/graphql.html#customize-the-graphql-schema
-    /*const resultado = await $strapi.graphql({
-      query: `query comunicados {
-        comunicados(limit: 3, sort: "fechaComunicado:desc")  {
-          titulo
-          id: 
-          descripcion
-          imagen {
-            url
-          }
-        }
-      }`
-    })
-    return {comunicados: resultado.comunicados, hayMas: true, filters}
-    */
-
-    const filters = {
+   const filters = {
         _start: 0,
         _limit: 5, 
         _sort:'fechaComunicado:DESC'
     }
 
-    const comunicados = await $strapi.find('comunicados', filters)
+    // TO-DO: https://strapi.io/documentation/developer-docs/latest/development/plugins/graphql.html#customize-the-graphql-schema
+    const resultado = await $strapi.graphql({
+      query:
+        `query {
+          ${query_comunicados}
+          recientes:comunicados(limit: 10, sort: "fechaComunicado:desc") {
+            id 
+            slug
+            titulo
+          }
+        }`
+        .replace('%start',filters._start) 
+        .replace('%limit',filters._limit) 
+        .replace('%where', '')
+    })
 
-    var hayMas = true
-    return { comunicados, filters, hayMas }
+    return {comunicados: resultado.comunicados, recientes: resultado.recientes, filters}
+
+    // const comunicados = await $strapi.find('comunicados', filters)
+    // return { comunicados, filters }
   },
   computed: {
-    comunicadosFiltrados() {
-      const bp = this.buscandoPor && this.buscandoPor.length>=minLengthBuscar ? this.$slugify(this.buscandoPor) : null
-      return this.comunicados
-        .map(x=>{if(!x.fulltext)x.fulltext=this.$slugify(x.titulo+'\n'+x.texto); return x})
-        .filter(x=>{
-        if(!bp) return true
-        return x.fulltext.search(bp)>-1
-      })
-    },
     comunicadosListados() {
-      return this.comunicadosFiltrados
+      return this.comunicados
       .map(x=>{if(!x.timestamp)x.timestamp = this.$dayjs(x.fechaComunicado).unix(); return x})
       .sort((a,b)=>{
         return b.timestamp-a.timestamp
       })
     },
     comunicadosRecientes() {
-      return this.comunicados.slice(0, 10)
+      return this.recientes
     }
   },
   data() {
     return {
+      hayMas: true,
       buscarPor: '',
       buscandoPor: '',
       cargando: false
@@ -125,15 +130,13 @@ export default {
   },
   methods: {
     buscar() {
-      console.log('buscar')
+      // console.log('buscar')
       if(this.buscarPor===this.buscandoPor) return
       
-      // recortamos al listado inicial para evitar efectos indeseados de búsquedas sucesivas
-      if(this.buscandoPor)
-        this.comunicados.splice(10, this.comunicados.length-10)
+      this.comunicados.splice(0, this.comunicados.length)
 
       this.hayMas = true
-      this.buscandoPor = this.buscarPor
+      this.buscandoPor = this.buscarPor.replace(/[\[\]\(\)]/g, '')
       // this.cargarMas()
     },
     async cargarMas() {
@@ -141,9 +144,21 @@ export default {
       this.filters._start = this.comunicadosListados.length
       const filtro = this.buscandoPor&&this.buscandoPor.length>=minLengthBuscar? {...this.filters, '_q':this.buscandoPor} : this.filters
       this.cargando = true
-      const comunicados = await this.$strapi.find('comunicados', filtro)
-      this.hayMas = comunicados.length===this.filters._limit
-      for(const comunicado of comunicados)
+      // const comunicados = await this.$strapi.find('comunicados', filtro)
+
+      const result = await this.$strapi.graphql({
+        query:
+          `query {
+          ${query_comunicados},
+          } `
+          .replace(/%start/g,this.filters._start) 
+          .replace(/%limit/g,this.filters._limit) 
+          .replace(/%where/g, filtro._q ? query_where : '') 
+          .replace(/%search/g, filtro._q)
+      })
+      // console.log('result', result)
+      this.hayMas = result.comunicados.length===this.filters._limit
+      for(const comunicado of result.comunicados)
       {
         if(!this.comunicados.find(x=>x.id===comunicado.id))
           this.comunicados.push(comunicado)
