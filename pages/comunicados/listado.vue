@@ -12,23 +12,57 @@
         </div>
       </li>
     </ul>
+    <div v-show="hayMas && !cargando" v-observe-visibility="cargarMas" class="mt-3 flex justify-center">
+          <!-- <button @click="cargarMas" class="btn">Cargar Más...</button> -->
+        </div>
+        <div v-show="cargando" class="mt-16 h-10 flex justify-center">
+          <span class="text-xs">
+            Cargando...
+          </span>
+        </div>
     </Card>
   </div>
 </template>
 
 <script>
-export default {
-  async asyncData({ $strapi }) {
-    const comunicados = await $strapi.graphql({
-      query: `query { 
-        comunicados(sort: "fechaComunicado:desc") {
+const query_comunicados = 
+    `query { 
+        comunicados(start: %start, sort: "fechaComunicado:desc") {
           fechaComunicado
           titulo
           id
         }
       }`
+
+export default {
+  async asyncData({ $strapi }) {
+    const result = await $strapi.graphql({
+      query: 
+        query_comunicados
+          .replace(/%start/g, "0")
     });
-    return comunicados
+    return result
+  },
+  data () {
+    return {
+      hayMas: true,
+      cargando: false
+    }
+  },
+  methods: {
+    async cargarMas() {
+      if(this.cargando) return
+      this.cargando = true
+      const result = await this.$strapi.graphql({
+      query: 
+        query_comunicados
+          .replace(/%start/g, this.comunicados.length)
+      })
+      this.hayMas = result.comunicados.length > 0
+      for(const comunicado of result.comunicados)
+        this.comunicados.push(comunicado)
+      this.cargando = false
+    }
   }
 }
 </script>
