@@ -4,7 +4,7 @@
     <Card class="p-4">
     <ul class="list-none">
       <li v-for="comunicado of comunicados" :key="comunicado.id" class="flex justify-between">
-        <NLink :to="'/comunicados/' + comunicado.id">
+        <NLink :to="'/comunicados/' + comunicado.slug">
           {{ comunicado.titulo }}
         </NLink>
         <div>
@@ -30,6 +30,7 @@ const query_comunicados =
         comunicados(start: %start, sort: "fechaComunicado:desc") {
           fechaComunicado
           titulo
+          slug
           id
         }
       }`
