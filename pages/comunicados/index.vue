@@ -47,7 +47,7 @@
         <h2 class="text-center">Recientes</h2>
         <ul class="list-disc ml-5">
           <li v-for="comunicado of comunicadosRecientes" :key="comunicado.id">
-            <NLink :to="'/comunicados/' + comunicado.id">
+            <NLink :to="'/comunicados/' + comunicado.slug">
               {{ comunicado.titulo }}
             </NLink>
           </li>

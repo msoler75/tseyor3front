@@ -78,7 +78,7 @@ export default {
       const r =
         this.href || this.data.href || this.data.url || this.data.enlace;
       if (!r && this.data) {
-        return "/" + (this.ccollection + "/" + this.data.id);
+        return "/" + (this.ccollection + "/" + (this.data.slug || this.data.id));
       }
       return r;
     },

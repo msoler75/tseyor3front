@@ -30,7 +30,7 @@
         </div>
 
         <!-- article wrapper -->
-        <section class="max-w-full w-[96rem]">
+        <ArticleWrapper>
           <!-- article heading -->
           <h1 class="">{{ ctitle }}</h1>
 
@@ -54,7 +54,7 @@
 
           <!-- article content -->
           <Article class="my-9 text-justify" v-html="comunicado.textoHTML" />
-        </section>
+        </ArticleWrapper>
       </div>
 
       <section class="my-7 lg:my-16">
@@ -118,7 +118,7 @@ export default {
   mixins: [vercontenidomixin],
   async asyncData({ app, $strapi, route, redirect }) {
     const id = route.params.id
-    const comunicados = await $strapi.find('comunicados', id.match(/\d+/)?{id}:{slug:id})
+    const comunicados = await $strapi.find('comunicados', id.match(/^\d+$/)?{id}:{slug:id})
     const contenido = comunicados[0]
     contenido.textoHTML = app.$renderMarkdownServer(contenido.texto, contenido.imagenes)
     contenido.likes = 3

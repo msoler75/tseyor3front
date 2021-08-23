@@ -30,7 +30,7 @@
         </div>
 
         <!-- article wrapper -->
-        <section>
+        <ArticleWrapper>
           <!-- article heading -->
           <h1 class="">{{ ctitle }}</h1>
 
@@ -67,7 +67,7 @@
 
           <!-- article content -->
           <Article class="my-9 text-justify" v-html="entrada.textoHTML" />
-        </section>
+        </ArticleWrapper>
       </div>
 
       <section class="my-7 lg:my-16">
