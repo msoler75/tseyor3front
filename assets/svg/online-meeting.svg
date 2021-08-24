@@ -9,11 +9,11 @@
   </linearGradient>
  </defs>
  <g id="Layer 1" transform="scale(1 -1)">
-  <path d="M 41.91,189.372 L 41.91,77.274 C 41.91,65.073 51.814,55.17 64.014,55.17 L 242.025,55.17 C 254.226,55.17 264.129,65.073 264.129,77.274 L 264.129,189.372 C 264.129,201.572 254.226,211.476 242.025,211.476 L 64.014,211.476 C 51.814,211.476 41.91,201.572 41.91,189.372 Z" stroke-width="10.055" stroke="#333333" stroke-linejoin="miter" marker-start="none" marker-end="none" fill="url(#LinearGradient)"/>
-  <path d="M 44.147,81.616 L 44.147,84.801 L 263.522,84.801 L 263.522,81.616 L 44.147,81.616 Z" stroke-width="4.469" stroke-linejoin="miter" stroke="#333333" marker-start="none" marker-end="none"/>
-  <g id="Group" stroke-linejoin="miter" stroke="#1c2c30" stroke-width="10.055" fill="#71b0c1">
+  <g id="Group" stroke-linejoin="miter" stroke="#333333" stroke-width="10.055" fill="#71b0c1">
    <path d="M 125.497,49.385 L 122.003,19.108 C 121.53,15.206 123.869,11.75 127.269,11.755 L 176.509,11.755 C 179.909,11.75 181.984,15.206 181.212,19.108 L 175.404,49.385 C 174.856,52.165 172.297,54.261 169.652,54.265 L 130.875,54.265 C 128.231,54.261 125.833,52.165 125.497,49.385 Z" marker-start="none" marker-end="none"/>
   </g>
+  <path d="M 41.91,189.372 L 41.91,77.274 C 41.91,65.073 51.814,55.17 64.014,55.17 L 242.025,55.17 C 254.226,55.17 264.129,65.073 264.129,77.274 L 264.129,189.372 C 264.129,201.572 254.226,211.476 242.025,211.476 L 64.014,211.476 C 51.814,211.476 41.91,201.572 41.91,189.372 Z" stroke-width="10.055" stroke="#333333" stroke-linejoin="miter" marker-start="none" marker-end="none" fill="url(#LinearGradient)"/>
+  <path d="M 44.147,81.616 L 44.147,84.801 L 263.522,84.801 L 263.522,81.616 L 44.147,81.616 Z" stroke-width="4.469" stroke-linejoin="miter" stroke="#333333" marker-start="none" marker-end="none"/>
   <g id="Group_1" stroke="#00bf02" stroke-width="6.703" fill="#7fff81">
    <path d="M 89.382,170.992 C 93.065,178.105 101.829,180.889 108.941,177.205 C 116.054,173.522 118.838,164.758 115.154,157.645 C 111.471,150.533 102.707,147.749 95.594,151.433 C 88.482,155.116 85.698,163.88 89.382,170.992 Z" stroke-linejoin="miter" marker-start="none" marker-end="none"/>
    <path d="M 84.192,127.612 C 89.586,138.028 102.419,142.106 112.834,136.71 C 120.196,132.897 124.391,125.369 124.315,117.607 L 81.81,117.607 C 81.768,120.98 82.531,124.41 84.192,127.612 Z" stroke-linejoin="round" marker-start="none" marker-end="none"/>
