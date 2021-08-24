@@ -3,8 +3,10 @@
     v-model="viendoCategoria"
     :values="categorias"
   >
-    <tabs compact group="fixed" v-model="viendoCategoria" :labels="categorias" class=""/>
-    <divider class="mt-0" />
+    <div class="flex">
+      <tabs compact group="fixed" v-model="viendoCategoria" :labels="categorias" class="mx-auto mb-20 lg:mb-32"/>
+    </div>
+    
     <section class="flex justify-evenly">
       <Glass>
       <scrollactive
@@ -19,14 +21,14 @@
         <div class="hidden lg:grid lg:grid-cols-1 xl:grid-cols-3 gap-4">
           <template v-for="evento of eventosProximos">
             <div class="hidden xl:block font-bold" :key="evento.id">
-              {{ $ucFirst($dayjs(evento.fechaInicio).fromNow()) }}
+              {{ $ucFirst($dayjs(evento.fechaComienzo).fromNow()) }}
             </div>
             <a
               :key="'ev-'+evento.id"
               :href="'#evento-' + evento.id"
               class="scrollactive-item xl:col-span-2"
               ><span class="font-bold text-lg">{{
-                $dayjs(evento.fechaInicio).format("D MMM YYYY")
+                $dayjs(evento.fechaComienzo).format("D MMM YYYY")
               }}</span>
               <br />
               <span>{{ evento.titulo }}</span>
@@ -47,7 +49,7 @@
               :href="'#evento-' + evento.id"
               class="scrollactive-item xl:col-span-2"
               ><span class="font-bold text-lg">{{
-                $dayjs(evento.fechaInicio).format("D MMM YYYY")
+                $dayjs(evento.fechaComienzo).format("D MMM YYYY")
               }}</span>
               <br />
               <span>{{ evento.titulo }}</span>
@@ -66,6 +68,7 @@
           :key="'evvvv'+evento.id"
           :id="'evento-' + evento.id"
           :data="evento"
+          collection="eventos"
           class="mb-4 max-w-md"
         />
       </div>
@@ -78,38 +81,55 @@
           :key="'past-'+evento.id"
           :id="'evento-' + evento.id"
           :data="evento"
+          collection="eventos"
         />
 </Grid>
   </SwipeX>
 </template>
 
 <script>
+const minLengthBuscar = 2
+const query_eventos = `eventos(start: %start, limit: %limit, sort: "fechaComienzo:desc" %where)  {
+          id
+          slug
+          fechaComienzo
+          titulo
+          tipoEvento
+          descripcion
+          imagen {
+            url
+            width
+            height
+          }
+        }`
+
+const query_where = `, where: { _or: [{ titulo_contains: "%search" }, { descripcion_contains: "%search" }, { texto_contains: "%search" }] }`
+
 export default {
-  asyncData({ app }) {
-    const eventos = [];
-    for (let i = 1; i < 44; i++) {
-      eventos.push({
-        id: i,
-        clase: i%4===1?"cursos":"eventos",
-        imagen: "imagen" + ((i % 8) + 1) + ".jpg",
-        titulo: i%4===1?"Curso Holístico online":app.$lorem(1, 5, 12),
-        texto: app.$lorem(3),
-        fechaInicio:
-          2018 +
-          Math.floor(Math.random() * 4) +
-          "/" +
-          Math.ceil(Math.random() * 12) +
-          "/" +
-          Math.ceil(Math.random() * 28)
-      });
+  async asyncData({$strapi}) {
+
+   const filters = {
+        _start: 0,
+        _limit: 5, 
     }
-    // eventos.sort((a,b)=>app.$dayjs(b.fechaInicio).diff(app.$dayjs(a.fechaInicio)))
-    return { eventos };
+
+    // TO-DO: https://strapi.io/documentation/developer-docs/latest/development/plugins/graphql.html#customize-the-graphql-schema
+    const resultado = await $strapi.graphql({
+      query:
+        `query {
+          ${query_eventos}
+        }`
+        .replace('%start',filters._start) 
+        .replace('%limit',filters._limit) 
+        .replace('%where', '')
+    })
+
+    return {eventos: resultado.eventos, filters}
   },
   data() {
     return  {
       viendoCategoria: "Todos",
-      categorias: ["Todos", "Cursos", "Eventos"]
+      categorias: ["Todos", "Cursos", "Encuentros"]
     }
   },
   methods: {
@@ -117,23 +137,23 @@ export default {
   },
   computed: {
     eventosFiltrados () {
-      const vc = this.viendoCategoria.toLowerCase()
-      return this.eventos.filter(x=>{return vc==='todos'||x.clase===vc})
+      const vc = this.viendoCategoria.toLowerCase().replace(/[eo]s$/, '')
+      return this.eventos.filter(x=>{return vc==='tod'||(x.tipoEvento||vc).search(vc)>-1})
     },
     eventosProximos() {
-        const now = this.$dayjs()
+      const now = this.$dayjs()
       return this.eventosFiltrados
-        .filter(x => this.$dayjs(x.fechaInicio).isAfter(now))
+        .filter(x => this.$dayjs(x.fechaComienzo).isAfter(now))
         .sort((a, b) =>
-          this.$dayjs(a.fechaInicio).diff(this.$dayjs(b.fechaInicio))
+          this.$dayjs(a.fechaComienzo).diff(this.$dayjs(b.fechaComienzo))
         );
     },
     eventosPasados() {
         const now = this.$dayjs()
       return this.eventosFiltrados
-        .filter(x => !this.$dayjs(x.fechaInicio).isAfter(now))
+        .filter(x => !this.$dayjs(x.fechaComienzo).isAfter(now))
         .sort((a, b) =>
-          this.$dayjs(b.fechaInicio).diff(this.$dayjs(a.fechaInicio))
+          this.$dayjs(b.fechaComienzo).diff(this.$dayjs(a.fechaComienzo))
         );
     }
   }

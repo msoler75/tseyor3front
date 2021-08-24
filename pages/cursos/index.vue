@@ -242,23 +242,23 @@ export default {
   computed: {
     cursosProximos() {
         // return []
-      const now = this.$dayjs();
+      const now = this.$dayjs()
       return this.cursos
         .filter((x) => this.$dayjs(x.fechaInicio).isAfter(now))
         .sort((a, b) =>
           this.$dayjs(a.fechaInicio).diff(this.$dayjs(b.fechaInicio))
-        );
+        )
     },
     cursosPasados() {
-      const now = this.$dayjs();
+      const now = this.$dayjs()
       return this.cursos
         .filter((x) => !this.$dayjs(x.fechaInicio).isAfter(now))
         .sort((a, b) =>
           this.$dayjs(b.fechaInicio).diff(this.$dayjs(a.fechaInicio))
-        );
-    },
-  },
-};
+        )
+    }
+  }
+}
 </script>
 
 <style scoped>
