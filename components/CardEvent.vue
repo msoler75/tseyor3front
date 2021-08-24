@@ -12,7 +12,7 @@
         </NLink>
         <CalendarDay :date="data.fechaInicio" class="ml-auto" />
       </div>
-      <div class="px-6 pb-4 text-diminished" v-html="ctext" />
+      <div v-if="!noText" class="px-6 pb-4 text-diminished" v-html="ctext" />
     </slot>
   </Card>
 </template>

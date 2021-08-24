@@ -8,25 +8,28 @@
   style="min-height:200px; z-index:-1" />
 
   <section class="h-image"/>
-  <Card class="absolute right-1 mt-1 font-bold text-xs p-1 sm:p-4 sm:text-base bg-orange text-orange-contrast">Evento Pasado</Card>
+  <Card v-if="$dayjs().isAfter($dayjs(evento.fechaFinal))" class="absolute right-1 mt-1 font-bold text-xs p-1 sm:p-4 sm:text-base bg-orange text-orange-contrast">Evento Pasado</Card>
   <div class="evento-wrapper bg-blue-gray dark:bg-blue-gray-900 grid w-full pb-9">
     <div class="order-1 bg-red text-center flex justify-center items-center h-20 md:col-span-2 xl:col-span-1">
       <div
             class="p-5 font-bold text-white text-3xl lg:text-4xl"
           > 
-            {{ $dayjs(evento.fechaInicio).format('D MMM YYYY') }}
+            {{ $dayjs(evento.fechaComienzo).format('D MMM YYYY') }}
           </div>
     </div>
     <div class="order-2 bg-red h-20 hidden xl:block xl:order-3"/>
     <Card class="rounded-none rounded-b-md order-4 p-7 xl:order-2 xl:row-span-2">
-      <h1>{{ctitle}}</h1>
-      <Article class="text-justify" v-html="evento.texto"/>
+      <h1 class="text-center">{{ctitle}}</h1>
+      <Article class="text-justify" v-html="evento.textoHTML"/>
     </Card>
     <div class="order-5 md:order-3 xl:order-4 flex justify-center items-start">
-      <Card class="p-5 m-5 whitespace-nowrap text-gray-700 flex flex-wrap lg:flex-col">
-        <p><icon icon="calendar-alt" class="mr-2 text-gray"/> 26 de enero</p>
-        <p><icon icon="globe" class="mr-2 text-gray"/> evento online</p>
-        <p><icon icon="hourglass" class="mr-2 text-gray"/> 3 días</p>
+      <Card class="p-7 m-5 mt-12 whitespace-nowrap text-gray-700 flex flex-wrap lg:flex-col">
+        <p class="my-1" v-if="evento.sala"><icon icon="globe" class="!w-8 mr-2 text-gray"/>Evento online</p>
+        <p class="my-1"><icon icon="calendar-alt" class="!w-8 mr-2 text-gray"/>{{$dayjs(evento.fechaComienzo).format('D MMM YYYY')}}
+        <template v-if="evento.fechaFinal"> <span class="text-diminished"> — </span> {{$dayjs(evento.fechaFinal).format('D MMM')}}</template>
+        </p>
+        <p class="my-1" v-if="evento.sala"><icon icon="door-open" class="!w-8 mr-2 text-gray"/><NLink :to="'/salas/'+evento.sala.id">{{evento.sala.nombre}}</NLink></p>
+        <p class="my-1"><icon icon="hourglass" class="!w-8 mr-2 text-gray"/>{{$dayjs(evento.fechaComienzo).fromNow()}}</p>
       </Card>
     </div>
   </div>
@@ -37,17 +40,20 @@
 import vercontenidomixin from "@/mixins/vercontenido.js";
 export default {
   mixins: [vercontenidomixin],
-  asyncData({ app, route }) {
-    // const noticiasGuays = await $strapi.$noticias.find({ id: 1 })
-    const id = parseInt(route.params.id);
-    const contenido = {
-      id,
-      titulo: app.$lorem(1),
-      imagen: "imagen" + ((id % 6) + 1) + ".jpg",
-      texto: app.$lorem(-7),
-      fechaInicio: (2021+Math.floor(Math.random()*2))+'/'+Math.ceil(Math.random()*12)+'/'+Math.ceil(Math.random()*28)
-    };
-    return { contenido, evento: contenido };
+  async asyncData({ app, $strapi, route, redirect }) {
+    try {
+      const id = route.params.id
+      const eventos = await $strapi.find('eventos', id.match(/\d+/)?{id}:{slug:id})
+      const contenido = eventos[0]
+      contenido.textoHTML = app.$renderMarkdownServer(contenido.texto, contenido.imagenes)
+      contenido.likes = 3
+      contenido.comentarios = 3
+      return { contenido, evento: contenido };
+    }
+    catch(error)
+    {
+      console.error(error)
+    }
   },
 };
 </script>
