@@ -52,10 +52,10 @@
             </div>
           </div>
 
-          <nuxt-img :src="cimage" />
+          <!-- <nuxt-img :src="cimage" /> -->
 
           <!-- article content -->
-          <Article class="my-9 text-justify" v-html="renderMarkdown(noticia.texto)" />
+          <Article class="my-9 text-justify" v-html="noticia.textoHTML" />
         </ArticleWrapper>
       </div>
 
@@ -99,9 +99,9 @@
    />    
 
     <!-- contenido relacionado -->
-    <div class="container mx-auto my-9">
+    <div class="container mx-auto my-9" v-observe-visibility="cargarRelacionados">
       <h3 class="text-center">Y también...</h3>
-      <HCarousel center :items="noticia.relacionados" />
+      <HCarousel center :items="relacionados" collection="comunicados" :no-text="true"/>
     </div>
 
     <!-- comentarios -->
@@ -120,35 +120,25 @@
 import vercontenidomixin from '@/mixins/vercontenido.js'
 export default {
   mixins: [vercontenidomixin],
-  asyncData ({ app, route }) {
-    // const noticiasGuays = await $strapi.$noticias.find({ id: 1 })
-    const id = parseInt(route.params.id)
-    console.log('noticias_id - asyncData id:', id)
-    const relacionados = [];
-
-    for (var i = 0; i < 9; i++) {
-          relacionados.push({
-            id: i + 1,
-            clase: "noticias",
-            titulo: app.$lorem(1),
-            imagen: "imagen" + (((i + 1) % 6) + 1) + ".jpg"
-          });
-        }
-
-    const contenido =
-        {
-          id,
-          clase: 'noticias',
-          titular: app.$lorem(1),
-          imagen: 'imagen' + (id % 6 + 1) + '.jpg',
-          texto: app.$lorem(-12)
-           .replace(/<p>/g, "\n")
-           .replace(/<\/p>/g, ""),
-          comentarios: Math.round(Math.random() * 33),
-          likes: Math.round(Math.random() * 77),
-          relacionados
-        }
-    return { contenido, noticia: contenido }
+  async asyncData({ app, $strapi, route, redirect }) {
+    const id = route.params.id
+    const noticias = await $strapi.find('noticias', id.match(/^\d+$/)?{id}:{slug:id})
+    const contenido = noticias[0]
+    contenido.textoHTML = app.$renderMarkdownServer(contenido.texto, contenido.imagenes)
+    contenido.likes = 3
+    contenido.comentarios = 3
+    return { contenido, noticia: contenido };
+  },
+  methods: {
+    async cargarRelacionados(){
+      const filtro = { id_ne: id, id_lt: id+10, id_gt: id-10 }
+      this.relacionados = await $strapi.find('noticias', {...filtro, _limit: 7})
+    },
+  },
+  data() {
+    return {
+      relacionados: []
+    }
   }
 }
 </script>
