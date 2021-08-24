@@ -57,9 +57,15 @@ export default ({ app, $config, $md, $img }, inject) => {
     return str;
   };
 
-  const renderMarkdownServer = (md, images) => {
+  const renderMarkdownServer = (md, images, keepTitle) => {
+    if(!keepTitle)
+    {
+      const pos = md.search('----')
+      if(pos>-1 && pos<200)
+        md = md.replace(/.*\n---+\n/m, '')
+    }
     var html = $md.render(md);
-    console.warn(html);
+    // console.warn(html);
     html = html
       .replace(/(<img[^>]+>)<br \/>\n?\s*(<img)/gm, "$1\n$2")
       .replace(/(<img[^>]+>)<br \/>\n?\s*(<img)/gm, "$1\n$2")
