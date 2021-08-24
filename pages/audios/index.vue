@@ -10,9 +10,9 @@
         />
     </client-only>
     <SwipeX
-    v-model="viendoCategoria"
-    :values="categorias" 
-   class="flex mt-6">
+      v-model="viendoCategoria"
+      :values="categorias" 
+      class="flex mt-6">
       <div class="w-full md:w-2/3">
         <div class="w-full flex mb-3">
           <div class="block xl:flex w-full">
@@ -34,8 +34,11 @@
             @click.native="play(audio)"
             class="p-2 mt-2 cursor-pointer"
           >
-             <div> <icon icon="music" class="text-gray mr-1" /> {{ audio.titulo }}</div>
+             <div> <icon icon="music" class="text-gray mr-2" /> {{ audio.titulo }} <span class="text-diminished"> — {{audio.descripcion}}</span></div>
           </Card>
+          <div v-show="hayMas && !cargando" v-observe-visibility="cargarMas" class="mt-3 flex justify-center">
+            <!-- <button @click="cargarMas" class="btn">Cargar Más...</button> -->
+          </div>
         </div>
       </div>
       <div class="hidden lg:block">
@@ -46,30 +49,24 @@
 </template>
 
 <script>
+const minLengthBuscar = 2
+
 export default {
-  asyncData({ app }) {
-    const audios = [];
-    for (let i = 1; i < 56; i++) {
-      const tags = [];
-      if (i % 3 === 2) tags.push("meditaciones");
-      if (i % 4 === 0) tags.push("talleres");
-      if (i % 5 === 1) tags.push("reflexiones");
-      if (i % 11 === 4) tags.push("cuentos");
-      if (i % 7 === 3) tags.push("musica");
-      audios.push({
-        id: i,
-        clase: "audios",
-        titulo: app.$lorem(1),
-        descripcion: app.$lorem(1),
-        src: "/audios/audio" + i + ".mp3",
-        tags
-      });
+  async asyncData({$strapi}) {
+
+   const filters = {
+        _start: 0,
+        _limit: 2
     }
-    return { audios };
+
+    const audios = await $strapi.find('audios', filters)
+
+    return {audios, filters}
   },
   data() {
     return {
       buscarPor: "",
+      hayMas: true,
       viendoCategoria: "todos",
       categorias: [
         "todos",
@@ -77,7 +74,8 @@ export default {
         "talleres",
         "reflexiones",
         "cuentos",
-        "musica"
+        "música",
+        "clásica"
       ]
     };
   },
@@ -87,10 +85,10 @@ export default {
     },
     audiosFiltrados() {
       const v = this.viendoCategoria.toLowerCase();
-      const bp = this.$slugify(this.buscarPor);
+      const bp = this.$slugify(this.buscarPor.replace(/ó/, 'o').replace(/ú/, 'u'));
       return this.audios.filter(
         audio =>
-          (v === "todos" || audio.tags.includes(v)) &&
+          (v === "todos" || audio.etiquetas.find(x=>x.nombre.toLowerCase()===v)) &&
           (bp === "" ||
             this.$slugify(audio.titulo).search(bp) > -1 ||
             this.$slugify(audio.descripcion).search(bp) > -1)
@@ -101,12 +99,29 @@ export default {
     }
   },
   methods: {
+    async cargarMas() {
+      if(!this.hayMas) return
+      this.filters._start = this.audios.length
+      const filtro = this.buscandoPor&&this.buscandoPor.length>=minLengthBuscar? {...this.filters, '_q':this.buscandoPor} : this.filters
+      this.cargando = true
+
+      const audios = await this.$strapi.find('audios', filtro)
+      
+      this.hayMas = audios.length===this.filters._limit
+      for(const audio of audios)
+      {
+        if(!this.audios.find(x=>x.id===noticia.id))
+          this.audios.push(noticia)
+      }
+      this.cargando = false
+    },
     play(audio) { 
-      console.log("play", audio);
+      const mp3 = audio.audio[0].url
+      console.log("play", mp3);
       this.$store.commit("setAudioPlay", {
         title: audio.titulo,
         artist: "TSEYOR",
-        src: audio.src
+        src: mp3
       });
     },
     canplay() {

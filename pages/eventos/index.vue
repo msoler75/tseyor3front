@@ -128,6 +128,7 @@ export default {
   },
   data() {
     return  {
+      buscarPor: "",
       viendoCategoria: "Todos",
       categorias: ["Todos", "Cursos", "Encuentros"]
     }
