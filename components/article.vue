@@ -15,6 +15,9 @@
       @apply text-center;
     }
 
+.article >>> a { 
+    color: #4589ef;
+  }
 
   .article >>> hr {
     @apply my-8;
