@@ -87,7 +87,7 @@ export default {
     librosListados() {
       const ob = this.ordenarPor
       return this.librosFiltrados
-      // .map(x=>{if(!x.timestamp)x.timestamp = this.$dayjs(x.updated_at)})
+      // .map(x=>{if(!x.timestamp)x.timestamp = this.$  (x.updated_at)})
       .sort((a,b)=>{
         return /* ob==='fecha'?a.timestamp-b.timestamp: */
         a-b // a.nombre.localeCompare(b.nombre)
