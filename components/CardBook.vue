@@ -11,14 +11,11 @@
       </section>
       <section class="px-1 pb-4 xs:px-6 text-center"
       :class="landscape?'flex flex-col justify-center':''">
-        <NLink :to="'/libros/' + data.id" class="mt-6 mb-2 font-bold text-xl">{{
-          ctitle
-        }}</NLink>
-        <p
-          v-if="!noText && ctext"
-          class="text-gray-700 text-base"
-          v-html="ctext"
-        />
+        <NLink :to="chref">
+          <section class="font-bold text-xl mb-2">{{ ctitle }}</section>
+        </NLink>
+        <v-clamp v-if="!noText && ctext" autoresize :max-lines="5"
+        class="text-gray-700 text-base">{{cteaser}}</v-clamp>
         <div v-if="showTags" class="px-6 pt-4 pb-2 mt-auto">
           <span
             v-for="tag of ctags"
@@ -34,8 +31,10 @@
 </template>
 
 <script>
+import VClamp from 'vue-clamp'
 import CardMix from "@/mixins/card";
 export default {
+  components: { VClamp },
   mixins: [CardMix],
   props: {
     landscape: { type: Boolean, required: false, default: false },

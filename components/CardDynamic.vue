@@ -3,6 +3,7 @@
   class="card flex flex-col rounded shadow-lg overflow-hidden"
   :image="image"
   :imageSizes="imageSizes"
+  :imageWidth="imageWidth"
   :title="title"
   :text="text"
   :noText="noText"

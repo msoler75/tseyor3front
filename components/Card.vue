@@ -11,8 +11,7 @@
       <div v-if="cimage" :style="imageBg" class="card-img max-w-full h-40"/>
       <div class="px-6 py-4">
         <NLink :to="chref">
-          <section class="font-bold text-xl mb-2"
-          >{{ ctitle }}</section>
+          <section class="font-bold text-xl mb-2">{{ ctitle }}</section>
         </NLink>
         <v-clamp v-if="!noText && ctext" autoresize :max-lines="5"
         class="text-gray-700 text-base">{{cteaser}}</v-clamp>
