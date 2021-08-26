@@ -34,7 +34,11 @@
             @click.native="play(audio)"
             class="p-2 mt-2 cursor-pointer"
           >
-             <div> <icon icon="music" class="text-gray mr-2" /> {{ audio.titulo }} <span class="text-diminished"> — {{audio.descripcion}}</span></div>
+             <div> <icon icon="music" class="text-gray mr-2" /> {{ audio.titulo }} 
+             <span v-if="audio.descripcion" class="text-diminished"> 
+               — {{audio.descripcion}}
+               </span>
+               </div>
           </Card>
           <div v-show="hayMas && !cargando" v-observe-visibility="cargarMas" class="mt-3 flex justify-center">
             <!-- <button @click="cargarMas" class="btn">Cargar Más...</button> -->
@@ -67,6 +71,7 @@ export default {
     return {
       buscarPor: "",
       hayMas: true,
+      cargando: false,
       viendoCategoria: "todos",
       categorias: [
         "todos",
@@ -84,11 +89,11 @@ export default {
       return this.$store.state.audioPlaying;
     },
     audiosFiltrados() {
-      const v = this.viendoCategoria.toLowerCase();
+      const v = this.viendoCategoria.toLowerCase().replace(/ú/, 'u');
       const bp = this.$slugify(this.buscarPor.replace(/ó/, 'o').replace(/ú/, 'u'));
       return this.audios.filter(
         audio =>
-          (v === "todos" || audio.etiquetas.find(x=>x.nombre.toLowerCase()===v)) &&
+          (v === "todos" || audio.categoria.toLowerCase()===v) &&
           (bp === "" ||
             this.$slugify(audio.titulo).search(bp) > -1 ||
             this.$slugify(audio.descripcion).search(bp) > -1)
@@ -110,8 +115,8 @@ export default {
       this.hayMas = audios.length===this.filters._limit
       for(const audio of audios)
       {
-        if(!this.audios.find(x=>x.id===noticia.id))
-          this.audios.push(noticia)
+        if(!this.audios.find(x=>x.id===audio.id))
+          this.audios.push(audio)
       }
       this.cargando = false
     },
@@ -120,7 +125,7 @@ export default {
       console.log("play", mp3);
       this.$store.commit("setAudioPlay", {
         title: audio.titulo,
-        artist: "TSEYOR",
+        artist: audio.descripcion,
         src: mp3
       });
     },
