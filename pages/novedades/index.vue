@@ -69,7 +69,7 @@ export default {
           if(n.tipo===vc) last=n
       }
       console.log('last', last)
-      const filtro = vc === 'todo' ? {_start: this.novedades.length, _limit: 20} : {_tipo: vc }
+      const filtro = vc === 'todo' ? {_start: this.novedades.length, _limit: 20} : {_tipo: vc, _limit: 20 }
       if(last)
         filtro._upd = last.updated_at
       // console.log('filtro', filtro)
