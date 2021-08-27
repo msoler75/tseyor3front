@@ -11,7 +11,7 @@
               {{ ctitle }}
             </div>
           </NLink>
-          <CalendarDay :date="data.fechaInicio" class="ml-auto" />
+          <CalendarDay :date="data.fechaComienzo" class="ml-auto" />
         </div>
         <v-clamp v-if="!noText && ctext" autoresize :max-lines="4"
         class="mt-auto text-gray-700 text-base">{{cteaser}}</v-clamp>

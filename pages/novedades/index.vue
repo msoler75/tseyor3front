@@ -95,7 +95,11 @@ export default {
     },
     novedadesListado () {
       // .sort((b,a)=>this.$dayjs(a.updated_at).unix() - this.$dayjs(b.updated_at).unix())
-      return this.novedadesFiltradas.slice(0, this.mostrando)
+      return this.novedadesFiltradas.slice(0, this.mostrando).map(x=>{
+        if(x.tipo==='eventos')
+          x.fechaComienzo=x.extra
+        return x
+      })
     }
   }
 };
