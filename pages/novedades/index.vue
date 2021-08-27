@@ -21,6 +21,11 @@
     <div v-show="hayMas && !cargando" v-observe-visibility="cargarMas" class="mt-3 flex justify-center">
       <!-- <button @click="cargarMas" class="btn">Cargar Más...</button> -->
     </div>
+    <div v-show="cargando" class="mt-16 h-10 flex justify-center">
+        <span class="text-xs">
+          Cargando...
+        </span>
+    </div>
   </SwipeX>
 </template>
 
@@ -39,8 +44,14 @@ export default {
       categorias: ["Todo", "Noticias", "Comunicados", "Eventos", "Libros", "Otros"]
     };
   },
+  watch: {
+    viendoCategoria(newValue) {
+      this.hayMas = true
+    }
+  },
   methods: {
     async cargarMas() {
+      if(this.cargando) return
       this.cargando = true
       const vc = this.viendoCategoria.toLowerCase()
       let last = null
@@ -53,8 +64,10 @@ export default {
       const filtro = vc === 'todo' ? {_start: this.novedades.length, _limit: 20} : {_tipo: vc }
       if(last)
         filtro._upd = last.updated_at
-      console.log('filtro', filtro)
+      // console.log('filtro', filtro)
       const novedades = await this.$strapi.find('novedades', filtro)
+      if(filtro._limit)
+        this.hayMas = novedades.length === filtro._limit
       for(const n of novedades) {
         if(!this.novedades.find(x=>x.id===n.id&&x.tipo===n.tipo))
           this.novedades.push(n)
