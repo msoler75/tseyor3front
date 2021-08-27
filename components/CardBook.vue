@@ -1,21 +1,20 @@
 <template>
-  <Card class="card-book"
+  <Card class="card-book h-full"
   :class="landscape ? 'landscape' : ''">
-    <section :class="landscape ? 'xm:flex' : ''">
-      <section class="flex-grow sm:pt-2">
+    <section class="h-full flex flex-col justify-start" :class="landscape ? 'xm:flex' : ''">
+      <section class="sm:pt-2">
         <Book3D class="mx-auto"
           :class="sizeBook"
           :src="cimage"
          />
         <!-- <nuxt-img class="block xs:hidden max-w-8" :src="'/images/portadas/' + data.imagen"/> -->
       </section>
-      <section class="px-1 pb-4 xs:px-6 text-center"
-      :class="landscape?'flex flex-col justify-center':''">
+      <section class="px-1 pb-4 xs:px-6 text-center flex flex-col flex-grow" :class="landscape?'flex flex-col justify-center':''">
         <NLink :to="chref">
           <section class="font-bold text-xl mb-2">{{ ctitle }}</section>
         </NLink>
         <v-clamp v-if="!noText && ctext" autoresize :max-lines="5"
-        class="text-gray-700 text-base">{{cteaser}}</v-clamp>
+        class="my-auto text-gray-700 text-base">{{cteaser}}</v-clamp>
         <div v-if="showTags" class="px-6 pt-4 pb-2 mt-auto">
           <span
             v-for="tag of ctags"

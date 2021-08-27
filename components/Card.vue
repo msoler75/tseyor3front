@@ -1,5 +1,5 @@
 <template>
-  <div class="card flex flex-col rounded overflow-hidden"
+  <div class="card flex flex-col rounded overflow-hidden h-full"
   :class="center?'text-center':''">
     <slot>
       <!-- 
@@ -8,13 +8,13 @@
         <nuxt-img v-else :src="cimage" :sizes="imageSizes" class="w-full" :alt="ctitle"></nuxt-img>
       </div>
       -->
-      <div v-if="cimage" :style="imageBg" class="card-img max-w-full h-40"/>
-      <div class="px-6 py-4">
+      <div v-if="cimage" :style="imageBg" class="card-img max-w-full h-40 flex-shrink-0"/>
+      <div class="px-6 py-4 flex flex-col h-full">
         <NLink :to="chref">
           <section class="font-bold text-xl mb-2">{{ ctitle }}</section>
         </NLink>
         <v-clamp v-if="!noText && ctext" autoresize :max-lines="5"
-        class="text-gray-700 text-base">{{cteaser}}</v-clamp>
+        class="mt-auto text-gray-700 text-base">{{cteaser}}</v-clamp>
       </div>
       <div v-if="showTags" class="px-6 pt-4 pb-2 mt-auto">
         <span
