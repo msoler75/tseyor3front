@@ -9,7 +9,7 @@
 
     <Tabs ref="tabs" v-model="viendoCategoria" :labels="categorias" class="mb-7 justify-center"/>
     <Grid class="grid-cols-fill-w-72 text-center">
-      <template v-for="item of novedadesFiltradas">
+      <template v-for="item of novedadesListado">
         <CardDynamic          
           :key="item.tipo+'-'+item.id"
           :data="item"
@@ -40,6 +40,7 @@ export default {
     return {
       hayMas: true,
       cargando: false,
+      mostrando: 8,
       viendoCategoria: "Todo",
       categorias: ["Todo", "Noticias", "Comunicados", "Eventos", "Libros", "Otros"]
     };
@@ -47,10 +48,17 @@ export default {
   watch: {
     viendoCategoria(newValue) {
       this.hayMas = true
+      this.mostrando = 8
     }
   },
   methods: {
     async cargarMas() {
+      if(this.novedadesFiltradas.length>this.novedadesListado.length)
+      {
+        this.mostrando += 8
+        return
+      }
+
       if(this.cargando) return
       this.cargando = true
       const vc = this.viendoCategoria.toLowerCase()
@@ -85,8 +93,9 @@ export default {
         );
       return this.novedades.filter(x => x.tipo === c );
     },
-    novedadesOrdenadas () {
+    novedadesListado () {
       // .sort((b,a)=>this.$dayjs(a.updated_at).unix() - this.$dayjs(b.updated_at).unix())
+      return this.novedadesFiltradas.slice(0, this.mostrando)
     }
   }
 };
