@@ -1,7 +1,6 @@
 <template>
   <div class="max-w-3xl">
     <h1>Equipos</h1>
-    plan hogar: 56 2 22638652
     <section class="flex">
       <div></div>
       <div class="ml-auto">
@@ -22,7 +21,7 @@
               :height="70"
               class="w-full h-full rounded-full"
               fit="cover"
-            ></nuxt-img>
+            />
           </div>
           <div class="flex-shrink pr-4 whitespace-normal">
             <div>
