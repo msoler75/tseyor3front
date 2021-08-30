@@ -8,7 +8,7 @@
 
       <Tabs ref="tabs" v-model="viendoCategoria" :labels="categorias" class="mb-7 justify-center"/>
 
-      <form @submit.prevent="buscar" class="w-full w-auto flex justify-end order-1">
+      <form @submit.prevent="buscar" class="w-auto flex justify-end order-1">
         <SearchInput v-model="buscarPor" class="w-48" placeholder="Título o palabras clave" required @search="buscar"/>
         <button :disabled="buscarPor.length<=3" type="submit" class="ml-2 btn">Buscar<span class="hidden md:inline"> en Normativas</span></button>
       </form>
