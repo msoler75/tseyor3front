@@ -54,7 +54,7 @@ export default {
       this.hayMas = entradas.length===this.filters._limit
       for(const entrada of entradas)
       {
-        if(!this.entradas.find(x=>x.id===entradas.id))
+        if(!this.entradas.find(x=>x.id===entrada.id))
           this.entradas.push(entrada)
       }
       this.cargando = false

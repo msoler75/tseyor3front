@@ -74,8 +74,7 @@ export default {
         filtro._upd = last.updated_at
       // console.log('filtro', filtro)
       const novedades = await this.$strapi.find('novedades', filtro)
-      if(filtro._limit)
-        this.hayMas = novedades.length === filtro._limit
+      this.hayMas = novedades.length && novedades.length === filtro._limit
       for(const n of novedades) {
         if(!this.novedades.find(x=>x.id===n.id&&x.tipo===n.tipo))
           this.novedades.push(n)

@@ -11,3 +11,17 @@ https://cloud.google.com/build/docs/deploying-builds/deploy-cloud-run#fully-mana
 
 me gusta:
 http://www.shardul.org/
+
+
+
+
+
+
+TO-DO:
+
+- login de usuarios -> nombre simbólico -> página de perfil de usuario 
+- grupos
+- equipos
+- establecer grupos de usuario (muul)
+- página de contacto para muul
+- eventos

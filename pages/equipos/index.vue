@@ -1,6 +1,7 @@
 <template>
   <div class="max-w-3xl">
     <h1>Equipos</h1>
+    plan hogar: 56 2 22638652
     <section class="flex">
       <div></div>
       <div class="ml-auto">
@@ -16,14 +17,16 @@
         <div class="flex items-center whitespace-nowrap">
           <div class="w-14 h-14 mr-5 flex-shrink-0">
             <nuxt-img
-              :src="'./images/' + equipo.imagen"
+              :src="equipo.imagen.url"
+              :width="70"
+              :height="70"
               class="w-full h-full rounded-full"
               fit="cover"
             ></nuxt-img>
           </div>
           <div class="flex-shrink pr-4 whitespace-normal">
             <div>
-              <div class="font-bold text-lg">{{ equipo.nombre }}</div>
+              <div class="font-bold text-lg"><NLink :to="'/equipos/'+equipo.slug">{{ equipo.nombre }}</NLink></div>
               <div class="text-sm text-diminished">
                 {{ equipo.descripcion }}
               </div>
@@ -34,7 +37,7 @@
               <div class="uppercase font-bold text-sm">miembros</div>
               <span
                 ><icon icon="user" class="mr-2 text-gray" />
-                {{ equipo.miembros }}</span
+                {{ equipo.users.length }}</span
               >
             </div>
             <div class="flex flex-col justify-center items-center">
@@ -67,27 +70,19 @@
 
 <script>
 export default {
-  asyncData({ app }) {
-    const equipos = [];
-    for (let i = 1; i < 24; i++) {
-      const tags = [];
-      equipos.push({
-        id: i,
-        clase: "equipos",
-        nombre: "Equipo " + app.$lorem(1, 2, 5),
-        imagen: "imagen" + ((i % 8) + 1) + ".jpg",
-        descripcion: app.$lorem(1),
-        miembros: Math.ceil(Math.random() * 70),
-        reuniones: Math.ceil(Math.random() * 40),
-        actas: Math.ceil(Math.random() * 20),
-        anexos: Math.ceil(Math.random() * 50),
-      });
+  async asyncData({ $strapi }) {
+    const filters = {
+        _start: 0,
+        _limit: 2
     }
-    return { equipos };
+    const equipos = await $strapi.find("equipos", filters)
+    return { equipos, filters };
   },
   data() {
     return {
       buscarPor: "",
+      hayMas: true,
+      cargando: false,
     };
   },
   computed: {
@@ -100,5 +95,23 @@ export default {
       );
     },
   },
+  methods: {
+    async cargarMas() {
+      if(!this.hayMas) return
+      this.filters._start = this.equipos.length
+      const filtro = this.buscarPor.length>=1? {...this.filters, '_q':this.buscarPor} : this.filters
+      this.cargando = true
+
+      const equipos = await this.$strapi.find('equipos', filtro)
+      
+      this.hayMas = equipos.length===this.filters._limit
+      for(const equipo of equipos)
+      {
+        if(!this.equipos.find(x=>x.id===equipo.id))
+          this.equipos.push(equipo)
+      }
+      this.cargando = false
+    },
+  }
 };
 </script>

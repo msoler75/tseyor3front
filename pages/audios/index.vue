@@ -107,7 +107,7 @@ export default {
     async cargarMas() {
       if(!this.hayMas) return
       this.filters._start = this.audios.length
-      const filtro = this.buscandoPor&&this.buscandoPor.length>=minLengthBuscar? {...this.filters, '_q':this.buscandoPor} : this.filters
+      const filtro = this.buscarPor&&this.buscarPor.length>=minLengthBuscar? {...this.filters, '_q':this.buscarPor} : this.filters
       this.cargando = true
 
       const audios = await this.$strapi.find('audios', filtro)

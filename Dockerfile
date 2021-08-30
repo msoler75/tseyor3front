@@ -1,20 +1,12 @@
-FROM node:12
-
-WORKDIR /usr/src/app
-
-COPY package*.json ./
-RUN npm install
-# RUN npm ci --only=production 
-COPY . .
+# https://milanwittpohl.com/projects/tutorials/Full-Stack-Web-App/
 
 
-EXPOSE 8080
+FROM node:15.11.0-alpine3.12 as frontend
 
-ENV HOST 0.0.0.0
-ENV PORT 8080
-ENV NODE_ENV production
+WORKDIR /src
 
-RUN npm run build
+ADD frontend ./
+RUN yarn install && yarn build
 
-#start the service
-CMD [ "npm", "run", "start" ]
+ENTRYPOINT ["npx", "nuxt", "start"]
+EXPOSE 3000

@@ -78,6 +78,7 @@ export default {
         });
         this.$router.push("/");
       } catch (e) {
+        console.error(e)
         this.error = e.response.data.message[0].messages[0].message;
       }
     }
