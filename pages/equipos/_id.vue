@@ -24,7 +24,7 @@
         </p>
     </div>
 
-    <div class="grid-block" v-if="equipo.pizarra.length>4">
+    <div class="grid-block" v-if="equipo.pizarra">
       <div v-html="equipo.textoHTML"/>
     </div>
   

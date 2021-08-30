@@ -58,6 +58,7 @@ export default ({ app, $config, $md, $img }, inject) => {
   };
 
   const renderMarkdownServer = (md, images, keepTitle) => {
+    if(!md) return ""
     if(!keepTitle)
     {
       const pos = md.search('----')
