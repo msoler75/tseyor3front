@@ -77,18 +77,20 @@ export default () => ({
       icon: "fas fa-users",
       description: "Listado de miembros de Tseyor"
     },
+    /*
     "/recursos/estatutos": {
       name: "Estatutos",
       icon: "fas fa-scroll",
       description:
         "Estatutos de las instituciones de Tseyor: ONG, Universidad y la Asociación Tseyor"
-    },
-    "/recursos/normativas": {
+    }, */
+    "/normativas": {
       name: "Normativas",
       icon: "fas fa-balance-scale",
-      description: "Normativas y protocolos de funcionamiento"
+      description: "Normativas, estatutos, protocolos de funcionamiento",
+      parent: "/recursos"
     },
-    "/recursos/legal": {
+    "/legal": {
       name: "Legal",
       icon: "fas fa-gavel",
       description: "Documentos legales"

@@ -86,7 +86,7 @@ export default {
     novedadesFiltradas() {
       const c = this.viendoCategoria.toLowerCase()
       if (!c || c === "todo") return this.novedades;
-      if (!c === "otros")
+      if (c === "otros")
         return this.novedades.filter(
           x => !["noticias", "comunicados", "eventos", "libros"].includes(x.tipo)
         );

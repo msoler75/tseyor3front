@@ -355,9 +355,8 @@ export default {
             "/reuniones",
             "/recursos/listados",
             "/usuarios",
-            "/recursos/estatutos",
-            "/recursos/normativas",
-            "/recursos/legal",
+            "/normativas",
+            "/legal",
           ],
         },
         {
