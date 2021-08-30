@@ -5,15 +5,15 @@
     <Grid class="grid-cols-fill-w-80">
       <Card
         v-for="pagina of paginas"
-        :key="pagina.href"
+        :key="pagina.enlace"
         class="p-4 flex-row"
       >
         <div class="mr-5 flex items-center">
-          <icon :icon="'fab fa-' + dameRed(pagina.href).icon" class="text-5xl mr-6" :class="dameRed(pagina.href).class" />
-           <h2 class="text-xl">{{ pagina.nombre }}</h2>
+          <icon :icon="'fab fa-' + dameRed(pagina.enlace).icon" class="text-5xl mr-6" :class="dameRed(pagina.enlace).class" />
+           <h2 class="text-xl">{{ pagina.titulo }}</h2>
         </div>
           <div class="mt-auto flex w-full items-end justify-end">
-            <a target="_blank" :href="pagina.href" class="btn">
+            <a target="_blank" :href="pagina.enlace" class="btn">
               <icon icon="link" class="mr-2" /> Visitar
             </a>
           </div>
@@ -24,6 +24,10 @@
 
 <script>
 export default {
+  async asyncData({$strapi}) {
+      const paginas = await $strapi.find('redes')
+      return { paginas }
+  },
   data() {
     return {
       redes: {
@@ -31,29 +35,7 @@ export default {
         twitter: "text-light-blue-400",
         instagram: "text-gray-400",
         youtube: "text-red"
-      },
-      paginas: [
-        {
-          nombre: "Página principal de Tseyor en Facebook",
-          href: "https://facebook.com/tseyor"
-        },
-        {
-          nombre: "Tseyor Lanzarote",
-          href: "https://www.facebook.com/Tseyor-Lanzarote-839961976187688"
-        },
-        {
-          nombre: "Muulasterio Tseyor La Libélula",
-          href: "https://www.facebook.com/muulasterio.tseyor.la.libelula"
-        },
-        {
-          nombre: "@TSEYOR en Twitter",
-          href: "https://www.twitter.com/TSEYOR"
-        },
-        {
-          nombre: "Tseyor Vídeos",
-          href: "https://www.youtube.com/user/TseyorVideos"
-        }
-      ]
+      }
     };
   },
   methods: {
