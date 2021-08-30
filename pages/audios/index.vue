@@ -53,7 +53,7 @@
 </template>
 
 <script>
-const minLengthBuscar = 2
+import Fuse from "fuse.js";
 
 export default {
   async asyncData({$strapi}) {
