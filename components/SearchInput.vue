@@ -1,9 +1,9 @@
 <template>
    <div class="relative flex w-full items-stretch">
-  <span class="z-10 h-full leading-snug font-normal absolute text-center text-blueGray-300 bg-transparent rounded text-base items-center justify-center w-8 pl-3 py-3">
+  <span class="z-10 h-full leading-snug font-normal absolute text-center text-blueGray-300 bg-transparent text-base items-center justify-center w-8 pl-3 py-3">
     <icon icon="search"/>
   </span>
-  <input type="search" @search="$emit('search')" v-model="localValue" :placeholder="placeholder" class="search-input px-3 py-3 placeholder-blueGray-300 ring-blue-400 dark:ring-orange-800 text-gray focus:text-gray-dark-800 bg-white rounded text-sm border-0 shadow outline-none focus:outline-none focus:ring w-full pl-10"/>
+  <input type="search" @search="$emit('search')" v-model="localValue" :placeholder="placeholder" class="search-input px-3 py-3 placeholder-blueGray-300 ring-blue-400 dark:ring-orange-800 text-gray focus:text-gray-dark-800 bg-white rounded-lg text-sm border-0 shadow outline-none focus:outline-none focus:ring w-full pl-10"/>
 </div>
 </template>
 
