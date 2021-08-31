@@ -88,9 +88,8 @@ export default {
           return null
       },
     cimage() {
-      let image = this.image
-      if(this.data) 
-        image = this.data.image || this.data.imagen
+      let image = this.data?this.data.image|| this.data.imagen:this.image
+      if(!image) return image
       if(typeof image === 'object')
         return image.url || image.href || image.src
       return image
