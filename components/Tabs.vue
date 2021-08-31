@@ -3,7 +3,7 @@
   :class="compact?'compact':'normal'">
     <div
       v-for="(label, index) of labels"
-      :key="label"
+      :key="getLabel(label)"
       class="tab"
       @click="currentTab = typeof index === 'string' ? index : getLabel(label)"
       :class="
