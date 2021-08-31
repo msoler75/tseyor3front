@@ -1,6 +1,5 @@
 <template>
   <div>
-    <h1 class="text-center">¿Dónde Estamos?</h1>
     <div class="flex flex-wrap text-center items-stretch justify-center">
       <div v-for="info of infoClases" :key="info.titulo" class="p-2 max-w-sm">
         <Card class="p-5 rounded-xl h-full">
@@ -16,72 +15,29 @@
       </div>
     </div>
     <section class="mt-5 mb-2">
-      <Tabs v-model="viendoPais" :labels="paises" group />
       <section class="flex flex-wrap justify-between text-sm">
-        <Tabs compact group="fixed" v-model="viendoVista" :labels="modosVista" class="text-md"/>
-        <Tabs compact group="fixed" v-model="viendoClase" :labels="modosClase" class="text-xs" /> 
-            <SearchInput
-              v-model="buscarPor"
-              class="w-64"
-              placeholder="Buscar..."
-            />
+        <NLink to="/mapa?centros" class="btn btn-gray">Ver en Mapa</NLink>
+        <SearchInput
+          v-model="buscarPor"
+          class="w-64 mb-5"
+          placeholder="Buscar..."
+        />
       </section>
       
-      
-    </section>
-  
-  <section :key="mapKey"
-        v-if="(viendoVista === 'Mapa')"
-  >
-  
-      <GMap
-        ref="gMap"
-        language="es"
-        :cluster="{ options: { styles: clusterStyle } }"
-        :center="{ lat: locations[0].lat, lng: locations[0].lng }"
-        :options="{ fullscreenControl: true, styles: mapStyle }"
-        :zoom="3"
-      >
-        <GMapMarker
-          v-for="location in locations"
-          :key="location.clase+'-'+location.id"
-          :position="{ lat: location.lat, lng: location.lng }"
-          @click="currentLocation = location"
-        >
-          <GMapInfoWindow :options="{ maxWidth: 200 }">
-            <div class="flex flex-col items-center">
-            <nuxt-img class="rounded-full" width="50" height="50" 
-            :src="
-              location.clase === 'centros'
-                ? '/images/' + location.imagen
-                : '/images/usuarios/' + location.imagen
-            "
-            />
-            <p class="font-bold text-sm">{{location.nombre}}</p>
-            </div>
-          </GMapInfoWindow>
-        </GMapMarker>
-      </GMap>
-      </section>
-
-      <Grid class="grid-cols-fill-w-40" v-else-if="viendoVista === 'Listado'">
+      <Grid class="grid-cols-fill-w-40">
         <Card
-          v-for="contacto of contactosFiltrados"
-          :key="contacto.clase + '-' + contacto.id"
+          v-for="centro of centros"
+          :key="centro.id"
           class="p-3 text-center"
         >
           <nuxt-img
-            :src="
-              contacto.clase === 'centros'
-                ? '/images/' + contacto.imagen
-                : '/images/usuarios/' + contacto.imagen
-            "
+            :src="centro.imagen.url"
             class="mx-auto mb-3 w-20 h-20 rounded-full"
           />
-          <h3>{{ contacto.nombre }}</h3>
-          <p class="text-lg">{{ contacto.pais }}</p>
-          <p v-if="contacto.ciudad" class="text-diminished">
-            {{ contacto.ciudad }}
+          <h3>{{ centro.nombre }}</h3>
+          <p class="text-lg">{{ getPais(centro.contacto) }}</p>
+          <p v-if="centro.contacto&&(centro.contacto.provincia||centro.contacto.poblacion)" class="text-diminished">
+            {{ centro.contacto.provincia||centro.contacto.poblacion }}
           </p>
         </Card>
       </Grid>
@@ -90,42 +46,12 @@
 </template>
 
 <script>
+import countries from "@/assets/js/countries.js"
+
 export default {
-  asyncData({ app }) {
-    const paises = [
-      "España",
-      "Chile",
-      "Panamá",
-      "México",
-      "Venezuela",
-      "Argentina",
-      "Colombia",
-      "Costa Rica",
-      "Bolivia",
-      "Ecuador",
-    ];
-    const contactos = [];
-    for (let i = 1; i < 70; i++) {
-      const str = i % 4 === 0 ? "Muulasterio " : "Casa ";
-      const pais = paises[(i * i * 13) % paises.length];
-      contactos.push({
-        id: i,
-        clase: i % 10 === 9 ? "centros" : "usuarios",
-        imagen:
-          i % 10 === 9
-            ? "imagen" + ((i % 8) + 1) + ".jpg"
-            : "usuario" + ((i % 7) + 1) + ".jpg",
-        pais,
-        nombre:
-          i % 10 === 9
-            ? str + "Tseyor " + app.$lorem(1, 1, 3)
-            : app.$lorem(1, 1, 3),
-        ciudad: app.$lorem(1, 1, 2),
-        lat: Math.random() * 60 - 30,
-        lng: Math.random() * 60 - 30,
-      });
-    }
-    return { contactos };
+  async asyncData({ $strapi }) {
+    const centros = await $strapi.find("centros") 
+    return { centros };
   },
   data() {
     return {
@@ -134,83 +60,18 @@ export default {
         icon: 'fas fa-home',
         title: 'Centros Tseyor',
         text: 'Nuestros centros son las Casas Tseyor y Muulasterios Tseyor, que estamos conformando en todo el mundo, y que próximamente darán paso a los Pueblos Tseyor.'
-      },
-      {
-        icon: 'fas fa-user',
-        title: 'Miembros de Tseyor',
-        text: ' Puedes consultar todos los miembros de Tseyor que ofrecen su servicio de información, ayuda y apoyo en sus zonas de actividad.'
-      },
+        },
       ],
       buscarPor: "",
-      viendoPais: "Mundo",
-      viendoVista: "Mapa",
-      viendoClase: "Ambos",
-      modosClase: ["Personas", "Centros", "Ambos"],
-      modosVista: [
-        {icon: 'fas fa-map-marked-alt',
-        label: "Mapa"
-        },
-        {
-          icon: 'fas fa-th-large',
-          label:"Listado"}],
-      //opciones GMap
-      currentLocation: {},
-      /* pins: {
-                selected: "data:image/png;base64,iVBORw0KGgo...",
-                notSelected: "data:image/png;base64,iVBORw0KGgo..."
-            }, */
-      mapStyle: [],
-      clusterStyle: [
-        {
-          url: "https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m1.png",
-          width: 56,
-          height: 56,
-          textColor: "#fff",
-        },
-      ],
     };
   },
-  computed: {
-    paises() {
-      const r = { Mundo: true };
-      for (const centro of this.contactos) r[centro.pais] = true;
-      return Object.keys(r);
-    },
-    contactosFiltrados() {
-      const v = this.viendoPais.toLowerCase();
-      const bp = this.$slugify(this.buscarPor);
-      const vc = this.viendoClase.toLowerCase().replace('personas', 'usuarios');
-      return this.contactos
-        .filter(
-          (contacto) =>
-            (v === "mundo" || contacto.pais === this.viendoPais) &&
-            (bp === "" ||
-              this.$slugify(contacto.nombre).search(bp) > -1 ||
-              this.$slugify(contacto.ciudad).search(bp) > -1 ||
-              this.$slugify(contacto.pais).search(bp) > -1)
-        )
-        .filter((contacto) => vc === "ambos" || vc === contacto.clase);
-    },
-    locations() {
-      return this.contactosFiltrados
-    },
-    mapKey() {
-      return this.hashCode(JSON.stringify(this.locations));
-    },
-  },
   methods: {
-    hashCode(str) {
-      var hash = 0;
-      if (!str || str.length == 0) {
-        return hash;
-      }
-      for (var i = 0; i < str.length; i++) {
-        var char = str.charCodeAt(i);
-        hash = (hash << 5) - hash + char;
-        hash = hash & hash; // Convert to 32bit integer
-      }
-      return hash;
-    },
-  },
+    getPais(contacto) {
+      if(!contacto||!contacto.pais) return ''
+      const code = contacto.pais.toUpperCase()
+      const pais = countries.find(x=>x.code===code)
+      return pais?pais.label:""
+    }
+  }
 };
 </script>

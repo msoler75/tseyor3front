@@ -72,6 +72,12 @@ export default () => ({
       description: "Zona de archivos para descargar",
       parent: "/recursos"
     },
+    "/centros": {
+      name: "Centros Tseyor",
+      icon: "fas fa-globe-americas",
+      description: "Lugares Tseyor en el mundo",
+      parent: "/recursos"
+    },
     "/recursos/listados": {
       name: "Listados de miembros",
       icon: "fas fa-users",
