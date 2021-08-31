@@ -5,36 +5,36 @@
   <div
     class="grid grid-fluid gap-8"
   >
-    <div class="grid-block" v-if="equipo.imagen&&equipo.imagen.url">
-    <nuxt-img
-        :src="equipo.imagen.url"
-        :width="300"
-        :height="300"
-        class="w-full h-full"
-        fit="cover"
-      />
+    <div class="grid-block h-64 md:h-full" v-if="equipo.imagen&&equipo.imagen.url" :style="bgImage">
     </div>
 
-    <div class="grid-block p-5 text-center">
+    <div class="grid-block surface p-5 text-center flex flex-col justify-center">
+        <h2 class="my-0">
+          {{ equipo.nombre }}
+        </h2>
       <section class="text-3xl my-5">
         <Icon icon="people-carry" />
       </section>
-        <h2>
-          {{ equipo.nombre }}
-        </h2>
         <p>
           {{equipo.descripcion}}
         </p>
     </div>
 
-    <div class="grid-block p-5" v-if="equipo.pizarra">
+    <div class="grid-block surface p-5" v-if="equipo.pizarra">
       <div v-html="equipo.textoHTML"/>
     </div>
 
-    <div class="grid-block p-5">
+    <div class="grid-block surface p-5">
       <h3>Miembros</h3>
-      <div class="flex">
-        <Avatar v-for="user of equipo.users" :key="user.id" :data="user" class="w-16 h-16" />
+      <div class="flex flex-wrap">
+        <Avatar v-for="user of equipo.users" :key="user.id" :data="user" :class="avatarClass" class="m-1" />
+      </div>
+    </div>
+
+    <div v-if="equipo.actividades" class="grid-block surface p-5">
+      <h3>Actividades</h3>
+      <div class="flex flex-col space-y-4">
+        <NLink v-for="actividad of equipo.actividades" :key="actividad.id" class="p-3 btn btn-gray" :to="'/actividades/'+actividad.id">{{actividad.titulo}} <span v-if="actividad.descripcion" class="text-diminished"> — {{actividad.descripcion}}</span></NLink>
       </div>
     </div>
   
@@ -54,6 +54,8 @@ export default {
       const id = route.params.id
       const equipos = await $strapi.find('equipos', id.match(/\d+/)?{id}:{slug:id})
       const contenido = equipos[0]
+      for(var i=0;i<62;i++)
+        contenido.users.push(contenido.users[0])
       contenido.textoHTML = app.$renderMarkdownServer(contenido.pizarra/*, contenido.imagenes*/)
       return { contenido, equipo: contenido };
     }
@@ -62,27 +64,42 @@ export default {
       console.error(error)
     }
   },
+  computed: {
+    avatarClass() {
+      if(!this.equipo.users) return ''
+      const n = this.equipo.users.length
+      return n<16?'w-16 h-16':n<64?'w-6 h-6':'w-4 h-4'
+    },
+    bgImage() {
+      const imgUrl = this.$img(this.equipo.imagen.url, {width: 400, format: 'webp', quality: 70})
+      return {
+        backgroundImage: `url('${imgUrl}')`,
+        backgroundPosition: 'center',
+        backgroundSize: 'cover'
+      }
+    }
+  }
 };
 </script>
 
 <style scoped>
-.grid-fluid {
-  grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
-  grid-template-rows: repeat(auto-fill, minmax(360px, 1fr));
-  grid-auto-columns: minmax(320px, 360px);
-  grid-auto-rows: minmax(320px, 460px);
-  grid-auto-flow: dense;
-  place-items: stretch stretch;
-}
-
 .grid-block {
-  @apply rounded shadow bg-white overflow-hidden;
-}
-
-.grid-block.cols-2 {
-  grid-column-end: span 2;
-}
-.grid-block.rows-2 {
-  grid-row-end: span 2;
+    @apply min-h-8 border border-gray-200 dark:border-gray-900 rounded shadow overflow-hidden;
+  }
+@screen md {
+  .grid-fluid {
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    grid-template-rows: repeat(auto-fill, minmax(350px, 1fr));
+    grid-auto-columns: minmax(320px, 400px);
+    grid-auto-rows: minmax(320px, 400px);
+    grid-auto-flow: dense;
+    place-items: stretch stretch;
+  }
+  .grid-block.cols-2 {
+    grid-column-end: span 2;
+  }
+  .grid-block.rows-2 {
+    grid-row-end: span 2;
+  }
 }
 </style>
