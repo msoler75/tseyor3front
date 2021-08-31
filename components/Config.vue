@@ -1,7 +1,5 @@
 <template>
-    <div class="w-full">
-        <slot />
-    </div>
+    <div class="d-none"/>
 </template>
 
 <script>

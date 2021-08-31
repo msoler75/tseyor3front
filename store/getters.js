@@ -84,4 +84,8 @@ export default {
     return state.menuUsuario
   },
 
+  hideMenus (state) {
+    return state.hideMenus
+  }
+
 }

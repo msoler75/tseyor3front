@@ -4,6 +4,7 @@
   >
     <!-- Navigation starts -->
     <nav id="main-menu" 
+    v-show="!hideMenus"
     class="flex transition duration-200 font-serif z-30 w-full mx-auto bg-white dark:bg-gray-900 text-gray-blue-800 dark:text-gray-200 dark:hover:text-gray-50  shadow select-none sticky top-0" 
     style="min-height:48px"
     :submenu="currentTab !== ''">
@@ -250,8 +251,10 @@
       </div>
     </div>
 
-    <Sidebar v-model="showSidebar" :items="rutasMenu" class="xl:hidden"/>
-    <Footer class="mt-auto"
+    <Sidebar v-show="!hideMenus" v-model="showSidebar" :items="rutasMenu" class="xl:hidden"/>
+    <Footer 
+    v-show="!hideMenus"
+    class="mt-auto"
     :class="pageContained?'pt-9':''" />
   </div>
 </template>
@@ -524,7 +527,7 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(["isAuthenticated", "loggedInUser", "pageContained", "pageBackground", "pageBreadcrumb", "menuUsuario"]),
+    ...mapGetters(["isAuthenticated", "loggedInUser", "pageContained", "pageBackground", "pageBreadcrumb", "menuUsuario", "hideMenus"]),
 
     iconMode() {
       return this.$colorMode.value === "light" ? iconSun : iconMoon;

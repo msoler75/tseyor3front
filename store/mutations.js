@@ -27,4 +27,8 @@ export default {
     state.menuUsuario = payload
   },
 
+  setHideMenus(state, payload) {
+    state.hideMenus = payload
+  }
+
 }
