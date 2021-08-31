@@ -1,5 +1,5 @@
 <template>
-<section class="relative">
+<section class="relative px-7">
   <Config :contained="false"/>
 
   <div
@@ -10,22 +10,32 @@
         :src="equipo.imagen.url"
         :width="300"
         :height="300"
-        class="w-full h-full rounded-full"
+        class="w-full h-full"
         fit="cover"
       />
     </div>
 
-    <div class="grid-block">
-        <h1>
-          <Icon :icon="people-carry" /><span>{{ equipo.nombre }}</span>
-        </h1>
+    <div class="grid-block p-5 text-center">
+      <section class="text-3xl my-5">
+        <Icon icon="people-carry" />
+      </section>
+        <h2>
+          {{ equipo.nombre }}
+        </h2>
         <p>
           {{equipo.descripcion}}
         </p>
     </div>
 
-    <div class="grid-block" v-if="equipo.pizarra">
+    <div class="grid-block p-5" v-if="equipo.pizarra">
       <div v-html="equipo.textoHTML"/>
+    </div>
+
+    <div class="grid-block p-5">
+      <h3>Miembros</h3>
+      <div class="flex">
+        <Avatar v-for="user of equipo.users" :key="user.id" :data="user" class="w-16 h-16" />
+      </div>
     </div>
   
   </div>
@@ -63,6 +73,10 @@ export default {
   grid-auto-rows: minmax(320px, 460px);
   grid-auto-flow: dense;
   place-items: stretch stretch;
+}
+
+.grid-block {
+  @apply rounded shadow bg-white overflow-hidden;
 }
 
 .grid-block.cols-2 {

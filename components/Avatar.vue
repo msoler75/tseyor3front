@@ -1,11 +1,11 @@
 <template>
     <NLink v-if="cto" :to="cto" class="flex-shrink-0 rounded-full overflow-hidden">
-        <nuxt-img v-if="cimage" :src="cimage" class="shadow w-full h-full" :alt="cname"/>
+        <nuxt-img v-if="cimage" :src="cimage" class="shadow w-full h-full" :alt="cname" :title="cname"/>
         <div v-else class="flex justify-center items-center shadow uppercase" :style="'background: ' + color">
             {{initials}}
         </div>
     </NLink>
-    <nuxt-img v-else-if="cimage" :src="cimage" class="flex-shrink-0 rounded-full shadow w-full h-full" :alt="cname"/>
+    <nuxt-img v-else-if="cimage" :src="cimage" class="flex-shrink-0 rounded-full shadow w-full h-full" :alt="cname" :title="cname"/>
     <div v-else class="flex-shrink-0 rounded-full overflow-hidden flex justify-center items-center shadow uppercase" :style="'background: ' + color">
         {{initials}}
     </div>
@@ -27,7 +27,7 @@ export default {
       default: null,
     },
     image: {
-      type: String,
+      type: String | Object,
       required: false,
       default: null,
     },
@@ -88,13 +88,12 @@ export default {
           return null
       },
     cimage() {
-        if(this.data)
-        {
-            const image = this.data.image || this.data.imagen
-            if(image)
-                return './images/usuarios/'+image
-        }
-        return this.image
+      let image = this.image
+      if(this.data) 
+        image = this.data.image || this.data.imagen
+      if(typeof image === 'object')
+        return image.url || image.href || image.src
+      return image
     },
     cname() {
         if(this.data)
