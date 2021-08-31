@@ -127,8 +127,9 @@ export default {
   },
   methods: {
     async cargarRelacionados(){
+      const id = this.contenido.id
       const filtro = { id_ne: id, id_lt: id+10, id_gt: id-10 }
-      this.relacionados = await $strapi.find('comunicados', {...filtro, _limit: 7})
+      this.relacionados = await this.$strapi.find('comunicados', {...filtro, _limit: 7})
     },
   },
   data() {
