@@ -1,14 +1,12 @@
 <template>
-<section class="relative px-7">
+<section class="relative px-7 mb-7">
   <Config :contained="false"/>
 
-  <div
-    class="grid grid-fluid gap-8"
-  >
-    <div class="grid-block h-64 md:h-full" v-if="equipo.imagen&&equipo.imagen.url" :style="bgImage">
+  <GridFluid class="gap-4">
+    <div class="h-64 md:h-full" v-if="equipo.imagen&&equipo.imagen.url" :style="bgImage">
     </div>
 
-    <div class="grid-block surface p-5 text-center flex flex-col justify-center">
+    <div class="surface p-5 text-center flex flex-col justify-center">
         <h2 class="my-0">
           {{ equipo.nombre }}
         </h2>
@@ -20,28 +18,25 @@
         </p>
     </div>
 
-    <div class="grid-block surface p-5" v-if="equipo.pizarra">
+    <div class="surface p-5" v-if="equipo.pizarra">
       <div v-html="equipo.textoHTML"/>
     </div>
 
-    <div class="grid-block surface p-5">
+    <div class="surface p-5">
       <h3>Miembros</h3>
       <div class="flex flex-wrap">
         <Avatar v-for="user of equipo.users" :key="user.id" :data="user" :class="avatarClass" class="m-1" />
       </div>
     </div>
 
-    <div v-if="equipo.actividades" class="grid-block surface p-5">
+    <div v-if="equipo.actividades" class="surface p-5">
       <h3>Actividades</h3>
       <div class="flex flex-col space-y-4">
         <NLink v-for="actividad of equipo.actividades" :key="actividad.id" class="p-3 btn btn-gray" :to="'/actividades/'+actividad.id">{{actividad.titulo}} <span v-if="actividad.descripcion" class="text-diminished"> — {{actividad.descripcion}}</span></NLink>
       </div>
     </div>
   
-  </div>
-
-  {{equipo}}
-
+  </GridFluid>
 </section>
 </template>
 
@@ -82,24 +77,3 @@ export default {
 };
 </script>
 
-<style scoped>
-.grid-block {
-    @apply min-h-8 border border-gray-200 dark:border-gray-900 rounded shadow overflow-hidden;
-  }
-@screen md {
-  .grid-fluid {
-    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-    grid-template-rows: repeat(auto-fill, minmax(350px, 1fr));
-    grid-auto-columns: minmax(320px, 400px);
-    grid-auto-rows: minmax(320px, 400px);
-    grid-auto-flow: dense;
-    place-items: stretch stretch;
-  }
-  .grid-block.cols-2 {
-    grid-column-end: span 2;
-  }
-  .grid-block.rows-2 {
-    grid-row-end: span 2;
-  }
-}
-</style>
