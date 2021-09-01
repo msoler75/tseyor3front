@@ -16,6 +16,7 @@
         <p>
           {{equipo.descripcion}}
         </p>
+        <div class="italic mt-5"><Icon icon="check-circle" class="text-green mr-1"/> Eres miembro</div>
     </div>
 
     <div class="surface p-5" v-if="equipo.pizarra">
@@ -35,8 +36,13 @@
         <NLink v-for="actividad of equipo.actividades" :key="actividad.id" class="p-3 btn btn-gray" :to="'/actividades/'+actividad.id">{{actividad.titulo}} <span v-if="actividad.descripcion" class="text-diminished"> — {{actividad.descripcion}}</span></NLink>
       </div>
     </div>
-  
+
   </GridFluid>
+
+  <section class="mt-7 flex">
+      <button class="btn btn-gray ml-auto"><Icon icon="sign-out-alt" class="mr-1" /> Salir del equipo</button>
+  </section>
+
 </section>
 </template>
 

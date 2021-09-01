@@ -9,7 +9,7 @@
               class="max-w-full w-32 rounded-full overflow-hidden"
             >
               <nuxt-img
-                :src="image"
+                :src="cimage"
                 class="w-full block"
               />
             </nuxt-link>
@@ -23,7 +23,7 @@
           v-html="description"
         />
         <div class="flex justify-center items-center sm:mx-auto lg:w-1/3">
-          <button class="btn">Suscríbete</button>
+          <button class="btn" :to="to">{{clabel}}</button>
         </div>
       </div>
     </Section>
@@ -35,7 +35,19 @@ export default {
       image: {},
       to: {},
       title: {},
-      description: {}
+      description: {},
+      label: {}
+    },
+    computed: {
+      cimage() {
+        if(!this.image)return ""
+        if(typeof this.image === "string")
+          return this.image
+        return this.image.url
+      },
+      clabel() {
+        return this.label || 'Suscríbete'
+      }
     }
 }
 </script>

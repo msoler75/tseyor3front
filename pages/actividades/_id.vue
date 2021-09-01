@@ -27,12 +27,7 @@
       />
   </div>
 
-      
-      <div class="p-5 surface text-center" v-if="actividad.reuniones&&actividad.reuniones.length">
-        <h3 >Últimas Reuniones</h3>
-        {{actividad.reuniones}}
-      </div>
-
+    
       <div class="p-5 surface text-center flex flex-col justify-center" v-if="actividad.sala">
         <h3 >Sala virtual</h3>
         <strong class="my-5">
@@ -42,11 +37,28 @@
           <NLink class="btn w-auto mx-auto" :to="'/salas/'+actividad.sala.id">Acceder</NLink>
       </div>
 
-      <div class="p-5 surface text-center flex flex-col justify-center">
-          <p>Ahora puedes seguir esta actividad y recibirás las notificaciones.</p>
-      <button class="btn w-auto mx-auto">Seguir</button>
+      <div class="p-5 surface text-center flex flex-col justify-center items-center" v-if="actividad.tipo=='reunion'">
+          <div v-if="!actividad.reuniones.length">
+            No hay reuniones
+          </div>
+          <section v-else class="w-full">
+            <h3>Reuniones</h3>
+            <table class="w-full">
+              <tr v-for="reunion of actividad.reuniones" :key="reunion.id">
+                <td>
+                  <span>{{$dayjs(reunion.fecha).fromNow()}}</span><br>
+                  <strong class="bg-gray-100">{{$dayjs(reunion.fecha).format("DD-MMM")}}</strong><br>a las <strong>{{$dayjs(reunion.fecha).format("HH:mm")}}</strong>
+                </td>
+                <td>
+                  <NLink class="btn" :to="'/reuniones/'+reunion.id">Ver</NLink>
+                </td>
+              </tr>
+            </table>
+          </section>
       </div>
     </GridFluid>
+
+    {{actividad}}
   </div>
 </template>
 
