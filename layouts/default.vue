@@ -288,7 +288,7 @@ export default {
         {
           icon: "fas fa-user",
           name: "Ver Perfil",
-          href: "/perfil"
+          href: "/usuarios/yo"
         },
         {
           icon: "fas fa-sign-out-alt",

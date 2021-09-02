@@ -58,7 +58,8 @@
 
 <script>
 export default {
-  middleware: "invitado",
+  // middleware: "invitado",
+  auth: 'guest',
   data() {
     return {
       email: "",
@@ -69,18 +70,19 @@ export default {
   methods: {
     async login() {
       this.error = null;
-      try {
-        await this.$auth.loginWith("local", {
+      this.$auth.loginWith("local", {
           data: {
             identifier: this.email,
             password: this.password
           }
-        });
-        this.$router.push("/");
-      } catch (e) {
+        })
+        .then( ()=>{
+          this.$router.push("/")
+        })
+        .catch ((e)=> {
         console.error(e)
         this.error = e.response.data.message[0].messages[0].message;
-      }
+      });
     }
   }
 };

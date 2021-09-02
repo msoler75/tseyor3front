@@ -58,22 +58,20 @@
 </template>
 
 <script>
-import vercontenidomixin from "@/mixins/vercontenido.js";
+import { mapGetters } from "vuex";
+// import vercontenidomixin from "@/mixins/vercontenido.js";
 export default {
-  mixins: [vercontenidomixin],
-  async asyncData({ $strapi, route }) {
-    const id = route.params.id
-    const usuarios = await $strapi.find('users', {id})
-    const contenido = usuarios[0]
-    contenido.comentarios = []
-    return { contenido, usuario: contenido };
-  },
+  middleware: "auth",
   computed: {
+    ...mapGetters(["loggedInUser"]),
+    usuario () {
+      return this.loggedInUser
+    },
     cimage() {
-      return this.usuario&&this.usuario.imagen&&this.usuario.imagen.url?this.usuario.imagen.url:'/images/usuario.jpg'
+        return this.usuario&&this.usuario.imagen&&this.usuario.imagen.url?this.usuario.imagen.url:'/images/usuario.jpg'
+    }
   }
-  }
-};
+}
 </script>
 
 <style scoped>

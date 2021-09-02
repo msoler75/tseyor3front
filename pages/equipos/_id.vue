@@ -49,6 +49,7 @@
 <script>
 import vercontenidomixin from "@/mixins/vercontenido.js";
 export default {
+  middleware: 'auth', // requiere auth
   mixins: [vercontenidomixin],
   async asyncData({ app, $strapi, route, redirect }) {
     try {

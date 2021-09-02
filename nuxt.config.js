@@ -9,12 +9,12 @@ export default {
   router: {
     // base: '/web3/',
     prefetchLinks: false,
-    middleware: 'route'
+    middleware: ['route']
   },
 
   // https://nuxtjs.org/docs/2.x/directory-structure/nuxt-config#publicruntimeconfig
   publicRuntimeConfig: {
-    baseUrl: process.env.BASE_URL || 'http://tseyor.org',
+    // baseUrl: process.env.BASE_URL || 'http://tseyor.org',
     publicFolder: Path.resolve(__dirname, 'static')
   },
 
@@ -88,6 +88,7 @@ export default {
     '@nuxtjs/pwa',
     '@nuxtjs/apollo',
     '@nuxtjs/strapi',
+    '@nuxtjs/proxy',
     // Doc: https://github.com/nuxt-community/dotenv-module
     // '@nuxtjs/dotenv',
     '@nuxtjs/auth',
@@ -113,13 +114,13 @@ export default {
 
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
   axios: {
-    baseURL: process.env.API_AUTH_URL || 'http://localhost:1337'
+    baseURL: '/api'
   },
 
   apollo: {
     clientConfigs: {
       default: {
-        httpEndpoint: process.env.BACKEND_URL || 'http://localhost:1337/graphql'
+        httpEndpoint: '/api/graphql'
       }
     },
     defaultOptions: {
@@ -141,12 +142,12 @@ export default {
       local: {
         endpoints: {
           login: {
-            url: 'auth/local',
+            url: '/api/auth/local',
             method: 'post',
             propertyName: 'jwt'
           },
           user: {
-            url: 'users/me',
+            url: '/api/users/me',
             method: 'get',
             propertyName: false
           },
@@ -167,8 +168,17 @@ export default {
   },
 
   strapi: {
-    url: process.env.STRAPI_URL || 'http://localhost:1337',
-    entities: ['noticias']
+    url: '/api'
+    // entities: ['noticias']
+  },
+
+  proxy: {
+    '/api': {
+      target: 'http://localhost:1337',
+      pathRewrite: {
+        '^/api': '/'
+      }
+    }
   },
 
   tailwindcss: {

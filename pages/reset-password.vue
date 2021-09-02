@@ -71,7 +71,7 @@ export default {
     async resetPassword() {
       this.error = null;
       if (this.password1 !== this.password2) {
-        this.error = "Passwords do not match.";
+        this.error = "Las contraseñas no coinciden.";
         return;
       }
       try {

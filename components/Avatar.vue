@@ -96,7 +96,12 @@ export default {
     },
     cname() {
         if(this.data)
-            return this.data.name || this.data.nombreSimbolico || this.data.username || this.data.nombre || this.data.user ||this.data.usuario || this.data.email.replace(/@.*/, '')
+        {
+          let name = this.data.name || this.data.nombreSimbolico || this.data.username || this.data.nombre || this.data.user ||this.data.usuario 
+          if(!name&& this.data&& this.data.email)
+            name = this.data.email.replace(/@.*/, '')
+          return name || ''
+        }
         return this.name || 'Anónimo'
     },
     initials() {

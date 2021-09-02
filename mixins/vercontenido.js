@@ -57,7 +57,7 @@ export default {
       return this.contenido?this.contenido.clase:'default'
     },
     cimage() {
-      var src = this.image || this.contenido.image || this.contenido.imagen;
+      let src = this.image || this.imagen || this.contenido.image || this.contenido.imagen;
       if(typeof src === 'object')
         src = src.url 
       // if (src && src.search("/") > -1) return src;
@@ -73,7 +73,7 @@ export default {
   },
   methods: {
   renderMarkdown(md) {
-    var html = this.$md.render(md)
+    let html = this.$md.render(md)
     // console.warn(html)
     html = html
       .replace(/(<img[^>]+>)<br \/>\n?\s*(<img)/gm, '$1\n$2')
