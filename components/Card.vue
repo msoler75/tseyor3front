@@ -1,5 +1,5 @@
 <template>
-  <div class="card flex flex-col rounded overflow-hidden h-full"
+  <div class="card flex flex-col rounded overflow-hidden"
   :class="center?'text-center':''">
     <slot>
       <!-- 

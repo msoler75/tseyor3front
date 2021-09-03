@@ -13,7 +13,7 @@ export default {
     props: {
         value: {},
         values: {
-            type: Array,
+            type: Array | Object,
             required: true
         },
         threshold: {

@@ -3,7 +3,7 @@
     <div v-for="guia of guias" :key="guia.slug" class="p-3">
       <NLink :to="'/guias-estelares/' + guia.slug">
         <h2 class="text-lg mb-2">{{ guia.nombre }}</h2>
-        <nuxt-img
+        <nuxt-img v-if="guia.imagen"
           loading="lazy"
           :alt="guia.nombre"
           :src="guia.imagen.url"

@@ -1,4 +1,6 @@
 <template>
+<div>
+
   <SwipeX v-model="viendoSeccion" :values="secciones">
     <section class="block lg:flex">
       <div class="lg:mr-10">
@@ -36,12 +38,12 @@
         </Card>
 
         <Card v-show="viendoSeccion === 'bibliografia'" class="p-5">
-          <div v-html="guia.experienciaHTML" />
+          <div v-html="guia.bibliografiaHTML" />
         </Card>
 
         <Grid
           v-show="viendoSeccion === 'bibliografia'"
-          class="grid-cols-fill-w-56 text-center"
+          class="grid-cols-fill-w-56 text-center mt-3"
         >
           <CardBook
             v-for="libro of guia.libros"
@@ -58,6 +60,11 @@
       </div>
     </section>
   </SwipeX>
+
+
+  <LazyGuiasCollection class="mt-16"/>
+
+  </div>
 </template>
 
 <script>
@@ -103,7 +110,7 @@ export default {
       return r;
     },
     citas() {
-      return this.guia.citas.split(/\n/).filter(x => x);
+      return (this.guia.citas || '').split(/\n/).filter(x => x);
     }
   }
 };

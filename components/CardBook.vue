@@ -45,7 +45,7 @@ export default {
     }
   },
   computed: {
-    cclase() {
+    ccollection() {
       return "libros";
     },
     sizeBook() {
