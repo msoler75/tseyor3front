@@ -199,6 +199,10 @@ export default {
       config.node = {
         fs: 'empty',
       }
+
+      if (isDev) {
+        config.devtool = isClient ? 'source-map' : 'inline-source-map'
+      }
     }
   },
 

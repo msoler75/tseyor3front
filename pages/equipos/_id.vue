@@ -16,7 +16,10 @@
         <p>
           {{equipo.descripcion}}
         </p>
-        <div class="italic mt-5"><Icon icon="check-circle" class="text-green mr-1"/> Eres miembro</div>
+        <div class="mt-5 h-8 flex justify-center items-center">
+          <div v-if="soyMiembro" class="italic"><Icon icon="check-circle" class="text-green mr-1"/> Eres miembro</div>
+          <div v-else><Button @click="entrar" class="btn"><Icon icon="door-open" class="mr-2" />Inscríbete</Button></div>
+        </div>
     </div>
 
     <div class="surface p-5" v-if="equipo.pizarra">
@@ -40,13 +43,14 @@
   </GridFluid>
 
   <section class="mt-7 flex">
-      <button class="btn btn-gray ml-auto"><Icon icon="sign-out-alt" class="mr-1" /> Salir del equipo</button>
+      <button v-if="soyMiembro" class="btn btn-gray ml-auto" @click="salir" ><Icon icon="sign-out-alt" class="mr-1" /> Salir del equipo</button>
   </section>
 
 </section>
 </template>
 
 <script>
+import { mapGetters } from "vuex";
 import vercontenidomixin from "@/mixins/vercontenido.js";
 export default {
   middleware: 'auth', // requiere auth
@@ -59,7 +63,7 @@ export default {
       for(var i=0;i<62;i++)
         contenido.users.push(contenido.users[0])
       contenido.textoHTML = app.$renderMarkdownServer(contenido.pizarra/*, contenido.imagenes*/)
-      return { contenido, equipo: contenido };
+      return { id: contenido.id, contenido, equipo: contenido };
     }
     catch(error)
     {
@@ -67,6 +71,7 @@ export default {
     }
   },
   computed: {
+    ...mapGetters(["loggedInUser"]),
     avatarClass() {
       if(!this.equipo.users) return ''
       const n = this.equipo.users.length
@@ -79,8 +84,64 @@ export default {
         backgroundPosition: 'center',
         backgroundSize: 'cover'
       }
+    },
+    soyMiembro () {
+      return this.equipo.users.find(x=>x.id===this.loggedInUser.id)
     }
+  },
+  methods: {
+     async entrar() {
+      await this.$axios.put('/api/equipos/'+this.equipo.id+'/join')
+      //await this.$auth.fetchUser()
+      // this.$router.app.refresh()  
+      this.refresh()
+    },
+    async salir() {
+      await this.$axios.put('/api/equipos/'+this.equipo.id+'/leave')
+      // this.$router.app.refresh()  
+      this.refresh()
+    },
+    async refresh() {
+      await this.$auth.fetchUser() // actualizamos los datos del usuario actual y el equipo con sus miembros después de la operación
+      const equipos = await this.$strapi.find('equipos', {id: this.equipo.id})
+      this.$set(this.contenido, 'users', equipos[0].users) 
+    }
+    /*
+    async getEquipos() {
+      const response = await this.$axios.get('/api/users/'+this.loggedInUser.id)
+      const user = response.data
+      return user&&user.equipos?user.equipos.map(x=>x.id):[]
+    },
+    async updateEquipos(equipos) {
+      console.log('update_equipos', equipos)
+      const r = await this.$axios.put('/api/users/'+this.loggedInUser.id, {equipos})
+      this.$router.app.refresh()     
+    },
+    async entrar2() {
+      const equipos = await this.getEquipos()
+      console.log('equipos', equipos)
+      const idx = equipos.findIndex(id=>id===this.equipo.id)
+      if(idx!==-1)
+      {
+        this.$router.app.refresh()
+        return
+      }
+      equipos.push(this.equipo.id)
+      this.updateEquipos(equipos)   
+    },
+    async salir2() {
+      const equipos = await this.getEquipos()
+      console.log('equipos', equipos)
+      const idx = equipos.findIndex(id=>id===this.equipo.id)
+      if(idx===-1)
+      {
+        this.$router.app.refresh()
+        return
+      }
+      equipos.splice(idx, 1)
+      this.updateEquipos(equipos)     
+    }
+    */
   }
 };
 </script>
-
