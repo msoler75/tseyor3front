@@ -40,24 +40,24 @@
               >
             </div>
             <div class="flex flex-col justify-center items-center">
-              <div class="uppercase font-bold text-sm">reuniones</div>
+              <div class="uppercase font-bold text-sm">actividades</div>
               <span
-                ><icon icon="calendar-day" class="mr-2 text-gray" />
-                {{ equipo.reuniones }}</span
+                ><icon icon="hiking" class="mr-2 text-gray" />
+                {{ equipo.actividades.length }}</span
               >
             </div>
             <div class="flex flex-col justify-center items-center">
-              <div class="uppercase font-bold text-sm">anexos</div>
+              <div class="uppercase font-bold text-sm">reuniones</div>
               <span
-                ><icon icon="paperclip" class="mr-2 text-gray" />
-                {{ equipo.anexos }}</span
+                ><icon icon="calendar-day" class="mr-2 text-gray" />
+                {{ equipo.reuniones.length }}</span
               >
             </div>
             <div class="flex flex-col justify-center items-center">
               <div class="uppercase font-bold text-sm">actas</div>
               <span
                 ><icon icon="file-alt" class="mr-2 text-gray" />
-                {{ equipo.actas }}</span
+                {{ equipo.actas.length }}</span
               >
             </div>
           </div>

@@ -6,7 +6,7 @@
 
 <style scoped>
 .grid-fluid > * {
-    @apply min-h-8 border border-gray-200 dark:border-gray-900 rounded-md shadow overflow-hidden;
+    @apply min-h-8 max-h-[400px] border border-gray-200 dark:border-gray-900 rounded-md shadow;
   }
 @screen md {
   .grid-fluid {
@@ -17,10 +17,10 @@
     grid-auto-flow: dense;
     place-items: stretch stretch;
   }
-  .grid-fluid > *.cols-2 {
+  .grid-fluid >>> *.cols-2 {
     grid-column-end: span 2;
   }
-  .grid-fluid > *.rows-2 {
+  .grid-fluid >>> *.rows-2 {
     grid-row-end: span 2;
   }
 }

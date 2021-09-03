@@ -368,7 +368,7 @@ export default {
           sidebarClass: 'order-3',
           items: [
             "/presentacion/visita",
-             "/guias_estelares",
+             "/guias-estelares",
              "/preguntas_frecuentes",
              "/mapa",
             {

@@ -263,7 +263,7 @@ export default () => ({
       description: "Orígenes del grupo Tseyor",
       parent: "/presentacion/visita"
     },
-    "/guias_estelares": {
+    "/guias-estelares": {
       name: "Guías Estelares",
       icon: "svg ufo",
       description: "Toda la información de nuestros tutores de la Confederación de Mundos",

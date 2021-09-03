@@ -22,23 +22,25 @@
         </div>
     </div>
 
-    <div class="surface p-5" v-if="equipo.pizarra">
+    <div class="surface p-5 cols-2 overflow-auto" v-if="equipo.pizarra">
       <div v-html="equipo.textoHTML"/>
     </div>
 
-    <div class="surface p-5">
+    <div class="surface p-5 overflow-auto">
       <h3>Miembros</h3>
       <div class="flex flex-wrap">
         <Avatar v-for="user of equipo.users" :key="user.id" :data="user" :class="avatarClass" class="m-1" />
       </div>
     </div>
 
-    <div v-if="equipo.actividades" class="surface p-5">
-      <h3>Actividades</h3>
+    <div v-if="equipo.actividades&&equipo.actividades.length" class="surface p-5">
+      <h3><Icon icon="hiking" class="mr-3"/>Actividades</h3>
       <div class="flex flex-col space-y-4">
         <NLink v-for="actividad of equipo.actividades" :key="actividad.id" class="p-3 btn btn-gray" :to="'/actividades/'+actividad.id">{{actividad.titulo}} <span v-if="actividad.descripcion" class="text-diminished"> — {{actividad.descripcion}}</span></NLink>
       </div>
     </div>
+
+
 
   </GridFluid>
 
@@ -75,7 +77,7 @@ export default {
     avatarClass() {
       if(!this.equipo.users) return ''
       const n = this.equipo.users.length
-      return n<16?'w-16 h-16':n<64?'w-6 h-6':'w-4 h-4'
+      return n<16?'w-16 h-16':n<32?'w-12 h-12':n<64?'w-8 h-8':'w-4 h-4'
     },
     bgImage() {
       const imgUrl = this.$img(this.equipo.imagen.url, {width: 400, format: 'webp', quality: 70})

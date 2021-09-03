@@ -41,7 +41,7 @@ export default {
     return {
       secciones: [
             "/presentacion/visita",
-             "/guias_estelares",
+             "/guias-estelares",
              "/preguntas_frecuentes",
              "/mapa",
             {

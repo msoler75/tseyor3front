@@ -24,30 +24,37 @@ export default {
             case "lunes_segundo_lunes_del_mes":                     return 'El segundo lunes de cada mes';
             case "lunes_tercer_primer_lunes_del_mes":               return 'El tercer lunes de cada mes';
             case "lunes_cuarto_lunes_del_mes":                      return 'El cuarto lunes de cada mes';
+            case "lunes_sin_definir":                               return 'En lunes (a definir)';
             case "martes_primer_martes_del_mes":                    return 'El primer martes de cada mes';
             case "martes_segundo_martes_del_mes":                   return 'El segundo martes de cada mes';
             case "martes_tercer_primer_martes_del_mes":             return 'El tercer martes de cada mes';
             case "martes_cuarto_martes_del_mes":                    return 'El cuarto martes de cada mes';
+            case "martes_sin_definir":                              return 'En martes (a definir)';
             case "miercoles_primer_miercoles_del_mes":              return 'El primer miércoles de cada mes';
             case "miercoles_segundo_miercoles_del_mes":             return 'El segundo miércoles de cada mes';
             case "miercoles_tercer_primer_miercoles_del_mes":       return 'El tercer miércoles de cada mes';
             case "miercoles_cuarto_miercoles_del_mes":              return 'El cuarto miércoles de cada mes';
+            case "miercoles_sin_definir":                           return 'En miércoles (a definir)';
             case "jueves_primer_jueves_del_mes":                    return 'El primer jueves de cada mes';
             case "jueves_segundo_jueves_del_mes":                   return 'El segundo jueves de cada mes';
             case "jueves_tercer_primer_jueves_del_mes":             return 'El tercer jueves de cada mes';
             case "jueves_cuarto_jueves_del_mes":                    return 'El cuarto jueves de cada mes';
+            case "jueves_sin_definir":                              return 'En jueves (a definir)';
             case "viernes_primer_viernes_del_mes":                  return 'El primer viernes de cada mes';
             case "viernes_segundo_viernes_del_mes":                 return 'El segundo viernes de cada mes';
             case "viernes_tercer_primer_viernes_del_mes":           return 'El tercer viernes de cada mes';
             case "viernes_cuarto_viernes_del_mes":                  return 'El cuarto viernes de cada mes';
+            case "viernes_sin_definir":                             return 'En viernes (a definir)';
             case "sabado_primer_sabado_del_mes":                    return 'El primer sábado de cada mes';
             case "sabado_segundo_sabado_del_mes":                   return 'El segundo sábado de cada mes';
             case "sabado_tercer_primer_sabado_del_mes":             return 'El tercer sábado de cada mes';
             case "sabado_cuarto_sabado_del_mes":                    return 'El cuarto sábado de cada mes';
+            case "sabado_sin_definir":                              return 'En sábado (a definir)';
             case "domingo_primer_domingo_del_mes":                  return 'El primer domingo de cada mes';
             case "domingo_segundo_domingo_del_mes":                 return 'El segundo domingo de cada mes';
             case "domingo_tercer_primer_domingo_del_mes":           return 'El tercer domingo de cada mes';
             case "domingo_cuarto_domingo_del_mes":                  return 'El cuarto domingo de cada mes';
+            case "domingo_sin_definir":                             return 'En domingo (a definir)';
           }
         }
     }
