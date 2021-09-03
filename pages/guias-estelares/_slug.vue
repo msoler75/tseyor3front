@@ -44,7 +44,7 @@
           class="grid-cols-fill-w-56 text-center"
         >
           <CardBook
-            v-for="libro of libros"
+            v-for="libro of guia.libros"
             :key="libro.id"
             :data="libro"
             :noText="true"
