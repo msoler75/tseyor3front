@@ -54,7 +54,8 @@ export default {
     '~plugins/global.js',
     '~plugins/axios',
     { src: '~plugins/vue-observe-visibility.js', mode: 'client' },
-    { src: '~plugins/scrollactive.js', mode: 'client' },
+    // { src: '~plugins/scrollactive.js', mode: 'client' },
+    { src: '~plugins/scrollto.js', mode: 'client' },
     // { src: '~plugins/nuxt-hammer.js', mode: 'client' },
     // { src: '~plugins/vue-touch.js', mode: 'client' },
   ],
@@ -109,7 +110,8 @@ export default {
     '@nuxtjs/markdownit',
     // ['nuxt-tailvue', {modal: true, toast: true}],
     // https://github.com/Maronato/vue-toastification
-    "vue-toastification/nuxt"
+    "vue-toastification/nuxt",
+    ['vue-scrollto/nuxt', { duration: 300 }],
   ],
 
   // Axios module configuration: https://go.nuxtjs.dev/config-axios

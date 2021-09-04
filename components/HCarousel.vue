@@ -130,6 +130,9 @@ export default {
 .h-carousel  >>> .hooper {
   height: unset
 }
+.h-carousel >>> .hooper-list {
+  @apply pb-8;
+}
 .card-img {
   width: 100%;
   height: 200px;

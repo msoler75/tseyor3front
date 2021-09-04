@@ -79,7 +79,7 @@
           <a class="max-w-xs mx-auto min-w-40 btn flex items-center justify-center scrollactive-item" href="#comentarios">
             <icon class="mr-2 xs:mr-4" icon="far fa-comment" />
             <span v-if="noticia.comentarios">
-              {{ noticia.comentarios }} Comentarios</span
+              {{ noticia.comentarios + ' Comentario' + (contenido.comentarios!==1?'s':'')}}</span
             >
             <span v-else>
               Coméntalo
@@ -107,10 +107,10 @@
     <!-- comentarios -->
     <div id="comentarios" class="container mx-auto my-9">
       <h3 v-if="noticia.comentarios" class="text-center">
-        {{ noticia.comentarios }} Comentarios
+        {{ noticia.comentarios + ' Comentario' + (contenido.comentarios!==1?'s':'') }}
       </h3>
       <h3 v-else class="text-center">Coméntalo</h3>
-      <Comentarios :uid="'noticia-' + noticia.id" @count="ccom" class="px-1 xs:px-2" />
+      <Comentarios :uid="'noticia-' + noticia.id" @count="$set(contenido, 'comentarios', $event)" class="px-1 xs:px-2" />
     </div>
   </div>
 </template>
@@ -131,13 +131,9 @@ export default {
   },
   methods: {
     async cargarRelacionados(){
-      const filtro = { id_ne: id, id_lt: id+10, id_gt: id-10 }
-      this.relacionados = await $strapi.find('noticias', {...filtro, _limit: 7})
+      const filtro = { id_ne: this.contenido.id, id_lt: this.contenido.id+10, id_gt: this.contenido.id-10 }
+      this.relacionados = await this.$strapi.find('noticias', {...filtro, _limit: 7})
     },
-    ccom(v) {
-      console.log('comentarios event count', v);
-      this.$set(this.contenido, 'comentarios', v)
-    }
   },
   data() {
     return {
