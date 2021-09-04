@@ -110,7 +110,7 @@
         {{ noticia.comentarios }} Comentarios
       </h3>
       <h3 v-else class="text-center">Coméntalo</h3>
-      <Comentarios :uid="'comunicado-' + id" class="px-1 xs:px-2" />
+      <Comentarios :uid="'noticia-' + noticia.id" @count="ccom" class="px-1 xs:px-2" />
     </div>
   </div>
 </template>
@@ -126,7 +126,7 @@ export default {
     const contenido = noticias[0]
     contenido.textoHTML = app.$renderMarkdownServer(contenido.texto, contenido.imagenes)
     contenido.likes = 3
-    contenido.comentarios = 3
+    // contenido.comentarios = 3
     return { contenido, noticia: contenido };
   },
   methods: {
@@ -134,6 +134,10 @@ export default {
       const filtro = { id_ne: id, id_lt: id+10, id_gt: id-10 }
       this.relacionados = await $strapi.find('noticias', {...filtro, _limit: 7})
     },
+    ccom(v) {
+      console.log('comentarios event count', v);
+      this.$set(this.contenido, 'comentarios', v)
+    }
   },
   data() {
     return {

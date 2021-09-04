@@ -1,7 +1,7 @@
 <template>
     <div class="max-w-xl mx-auto"
     :class="$device.isMobileOrTablet?'touch':'mouse'">
-        <div v-for="comentario of comentariosFiltrados" :key="comentario.id" class="comment flex flex-col mb-5">
+        <div v-for="comentario of comentariosListado" :key="comentario.id" class="comment flex flex-col mb-5">
             <div class="flex w-full">
                 <Avatar :data="comentario.autor" class="text-3xl w-8 h-8 sm:w-16 sm:h-16 mr-2 sm:mr-3 lg:mr-5"/>
                 <section>
@@ -103,53 +103,14 @@ methods: {
       }
     },
   async fetch() {
-    for (let i = 1; i < 7; i++) {
-      const respuestas = []
-      const numr = Math.random()*3
-      for(let j = 1; j<numr; j++)
-        respuestas.push( {
-            id: i,
-            clase: "comentarios",
-            autor: {
-                id: j+i!==3?(i*j*177)%255:null,
-                clase: "usuarios",
-                imagen: j+i!==3?"usuario" + (((j+i) % 8) + 1) + ".jpg" : null,
-                nombre: this.$lorem(1, 1, 3).slice(0, -1)
-            },
-            texto: this.$lorem(Math.min(-1, Math.ceil(Math.random()*-3))),
-            fecha:
-              2016 +
-              Math.floor(Math.random() * 4) +
-              "/" +
-              Math.ceil(Math.random() * 12) +
-              "/" +
-              Math.ceil(Math.random() * 28),
-        })
-
-      this.comentarios.push({
-        id: i,
-        clase: "comentarios",
-        autor: {
-            id: i!==2?(i*177)%255:null,
-            clase: "usuarios",
-            imagen: i!==2?"usuario" + ((i % 8) + 1) + ".jpg" : null,
-            nombre: this.$lorem(1, 1, 3).slice(0, -1)
-        },
-        texto: this.$lorem(Math.min(-1, Math.ceil(Math.random()*-3))),
-        fecha:
-          2016 +
-          Math.floor(Math.random() * 4) +
-          "/" +
-          Math.ceil(Math.random() * 12) +
-          "/" +
-          Math.ceil(Math.random() * 28),
-        respuestas
-      });
-    }
+    console.log('fetch uid=', this.uid)
+    const comentarios = await this.$strapi.find('comentarios', {uid: this.uid, _sort: 'fecha:DESC'})
+    this.$emit('count', comentarios.length)
+    console.log('comentarios', comentarios)
   },
   computed: {
-      comentariosFiltrados() {
-          return this.comentarios.sort((a,b)=>this.$dayjs(b.fecha).diff(this.$dayjs(a.fecha)))
+      comentariosListado() {
+          return this.comentarios
       }
   },
 }
