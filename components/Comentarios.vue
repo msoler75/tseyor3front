@@ -62,7 +62,7 @@
             <button type="submit" class="btn mt-3">Comentar</button>
           </form>
         </Card>
-        <div v-else class="text-center"><NLink class="btn" :to="'/login?desde='+$route.path">Inicia sesión para comentar</NLink></div>
+        <div v-else class="text-center"><NLink class="btn" :to="'/login?desde='+encodeURIComponent($route.fullPath)">Inicia sesión para comentar</NLink></div>
     </div>
 </template>
 
