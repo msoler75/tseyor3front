@@ -76,7 +76,10 @@ export default {
             password: this.password
           }
         })
-        .then( ()=>{
+        .then( async (response)=> {
+          // this.$auth.setUser(response.data.user) // this data is ok
+          const users = await this.$strapi.find("users", {id: response.data.user.id})
+          this.$auth.setUser(users[0])
           this.$router.push("/")
         })
         .catch ((e)=> {

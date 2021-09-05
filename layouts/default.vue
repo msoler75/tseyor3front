@@ -526,8 +526,11 @@ export default {
     };
   },
   async mounted() {
-    const users = await this.$strapi.find("users", {id: this.$auth.user.id})
-    this.$auth.setUser(users[0])
+    if(this.$auth.user)
+    {
+      const users = await this.$strapi.find("users", {id: this.$auth.user.id})
+      this.$auth.setUser(users[0])
+    }
     //console.log('fetched user', user)
   },
   computed: {

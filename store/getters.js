@@ -1,5 +1,3 @@
-import state from "./state"
-
 export default {
   // nuxt/auth
   isAuthenticated (state) {
