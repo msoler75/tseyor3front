@@ -25,6 +25,8 @@
               :active="currentTab === item.href"
               class="transition duration-200 menuitem hover:text-black dark:hover:text-white px-3 cursor-pointer h-full flex items-center text-sm tracking-normal border-b-4 border-blue-500"
               @click="menuClick(item)"
+              @mouseover="menuClick(item)"
+              @mouseleave="menuClick(null)"
             >
               <icon v-if="!item.name" :icon="item.icon" :class="item.iconClass"/> 
               {{ item.name }}
@@ -45,6 +47,8 @@
               :active="currentTab === item.href"
               class="transition duration-200 menuitem hover:text-black dark:hover:text-white px-3 cursor-pointer h-full flex items-center text-sm tracking-normal border-b-4 border-blue-500"
               @click="menuClick(item)"
+              @mouseover="menuClick(item)"
+              @mouseleave="menuClick(null)"
             >
               <icon v-if="!item.name" :icon="item.icon" /> 
               {{ item.name }}
@@ -580,6 +584,7 @@ export default {
     },
     menuClick(item) {
       this.mostrarMenuUsuario = false
+      if(!item) return
       if (!item.items) {
         this.currentTab = "";
         this.$router.push(item.href);

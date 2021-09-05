@@ -127,7 +127,7 @@ export default {
     return  {
       buscarPor: "",
       viendoCategoria: "Todos",
-      categorias: ["Todos", "Cursos", "Encuentros"]
+      categorias: ["Todos", "Cursos", "Encuentros", "Presentaciones"]
     }
   },
   methods: {
