@@ -250,7 +250,6 @@
         :class="pageContained?'mb-5':''" />
       </div>
     </div>
-
     <Sidebar v-show="!hideMenus" v-model="showSidebar" :items="rutasMenu" class="xl:hidden"/>
     <Footer 
     v-show="!hideMenus"
@@ -525,6 +524,11 @@ export default {
       },*/
       ],
     };
+  },
+  async mounted() {
+    const users = await this.$strapi.find("users", {id: this.$auth.user.id})
+    this.$auth.setUser(users[0])
+    //console.log('fetched user', user)
   },
   computed: {
     ...mapGetters(["isAuthenticated", "loggedInUser", "pageContained", "pageBackground", "pageBreadcrumb", "menuUsuario", "hideMenus"]),

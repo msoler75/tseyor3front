@@ -1,14 +1,14 @@
 import Vue from 'vue'
 import VueScrollTo from 'vue-scrollto'
  
-// Vue.use(VueScrollTo)
+Vue.use(VueScrollTo)
  
 // You can also pass in the default options
-Vue.use(VueScrollTo, {
+/* Vue.use(VueScrollTo, {
      container: "body",
-     duration: 500,
+     duration: 1500,
      easing: "ease",
-     offset: -150,
+     offset: -250,
      force: true,
      cancelable: true,
      onStart: false,
@@ -17,3 +17,4 @@ Vue.use(VueScrollTo, {
      x: false,
      y: true
  })
+ */

@@ -111,7 +111,14 @@ export default {
     // ['nuxt-tailvue', {modal: true, toast: true}],
     // https://github.com/Maronato/vue-toastification
     "vue-toastification/nuxt",
-    ['vue-scrollto/nuxt', { duration: 300 }],
+    ['vue-scrollto/nuxt', {
+      // default options
+      container: "body",
+      duration: 800,
+      easing: "ease",
+      offset: -120,
+      force: true
+  }],
   ],
 
   // Axios module configuration: https://go.nuxtjs.dev/config-axios

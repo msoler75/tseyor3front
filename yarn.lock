@@ -4821,7 +4821,7 @@
   dependencies:
     "tweetnacl" "^0.14.3"
 
-"bezier-easing@^2.0.3", "bezier-easing@2.1.0":
+"bezier-easing@2.1.0":
   "integrity" "sha1-wE3+i5JtbsrKGBPWn/F5t8ICXYY="
   "resolved" "https://registry.npmjs.org/bezier-easing/-/bezier-easing-2.1.0.tgz"
   "version" "2.1.0"
@@ -17035,13 +17035,6 @@
   "integrity" "sha512-807gn82hTnjCYGrnF3eNmIw/dk7/GE4B5h69BlyCK9KHASwSloD1Sjcn06zg9fVG4fYH2DrsNBZkpLtb25WtaQ=="
   "resolved" "https://registry.npmjs.org/vue-router/-/vue-router-3.5.2.tgz"
   "version" "3.5.2"
-
-"vue-scrollactive@^0.9.3":
-  "integrity" "sha512-W7Z2EQGDjnvgZ4h+/bpRVjiVU3bKWQDmT9f0bUL+zq3C/VSZaQiQ+qzWlMYDEpJbm13wJ6KIE6ry3HKLVyU4cQ=="
-  "resolved" "https://registry.npmjs.org/vue-scrollactive/-/vue-scrollactive-0.9.3.tgz"
-  "version" "0.9.3"
-  dependencies:
-    "bezier-easing" "^2.0.3"
 
 "vue-scrollto@^2.20.0":
   "integrity" "sha512-7i+AGKJTThZnMEkhIPgrZjyAX+fXV7/rGdg+CV283uZZwCxwiMXaBLTmIc5RTA4uwGnT+E6eJle3mXQfM2OD3A=="

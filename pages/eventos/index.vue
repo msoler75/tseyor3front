@@ -9,15 +9,10 @@
     
     <section class="flex justify-evenly">
       <Glass>
-      <scrollactive
+      <div
         v-if="eventosProximos.length"
         class="my-nav hidden lg:block w-64 xl:w-96 2xl:w-128 3xl:w-144 mr-8 flex-shrink-0 py-4 px-2 sm:px-5"
-        @itemchanged="onItemChanged"
-        bezier-easing-value=".5,0,.35,1"
-        :duration="800"
       >
-
-
         <div class="hidden lg:grid lg:grid-cols-1 xl:grid-cols-3 gap-4">
           <template v-for="evento of eventosProximos">
             <div class="hidden xl:block font-bold" :key="evento.id">
@@ -26,7 +21,8 @@
             <a
               :key="'ev-'+evento.id"
               :href="'#evento-' + evento.id"
-              class="scrollactive-item xl:col-span-2"
+              v-scroll-to="'#evento-' + evento.id"
+              class="xl:col-span-2"
               ><span class="font-bold text-lg">{{
                 $dayjs(evento.fechaComienzo).format("D MMM YYYY")
               }}</span>
@@ -47,7 +43,8 @@
             <a v-if="index<eventosProximos.length*3"
               :key="'evvv'+evento.id"
               :href="'#evento-' + evento.id"
-              class="scrollactive-item xl:col-span-2"
+              v-scroll-to="'#evento-' + evento.id"
+              class="xl:col-span-2"
               ><span class="font-bold text-lg">{{
                 $dayjs(evento.fechaComienzo).format("D MMM YYYY")
               }}</span>
@@ -56,7 +53,7 @@
             </a>
           </template>
         </div>
-      </scrollactive>
+      </div>
       </Glass>
 
       <div class=""

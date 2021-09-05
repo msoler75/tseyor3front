@@ -1,14 +1,14 @@
 <template>
     <div class="max-w-xl mx-auto"
     :class="$device.isMobileOrTablet?'touch':'mouse'">
-        <div v-for="comentario of comentariosListado" :key="comentario.id" class="comment flex flex-col mb-5">
+        <div v-for="comentario of comentariosPrimerNivel" :key="comentario.id" class="comment flex flex-col mb-5">
             <div class="flex w-full">
                 <Avatar :data="comentario.user" class="text-3xl w-8 h-8 sm:w-16 sm:h-16 mr-2 sm:mr-3 lg:mr-5"/>
                 <section>
                   <Card class="w-full p-1 xs:p-2 sm:p-4">
                     <div class="flex justify-start items-baseline text-xs lg:text-sm text-blue-gray">
-                        <NLink v-if="comentario.user.id" :to="'/usuarios/'+comentario.user.id" class="font-bold mb-1">{{comentario.user.nombreSimbolico||comentario.user.username}}</NLink> 
-                        <span v-else class="font-bold">{{comentario.user.nombreSimbolico||comentario.user.username}}</span> 
+                        <NLink v-if="comentario.user.id" :to="'/usuarios/'+comentario.user.id" class="font-bold mb-1">{{mostrarNombre(comentario.user)}}</NLink> 
+                        <span v-else class="font-bold">{{mostrarNombre(comentario.user)}}</span> 
                         <span class="mx-2 opacity-50">•</span>
                         <span class="text-xs">{{ $dayjs(comentario.updated_at).fromNow() }}</span>
                     </div>
@@ -22,14 +22,14 @@
                 
                 <!-- respuestas -->
                 <div v-if="comentario.respuestas.length" class="w-full mt-5">
-                  <div v-for="respuesta of comentario.respuestas" :key="respuesta.id" class="comment flex flex-col mb-5">
+                  <div v-for="respuesta of getRespuestas(comentario.respuestas)" :key="respuesta.id" class="comment flex flex-col mb-5">
                     <div class="flex w-full">
                     <Avatar :data="respuesta.user" class="text-3xl w-8 h-8 mr-2 sm:mr-3 lg:mr-5"/>
                     <section>
                       <Card class="w-full p-1 xs:p-2 sm:p-4">
                         <div class="flex justify-start items-baseline text-xs lg:text-sm text-blue-gray">
-                            <NLink v-if="respuesta.user.id" :to="'/usuarios/'+respuesta.user.id" class="font-bold mb-1">{{respuesta.user.nombreSimbolico||respuesta.user.username}}</NLink> 
-                            <span v-else class="font-bold">{{respuesta.user.nombre}}</span> 
+                            <NLink v-if="respuesta.user.id" :to="'/usuarios/'+respuesta.user.id" class="font-bold mb-1">{{mostrarNombre(respuesta.user)}}</NLink> 
+                            <span v-else class="font-bold">{{mostrarNombre(respuesta.user)}}</span> 
                             <span class="mx-2 opacity-50">•</span>
                             <span class="text-xs">{{ $dayjs(respuesta.updated_at).fromNow() }}</span>
                         </div>
@@ -111,11 +111,24 @@ methods: {
     await this.cargarComentarios()
   },
   computed: {
-      comentariosListado() {
-          return this.comentarios
+      comentariosPrimerNivel() {
+          return this.comentarios.filter(x=>!x.respondiendo)
+      },
+      comentariosSegundoNivel() {
+          return this.comentarios.filter(x=>x.respondiendo)
       }
   },
   methods: {
+    mostrarNombre(user) {
+      return user.nombreSimbolico||user.username
+    },
+    getRespuestas(respuestas) {
+      const r = []
+      for(const respuesta of respuestas) {
+        r.push(this.comentariosSegundoNivel.find(x=>x.id===respuesta.id))
+      }
+      return r      
+    },
     async cargarComentarios() {
       console.log('fetch uid=', this.uid)
       const comentarios = await this.$strapi.find('comentarios', {uid: this.uid, _sort: 'updated_at:ASC'})
@@ -145,7 +158,7 @@ methods: {
     onResponder(id) {
       this.responderA=id;
       this.$nextTick(()=>{
-        this.$scrollTo('#respuesta-a-'+id, 500, {offset: -150})
+        this.$scrollTo('#respuesta-a-'+id, 500, {offset: -250})
         const el = document.querySelector('#respuesta-a-'+id+' input[type=text]')
         if(el) el.focus()
       })

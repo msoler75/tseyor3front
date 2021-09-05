@@ -38,12 +38,10 @@
 
       <section>
         <h2>Comentarios</h2>
-        <ul v-if="usuario.comentarios&&usuario.comentarios.length">
-        <li
-          v-for="comentario of usuario.comentarios"
-          :key="comentario"
-          v-html="$teaser(comentario, 196)"
-        />
+        <ul v-if="usuario.comentarios&&usuario.comentarios.length" class="pl-5">
+          <li v-for="comentario of usuario.comentarios" :key="comentario">
+            <v-clamp autoresize :max-lines="2" v-html="$renderMarkdownServer(comentario.texto)" class="text-left"></v-clamp>
+          </li>
         </ul>
         <p v-else class="text-center italic">No hay comentarios</p>
       </section>

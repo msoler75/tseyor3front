@@ -4,7 +4,6 @@
     <!-- No tiene imagen de fondo -->
     <Config :contained="false" :background="false" />
 
-    <scrollactive bezier-easing-value=".5,0,.35,1" :duration="800" :offset="90">
       <!-- article container -->
       <div
         class="px-3 sm:px-5 md:px-7 relative w-full shrink-0 flex-grow-1 max-w-3xl flex flex-col items-start"
@@ -16,8 +15,7 @@
             <div class="my-3">
               <icon class="5xl:w-4" icon="far fa-heart" /> {{ noticia.likes }}
             </div>
-            <a class="scrollactive-item my-3" href="#comentarios"
-              ><icon class="5xl:w-4" icon="far fa-comment" />
+            <a class="my-3" href="#comentarios" v-scroll-to="'#comentarios'"><icon class="5xl:w-4" icon="far fa-comment" />
               {{ noticia.comentarios }}</a
             >
             <div
@@ -43,8 +41,8 @@
               <div>
                 <icon class="ml-3" icon="far fa-heart" /> {{ noticia.likes }}
               </div>
-              <a class="scrollactive-item ml-3" href="#comentarios"
-                ><icon icon="far fa-comment" /> {{ noticia.comentarios }}</a
+              <a class="scrollactive-item ml-3" href="#comentarios" v-scroll-to="'#comentarios'">
+                <icon icon="far fa-comment" /> {{ noticia.comentarios }}</a
               >
               <div class="cursor-pointer" @click="viendoCompartir = true">
                 <icon class="ml-3" icon="fas fa-share-alt" />
@@ -70,13 +68,13 @@
             <icon class="mr-2 xs:mr-4" icon="fas fa-heart" />
             Me Gusta
           </div>
-          
+       
           <div class="max-w-xs mx-auto min-w-40 btn flex items-center justify-center" @click="viendoCompartir = true">
             <icon class="mr-2 xs:mr-4" icon="fas fa-share-alt" />
             Comparte
           </div>
 
-          <a class="max-w-xs mx-auto min-w-40 btn flex items-center justify-center scrollactive-item" href="#comentarios">
+          <a class="max-w-xs mx-auto min-w-40 btn flex items-center justify-center" href="#comentarios" v-scroll-to="'#comentarios'">
             <icon class="mr-2 xs:mr-4" icon="far fa-comment" />
             <span v-if="noticia.comentarios">
               {{ noticia.comentarios + ' Comentario' + (contenido.comentarios!==1?'s':'')}}</span
@@ -87,7 +85,6 @@
           </a>
         </Grid>
       </section>
-    </scrollactive>
 
 
   <SuscriptionSection
@@ -101,7 +98,7 @@
     <!-- contenido relacionado -->
     <div class="container mx-auto my-9" v-observe-visibility="cargarRelacionados">
       <h3 class="text-center">Y también...</h3>
-      <HCarousel center :items="relacionados" collection="comunicados" :no-text="true"/>
+      <HCarousel center :items="relacionados" collection="noticias" :no-text="true"/>
     </div>
 
     <!-- comentarios -->
