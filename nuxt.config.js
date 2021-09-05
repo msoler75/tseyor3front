@@ -54,7 +54,6 @@ export default {
     '~plugins/global.js',
     '~plugins/axios',
     { src: '~plugins/vue-observe-visibility.js', mode: 'client' },
-    // { src: '~plugins/scrollactive.js', mode: 'client' },
     { src: '~plugins/scrollto.js', mode: 'client' },
     // { src: '~plugins/nuxt-hammer.js', mode: 'client' },
     // { src: '~plugins/vue-touch.js', mode: 'client' },

@@ -15,7 +15,8 @@
             <div class="my-3">
               <icon class="5xl:w-4" icon="far fa-heart" /> {{ noticia.likes }}
             </div>
-            <a class="my-3" href="#comentarios" v-scroll-to="'#comentarios'"><icon class="5xl:w-4" icon="far fa-comment" />
+            <a class="my-3" href="#comentarios" v-scroll-to="'#comentarios'">
+              <icon class="5xl:w-4" icon="far fa-comment" />
               {{ noticia.comentarios }}</a
             >
             <div
@@ -41,7 +42,7 @@
               <div>
                 <icon class="ml-3" icon="far fa-heart" /> {{ noticia.likes }}
               </div>
-              <a class="scrollactive-item ml-3" href="#comentarios" v-scroll-to="'#comentarios'">
+              <a class="ml-3" href="#comentarios" v-scroll-to="'#comentarios'">
                 <icon icon="far fa-comment" /> {{ noticia.comentarios }}</a
               >
               <div class="cursor-pointer" @click="viendoCompartir = true">

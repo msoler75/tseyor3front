@@ -12,12 +12,7 @@
                     <h1 class="text-center">Curso Holístico TSEYOR</h1>
                     <p class="mx-auto text-lg text-center">Curso gratuito que resume todo el mensaje del grupo TSEYOR, y que sirve de entrada para ser miembro y poder participar en sus actividades.</p>
                     <section class="mt-9 flex justify-center items-center">
-                        <scrollactive
-                            bezier-easing-value=".5,0,.35,1"
-                            :duration="800"
-                        >
-                        <a href="#cursos" class="flex justify-center items-center rounded-xl px-7 py-4 scrollactive-item btn"><span>Ver Agenda de Cursos</span><icon icon="fas fa-chevron-right" class="ml-3 text-deep-orange text-xl"/></a>
-                        </scrollactive>
+                        <a href="#cursos" v-scroll-to="'#cursos'" class="flex justify-center items-center rounded-xl px-7 py-4 btn"><span>Ver Agenda de Cursos</span><icon icon="fas fa-chevron-right" class="ml-3 text-deep-orange text-xl"/></a>
                     </section>
                 </Card>
             </div>
@@ -76,7 +71,7 @@
     </section>
 
 
-    <section id="cursos" class="scrollactive-item mt-16 px-1 sm:px-3 py-10 bg-dark-theme">
+    <section id="cursos" class="mt-16 px-1 sm:px-3 py-10 bg-dark-theme">
       <div class="max-w-xl mx-auto">
         <div class="w-full flex justify-center my-4 text-white"><icon :svg="calendarIcon" class="w-32 mr-5"/></div>
         <h2 class="text-center text-white text-glow-dense">Próximos Cursos</h2>
