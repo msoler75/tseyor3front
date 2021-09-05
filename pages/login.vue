@@ -80,7 +80,8 @@ export default {
           // this.$auth.setUser(response.data.user) // this data is ok
           const users = await this.$strapi.find("users", {id: response.data.user.id})
           this.$auth.setUser(users[0])
-          this.$router.push("/")
+          // console.log('desde', this.$route.query)
+          this.$router.push(this.$route.query.desde || "/")
         })
         .catch ((e)=> {
         console.error(e)

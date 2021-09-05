@@ -15,7 +15,7 @@
                     <div class="text-justify text-sm lg:text-base" v-html="$renderMarkdownServer(comentario.texto)"/>
                   </Card>
                   
-                  <div class="actions mt-2 flex justify-start items-center text-xs px-2">
+                  <div v-if="isAuthenticated" class="actions mt-2 flex justify-start items-center text-xs px-2">
                     <icon icon="far fa-heart" class="cursor-pointer mr-5"/>
                     <span class="link cursor-pointer" @click="onResponder(comentario.id)">Responder</span>
                   </div>
@@ -35,7 +35,7 @@
                         </div>
                         <div class="text-justify text-sm lg:text-base" v-html="$renderMarkdownServer(respuesta.texto)"/>
                       </Card>
-                      <div class="actions mt-2 flex justify-start items-center text-xs px-2">
+                      <div v-if="isAuthenticated" class="actions mt-2 flex justify-start items-center text-xs px-2">
                         <icon icon="far fa-heart" class="cursor-pointer mr-5"/>
                         <span class="link cursor-pointer" @click="onResponder(comentario.id)">Responder</span>
                       </div>
@@ -44,9 +44,9 @@
                   </div>
                 </div>
 
-                  <Card :id="'respuesta-a-'+comentario.id" class="p-5" v-if="responderA===comentario.id">
+                  <Card v-if="isAuthenticated" :id="'respuesta-a-'+comentario.id" class="p-5" v-show="responderA===comentario.id">
                     <form @submit.prevent="responder(comentario.id)">
-                      <input type="text" v-model="respuesta" placeholder="Comentario...">
+                      <input type="text" v-model="respuesta" placeholder="Respuesta...">
                       <button type="submit" class="btn mt-3">Responder</button>
                     </form>
                   </Card> 
@@ -56,16 +56,18 @@
             </div>
         </div>
 
-        <Card class="p-5">
+        <Card v-if="isAuthenticated" class="p-5">
           <form @submit.prevent="comentar">
-            <input type="text" v-model="nuevoComentario" placeholder="Comentario...">
+            <input type="text" v-model="nuevoComentario" placeholder="Nuevo comentario...">
             <button type="submit" class="btn mt-3">Comentar</button>
           </form>
-        </Card>   
+        </Card>
+        <div v-else class="text-center"><NLink class="btn" :to="'/login?desde='+$route.path">Inicia sesión para comentar</NLink></div>
     </div>
 </template>
 
 <script>
+import { mapGetters } from "vuex";
 export default {
   props: {
     // unique identifier for content-id
@@ -111,6 +113,7 @@ methods: {
     await this.cargarComentarios()
   },
   computed: {
+      ...mapGetters(["isAuthenticated"]),
       comentariosPrimerNivel() {
           return this.comentarios.filter(x=>!x.respondiendo)
       },
