@@ -69,6 +69,7 @@
             </Card>
 
             <NLink
+                v-if="a.tipo==='actividad'"
               :key="'d' + index"
               class="card rounded font-bold text-center text-blue-600 flex justify-center items-center"
               :to="'/actividades/' + a.detalles.actividad.id"
@@ -76,7 +77,14 @@
               {{ a.detalles.actividad.titulo }}
             </NLink>
 
+            <NLink v-else :to="'/eventos/'+a.detalles.evento.id" :key="'v' + index"
+            class="col-span-2 bg-purple-800 text-purple-contrast font-bold text-center px-3 py-1 rounded shadow flex justify-center items-center"
+            >
+                {{a.detalles.evento.titulo}}
+            </NLink>
+
             <NLink
+            v-if="a.tipo==='actividad'"
               :key="'e' + index"
               class="font-bold text-center px-3 py-1 rounded shadow flex justify-center items-center"
               :class="equipos.find(x => x.id === a.detalles.equipo.id).color"
@@ -92,9 +100,30 @@
   </section>
 </template>
 
+1, 2, 3, 4, 5, 6 evento empieza 3, termina 5
+
 <script>
+import qs from "qs";
 export default {
-  async asyncData({ $strapi }) {
+  async asyncData({ $dayjs, $strapi }) {
+    const query = qs.stringify({
+      _where: {
+        _or: [
+          {
+            fechaComienzo_gt: $dayjs()
+              .add(-1, "days")
+              .format("YYYY-MM-DDT00:00")
+          },
+          {
+            fechaFinal_gt: $dayjs()
+              .add(-1, "days")
+              .format("YYYY-MM-DDT00:00")
+          }
+        ]
+      }
+    });
+
+    const eventos = await $strapi.find("eventos", query);
     const agenda = await $strapi.find("agenda");
     const equipos = [];
     const colores = [
@@ -115,7 +144,7 @@ export default {
           viendo: true
         });
     }
-    return { equipos, agenda };
+    return { equipos, agenda, eventos };
   },
   data() {
     return {
@@ -127,7 +156,7 @@ export default {
       let seccion = null;
       return this.proximas
         .filter(
-          a => this.equipos.find(x => x.id === a.detalles.equipo.id).viendo
+          a => a.tipo==='evento' || this.equipos.find(x => x.id === a.detalles.equipo.id).viendo
         )
         .map(a => {
           a.seccion = null;
@@ -166,6 +195,7 @@ export default {
     const now = this.$dayjs();
 
     const ordinal = ["primer", "segund", "tercer", "cuart", "quint"];
+    
     for (var i = -1; i < 30 + 15; i++) {
       const fecha = now.add(i, "days");
       const dia = fecha.day();
@@ -175,16 +205,31 @@ export default {
       const diadelmes = fecha.date();
       const semana = Math.floor(diadelmes / 7);
       const ssemana = ordinal[semana];
-      console.log(
-        "i",
-        i,
-        "semana",
-        semana,
-        ssemana,
-        sdia,
-        "diadelmes",
-        diadelmes
-      );
+      // miramos los eventos
+      for (const evento of this.eventos) {
+          if(evento.insertado) continue
+          if(!evento.fechaComienzo) continue
+          const di = fecha.diff(evento.fechaComienzo, 'h')
+          const df = fecha.diff(evento.fechaFinal, 'h')
+          console.log('i', i, fecha.format('DD-MM'), 'dif', fecha.diff(evento.fechaComienzo, 'h'))
+          if(di>-12&&di<24||(evento.fechaFinal&&df>-12&&df<24))
+          {
+              evento.insertado = true
+              this.proximas.push({
+                tipo: 'evento',
+                fecha: {
+                    diasemana: sdia.replace("erc", "érc").replace("aba", "ába"),
+                    dia: diadelmes,
+                    mes,
+                    mesnombre: meses[mes],
+                    año
+                },
+                hora: fecha.diff(evento.fechaComienzo, 'day')<1?this.$dayjs(evento.fechaComienzo).format("HH:mm"):"00:00",
+                detalles: {evento}
+            });
+          }
+      }
+      // miramos las actividades
       for (const item of this.agenda) {
         let ok = false;
         let semi = false;
@@ -192,24 +237,16 @@ export default {
           // todos los lunes
           ok = true;
         } else if (item.horario.dia.startsWith(sdia)) {
-          console.log(item.horario.dia, "startsWith", sdia);
           if (item.horario.dia.search("sin_definir") > -1) {
             // ok = true
             semi = true;
           } else if (item.horario.dia.search(ssemana) > -1) {
-            console.log(
-              "horario",
-              item.horario,
-              "ssemana",
-              ssemana,
-              "sdia",
-              sdia
-            );
             ok = true;
           }
         }
         if (ok) {
           this.proximas.push({
+            tipo: 'actividad', 
             fecha: {
               diasemana: sdia.replace("erc", "érc").replace("aba", "ába"),
               dia: diadelmes,
