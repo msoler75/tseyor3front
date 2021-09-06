@@ -7,13 +7,13 @@
         <div v-for="(a, index) of agenda" :key="index" class="my-3">
           <Horario :data="a.horario" />
           <NLink
-            class="font-bold text-blue-600"
+            class="font-bold whitespace-nowrap text-blue-600"
             :to="'/actividades/' + a.actividad.id"
             >{{ a.actividad.titulo }}</NLink
           >
           de
           <NLink
-            class="font-bold px-3 py-1 rounded-lg shadow"
+            class="font-bold whitespace-nowrap px-3 py-1 rounded-lg shadow"
             :class="equipos.find(x => x.id === a.equipo.id).color"
             :to="'/equipos/' + a.equipo.id"
             >{{ a.equipo.nombre }}</NLink
@@ -28,7 +28,7 @@
             <div
               v-for="equipo of equipos"
               :key="equipo.id"
-              class="shadow rounded-lg px-3 py-1 cursor-pointer select-none mr-2 mb-2 font-bold"
+              class="shadow rounded-lg px-3 py-1 cursor-pointer select-none mr-2 mb-2 font-bold whitespace-nowrap"
               :class="equipo.color"
               @click="equipo.viendo = !equipo.viendo"
             >
@@ -42,30 +42,36 @@
           </div>
         </Card>
 
-        <Card
-          v-for="(a, index) of proximas"
-          :key="index"
-          v-show="equipos.find(x => x.id === a.detalles.equipo.id).viendo"
-          class="my-3 p-5"
+        <div class="grid">
+        <template
+          v-for="(a, index) of proximasFiltro"
         >
-        <div>
-          {{ a.fecha.diasemana }} <strong>{{ a.fecha.dia }}</strong> de
-          {{ a.fecha.mesnombre }} a las
-          <strong>{{ $dayjs("1970/1/1 " + a.hora).format("HH:mm") }}</strong> -
-          <NLink
-            class="font-bold text-blue-600"
-            :to="'/actividades/' + a.detalles.actividad.id"
-            >{{ a.detalles.actividad.titulo }}</NLink
-          >
-          de
-          <NLink
-            class="font-bold px-3 py-1 rounded-lg shadow"
-            :class="equipos.find(x => x.id === a.detalles.equipo.id).color"
-            :to="'/equipos/' + a.detalles.equipo.id"
-            >{{ a.detalles.equipo.nombre }}</NLink
-          >
-        </div>
+        <Card v-if="a.seccion" :key="'a'+index" class="col-span-4 p-5 font-bold text-3xl text-center tracking-widest uppercase">
+            {{a.seccion}}
         </Card>
+            
+        <Card :key="'b'+index" class="p-3 text-3xl flex font-bold justify-center items-center">{{ a.fecha.dia }}</Card> 
+
+        <Card :key="'c'+index" class="p-3 text-center">
+            <span>{{ a.fecha.diasemana }}</span>
+            <span class="font-bold text-xl">{{ $dayjs("1970/1/1 " + a.hora).format("HH:mm") }}</span>
+        </Card>  
+
+        <NLink :key="'d'+index"
+            class="card rounded font-bold whitespace-nowrap text-blue-600 flex justify-center items-center"
+            :to="'/actividades/' + a.detalles.actividad.id">
+            {{ a.detalles.actividad.titulo }}
+        </NLink>
+        
+        <NLink :key="'e'+index"
+            class="font-bold whitespace-nowrap px-3 py-1 rounded shadow flex justify-center items-center"
+            :class="equipos.find(x => x.id === a.detalles.equipo.id).color"
+            :to="'/equipos/' + a.detalles.equipo.id">
+            {{ a.detalles.equipo.nombre }}
+        </NLink>
+        
+        </template>
+        </div>
       </div>
     </div>
   </div>
@@ -101,15 +107,29 @@ export default {
       proximas: []
     };
   },
+  computed: {
+      proximasFiltro() {
+          const r = this.proximas.filter(a=>this.equipos.find(x => x.id === a.detalles.equipo.id).viendo)
+          // ponemos la propiedad de seccion (mes actual) en los elementos
+          let seccion = null
+          for(const a of r)
+          if(a.fecha.mesnombre!==seccion)
+          {
+              a.seccion = a.fecha.mesnombre
+              seccion = a.seccion
+          }
+          return r
+      }
+  },
   mounted() {
     const dia_semana = [
+      "domingo",
       "lunes",
       "martes",
       "miercoles",
       "jueves",
       "viernes",
       "sabado",
-      "domingo"
     ];
     const meses = [
       "Enero",
@@ -128,7 +148,7 @@ export default {
     const now = this.$dayjs();
 
     const ordinal = ["primer", "segund", "tercer", "cuart", "quint"];
-    for (var i = -1; i < 60; i++) {
+    for (var i = -1; i < 30; i++) {
       const fecha = now.add(i, "days");
       const dia = fecha.day();
       const mes = fecha.month();
@@ -137,25 +157,28 @@ export default {
       const diadelmes = fecha.date();
       const semana = Math.floor(diadelmes / 7);
       const ssemana = ordinal[semana];
-
+      console.log('i', i, 'semana', semana, ssemana, sdia, 'diadelmes', diadelmes)
       for (const item of this.agenda) {
         let ok = false;
         let semi = false;
         if (item.horario.dia === sdia) {
           // todos los lunes
           ok = true;
-        } else if (item.horario.dia.search(sdia) > -1) {
-          if (item.horario.dia.search("sin_definir")) {
+        } else if (item.horario.dia.startsWith(sdia)) {
+            console.log(item.horario.dia, 'startsWith', sdia)
+          if (item.horario.dia.search("sin_definir") > -1) {
             // ok = true
             semi = true;
           } else if (item.horario.dia.search(ssemana) > -1) {
+              console.log('horario', item.horario, 'ssemana', ssemana, 'sdia', sdia)
             ok = true;
           }
         }
         if (ok)
+        {
           this.proximas.push({
             fecha: {
-              diasemana: sdia.replace("erc", "érc").replace("abado", "ábado"),
+              diasemana: sdia.replace("erc", "érc").replace("aba", "ába"),
               dia: diadelmes,
               mes,
               mesnombre: meses[mes],
@@ -165,8 +188,16 @@ export default {
             detalles: item,
             semi
           });
+        }
       }
     }
   }
 };
 </script>
+
+<style scoped>
+.grid {
+    @apply gap-2;
+    grid-template-columns: 60px 2fr 2fr 2fr;
+}
+</style>
