@@ -2,8 +2,9 @@
   <section>
     <h1 class="text-center">Agenda de actividades</h1>
     <div class="lg:flex lg:justify-center lg:items-start mx-auto">
-      <Card class="order-2 p-5 lg:ml-12">
-        <h3>Agenda</h3>
+      <Card class="order-2 p-5 lg:ml-12 mb-12">
+        <h3 class="text-center hidden sm:block">Horarios Regulares</h3>
+        <div class="grid grid-cols-1 xs:grid-cols-2 md:grid-cols-3 lg:grid-cols-1 gap-3">
         <div v-for="(a, index) of agenda" :key="index" class="my-3">
           <Horario :data="a.horario" />
           <NLink
@@ -19,11 +20,12 @@
             >{{ a.equipo.nombre }}</NLink
           >
         </div>
+        </div>
       </Card>
 
       <div>
         <div class="order-3 lg:order-1">
-          <div class="flex my-4">
+          <div class="flex flex-wrap my-4">
             <div
               v-for="equipo of equipos"
               :key="equipo.id"
@@ -41,7 +43,7 @@
           </div>
         </div>
 
-        <div class="grid">
+        <div class="grid proximas gap-2">
         <template
           v-for="(a, index) of proximasFiltro"
         >
@@ -57,13 +59,13 @@
         </Card>  
 
         <NLink :key="'d'+index"
-            class="card rounded font-bold whitespace-nowrap text-blue-600 flex justify-center items-center"
+            class="card rounded font-bold text-center text-blue-600 flex justify-center items-center"
             :to="'/actividades/' + a.detalles.actividad.id">
             {{ a.detalles.actividad.titulo }}
         </NLink>
         
         <NLink :key="'e'+index"
-            class="font-bold whitespace-nowrap px-3 py-1 rounded shadow flex justify-center items-center"
+            class="font-bold text-center px-3 py-1 rounded shadow flex justify-center items-center"
             :class="equipos.find(x => x.id === a.detalles.equipo.id).color"
             :to="'/equipos/' + a.detalles.equipo.id">
             {{ a.detalles.equipo.nombre }}
@@ -195,8 +197,7 @@ export default {
 </script>
 
 <style scoped>
-.grid {
-    @apply gap-2;
+.proximas {
     grid-template-columns: 60px 2fr 2fr 2fr;
 }
 </style>
