@@ -69,20 +69,18 @@ export default {
       estado: "",
       items: [
         {
-          hero: true,
-          class: this.$store.state.loggedIn?'hidden':'bg-green-50',
-          icon: 'fas fa-route',
-          color: 'text-green-800',
-          name: 'Conocer Tseyor',
-          description: 'Visita guiada para conocer Tseyor',
-          url: '/presentacion/visita'
-        },
-        {
           icon: 'fas fa-bolt',
           color: 'text-yellow-800',
           name: 'Novedades',
           description: 'Noticias, blogs, eventos y otras publicaciones',
           url: '/novedades'
+        },
+        {
+          icon: 'far fa-calendar-alt',
+          color: 'text-green-800 dark:text-green-50',
+          name: 'Agenda',
+          description: 'Consulta tu agenda de actividades y eventos',
+          url: '/agenda'
         },
         {
           icon: 'fas fa-headphones',
@@ -105,13 +103,15 @@ export default {
           description: 'Inspírate y aprende con los mensajes de las estrellas',
           url: '/leer'
         },
-        {
-          icon: 'far fa-comments',
-          color: 'text-green-800 dark:text-green-50',
-          name: 'Reuniones',
-          description: 'Consulta tu agenda de reuniones',
-          url: '/agenda?reuniones'
-        }
+        /* {
+          hero: true,
+          class: this.$store.state.loggedIn?'hidden':'bg-green-50',
+          icon: 'fas fa-route',
+          color: 'text-green-800',
+          name: 'Conocer Tseyor',
+          description: 'Visita guiada para conocer Tseyor',
+          url: '/presentacion/visita'
+        }, */
       ]
     }
   },
