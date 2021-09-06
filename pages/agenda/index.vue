@@ -1,7 +1,7 @@
 <template>
-  <div>
-    <h1>Agenda de actividades</h1>
-    <div class="lg:flex">
+  <section>
+    <h1 class="text-center">Agenda de actividades</h1>
+    <div class="lg:flex lg:justify-center lg:items-start mx-auto">
       <Card class="order-2 p-5 lg:ml-12">
         <h3>Agenda</h3>
         <div v-for="(a, index) of agenda" :key="index" class="my-3">
@@ -22,8 +22,7 @@
       </Card>
 
       <div>
-        <Card class="order-3 p-5 lg:order-1 mb-4">
-          <h3>Próximamente</h3>
+        <div class="order-3 lg:order-1">
           <div class="flex my-4">
             <div
               v-for="equipo of equipos"
@@ -40,7 +39,7 @@
               {{ equipo.nombre }}
             </div>
           </div>
-        </Card>
+        </div>
 
         <div class="grid">
         <template
@@ -74,7 +73,7 @@
         </div>
       </div>
     </div>
-  </div>
+  </section>
 </template>
 
 <script>
