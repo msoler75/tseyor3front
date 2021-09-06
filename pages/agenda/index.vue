@@ -72,6 +72,7 @@
         </NLink>
         
         </template>
+        <div class="col-span-4 my-5 text-3xl text-center">...</div>
         </div>
       </div>
     </div>
@@ -110,16 +111,17 @@ export default {
   },
   computed: {
       proximasFiltro() {
-          const r = this.proximas.filter(a=>this.equipos.find(x => x.id === a.detalles.equipo.id).viendo)
-          // ponemos la propiedad de seccion (mes actual) en los elementos
           let seccion = null
-          for(const a of r)
+          return this.proximas.filter(a=>this.equipos.find(x => x.id === a.detalles.equipo.id).viendo)
+          // ponemos la propiedad de seccion (mes actual) en los elementos
+          .map(a=>{
           if(a.fecha.mesnombre!==seccion)
           {
               a.seccion = a.fecha.mesnombre
-              seccion = a.seccion
+              seccion = a.fecha.mesnombre
           }
-          return r
+          return a
+          })
       }
   },
   mounted() {
@@ -149,7 +151,7 @@ export default {
     const now = this.$dayjs();
 
     const ordinal = ["primer", "segund", "tercer", "cuart", "quint"];
-    for (var i = -1; i < 30; i++) {
+    for (var i = -1; i < 30 + 15; i++) {
       const fecha = now.add(i, "days");
       const dia = fecha.day();
       const mes = fecha.month();
