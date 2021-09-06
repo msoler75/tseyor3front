@@ -101,11 +101,11 @@ export default {
       const r = {
         descripcion: "Descripción"
       };
-      if (this.guia.presentacion) r.presentacion = "Presentación";
-      if (this.guia.comunicado) r.presentacion = "Comunicado";
-      if (this.guia.experiencia) r.citas = "Experiencia";
-      if (this.guia.citas) r.citas = "Citas";
-      if (this.guia.libros || this.guia.bibliografia)
+      if (this.guia.presentacionHTML&&this.guia.presentacionHTML.length>21) r.presentacion = "Presentación";
+      if (this.guia.comunicadoHTML&&this.guia.comunicadoHTML.length>21) r.comunicado = "Comunicado";
+      if (this.guia.experienciaHTML&&this.guia.experienciaHTML.length>21) r.experiencia = "Experiencia";
+      if (this.guia.citas&&this.guia.citas.length>21) r.citas = "Citas";
+      if ((this.guia.libros&&this.guia.libros.length) || (this.guia.bibliografiaHTML&&this.guia.bibliografiaHTML.length>21))
         r.bibliografia = "Bibliografía";
       return r;
     },
