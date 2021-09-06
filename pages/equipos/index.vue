@@ -64,6 +64,11 @@
         </div>
       </Card>
     </div>
+
+     <div v-show="hayMas && !cargando" v-observe-visibility="cargarMas" class="mt-3 flex justify-center">
+        <!-- <button @click="cargarMas" class="btn">Cargar Más...</button> -->
+    </div>
+
   </div>
 </template>
 
@@ -72,7 +77,7 @@ export default {
   async asyncData({ $strapi }) {
     const filters = {
         _start: 0,
-        _limit: 2
+        _limit: 10
     }
     const equipos = await $strapi.find("equipos", filters)
     return { equipos, filters };
