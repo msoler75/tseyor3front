@@ -2,51 +2,106 @@
   <div>
     <h1>Agenda de actividades</h1>
     <div class="lg:flex">
-      <Card class="order-2 p-5">
+      <Card class="order-2 p-5 lg:ml-12">
         <h3>Agenda</h3>
         <div v-for="(a, index) of agenda" :key="index" class="my-3">
-          <Horario :data="a.horario"/>  <NLink class="font-bold" :to="'/equipos/'+a.equipo.id">{{a.equipo.nombre}}</NLink>
+          <Horario :data="a.horario" />
+          <NLink
+            class="font-bold text-blue-600"
+            :to="'/actividades/' + a.actividad.id"
+            >{{ a.actividad.titulo }}</NLink
+          >
+          de
+          <NLink
+            class="font-bold px-3 py-1 rounded-lg shadow"
+            :class="equipos.find(x => x.id === a.equipo.id).color"
+            :to="'/equipos/' + a.equipo.id"
+            >{{ a.equipo.nombre }}</NLink
+          >
         </div>
       </Card>
-      <Card class="order-3 p-5 lg:order-1 lg:mr-12">
-        <h3>Próximamente</h3>
-        <div class="flex my-4">
-            <div v-for="equipo of equipos" :key="equipo.id" class="bg-gray-100 dark:bg-gray-800 shadow rounded-lg px-3 py-1 cursor-pointer select-none mr-2 mb-2"
-            @click="equipo.viendo=!equipo.viendo">
-                <input type="checkbox" v-model="equipo.viendo"> {{equipo.nombre}}
+
+      <div>
+        <Card class="order-3 p-5 lg:order-1 mb-4">
+          <h3>Próximamente</h3>
+          <div class="flex my-4">
+            <div
+              v-for="equipo of equipos"
+              :key="equipo.id"
+              class="shadow rounded-lg px-3 py-1 cursor-pointer select-none mr-2 mb-2 font-bold"
+              :class="equipo.color"
+              @click="equipo.viendo = !equipo.viendo"
+            >
+              <input
+                type="checkbox"
+                v-model="equipo.viendo"
+                class="scale-150 mr-2"
+              />
+              {{ equipo.nombre }}
             </div>
-        </div>
-        <div v-for="(a, index) of proximas" :key="index" class="flex" v-show="equipos.find(x=>x.id===a.detalles.equipo.id).viendo">
-          <div :class="a.semi ? 'text-diminished' : ''">
-            {{ a.fecha.diasemana }} <strong>{{a.fecha.dia}}</strong> de {{a.fecha.mesnombre}} a las <strong>{{ $dayjs('1970/1/1 '+a.hora).format("HH:mm") }}</strong>
-            - <strong>{{ a.detalles.actividad.titulo }}</strong> de
-            <strong>{{ a.detalles.equipo.nombre }}</strong>
           </div>
+        </Card>
+
+        <Card
+          v-for="(a, index) of proximas"
+          :key="index"
+          v-show="equipos.find(x => x.id === a.detalles.equipo.id).viendo"
+          class="my-3 p-5"
+        >
+        <div>
+          {{ a.fecha.diasemana }} <strong>{{ a.fecha.dia }}</strong> de
+          {{ a.fecha.mesnombre }} a las
+          <strong>{{ $dayjs("1970/1/1 " + a.hora).format("HH:mm") }}</strong> -
+          <NLink
+            class="font-bold text-blue-600"
+            :to="'/actividades/' + a.detalles.actividad.id"
+            >{{ a.detalles.actividad.titulo }}</NLink
+          >
+          de
+          <NLink
+            class="font-bold px-3 py-1 rounded-lg shadow"
+            :class="equipos.find(x => x.id === a.detalles.equipo.id).color"
+            :to="'/equipos/' + a.detalles.equipo.id"
+            >{{ a.detalles.equipo.nombre }}</NLink
+          >
         </div>
-      </Card>
+        </Card>
+      </div>
     </div>
   </div>
 </template>
-
 
 <script>
 export default {
   async asyncData({ $strapi }) {
     const agenda = await $strapi.find("agenda");
-    const equipos = []
-    for(const a of agenda) {
-        if(!equipos.find(x=>x.id===a.equipo.id))
-            equipos.push({...a.equipo, viendo: true})
+    const equipos = [];
+    const colores = [
+      "bg-green-400 text-green-contrast",
+      "bg-red-900 text-red-contrast",
+      "bg-blue-200 text-blue-900",
+      "bg-yellow-200 text-yellow-contrast",
+      "bg-cyan-200 text-blue-contrast",
+      "bg-orange-800 text-orange-contrast",
+      "bg-gray-200 text-gray-900",
+      "bg-pink-200 text-pink-contrast"
+    ];
+    for (const a of agenda) {
+      if (!equipos.find(x => x.id === a.equipo.id))
+        equipos.push({
+          ...a.equipo,
+          color: colores[equipos.length % colores.length],
+          viendo: true
+        });
     }
     return { equipos, agenda };
   },
   data() {
-      return {
-          proximas: []
-      }
+    return {
+      proximas: []
+    };
   },
   mounted() {
-
     const dia_semana = [
       "lunes",
       "martes",
@@ -54,11 +109,24 @@ export default {
       "jueves",
       "viernes",
       "sabado",
-      "domingo",
+      "domingo"
     ];
-    const meses = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre']
+    const meses = [
+      "Enero",
+      "Febrero",
+      "Marzo",
+      "Abril",
+      "Mayo",
+      "Junio",
+      "Julio",
+      "Agosto",
+      "Septiembre",
+      "Octubre",
+      "Noviembre",
+      "Diciembre"
+    ];
     const now = this.$dayjs();
-    
+
     const ordinal = ["primer", "segund", "tercer", "cuart", "quint"];
     for (var i = -1; i < 60; i++) {
       const fecha = now.add(i, "days");
@@ -86,13 +154,19 @@ export default {
         }
         if (ok)
           this.proximas.push({
-            fecha: { diasemana: sdia.replace('erc', 'érc').replace('abado', 'ábado'), dia: diadelmes, mes, mesnombre:meses[mes], año },
+            fecha: {
+              diasemana: sdia.replace("erc", "érc").replace("abado", "ábado"),
+              dia: diadelmes,
+              mes,
+              mesnombre: meses[mes],
+              año
+            },
             hora: item.horario.hora,
             detalles: item,
-            semi,
+            semi
           });
       }
     }
   }
-}
+};
 </script>
