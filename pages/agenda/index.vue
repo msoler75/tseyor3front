@@ -211,7 +211,7 @@ export default {
           if(!evento.fechaComienzo) continue
           const di = fecha.diff(evento.fechaComienzo, 'h')
           const df = fecha.diff(evento.fechaFinal, 'h')
-          console.log('i', i, fecha.format('DD-MM'), 'dif', fecha.diff(evento.fechaComienzo, 'h'))
+          // console.log('i', i, fecha.format('DD-MM'), 'dif', fecha.diff(evento.fechaComienzo, 'h'))
           if(di>-12&&di<24||(evento.fechaFinal&&df>-12&&df<24))
           {
               evento.insertado = true
