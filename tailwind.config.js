@@ -683,5 +683,8 @@ module.exports = {
       whitelist: ['dark-mode', 'mode-dark']
     }
   },
+  purge: [
+    './src/**/*.vue',
+  ],
   plugins: [require('tailwindcss-dark-mode')()]
 }

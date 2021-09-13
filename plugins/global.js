@@ -1,6 +1,6 @@
 import Path from "path";
 // import sizeOf from "image-size";
-import { LoremIpsum } from "lorem-ipsum";
+// import { LoremIpsum } from "lorem-ipsum";
 
 export default ({ app, $config, $md, $img }, inject) => {
   const ucFirst = texto => {
@@ -18,7 +18,7 @@ export default ({ app, $config, $md, $img }, inject) => {
    * @param {*} wordsMax
    * @returns
    */
-  const lorem = (param, wordsMin, wordsMax) => {
+  /* const lorem = (param, wordsMin, wordsMax) => {
     if (!wordsMin) wordsMin = 5;
     if (!wordsMax) wordsMax = 14;
     const mylorem = new LoremIpsum(
@@ -36,7 +36,7 @@ export default ({ app, $config, $md, $img }, inject) => {
     );
     if (param > 0) return mylorem.generateSentences(param);
     else return mylorem.generateParagraphs(-param);
-  };
+  }; */
 
   const slugify = str => {
     str = str.replace(/^\s+|\s+$/g, ""); // trim
@@ -138,7 +138,7 @@ export default ({ app, $config, $md, $img }, inject) => {
 
   inject("ucFirst", ucFirst);
   inject("teaser", teaser);
-  inject("lorem", lorem);
+  // inject("lorem", lorem);
   inject("slugify", slugify);
   inject("renderMarkdownServer", renderMarkdownServer);
 };

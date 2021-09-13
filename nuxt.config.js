@@ -20,8 +20,8 @@ export default {
 
   // https://nuxtjs.org/docs/2.x/configuration-glossary/configuration-server
   server: {
-    port: 8080, // default: 3000
-    host: '0.0.0.0', // default: localhost,
+    // port: process.env.PORT || 3000, // default: 3000
+    // host: process.env.HOST || '0.0.0.0', // default: localhost,
     timing: {
       total: true
     }
@@ -122,7 +122,7 @@ export default {
 
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
   axios: {
-    baseURL: '/api'
+    baseURL: '/api' 
   },
 
   apollo: {
@@ -182,7 +182,7 @@ export default {
 
   proxy: {
     '/api': {
-      target: 'http://localhost:1337',
+      target: process.env.STRAPI_URL || 'http://localhost:1337',
       pathRewrite: {
         '^/api': '/'
       }
@@ -216,6 +216,7 @@ export default {
 
   // https://image.nuxtjs.org/api/options/
   image: {
+    domains: ['https://storage.googleapis.com'],
     // format: 'webp',
     //dir: '',
     provider: 'ipx',

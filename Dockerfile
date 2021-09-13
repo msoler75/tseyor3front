@@ -1,12 +1,16 @@
-# https://milanwittpohl.com/projects/tutorials/Full-Stack-Web-App/
-
-
-FROM node:15.11.0-alpine3.12 as frontend
+FROM node:14-alpine3.14
 
 WORKDIR /src
 
-ADD frontend ./
-RUN yarn install && yarn build
+ADD package.json package-lock.json ./
+RUN npm ci install
 
-ENTRYPOINT ["npx", "nuxt", "start"]
+ADD . ./
+RUN npm run build
+
 EXPOSE 3000
+ENV NUXT_HOST=0.0.0.0
+ENV NUXT_PORT=3000
+#ENV NODE_ENV=production
+
+CMD ["npm", "run", "start"]
