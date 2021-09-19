@@ -76,7 +76,13 @@ export default {
     '@nuxtjs/device',
     // https://github.com/nuxt-community/fontawesome-module
     '@nuxtjs/fontawesome',
+    // https://github.com/harlan-zw/nuxt-build-optimisations
+    // 'nuxt-build-optimisations'
   ],
+
+  buildOptimisations: {
+    profile: process.env.NODE_ENV === 'development' ? 'risky' : 'experimental'
+  },
 
   // Modules: https://go.nuxtjs.dev/config-modules
   modules: [
@@ -218,7 +224,7 @@ export default {
   image: {
     domains: ['https://storage.googleapis.com'],
     // format: 'webp',
-    //dir: '',
+    // dir: Path.resolve(__dirname, 'static'),
     provider: 'ipx',
     // The screen sizes predefined by `@nuxt/image`:
     screens: {

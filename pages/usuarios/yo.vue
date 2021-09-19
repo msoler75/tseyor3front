@@ -66,7 +66,7 @@ export default {
       return this.loggedInUser
     },
     cimage() {
-        return this.usuario&&this.usuario.imagen&&this.usuario.imagen.url?this.usuario.imagen.url:'/images/usuario.jpg'
+        return this.usuario&&this.usuario.imagen&&this.usuario.imagen.url?this.usuario.imagen.url:'/imagenes/usuario.jpg'
     }
   }
 }

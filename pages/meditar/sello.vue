@@ -5,7 +5,7 @@
     <!-- No tiene imagen de fondo -->
     <!-- Sin breadcrumb -->
     <Config :contained="false" :background="false" :breadcrumb="false" />
-        <nuxt-img src="/images/sello.png" fit="cover" height="100%" />
+        <nuxt-img src="/imagenes/sello.png" fit="cover" height="100%" />
     </div>
 </template>
 

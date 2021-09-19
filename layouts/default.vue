@@ -729,10 +729,10 @@ nav#submenu {
 
 @screen sm {
   .main-wrapper:before {
-    background-image: url(/images/bg-light.jpg);
+    background-image: url(/imagenes/bg-light.jpg);
   }
   .dark .main-wrapper:before {
-    background-image: url(/images/bg-dark.jpg);
+    background-image: url(/imagenes/bg-dark.jpg);
   }
 }
 
@@ -742,7 +742,7 @@ nav#submenu {
 .bg-dark-theme:before {
   content: "";
   @apply absolute left-0 top-0 w-full h-full bg-black bg-top bg-no-repeat bg-cover bg-fixed;
-  background-image: url(/images/bg-dark.jpg);
+  background-image: url(/imagenes/bg-dark.jpg);
   z-index:-1;
 }
 

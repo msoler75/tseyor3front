@@ -37,7 +37,7 @@ export default {
   },
   computed: {
     cimage() {
-      return "/images/" + this.contenido.imagen;
+      return "/imagenes/" + this.contenido.imagen;
     },
   },
 };

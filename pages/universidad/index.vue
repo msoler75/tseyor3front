@@ -1,7 +1,7 @@
 <template>
   <div class="max-w-2xl">
     <Card class="px-5 py-7 w-full items-center">
-        <nuxt-img src="/images/utg-logo.jpg" sizes="100% xs:320px" class="mx-auto mb-6" />
+        <nuxt-img src="/imagenes/utg-logo.jpg" sizes="100% xs:320px" class="mx-auto mb-6" />
       <h1 class="text-center">Universidad Tseyor de Granada <span class="text-gray">(UTG)</span></h1>
       <blockquote>
         <p>

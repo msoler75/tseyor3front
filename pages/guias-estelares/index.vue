@@ -9,7 +9,7 @@
           :src="guia.imagen.url"
           :width="guia.imagen.width"
           :height="guia.imagen.height"
-          sizes="sm:100vw"
+          sizes="xs:100vw"
           class="hidden sm:block mx-auto"
         />
       </NLink>

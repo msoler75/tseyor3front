@@ -7,7 +7,7 @@
           :class="sizeBook"
           :src="cimage"
          />
-        <!-- <nuxt-img class="block xs:hidden max-w-8" :src="'/images/portadas/' + data.imagen"/> -->
+        <!-- <nuxt-img class="block xs:hidden max-w-8" :src="'/imagenes/portadas/' + data.imagen"/> -->
       </section>
       <section class="px-1 pb-4 xs:px-6 text-center flex flex-col flex-grow" :class="landscape?'flex flex-col justify-center':''">
         <NLink :to="chref">

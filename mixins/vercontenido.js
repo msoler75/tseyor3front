@@ -61,7 +61,7 @@ export default {
       if(typeof src === 'object')
         src = src.url 
       // if (src && src.search("/") > -1) return src;
-      // return "./images/" + src;
+      // return "./imagenes/" + src;
       return src
     }
   },

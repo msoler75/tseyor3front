@@ -62,7 +62,7 @@
             </div>
           </div>
 
-          <!-- <nuxt-img :src="'./images/' + entrada.imagen" /> -->
+          <!-- <nuxt-img :src="'./imagenes/' + entrada.imagen" /> -->
           <!-- <nuxt-img :src="cimage" /> -->
 
           <!-- article content -->
@@ -104,7 +104,7 @@
     :title="entrada.blog.nombre"
     :description="entrada.blog.descripcion"
     :to="'/blogs/' + entrada.blog.id"
-    :image="'./images/' + entrada.blog.imagen"
+    :image="'./imagenes/' + entrada.blog.imagen"
     class="bg-blue-gray-900 w-full"
    />
 

@@ -21,7 +21,7 @@
               class="text-justify text-xs flex-shrink sm:text-sm md:text-base order-3 lg:order-1 lg:w-1/2 h-auto md:ml-2 p-2 lg:p-6 lg:mr-3 lg:ml-10 md:mr-7 xl:mr-10 lg:text-lg xl:text-xl"
             />
             <div class="w-full flex-grow lg:w-1/2 pb-7 max-h-1/2 lg:max-h-full lg:h-full order-2 pr-1 flex flex-col justify-center items-center lg:p-10">
-                <nuxt-img :src="'/images/presentaciones/origenes/' + slide.imagen" :alt="slide.caption" class="max-w-full max-h-full mx-auto"
+                <nuxt-img :src="'/imagenes/presentaciones/origenes/' + slide.imagen" :alt="slide.caption" class="max-w-full max-h-full mx-auto"
                 sizes="xs:100vw xm:100vw sm:50vw md:25vw lg:50vw xl:50vw"
                 />
                 <p class="text-xs md:text-sm lg:text-base text-center mt-3">{{slide.caption}}</p>

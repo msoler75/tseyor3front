@@ -27,7 +27,7 @@
         </div>
       </Card>
       <div>
-        <img src="/images/mujer-relajada.png" />
+        <img src="/imagenes/mujer-relajada.png" />
       </div>
     </div>
 

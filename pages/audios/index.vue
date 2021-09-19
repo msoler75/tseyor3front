@@ -46,7 +46,7 @@
         </div>
       </div>
       <div class="hidden lg:block">
-        <img src="/images/meditando.png" class="w-full" />
+        <img src="/imagenes/meditando.png" class="w-full" />
       </div>
   </SwipeX>
     </section>

@@ -1,6 +1,6 @@
 <template>
     <div>
-        <nuxt-img :src="'./images/'+comunicado.imagen"/>
+        <nuxt-img :src="'./imagenes/'+comunicado.imagen"/>
         <div class="mt-4" v-html="comunicado.texto"></div>
     </div>
 </template>

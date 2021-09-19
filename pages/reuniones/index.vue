@@ -24,7 +24,7 @@
     </div>
 
     <h2>En Construcción...</h2>
-     <nuxt-img width=300 src="/images/trabajando.png" />
+     <nuxt-img width=300 src="/imagenes/trabajando.png" />
 
   </div>
 </template>
