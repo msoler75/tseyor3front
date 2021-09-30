@@ -6,16 +6,16 @@
 
 <script>
 import vercontenidomixin from "@/mixins/vercontenido.js";
+import seo from '@/mixins/seo.js'
 export default {
-  mixins: [vercontenidomixin],
-  async asyncData({ app, $strapi, route, redirect }) {
+  mixins: [vercontenidomixin, seo],
+  async asyncData({ app, $strapi, route }) {
     try {
-
       const id = route.params.id
-    const normativas = await $strapi.find('normativas', id.match(/\d+/)?{id}:{slug:id})
-    const contenido = normativas[0]
-    contenido.textoHTML = app.$renderMarkdownServer(contenido.texto)
-    return { contenido, normativa: contenido };
+      const normativas = await $strapi.find('normativas', id.match(/\d+/)?{id}:{slug:id})
+      const contenido = normativas[0]
+      contenido.textoHTML = app.$renderMarkdownServer(contenido.texto)
+      return { contenido, normativa: contenido };
     }
     catch(error)
     {

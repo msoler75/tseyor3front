@@ -10,7 +10,9 @@
 </template>
 
 <script>
+import seo from '@/mixins/seo.js'
 export default {
+    mixins: [seo],
     asyncData() {
         return {timer: null}
     },
@@ -27,6 +29,14 @@ export default {
             this.timer = setTimeout(function() {
                 that.$store.commit('setHideMenus', true)
             }, 5000)
+        }
+    },
+    data() {
+        return {
+            // SEO:
+            title: 'Sello de Tseyor',
+            description: 'Visualización del sello para la meditación de mente en blanco',
+            image: 'imagen_a_definir'
         }
     }
 }

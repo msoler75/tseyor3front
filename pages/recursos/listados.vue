@@ -13,7 +13,9 @@
 </template>
 
 <script>
+import seo from '@/mixins/seo.js'
 export default {
+  mixins: [seo],
     asyncData({app}) {
         const miembros = []
         for(var i=0;i<14000;i++)
@@ -31,6 +33,10 @@ export default {
         return {
             viendoCategoria: 'Todos',
             categorias: ['Todos', 'Muul'],
+            // SEO:
+            title: 'Listados',
+            description: 'Listado de miembros de Tseyor',
+            image: 'imagen_a_definir'
         }
     },
     methods: {

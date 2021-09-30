@@ -1,10 +1,5 @@
 export default {
-  head () {
-    return {
-      title: this.$teaser(this.title, 48) + ' — TSEYOR'
-    }
-  },
-  data() {
+  data () {
     return {
       viendoCompartir: false
     };
@@ -17,9 +12,13 @@ export default {
       return JSON.stringify(this.contenido)
     },
     ctitle() {
-        const t = this.contenido ? this.contenido.titulo || this.contenido.titular || this.contenido.name || this.contenido.nombre : ''
-        this.$store.commit('setTitle', t)
+      const t = this.contenido ? this.contenido.titulo || this.contenido.titular || this.contenido.name || this.contenido.nombre : ''
       return t
+    },
+    cdescription() {
+      if(this.contenido)
+        return this.contenido.descripcion || this.contenido.texto.substr(0,576)
+      return this.description || this.descripcion
     },
     cclase() {
         return (
@@ -30,8 +29,7 @@ export default {
         this.contenido.clase )
     },
     chref() {
-      const r =
-        this.href || this.contenido.href || this.contenido.url || this.contenido.enlace;
+      const r = this.href || this.contenido.href || this.contenido.url || this.contenido.enlace;
       if (!r && this.contenido) {
         return '/' + (
           this.cclase +
@@ -68,38 +66,37 @@ export default {
   watch: {
     contenidoJSON (value) {
       console.log('noticias_id, watch title =', value)
-      // this.$store.commit('setTitle', this.title)
+      // this.$store.commit('setSEO', this.ctitle)
     }
   },
   methods: {
-  renderMarkdown(md) {
-    let html = this.$md.render(md)
-    // console.warn(html)
-    html = html
-      .replace(/(<img[^>]+>)<br \/>\n?\s*(<img)/gm, '$1\n$2')
-      .replace(/(<img[^>]+>)<br \/>\n?\s*(<img)/gm, '$1\n$2')
-      .replace(/<p[^>]*>(?:<strong>)?((?:\s*<img[^>]+>[\s\n]*)+)(?:<\/strong>)?<\/p>/gm, '$1')
-      .replace(/<p[^>]*>(<img[^>]+>)<br\s*\/?>\n(.+?)<\/p>/g, '<figure>$1<figcaption>$2</figcaption></figure>')
-      .replace(/<img[^>]+>/g, (p0) =>
-      {
-        const data = p0.match(/src=['"]([^'"]+)['"]/)
-        if(!data||!data[1]) return p0
-        const src = data[1]
-        const img = this.$img.getSizes(src, {
-          sizes: 'xs:100vw xm:100vw sm:100vw md:100vw lg:100vw',
-          modifiers: {
-            format: 'webp',
-            quality: 90,
-            //height: 500,
-          }})
-        console.warn(img)       
-        return  `<img
-        src="${this.$img(src, { quality: 70 })}"
-        srcset="${img.srcset}"
-        sizes="${img.sizes}"
-      >`
-      })
-    return html
+    renderMarkdown(md) {
+      let html = this.$md.render(md)
+      html = html
+        .replace(/(<img[^>]+>)<br \/>\n?\s*(<img)/gm, '$1\n$2')
+        .replace(/(<img[^>]+>)<br \/>\n?\s*(<img)/gm, '$1\n$2')
+        .replace(/<p[^>]*>(?:<strong>)?((?:\s*<img[^>]+>[\s\n]*)+)(?:<\/strong>)?<\/p>/gm, '$1')
+        .replace(/<p[^>]*>(<img[^>]+>)<br\s*\/?>\n(.+?)<\/p>/g, '<figure>$1<figcaption>$2</figcaption></figure>')
+        .replace(/<img[^>]+>/g, (p0) =>
+        {
+          const data = p0.match(/src=['"]([^'"]+)['"]/)
+          if(!data||!data[1]) return p0
+          const src = data[1]
+          const img = this.$img.getSizes(src, {
+            sizes: 'xs:100vw xm:100vw sm:100vw md:100vw lg:100vw',
+            modifiers: {
+              format: 'webp',
+              quality: 90,
+              //height: 500,
+            }})
+          console.warn(img)       
+          return  `<img
+          src="${this.$img(src, { quality: 70 })}"
+          srcset="${img.srcset}"
+          sizes="${img.sizes}"
+        >`
+        })
+      return html
+    }
   }
-}
 }

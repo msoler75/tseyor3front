@@ -40,3 +40,18 @@
     </Card>
   </div>
 </template>
+
+<script>
+import seo from '@/mixins/seo.js'
+export default {
+  mixins: [seo],
+  data() {
+    return {
+      // SEO:
+      title: 'Comisión de Tseyor',
+      description: 'Comisión es la consciencia de Tseyor',
+      image: 'imagen_a_definir'
+    }
+  }
+}
+</script>

@@ -46,3 +46,18 @@
     </Card>
   </div>
 </template>
+
+<script>
+import seo from '@/mixins/seo.js'
+export default {
+  mixins: [seo],
+  data() {
+    return {
+      // SEO:
+      title: 'Ágora del Junantal',
+      description: 'Asamblea soberana de la organización Tseyor',
+      image: 'imagen_a_definir'
+    }
+  }
+}
+</script>

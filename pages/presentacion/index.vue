@@ -36,7 +36,9 @@
 </template>
 
 <script>
+import seo from '@/mixins/seo.js'
 export default {
+  mixins: [seo],
   data() {
     return {
       secciones: [
@@ -49,7 +51,11 @@ export default {
               bg: "text-yellow-900 shadow ring-2 ring-yellow-500 bg-yellow-200 hover:text-yellow-900 hover:bg-yellow-100 dark:text-yellow-800 dark:hover:text-yellow-900",
             },
             "/organizacion",
-            ]
+            ],
+      // SEO:
+      title: 'Presentación',
+      description: 'Toda la información para conocer Tseyor',
+      image: 'imagen_a_definir'
     };
   }
 };

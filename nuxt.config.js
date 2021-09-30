@@ -14,8 +14,9 @@ export default {
 
   // https://nuxtjs.org/docs/2.x/directory-structure/nuxt-config#publicruntimeconfig
   publicRuntimeConfig: {
-    // baseUrl: process.env.BASE_URL || 'http://tseyor.org',
-    publicFolder: Path.resolve(__dirname, 'static')
+    baseUrl: process.env.BASE_URL || 'https://tseyor.org',
+    publicFolder: Path.resolve(__dirname, 'static'),
+    twitter: '@TSEYOR',
   },
 
   // https://nuxtjs.org/docs/2.x/configuration-glossary/configuration-server

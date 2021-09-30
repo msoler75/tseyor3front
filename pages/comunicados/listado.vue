@@ -35,7 +35,9 @@ const query_comunicados =
         }
       }`
 
+import seo from '@/mixins/seo.js'
 export default {
+  mixins: [seo],
   async asyncData({ $strapi }) {
     const result = await $strapi.graphql({
       query: 
@@ -47,7 +49,11 @@ export default {
   data () {
     return {
       hayMas: true,
-      cargando: false
+      cargando: false,
+      // SEO:
+      title: 'Comunicados recientes',
+      description: 'Listado de comunicados recientes',
+      image: 'imagen_a_definir'
     }
   },
   methods: {

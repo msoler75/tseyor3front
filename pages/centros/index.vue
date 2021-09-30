@@ -47,8 +47,9 @@
 
 <script>
 import countries from "@/assets/js/countries.js"
-
+import seo from '@/mixins/seo.js'
 export default {
+  mixins: [seo],
   async asyncData({ $strapi }) {
     const centros = await $strapi.find("centros") 
     return { centros };
@@ -63,6 +64,10 @@ export default {
         },
       ],
       buscarPor: "",
+      // SEO:
+      title: 'Centros',
+      description: 'Casas Tseyor y Muulasterios Tseyor',
+      image: 'imagen_a_definir'
     };
   },
   methods: {

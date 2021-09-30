@@ -122,7 +122,9 @@
 <script>
 import dataraw from "raw-loader!@/content/comunicados.txt";
 import Fuse from "fuse.js";
+import seo from '@/mixins/seo.js'
 export default {
+  mixins: [seo],
   data() {
     return {
       comunicadosraw: dataraw,
@@ -132,7 +134,11 @@ export default {
       ordenarPorRecientes: false,
       pagina: 1,
       numPerPagina: 10,
-      totalPaginas: 1
+      totalPaginas: 1,
+      // SEO:
+      title: 'Comunicados',
+      description: 'Archivo de Comunicados',
+      image: 'imagen_a_definir'
     };
   },
   mounted() {

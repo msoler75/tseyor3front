@@ -53,9 +53,9 @@
 </template>
 
 <script>
-import Fuse from "fuse.js";
-
+import seo from '@/mixins/seo.js'
 export default {
+  mixins: [seo],
   async asyncData({$strapi}) {
 
    const filters = {
@@ -81,7 +81,11 @@ export default {
         "cuentos",
         "música",
         "clásica"
-      ]
+      ],
+      // SEO:
+      title: 'Audios',
+      description: 'Talleres, meditaciones, reflexiones, música...',
+      image: 'imagen_a_definir'
     };
   },
   computed: {

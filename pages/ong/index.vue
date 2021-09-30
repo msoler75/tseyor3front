@@ -81,3 +81,19 @@
 
   </div>
 </template>
+
+<script>
+import seo from '@/mixins/seo.js'
+export default {
+  mixins: [seo],
+  data() {
+    return {
+      // SEO:
+      title: 'ONG',
+      description: 'Toda la información acerca de la ONG Mundo Armónico Tseyor',
+      image: 'imagen_a_definir'
+    }
+  }
+};
+</script>
+

@@ -60,8 +60,18 @@ export default {
     return r
   },
   title (state) {
-    return state.tituloPagina
+    return state.SEO.title
   },
+  description (state) {
+    return state.SEO.description
+  },
+  imagen (state) {
+    return state.SEO.image
+  },
+  type (state) {
+    return state.SEO.type
+  },
+  
   audioPlaying (state) {
     return state.audioPlaying
   },

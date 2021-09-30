@@ -34,7 +34,9 @@
 
 <script>
 import Fuse from "fuse.js";
+import seo from '@/mixins/seo.js'
 export default {
+  mixins: [seo],
   async asyncData({$strapi}) {
     const normativas = await $strapi.find('normativas')
     return { normativas }
@@ -44,7 +46,11 @@ export default {
       buscarPor: '',
       buscandoPor: '',
       viendoCategoria: "Todo",
-      categorias: ["Todo", "Estatutos", "Normativas", "Documentos Legales"]
+      categorias: ["Todo", "Estatutos", "Normativas", "Documentos Legales"],
+      // SEO:
+      title: 'Normativas',
+      description: 'Todas las normativas, reglamentos, protocolos y estatutos de Tseyor',
+      image: 'imagen_a_definir'
     }
   },
   computed:

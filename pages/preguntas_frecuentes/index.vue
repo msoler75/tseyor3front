@@ -30,7 +30,9 @@
 
 
 <script>
+import seo from '@/mixins/seo.js'
 export default {
+  mixins: [seo],
   data() {
     return {
       preguntas: [
@@ -95,7 +97,11 @@ export default {
           show: false,
         },
       ],
-    };
+      // SEO:
+      title: 'Preguntas frecuentes',
+      description: 'Respuestas a las preguntas más habituales',
+      image: 'imagen_a_definir'
+    }
   },
   computed: {
     preguntasReady () {

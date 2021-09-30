@@ -28,7 +28,9 @@ const query_guias = `guias(sort: "nombre:asc")  {
           }
         }`
 
+import seo from '@/mixins/seo.js'
 export default {
+ mixins: [seo],
  async asyncData({$strapi}) {
    const resultado = await $strapi.graphql({
       query:
@@ -37,6 +39,14 @@ export default {
         }`
     })
    return {guias: resultado.guias}
+ },
+ data() {
+   return {
+      // SEO:
+      title: 'Guías Estelares',
+      description: 'Hermanos de la Confederación de Mundos Habitados de la Galaxia que tutelan al grupo Tseyor',
+      image: 'imagen_a_definir'
+   }
  }
 };
 </script>

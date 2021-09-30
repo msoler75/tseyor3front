@@ -28,3 +28,20 @@
 </Card>
     </div>
 </template>
+
+
+<script>
+import seo from '@/mixins/seo.js'
+export default {
+  mixins: [seo],
+  data() {
+    return {
+      // SEO:
+      title: 'Organización',
+      description: 'Información sobre todas las entidades que conforman Tseyor',
+      image: 'imagen_a_definir'
+    }
+  }
+};
+</script>
+

@@ -25,7 +25,9 @@ contrario al pensamiento.
 
 <script>
 import radioLogo from "~/assets/svg/radio-tseyor.svg?data";
+import seo from '@/mixins/seo.js'
 export default {
+    mixins: [seo],
     data() {
         return {
             items: [
@@ -59,7 +61,11 @@ export default {
                     descripcion: 'Consulta nuestro libro donde se explican todos los procesos de meditación',
                     href: '/libros/1'
                 }
-            ]
+            ],
+            // SEO:
+            title: 'Meditar',
+            description: 'Información sobre la meditación en Tseyor',
+            image: 'imagen_a_definir'
         }
     }
 }

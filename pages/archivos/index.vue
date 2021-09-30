@@ -26,8 +26,10 @@
   </div>
 </template>
 
-<script lang>
+<script>
+import seo from '@/mixins/seo.js'
 export default {
+  mixins: [seo],
   async asyncData({ app }) {
     // fetch our article here
     const archivos = [];
@@ -41,6 +43,14 @@ export default {
       });
     }
     return { archivos };
+  },
+  data() {
+    return {
+      // SEO:
+      title: 'Zona de Archivos',
+      description: 'Archivos y documentos',
+      image: 'imagen_a_definir'
+    }
   }
 };
 </script>

@@ -64,8 +64,9 @@
 
 <script>
 import vercontenidomixin from '@/mixins/vercontenido.js'
+import seo from '@/mixins/seo.js'
 export default {
-  mixins: [vercontenidomixin],
+  mixins: [vercontenidomixin, seo],
   async asyncData ({ $strapi, route }) {
     const id = route.params.id
     const actividades = await $strapi.find(

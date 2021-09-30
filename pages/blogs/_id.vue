@@ -7,8 +7,9 @@
 
 <script>
 import vercontenidomixin from '@/mixins/vercontenido.js'
+import seo from '@/mixins/seo.js'
 export default {
-  mixins: [vercontenidomixin],
+  mixins: [vercontenidomixin, seo],
   asyncData ({ route }) {
     // const noticiasGuays = await $strapi.$noticias.find({ id: 1 })
     const id = parseInt(route.params.id)

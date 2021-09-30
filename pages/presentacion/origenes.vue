@@ -52,7 +52,9 @@
 <script>
 import { Hooper, Slide, Navigation } from "hooper";
 import "hooper/dist/hooper.css";
+import seo from '@/mixins/seo.js'
 export default {
+  mixins: [seo],
   components: { Hooper, Slide, Navigation },
   async asyncData({ $content }) {
     // fetch our article here
@@ -165,7 +167,11 @@ export default {
         centerMode: true,
         itemsToSlide: 1,
         itemsToShow: 1
-      }
+      },
+      // SEO:
+      title: 'Orígenes de Tseyor',
+      description: 'Presentación de la historia de Tseyor desde sus comienzos',
+      image: 'imagen_a_definir'
     };
   },
   mounted() {

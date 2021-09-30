@@ -2,7 +2,12 @@ import ufo from "@/assets/svg/icons/ufo.svg?raw";
 import eyeClosed from "~/assets/svg/icons/eyeclosed.svg?raw";
 
 export default () => ({
-  tituloPagina: "",
+  SEO: {
+    title: "",
+    description: "",
+    image: "",
+    type: ""
+  },
   audioPlaying: {},
   svgIcons: {
     ufo: ufo,

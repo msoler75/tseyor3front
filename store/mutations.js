@@ -1,7 +1,13 @@
 export default {
-  setTitle (state, titulo) {
-    console.log('store.setTitle', titulo)
-    state.tituloPagina = titulo
+  setSEO (state, seo) {
+    console.log('store.seo', seo)
+    state.SEO.title = seo.title
+    state.SEO.description = seo.description
+    state.SEO.image = seo.image
+    state.SEO.type = seo.type
+  },
+  setTitle (state, title) {
+    // state.SEO.title = title
   },
   /**
    * Reproduce el audio

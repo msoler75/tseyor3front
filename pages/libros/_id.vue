@@ -43,9 +43,10 @@
 
 <script>
 import vercontenidomixin from "@/mixins/vercontenido.js";
+import seo from '@/mixins/seo.js'
 export default {
-  mixins: [vercontenidomixin],
-  async asyncData({ app, $strapi, route, redirect }) {
+  mixins: [vercontenidomixin, seo],
+  async asyncData({ $strapi, route, redirect }) {
     const id = route.params.id
     const libros = await $strapi.find('libros', id.match(/\d+/)?{id}:{slug:id})
     // const noticiasGuays = await $strapi.$noticias.find({ id: 1 })

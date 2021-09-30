@@ -43,7 +43,9 @@ const query_where = `, where: { _or: [{ nombre_contains: "%search" }, { descripc
 
 
 // import { salasQuery } from '@/graphql/query'
+import seo from '@/mixins/seo.js'
 export default {
+ mixins: [seo],
  async asyncData({$strapi}) {
 
    const filters = {
@@ -78,7 +80,11 @@ export default {
       hayMas: true,
       buscarPor: '',
       buscandoPor: '',
-      cargando: false
+      cargando: false,
+      // SEO:
+      title: 'Salas',
+      description: 'Salas virtuales de los diferentes equipos de Tseyor',
+      image: 'imagen_a_definir'
     }
   },
   methods: {

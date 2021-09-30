@@ -26,7 +26,9 @@
 
 
 <script>
+import seo from '@/mixins/seo.js'
 export default {
+ mixins: [seo],
   async asyncData({$strapi}) {
     const filters = {
         _start: 0,
@@ -48,7 +50,11 @@ export default {
     return {
       buscarPor: "",
       viendoCategoria: "Nuevos",
-      cargando: false
+      cargando: false,
+      // SEO:
+      title: 'Libros',
+      description: 'Todos los libros emanados de las conversaciones interdimensionales y disponibles para descarga en formato PDF',
+      image: 'imagen_a_definir'
     };
   },
   watch: {

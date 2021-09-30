@@ -4,3 +4,18 @@
         <nuxt-img src="/imagenes/trabajando.png" />
     </div>
 </template>
+
+<script>
+import seo from '@/mixins/seo.js'
+export default {
+  mixins: [seo],
+  data () {
+    return {
+      // SEO:
+      title: 'Cuadernos de trabajo',
+      description: 'Listado de cuadernos varios con objetivos de trabajo interior y de divulgación',
+      image: 'imagen_a_definir'
+    }
+  },
+}
+</script>

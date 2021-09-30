@@ -186,7 +186,9 @@
 <script>
 //import doorImage from "~/assets/svg/door-space.svg?raw";
 import calendarIcon from "~/assets/svg/icons/calendar.svg?raw";
+import seo from '@/mixins/seo.js'
 export default {
+  mixins: [seo],
   asyncData({ app }) {
     const cursos = [];
     for (let i = 1; i < 14; i++) {
@@ -232,6 +234,10 @@ export default {
         telefono: "",
         pais: "",
         mensaje: "",
+        // SEO:
+        title: 'Cursos',
+        description: 'Agenda de cursos del Curso Holístico de Tseyor',
+        image: 'imagen_a_definir'
       }
   },
   computed: {

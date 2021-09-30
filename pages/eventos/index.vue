@@ -102,7 +102,9 @@ const query_eventos = `eventos(start: %start, limit: %limit, sort: "fechaComienz
 
 const query_where = `, where: { _or: [{ titulo_contains: "%search" }, { descripcion_contains: "%search" }, { texto_contains: "%search" }] }`
 
+import seo from '@/mixins/seo.js'
 export default {
+  mixins: [seo],
   async asyncData({$strapi}) {
 
    const filters = {
@@ -127,7 +129,11 @@ export default {
     return  {
       buscarPor: "",
       viendoCategoria: "Todos",
-      categorias: ["Todos", "Cursos", "Encuentros", "Presentaciones"]
+      categorias: ["Todos", "Cursos", "Encuentros", "Presentaciones"],
+      // SEO:
+      title: 'Eventos',
+      description: 'Agenda de eventos',
+      image: 'imagen_a_definir'
     }
   },
   methods: {

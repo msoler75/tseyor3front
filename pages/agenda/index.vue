@@ -100,11 +100,12 @@
   </section>
 </template>
 
-1, 2, 3, 4, 5, 6 evento empieza 3, termina 5
 
 <script>
 import qs from "qs";
+import seo from '@/mixins/seo.js'
 export default {
+  mixins: [seo],
   async asyncData({ $dayjs, $strapi }) {
     const query = qs.stringify({
       _where: {
@@ -148,7 +149,11 @@ export default {
   },
   data() {
     return {
-      proximas: []
+      proximas: [],
+      // SEO:
+      title: 'Agenda',
+      description: 'Agenda personalizada de tus actividades',
+      image: 'imagen_a_definir'
     };
   },
   computed: {

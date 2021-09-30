@@ -19,7 +19,9 @@
 </template>
 
 <script>
+import seo from '@/mixins/seo.js'
 export default {
+  mixins: [seo],
   data() {
     return {
       videos: [
@@ -51,7 +53,11 @@ export default {
           src:
             "https://www.youtube.com/embed/playlist?list=PLFhMyyl8F1jYLD4d-J1pQZ11ScOPloVGo"
         }
-      ]
+      ],
+      // SEO:
+      title: 'Vídeos',
+      description: 'Principales vídeos de nuestro canal en Youtube',
+      image: 'imagen_a_definir'
     };
   }
 };

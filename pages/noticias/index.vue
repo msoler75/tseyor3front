@@ -42,9 +42,11 @@ const query_noticias = `noticias(start: %start, limit: %limit, sort: "published_
 
 const query_where = `, where: { _or: [{ titular_contains: "%search" }, { texto_contains: "%search" }] }`
 
+import seo from '@/mixins/seo.js'
 
 // import { noticiasQuery } from '@/graphql/query'
 export default {
+ mixins: [seo],
  async asyncData({$strapi}) {
 
    const filters = {
@@ -79,7 +81,11 @@ export default {
       hayMas: true,
       buscarPor: '',
       buscandoPor: '',
-      cargando: false
+      cargando: false,
+      // SEO:
+      title: 'Noticias',
+      description: 'Noticias de la comunidad Tseyor',
+      image: 'imagen_a_definir'
     }
   },
   methods: {

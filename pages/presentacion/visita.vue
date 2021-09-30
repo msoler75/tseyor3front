@@ -8,7 +8,9 @@
 </template>
 
 <script>
+import seo from '@/mixins/seo.js'
 export default {
+  mixins: [seo],
   data() {
     return {
       presentaciones: [
@@ -19,6 +21,9 @@ export default {
           imagen: "imagen1.jpg",
         },
       ],
+      title: 'Visita guiada',
+      description: 'Diferentes informaciones audiovisuales sobre Tseyor',
+      image: 'imagen_a_definir'
     };
   },
 };

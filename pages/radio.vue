@@ -46,7 +46,9 @@
 </template>
 
 <script>
+import seo from '@/mixins/seo.js'
 export default {
+  mixins: [seo],
   data() {
     const r = {
       beginOffset: 0,
@@ -65,7 +67,11 @@ export default {
             "Relájate y ponte en sintonía con los talleres guiados, meditaciones y cuentos de las estrellas...",
           station: "meditaciones"
         }
-      ]
+      ],
+      // SEO:
+      title: 'Radio Tseyor',
+      description: 'Escucha nuestra radio 24/7',
+      image: 'imagen_a_definir'
     };
     r.emisoraActiva = r.emisoras[0];
     return r;

@@ -73,7 +73,9 @@
 </template>
 
 <script>
+import seo from '@/mixins/seo.js'
 export default {
+  mixins: [seo],
   async asyncData({ $strapi }) {
     const filters = {
         _start: 0,
@@ -87,6 +89,10 @@ export default {
       buscarPor: "",
       hayMas: true,
       cargando: false,
+      // SEO:
+      title: 'Equipos de Tseyor',
+      description: 'Listado de los diferentes equipos y Departamentos de Tseyor',
+      image: 'imagen_a_definir'
     };
   },
   computed: {

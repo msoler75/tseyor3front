@@ -35,9 +35,12 @@
   </div>
 </template>
 
+
 <script>
 import ufo from "~/assets/svg/icons/ufo.svg?raw";
+import seo from '@/mixins/seo.js'
 export default {
+  mixins: [seo],
   data() {
     return {
       secciones: [
@@ -81,10 +84,14 @@ export default {
           descripcion:
             "Manuales de trabajo con meditaciones, textos seleccionados, etc."
         }
-      ]
-    };
+      ],
+      // SEO:
+      title: 'Biblioteca',
+      description: 'Libros, Audios, Vídeos, Comunicados y otros recursos',
+      image: 'imagen_a_definir'
+    }
   }
-};
+}
 </script>
 
 <style scoped>

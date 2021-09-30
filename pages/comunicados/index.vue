@@ -78,7 +78,9 @@ const query_comunicados = `comunicados(start: %start, limit: %limit, sort: "fech
 
 const query_where = `, where: { _or: [{ titulo_contains: "%search" }, { texto_contains: "%search" }] }`
 
+import seo from '@/mixins/seo.js'
 export default {
+  mixins: [seo],
   async asyncData({$strapi}) {
 
    const filters = {
@@ -125,7 +127,11 @@ export default {
       hayMas: true,
       buscarPor: '',
       buscandoPor: '',
-      cargando: false
+      cargando: false,
+      // SEO:
+      title: 'Comunicados',
+      description: 'Comunicados telepáticos mantenidos con los Guías Estelares a través de Chac Mool Puente',
+      image: 'imagen_a_definir'
     }
   },
   methods: {

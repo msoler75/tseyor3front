@@ -70,3 +70,21 @@
 
   </div>
 </template>
+
+
+
+<script>
+import seo from '@/mixins/seo.js'
+export default {
+  mixins: [seo],
+  data() {
+    return {
+      // SEO:
+      title: 'Universidad Tseyor de Granada',
+      description: 'Toda la información sobre la Universidad Tseyor de Granada',
+      image: 'imagen_a_definir'
+    }
+  }
+};
+</script>
+

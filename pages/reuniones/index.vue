@@ -30,7 +30,9 @@
 </template>
 
 <script>
+import seo from '@/mixins/seo.js'
 export default {
+  mixins: [seo],
   asyncData({ app }) {
     const actas = [];
     const anexos = [];
@@ -58,7 +60,11 @@ export default {
   data() {
     return {
       categorias: ["Actas", "Anexos", "Acuerdos"],
-      datos: [this.actas, this.anexos, this.acuerdos]
+      datos: [this.actas, this.anexos, this.acuerdos],
+      // SEO:
+      title: 'Reuniones',
+      description: 'Reuniones de los diferentes equipos de Tseyor',
+      image: 'imagen_a_definir'
     };
   }
 };

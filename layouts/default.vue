@@ -226,7 +226,7 @@
 
         <h4 class="text-2xl font-bold leading-tight text-gray-800 dark:text-gray-200">
           <div v-if="false">
-            {{ getTitle() }}
+            {{ title }}
           </div>
         </h4>
       </div>
@@ -502,30 +502,59 @@ export default {
           content:
             "width=device-width, initial-scale=1, user-scalable=1, maximum-scale=2",
         },
-        {
-          hid: "description",
-          name:  'description',
-          content: "Grupo TSEYOR",
-        },
-        // TO-DO:
-        // https://huleos.com/buenas-practicas-de-seo-para-optimizar-tu-web-con-nuxt/
-        // Open Graph
-        /*
-      { 
-        hid: 'og:url', 
-        property: 'og:url', 
-        content: `https://huleos.com${this.post.path}` 
+      // Open Graph
+      {
+        hid: 'og:type',
+        property: 'og:type',
+        content: 'website'
       },
       {
-        hid: 'og:title',
-        property: 'og:title',
-        content: this.post.title
+        hid: 'og:site_name',
+        property: 'og:site_name',
+        content: 'TSEYOR ORG'
+      },
+      
+      {
+        hid: 'og:url',
+        property: 'og:url',
+        content: this.$config.baseUrl + this.$route.path
       },
       {
-        hid: 'og:description',
-        property: 'og:description',
-        content: this.post.description
-      },*/
+        hid: 'og:image',
+        property: 'og:image',
+        content: this.image
+      },
+      // Twitter
+      {
+        hid: 'twitter:card',
+        name: 'twitter:card',
+        content: this.description
+      },
+      {
+        hid: 'twitter:site',
+        name: 'twitter:site',
+        content: '@TSEYOR'
+      },
+      {
+        hid: 'twitter:url',
+        name: 'twitter:url',
+        content: this.$config.baseUrl + this.$route.path
+      },
+      {
+        hid: 'twitter:title',
+        name: 'twitter:title',
+        content: this.title
+      },
+      {
+        hid: 'twitter:description',
+        name: 'twitter:description',
+        content: this.description
+      },
+      {
+        hid: 'twitter:image',
+        name: 'twitter:image',
+        content: this.image
+      }
       ],
     };
   },
@@ -538,13 +567,13 @@ export default {
     //console.log('fetched user', user)
   },
   computed: {
-    ...mapGetters(["isAuthenticated", "loggedInUser", "pageContained", "pageBackground", "pageBreadcrumb", "menuUsuario", "hideMenus"]),
+    ...mapGetters(["description", "image", "type", "isAuthenticated", "loggedInUser", "pageContained", "pageBackground", "pageBreadcrumb", "menuUsuario", "hideMenus"]),
 
     iconMode() {
       return this.$colorMode.value === "light" ? iconSun : iconMoon;
     },
     title() {
-      return (this.$ucFirst(this.$route.name) + " — TSEYOR").replace(
+      return ( this.$ucFirst(this.$route.name) + " | TSEYOR").replace(
         /^Index.*/,
         "TSEYOR"
       );

@@ -37,8 +37,9 @@
 
 <script>
 import vercontenidomixin from '@/mixins/vercontenido.js'
+import seo from '@/mixins/seo.js'
 export default {
-  mixins: [vercontenidomixin],
+  mixins: [vercontenidomixin, seo],
   async asyncData({ app, $strapi, route, redirect }) {
     const id = route.params.id
     const salas = await $strapi.find('salas', id.match(/^\d+$/)?{id}:{slug:id})
@@ -53,7 +54,7 @@ export default {
   },
   data() {
     return {
-      relacionados: []
+      relacionados: [],
     }
   }
 }

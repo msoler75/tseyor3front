@@ -36,7 +36,9 @@
 </template>
 
 <script>
+import seo from '@/mixins/seo.js'
 export default {
+  mixins: [seo],
   data() {
     return {
       secciones: [
@@ -52,7 +54,11 @@ export default {
             "/telegram-whatsapp",
             "/formularios/experiencias",
             "/muular",
-          ]
+          ],
+      // SEO:
+      title: 'Actividades',
+      description: 'Actividades de los diferentes equipos de Tseyor',
+      image: 'imagen_a_definir'
     };
   }
 };

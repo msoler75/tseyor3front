@@ -93,7 +93,9 @@
 </template>
 
 <script>
+import seo from '@/mixins/seo.js'
 export default {
+ mixins: [seo],
   asyncData({ app }) {
     const paises = [
       "España",
@@ -172,6 +174,10 @@ export default {
           textColor: "#fff",
         },
       ],
+      // SEO:
+      title: 'Mapa',
+      description: 'Dónde está Tseyor en el mundo',
+      image: 'imagen_a_definir'
     };
   },
   computed: {

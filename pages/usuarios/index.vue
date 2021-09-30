@@ -18,7 +18,9 @@
 </template>
 
 <script>
+import seo from '@/mixins/seo.js'
 export default {
+  mixins: [seo],
   asyncData({ app }) {
     const usuarios = [];
     for (let i = 0; i < 24; i++) {
@@ -45,7 +47,11 @@ export default {
   },
   data(){
       return { 
-          buscarPor: ''
+          buscarPor: '',
+          // SEO:
+          title: 'Usuarios',
+          description: 'Usuarios de Tseyor',
+          image: 'imagen_a_definir'
       }
   }, 
   computed: {

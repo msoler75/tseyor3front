@@ -36,7 +36,9 @@
 </template>
 
 <script>
+import seo from '@/mixins/seo.js'
 export default {
+  mixins: [seo],
   data() {
     return {
       secciones: [
@@ -53,7 +55,11 @@ export default {
             },
             "/blogs",
             "/boletines"
-      ]
+      ],
+      // SEO:
+      title: 'Publicaciones',
+      description: 'Todas las publicaciones de Tseyor',
+      image: 'imagen_a_definir'
     };
   }
 };

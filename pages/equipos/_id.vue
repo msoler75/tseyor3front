@@ -54,10 +54,11 @@
 <script>
 import { mapGetters } from "vuex";
 import vercontenidomixin from "@/mixins/vercontenido.js";
+import seo from '@/mixins/seo.js'
 export default {
+  mixins: [vercontenidomixin, seo],
   middleware: 'auth', // requiere auth
-  mixins: [vercontenidomixin],
-  async asyncData({ app, $strapi, route, redirect }) {
+  async asyncData({ app, $strapi, route }) {
     try {
       const id = route.params.id
       const equipos = await $strapi.find('equipos', id.match(/\d+/)?{id}:{slug:id})

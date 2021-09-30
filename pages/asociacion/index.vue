@@ -46,3 +46,20 @@ comunicados que recibís por medio de nuestro Chac Mool Puente.
 
   </div>
 </template>
+
+
+<script>
+import seo from '@/mixins/seo.js'
+export default {
+  mixins: [seo],
+  data() {
+    return {
+      // SEO:
+      title: 'Tseyor Centro de Estudios',
+      description: 'Toda la información sobre la Asociación Tseyor Centro de Estudios Socioculturales',
+      image: 'imagen_a_definir'
+    }
+  }
+};
+</script>
+

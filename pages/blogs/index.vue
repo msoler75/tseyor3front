@@ -21,7 +21,9 @@
 </template>
 
 <script>
+import seo from '@/mixins/seo.js'
 export default {
+  mixins: [seo],
   async asyncData({$strapi}) {
       const filters = {
           _start: 0,
@@ -41,7 +43,11 @@ export default {
   },
   data() {
     return {
-      cargando: false
+      cargando: false,
+      // SEO:
+      title: 'Blogs',
+      description: 'Blogs de la comunidad Tseyor',
+      image: 'imagen_a_definir'
     }
   },
   methods: {

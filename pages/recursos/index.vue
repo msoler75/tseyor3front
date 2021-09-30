@@ -36,7 +36,9 @@
 </template>
 
 <script>
+import seo from '@/mixins/seo.js'
 export default {
+  mixins: [seo],
   data() {
     return {
       secciones: [
@@ -55,7 +57,11 @@ export default {
           "/recursos/estatutos",
           "/recursos/normativas",
           "/recursos/legal",
-      ]
+      ],
+      // SEO:
+      title: 'Recursos',
+      description: 'Listado de recursos de Tseyor',
+      image: 'imagen_a_definir'
     };
   }
 };

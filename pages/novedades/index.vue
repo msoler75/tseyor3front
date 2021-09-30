@@ -30,7 +30,9 @@
 </template>
 
 <script>
+import seo from '@/mixins/seo.js'
 export default {
+  mixins: [seo],
   // components: { Hooper, Slide },
   async asyncData({$strapi}) {
     const novedades = await $strapi.find('novedades')
@@ -42,7 +44,11 @@ export default {
       cargando: false,
       mostrando: 8,
       viendoCategoria: "Todo",
-      categorias: ["Todo", "Noticias", "Comunicados", "Eventos", "Libros", "Otros"]
+      categorias: ["Todo", "Noticias", "Comunicados", "Eventos", "Libros", "Otros"],
+      // SEO:
+      title: 'Novedades',
+      description: 'Noticias, Comunicados, Libros, Eventos, Artículos, Cursos... ',
+      image: 'imagen_a_definir'
     };
   },
   watch: {
