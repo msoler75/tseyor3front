@@ -117,7 +117,6 @@
 <script>
 import vercontenidomixin from '@/mixins/vercontenido.js'
 import seo from '@/mixins/seo.js'
-
 export default {
   mixins: [vercontenidomixin, seo],
   async asyncData({ app, $strapi, route }) {

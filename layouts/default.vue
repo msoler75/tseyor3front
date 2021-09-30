@@ -267,7 +267,9 @@ import { mapGetters } from "vuex";
 import tseyorLogo from "~/assets/svg/sello-tseyor.svg?raw";
 import iconMoon from "~/assets/svg/icons/moon.svg?raw";
 import iconSun from "~/assets/svg/icons/sun.svg?raw";
+import seo from '@/mixins/seo.js'
 export default {
+  mixins: [seo],
   /* watch: {
     showSidebar: {
       immediate: true,
@@ -492,69 +494,17 @@ export default {
   },
   head() {
     return {
-      title: this.title,
       meta: [
         {
+          hid: "utf8",
           charset: "utf-8",
         },
         {
+          hid: 'viewport',
           name:  'viewport',
           content:
             "width=device-width, initial-scale=1, user-scalable=1, maximum-scale=2",
         },
-      // Open Graph
-      {
-        hid: 'og:type',
-        property: 'og:type',
-        content: 'website'
-      },
-      {
-        hid: 'og:site_name',
-        property: 'og:site_name',
-        content: 'TSEYOR ORG'
-      },
-      
-      {
-        hid: 'og:url',
-        property: 'og:url',
-        content: this.$config.baseUrl + this.$route.path
-      },
-      {
-        hid: 'og:image',
-        property: 'og:image',
-        content: this.image
-      },
-      // Twitter
-      {
-        hid: 'twitter:card',
-        name: 'twitter:card',
-        content: this.description
-      },
-      {
-        hid: 'twitter:site',
-        name: 'twitter:site',
-        content: '@TSEYOR'
-      },
-      {
-        hid: 'twitter:url',
-        name: 'twitter:url',
-        content: this.$config.baseUrl + this.$route.path
-      },
-      {
-        hid: 'twitter:title',
-        name: 'twitter:title',
-        content: this.title
-      },
-      {
-        hid: 'twitter:description',
-        name: 'twitter:description',
-        content: this.description
-      },
-      {
-        hid: 'twitter:image',
-        name: 'twitter:image',
-        content: this.image
-      }
       ],
     };
   },
