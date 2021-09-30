@@ -26,7 +26,6 @@
               class="transition duration-200 menuitem hover:text-black dark:hover:text-white px-3 cursor-pointer h-full flex items-center text-sm tracking-normal border-b-4 border-blue-500"
               @click="menuClick(item)"
               @mouseover="menuClick(item)"
-              @mouseleave="menuClick(null)"
             >
               <icon v-if="!item.name" :icon="item.icon" :class="item.iconClass"/> 
               {{ item.name }}
@@ -48,7 +47,6 @@
               class="transition duration-200 menuitem hover:text-black dark:hover:text-white px-3 cursor-pointer h-full flex items-center text-sm tracking-normal border-b-4 border-blue-500"
               @click="menuClick(item)"
               @mouseover="menuClick(item)"
-              @mouseleave="menuClick(null)"
             >
               <icon v-if="!item.name" :icon="item.icon" /> 
               {{ item.name }}
@@ -87,6 +85,7 @@
         id="submenu"
         class="absolute w-full hidden xl:block shadow text-gray-800 bg-gray-50 dark:bg-gray-900 dark:text-gray-200 text-sm overflow-y-auto"
         style="max-height: calc(100vh - 72px); top:76px"
+        @mouseleave="clickOff"
       >
         <template v-for="item of rutasMenu">
           <div
@@ -543,8 +542,9 @@ export default {
       await this.$auth.logout()
     },
     clickOff() {
-      this.currentTab = ''
-      this.mostrarMenuUsuario = false
+       this.menuClick(null)
+      // this.currentTab = ''
+      // this.mostrarMenuUsuario = false
     },
     changeColorMode() {
       this.$colorMode.preference =
@@ -563,9 +563,9 @@ export default {
     },
     menuClick(item) {
       this.mostrarMenuUsuario = false
+      this.currentTab = "";
       if(!item) return
       if (!item.items) {
-        this.currentTab = "";
         this.$router.push(item.href);
       } else {
         this.currentTab = this.currentTab === item.href ? "" : item.href;
