@@ -72,11 +72,6 @@ import vercontenidomixin from "@/mixins/vercontenido.js";
 import seo from '@/mixins/seo.js'
 export default {
  mixins: [vercontenidomixin, seo],
-  head() {
-    return {
-      title: this.guia.nombre + " — Guías Estelares — TSEYOR"
-    };
-  },
   async asyncData({ app, $strapi, route }) {
     const slug = route.params.slug;
     const guias = await $strapi.find("guias", { slug });

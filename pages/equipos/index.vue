@@ -90,7 +90,7 @@ export default {
       hayMas: true,
       cargando: false,
       // SEO:
-      title: 'Equipos de Tseyor',
+      title: 'Equipos',
       description: 'Listado de los diferentes equipos y Departamentos de Tseyor',
       image: 'imagen_a_definir'
     };
