@@ -60,7 +60,7 @@ export default {
 
    const filters = {
         _start: 0,
-        _limit: 2
+        _limit: 20
     }
 
     const audios = await $strapi.find('audios', filters)
@@ -125,8 +125,8 @@ export default {
       this.cargando = false
     },
     play(audio) { 
-      const mp3 = audio.audio[0].url
-      console.log("play", mp3);
+      const mp3 = audio.audio.url
+      // console.log("play", mp3);
       this.$store.commit("setAudioPlay", {
         title: audio.titulo,
         artist: audio.descripcion,

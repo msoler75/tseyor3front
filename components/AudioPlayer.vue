@@ -231,50 +231,50 @@ export default {
   methods: {
     // EVENTS
     abort(ev) {
-      console.log("abort", ev);
+      if(process.env.NODE_ENV === 'development') console.log("abort", ev);
       this.$emit("abort", ev);
     },
     error(ev) {
-      console.log("error", ev);
+      if(process.env.NODE_ENV === 'development') console.log("error", ev);
       this.$emit("error", ev);
     },
     loadedmetadata(ev) {
-      console.log("loadedmetadata", ev);
+      if(process.env.NODE_ENV === 'development') console.log("loadedmetadata", ev);
     },
     canplay(ev) {
-      console.log("canplay", ev);
+      if(process.env.NODE_ENV === 'development') console.log("canplay", ev);
       this.$emit("canplay", ev);
       this.durationVar = this.audio.duration;
       this.currentTimeVar = this.audio.currentTime;
       if (this.autoplay) this.audio.play();
     },
     play(ev) {
-      console.log("play", ev);
+      if(process.env.NODE_ENV === 'development') console.log("play", ev);
       this.$emit("play", ev);
       this.playState = "playing";
     },
     paused(ev) {
-      console.log("paused", ev);
+      if(process.env.NODE_ENV === 'development') console.log("paused", ev);
       this.$emit("paused", ev);
       this.playState = "paused";
     },
     ended(ev) {
-      console.log("ended", ev);
+      if(process.env.NODE_ENV === 'development') console.log("ended", ev);
       this.$emit("ended", ev);
       this.playState = "stopped";
     },
     progress(ev) {
-      console.log("progress", ev);
+      if(process.env.NODE_ENV === 'development') console.log("progress", ev);
       this.$emit("progress", ev);
       this.durationVar = this.$refs.audio ? this.$refs.audio.duration : 0;
     },
     timeupdate(ev) {
-      console.log("timeupdate", ev);
+      if(process.env.NODE_ENV === 'development') console.log("timeupdate", ev);
       this.$emit("timeupdate", ev);
       this.currentTimeVar = this.audio.currentTime;
     },
     waiting(ev) {
-      console.log("waiting", ev);
+      if(process.env.NODE_ENV === 'development') console.log("waiting", ev);
       this.$emit("waiting", ev);
     },
     // ACTIONS
