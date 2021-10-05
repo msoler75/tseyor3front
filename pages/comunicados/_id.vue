@@ -13,11 +13,11 @@
         >
           <aside class="sticky top-32 mb-6 text-xs 5xl:text-sm flex flex-col">
             <div class="my-3">
-              <icon class="5xl:w-4" icon="far fa-heart" /> {{ comunicado.likes }}
+              <icon class="5xl:w-4" icon="far fa-heart" /> {{ contenido.likes.length }}
             </div>
             <a class="my-3" href="#comentarios" v-scroll-to="'#comentarios'">
               <icon class="5xl:w-4" icon="far fa-comment" />
-              {{ comunicado.comentarios }}</a
+              {{ contenido.comentarios }}</a
             >
             <div
               class="cursor-pointer my-3 5xl:w-4"
@@ -40,10 +40,10 @@
 
             <div class="4xl:hidden flex ml-auto">
               <div>
-                <icon class="ml-3" icon="far fa-heart" /> {{ comunicado.likes }}
+                <icon class="ml-3" icon="far fa-heart" /> {{ contenido.likes.length }}
               </div>
               <a class="ml-3" href="#comentarios" v-scroll-to="'#comentarios'">
-                <icon icon="far fa-comment" /> {{ comunicado.comentarios }}</a
+                <icon icon="far fa-comment" /> {{ contenido.comentarios }}</a
               >
               <div class="cursor-pointer" @click="viendoCompartir = true">
                 <icon class="ml-3" icon="fas fa-share-alt" />
@@ -56,34 +56,21 @@
         </ArticleWrapper>
       </div>
 
-      <section class="my-7 lg:my-16">
-        <!-- modal -->
-        <Comparte v-model="viendoCompartir" />
+     
 
-        <!-- buttons -->
-        <Grid class="w-full px-3 sm:px-5 grid-cols-1 sm:grid-cols-3">
-          
-          <div class="max-w-xs mx-auto min-w-40 btn flex items-center justify-center">
-            <icon class="mr-2 xs:mr-4" icon="fas fa-heart" />
-            Me Gusta
-          </div>
-          
-          <div class="max-w-xs mx-auto min-w-40 btn flex items-center justify-center" @click="viendoCompartir = true">
-            <icon class="mr-2 xs:mr-4" icon="fas fa-share-alt" />
-            Comparte
-          </div>
+     <!-- share modal -->
+    <Comparte v-model="viendoCompartir" />
 
-          <a class="max-w-xs mx-auto min-w-40 btn flex items-center justify-center" href="#comentarios">
-            <icon class="mr-2 xs:mr-4" icon="far fa-comment" />
-            <span v-if="comunicado.comentarios">
-              {{ comunicado.comentarios }} Comentarios</span
-            >
-            <span v-else>
-              Coméntalo
-            </span>
-          </a>
-        </Grid>
-      </section>
+    <SocialButtons
+      id="social"
+      :data="contenido"
+      @like="like(contenido.id)"
+      @dislike="dislike(contenido.id)"
+      @share="viendoCompartir = true"
+      class="mx-auto max-w-3xl my-7 lg:my-16"
+    />
+
+
 
    <SuscriptionSection
     title="Comunicados TSEYOR"
@@ -101,11 +88,11 @@
 
     <!-- comentarios -->
     <div id="comentarios" class="container mx-auto my-9">
-      <h3 v-if="comunicado.comentarios" class="text-center">
-        {{ comunicado.comentarios }} Comentarios
+      <h3 v-if="contenido.comentarios" class="text-center">
+        {{ contenido.comentarios + ' Comentario' + (contenido.comentarios!==1?'s':'') }}
       </h3>
       <h3 v-else class="text-center">Coméntalo</h3>
-      <Comentarios :uid="'comunicado-' + id" class="px-1 xs:px-2" />
+      <Comentarios :uid="uid" @count="$set(contenido, 'comentarios', $event)"  class="px-1 xs:px-2" />
     </div>
   </div>
 </template>
@@ -119,9 +106,8 @@ export default {
     const id = route.params.id
     const comunicados = await $strapi.find('comunicados', id.match(/^\d+$/)?{id}:{slug:id})
     const contenido = comunicados[0]
+    contenido.likes = await $strapi.find('likes', {uid: `comunicados-${contenido.id}`})
     contenido.textoHTML = app.$renderMarkdownServer(contenido.texto, contenido.imagenes)
-    contenido.likes = 3
-    contenido.comentarios = 3
     return { contenido, comunicado: contenido };
   },
   methods: {

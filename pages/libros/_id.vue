@@ -35,9 +35,40 @@
     collection="libros"
    />
   </section>
-  <section>
-    ...
-  </section>
+
+
+    <!-- share modal -->
+    <Comparte v-model="viendoCompartir" />
+
+    <SocialButtons
+      id="social"
+      :data="contenido"
+      @like="like(contenido.id)"
+      @dislike="dislike(contenido.id)"
+      @share="viendoCompartir = true"
+      class="mx-auto max-w-3xl my-7 lg:my-16"
+    />
+
+  
+  <SuscriptionSection
+    id="blog-info"
+    title="Biblioteca Tseyor"
+    description="Libros de Tseyor"
+    to="/novedades"
+    image="/imagenes/image1.jpg"
+    class="bg-blue-gray-900 w-full"
+   />
+
+
+    <!-- comentarios -->
+    <div id="comentarios" class="container mx-auto my-9 max-w-3xl">
+      <h3 v-if="contenido.comentarios" class="text-center">
+        {{ contenido.comentarios + ' Comentario' + (contenido.comentarios!==1?'s':'') }}
+      </h3>
+      <h3 v-else class="text-center">Coméntalo</h3>
+      <Comentarios :uid="uid" @count="$set(contenido, 'comentarios', $event)" class="px-1 xs:px-2" />
+    </div>
+
 </div>
 </template>
 
@@ -49,8 +80,8 @@ export default {
   async asyncData({ $strapi, route, redirect }) {
     const id = route.params.id
     const libros = await $strapi.find('libros', id.match(/\d+/)?{id}:{slug:id})
-    // const noticiasGuays = await $strapi.$noticias.find({ id: 1 })
     const contenido = libros[0]
+    contenido.likes = await $strapi.find('likes', {uid: `libros-${contenido.id}`})
     const categoria = contenido.etiquetas.length?contenido.etiquetas[0].nombre:null
     const filtro = categoria?{'etiquetas.nombre':categoria}:{}
     const relacionados = await $strapi.find('libros', {...filtro, _limit: 8})

@@ -75,7 +75,6 @@ export default {
   async asyncData({ app, $strapi, route }) {
     const slug = route.params.slug;
     const guias = await $strapi.find("guias", { slug });
-    console.log(guias);
     const contenido = guias[0];
     contenido.presentacionHTML = app.$renderMarkdownServer(
       contenido.presentacion

@@ -47,8 +47,6 @@ export default {
       const eventos = await $strapi.find('eventos', id.match(/\d+/)?{id}:{slug:id})
       const contenido = eventos[0]
       contenido.textoHTML = app.$renderMarkdownServer(contenido.texto, contenido.imagenes)
-      contenido.likes = 3
-      contenido.comentarios = 3
       return { contenido, evento: contenido };
     }
     catch(error)

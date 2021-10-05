@@ -8,9 +8,13 @@ export default {
     id () {
       return parseInt(this.$route.params.id)
     },
-    contenidoJSON () {
-      return JSON.stringify(this.contenido)
+    uid () {
+      const parts = this.$route.path.split('/')
+      return (this.collection || parts[parts.length-2]) + '-' + this.contenido.id 
     },
+    /* contenidoJSON () {
+      return JSON.stringify(this.contenido)
+    }, */
     ctitle() {
       const t = this.contenido ? this.contenido.titulo || this.contenido.titular || this.contenido.name || this.contenido.nombre : ''
       return t
@@ -61,14 +65,22 @@ export default {
       // if (src && src.search("/") > -1) return src;
       // return "./imagenes/" + src;
       return src
-    }
+    },
+    collection () {
+      if (this.ccollection) 
+        return this.ccollection
+      const parts = this.$route.path.split('/')
+      return parts[parts.length-2]
+    },
+    
   },
+  /*
   watch: {
     contenidoJSON (value) {
-      console.log('noticias_id, watch title =', value)
+      //console.log('noticias_id, watch title =', value)
       // this.$store.commit('setSEO', this.ctitle)
     }
-  },
+  }, */
   methods: {
     renderMarkdown(md) {
       let html = this.$md.render(md)
@@ -97,6 +109,54 @@ export default {
         >`
         })
       return html
-    }
+    },
+        // ---- LIKES ----
+        async like (id) {
+          if(!this.$auth.user) return
+          // console.log('like', id)
+          this.likedItem(id)
+          //this.$strapi.$http.setToken(this.$auth.getToken('local'))
+          //this.$strapi.
+          // await this.$strapi.$http.$put(`/${this.collection}/${id}/like`)
+          
+          await this.$axios
+          .$post("/api/likes", {
+            uid: this.uid
+          })    
+          // este paso es opcional:
+          // this.refreshItem(id);
+        },
+        async dislike (id) {
+          if(!this.$auth.user) return
+          // console.log('dislike', id)
+          this.dislikedItem(id)
+          //this.$strapi.$http.setToken(this.$auth.getToken('local'))
+          // await this.$strapi.$http.$put(`/${this.collection}/${id}/dislike`)
+          const results = await this.$strapi.find('likes', {uid: this.uid, user: this.$auth.user.id})
+          if(results.length) {
+            await this.$axios.$delete(`/api/likes/${results[0].id}`)
+            // este paso es opcional:
+            // this.refreshItem(id);
+          }
+        },
+        async refreshItem (id) {
+          const likes = await this.$strapi.find('likes', { uid: this.uid })
+          this.saveRefreshedItem(id, likes)
+        },
+        likedItem (id) {
+          if(this.contenido.likes) 
+            this.contenido.likes.push({user: this.$auth.user})
+        },
+        dislikedItem (id) { 
+          if(this.contenido.likes) {
+            console.log('disliked', id, this.contenido.likes)
+            const idx = this.contenido.likes.findIndex(x=>x.user.id===this.$auth.user.id)
+            if(idx > -1) this.contenido.likes.splice(idx, 1)
+          }         
+        },
+        saveRefreshedItem(id, likes) {
+          this.$set(this.contenido, 'likes', likes)
+        },
+        // ---- end LIKES ----
   }
 }

@@ -14,7 +14,7 @@
           <aside class="sticky top-32 mb-6 text-xs 5xl:text-sm flex flex-col">
             <a class="my-3" href="#comentarios" v-scroll-to="'#comentarios'">
               <icon class="5xl:w-4" icon="far fa-comment" />
-              {{ reunion.comentarios }}</a
+              {{ contenido.comentarios }}</a
             >
             <div
               class="cursor-pointer my-3 5xl:w-4"
@@ -37,7 +37,7 @@
 
             <div class="4xl:hidden flex ml-auto">
               <a class="ml-3" href="#comentarios" v-scroll-to="'#comentarios'">
-                <icon icon="far fa-comment" /> {{ reunion.comentarios }}</a
+                <icon icon="far fa-comment" /> {{ contenido.comentarios }}</a
               >
               <div class="cursor-pointer" @click="viendoCompartir = true">
                 <icon class="ml-3" icon="fas fa-share-alt" />
@@ -65,8 +65,8 @@
 
           <a class="max-w-xs mx-auto min-w-40 btn flex items-center justify-center" href="#comentarios" v-scroll-to="'#comentarios'">
             <icon class="mr-2 xs:mr-4" icon="far fa-comment" />
-            <span v-if="reunion.comentarios">
-              {{ reunion.comentarios }} Comentarios</span
+            <span v-if="contenido.comentarios">
+              {{ contenido.comentarios }} Comentarios</span
             >
             <span v-else>
               Coméntalo
@@ -86,11 +86,11 @@
 
     <!-- comentarios -->
     <div id="comentarios" class="container mx-auto my-9">
-      <h3 v-if="reunion.comentarios" class="text-center">
-        {{ reunion.comentarios }} Comentarios
+      <h3 v-if="contenido.comentarios" class="text-center">
+        {{ contenido.comentarios + ' Comentario' + (contenido.comentarios!==1?'s':'') }}
       </h3>
       <h3 v-else class="text-center">Coméntalo</h3>
-      <Comentarios :uid="'reunion-' + id" class="px-1 xs:px-2" />
+      <Comentarios :uid="uid" @count="$set(contenido, 'comentarios', $event)"  class="px-1 xs:px-2" />
     </div>
   </div>
 </template>
@@ -105,7 +105,6 @@ export default {
     const reuniones = await $strapi.find('reuniones', {id})
     const contenido = reuniones[0]
     contenido.odHTML = app.$renderMarkdownServer(contenido.od)
-    contenido.comentarios = 3
     return { contenido, reunion: contenido };
   }
 }

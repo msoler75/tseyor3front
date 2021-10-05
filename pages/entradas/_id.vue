@@ -13,11 +13,11 @@
         >
           <aside class="sticky top-32 mb-6 text-xs 5xl:text-sm flex flex-col">
             <div class="my-3">
-              <icon class="5xl:w-4" icon="far fa-heart" /> {{ entrada.likes }}
+              <icon class="5xl:w-4" icon="far fa-heart" /> {{ contenido.likes.length }}
             </div>
             <a class="my-3" href="#comentarios" v-scroll-to="'#comentarios'">
               <icon class="5xl:w-4" icon="far fa-comment" />
-              {{ entrada.comentarios }}</a
+              {{ contenido.comentarios }}</a
             >
             <div
               class="cursor-pointer my-3 5xl:w-4"
@@ -51,10 +51,10 @@
 
             <div class="4xl:hidden flex ml-auto">
               <div>
-                <icon class="ml-3" icon="far fa-heart" /> {{ entrada.likes }}
+                <icon class="ml-3" icon="far fa-heart" /> {{ contenido.likes.length }}
               </div>
               <a class="ml-3" href="#comentarios" v-scroll-to="'#comentarios'">
-                <icon icon="far fa-comment" /> {{ entrada.comentarios }}</a
+                <icon icon="far fa-comment" /> {{ contenido.comentarios }}</a
               >
               <div class="cursor-pointer" @click="viendoCompartir = true">
                 <icon class="ml-3" icon="fas fa-share-alt" />
@@ -70,44 +70,18 @@
         </ArticleWrapper>
       </div>
 
-      <section class="my-7 lg:my-16">
-        <!-- modal -->
-        <Comparte v-model="viendoCompartir" />
+      <!-- share modal -->
+    <Comparte v-model="viendoCompartir" />
 
-        <!-- buttons -->
-        <Grid class="w-full px-3 sm:px-5 grid-cols-1 sm:grid-cols-3">
-          
-          <div class="max-w-xs mx-auto min-w-40 btn flex items-center justify-center">
-            <icon class="mr-2 xs:mr-4" icon="fas fa-heart" />
-            Me Gusta
-          </div>
-          
-          <div class="max-w-xs mx-auto min-w-40 btn flex items-center justify-center" @click="viendoCompartir = true">
-            <icon class="mr-2 xs:mr-4" icon="fas fa-share-alt" />
-            Comparte
-          </div>
-
-          <a class="max-w-xs mx-auto min-w-40 btn flex items-center justify-center" href="#comentarios">
-            <icon class="mr-2 xs:mr-4" icon="far fa-comment" />
-            <span v-if="entrada.comentarios">
-              {{ entrada.comentarios }} Comentarios</span
-            >
-            <span v-else>
-              Coméntalo
-            </span>
-          </a>
-        </Grid>
-      </section>
-
-    <SuscriptionSection
-    id="blog-info"
-    :title="entrada.blog.nombre"
-    :description="entrada.blog.descripcion"
-    :to="'/blogs/' + entrada.blog.id"
-    :image="'./imagenes/' + entrada.blog.imagen"
-    class="bg-blue-gray-900 w-full"
-   />
-
+    <SocialButtons
+      id="social"
+      :data="contenido"
+      @like="like(contenido.id)"
+      @dislike="dislike(contenido.id)"
+      @share="viendoCompartir = true"
+      class="mx-auto max-w-3xl my-7 lg:my-16"
+    />
+    
     <!-- contenido relacionado -->
     <div class="container mx-auto my-9">
       <h3 class="text-center">Y también...</h3>
@@ -116,11 +90,11 @@
 
     <!-- comentarios -->
     <div id="comentarios" class="container mx-auto my-9">
-      <h3 v-if="entrada.comentarios" class="text-center">
-        {{ entrada.comentarios }} Comentarios
+      <h3 v-if="contenido.comentarios" class="text-center">
+        {{ contenido.comentarios + ' Comentario' + (contenido.comentarios!==1?'s':'') }}
       </h3>
       <h3 v-else class="text-center">Coméntalo</h3>
-      <Comentarios :uid="'entrada-' + id" class="px-1 xs:px-2" />
+      <Comentarios :uid="uid" @count="$set(contenido, 'comentarios', $event)" class="px-1 xs:px-2" />
     </div>
   </div>
 </template>
@@ -137,8 +111,7 @@ export default {
     const entradas = await $strapi.find('entradas', id.match(/\d+/)?{id}:{slug:id})
     const contenido = entradas[0]
     contenido.textoHTML = app.$renderMarkdownServer(contenido.texto, contenido.imagenes)
-    contenido.likes = 3
-    contenido.comentarios = 3
+    contenido.likes = await $strapi.find('likes', {uid: `entradas-${contenido.id}`})
     return { contenido, entrada: contenido };
     }
     catch(error)

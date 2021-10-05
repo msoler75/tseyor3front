@@ -25,7 +25,7 @@
               :active="currentTab === item.href"
               class="transition duration-200 menuitem hover:text-black dark:hover:text-white px-3 cursor-pointer h-full flex items-center text-sm tracking-normal border-b-4 border-blue-500"
               @click="menuClick(item)"
-              @mouseover="menuClick(item)"
+              @mouseover="menuHover(item)"
             >
               <icon v-if="!item.name" :icon="item.icon" :class="item.iconClass"/> 
               {{ item.name }}
@@ -46,7 +46,7 @@
               :active="currentTab === item.href"
               class="transition duration-200 menuitem hover:text-black dark:hover:text-white px-3 cursor-pointer h-full flex items-center text-sm tracking-normal border-b-4 border-blue-500"
               @click="menuClick(item)"
-              @mouseover="menuClick(item)"
+              @mouseover="menuHover(item)"
             >
               <icon v-if="!item.name" :icon="item.icon" /> 
               {{ item.name }}
@@ -560,6 +560,13 @@ export default {
       if (title) return title;
       console.log("layout.getTitle returning", this.$ucFirst(this.$route.name));
       return this.$ucFirst(this.$route.name);
+    },
+    menuHover(item) {
+      if(item.href!=='/novedades')
+        this.menuClick(item)
+      else {
+        this.currentTab = "";
+      }
     },
     menuClick(item) {
       this.mostrarMenuUsuario = false
