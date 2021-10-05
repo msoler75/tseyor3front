@@ -13,7 +13,7 @@
           :data="comentario.user"
           class="text-3xl w-8 h-8 sm:w-16 sm:h-16 mr-2 sm:mr-3 lg:mr-5"
         />
-        <section>
+        <section class="group select-none">
           <Card class="w-full p-1 xs:p-2 sm:p-4">
             <div
               class="flex justify-start items-baseline text-xs lg:text-sm text-blue-gray"
@@ -40,23 +40,30 @@
 
           <div
             v-if="isAuthenticated"
-            class="actions mt-2 flex justify-start items-center text-xs px-2"
+            class="mt-2 flex justify-start items-center text-xs px-2"
           >
             <a
-              v-if="likeit(comentario)"
-              @click.prevent="dislike(comentario.id)"
+              v-if="comentario.likes.length"
               class="mr-5 cursor-pointer"
-              ><icon icon="fas fa-heart" class="text-red" />
-              {{ comentario.likes.length }}</a
+              @click="likeit(comentario)?dislike(comentario.id):{}"
             >
-            <a
-              v-else
-              @click.prevent="like(comentario.id)"
-              class="mr-5 cursor-pointer"
-              ><icon icon="far fa-heart" /> Me gusta</a
-            >
+              <icon icon="fas fa-heart" class="text-red" />
+              {{ comentario.likes.length }}
+            </a>
+            <a v-else class="mr-5 cursor-pointer"
+              @click="likeit(comentario)?{}:like(comentario.id)">
+              <icon icon="far fa-heart" />
+            </a>
+
             <span
-              class="link cursor-pointer"
+              v-if="!likeit(comentario)"
+              class="mr-5 opacity-0 transition transition-duration-200 group-hover:opacity-100 link cursor-pointer"
+              @click="like(comentario.id)"
+              >Me gusta</span
+            >
+
+            <span
+              class="opacity-0 transition transition-duration-200 group-hover:opacity-100 link cursor-pointer"
               @click="onResponder(comentario.id)"
               >Responder</span
             >
@@ -100,23 +107,29 @@
                   </Card>
                   <div
                     v-if="isAuthenticated"
-                    class="actions mt-2 flex justify-start items-center text-xs px-2"
+                    class="mt-2 flex justify-start items-center text-xs px-2"
                   >
-                    <a
-                      v-if="likeit(respuesta)"
-                      @click.prevent="dislike(respuesta.id)"
-                      class="mr-5 cursor-pointer"
-                      ><icon icon="fas fa-heart" class="text-red" />
-                      {{ respuesta.likes.length }}</a
-                    >
-                    <a
-                      v-else
-                      @click.prevent="like(respuesta.id)"
-                      class="mr-5 cursor-pointer"
-                      ><icon icon="far fa-heart" /> Me gusta</a
-                    >
+                   <a
+                    v-if="respuesta.likes.length"
+                    class="mr-5 cursor-pointer"
+                    @click="likeit(respuesta)?dislike(respuesta.id):{}"
+                  >
+                    <icon icon="fas fa-heart" class="text-red" />
+                    {{ respuesta.likes.length }}
+                  </a>
+                  <a v-else class="mr-5 cursor-pointer"
+                    @click="likeit(respuesta)?{}:like(respuesta.id)">
+                    <icon icon="far fa-heart" />
+                  </a>
+
+                  <span
+                    v-if="!likeit(respuesta)"
+                    class="mr-5 opacity-0 transition transition-duration-200 group-hover:opacity-100 link cursor-pointer"
+                    @click="like(respuesta.id)"
+                    >Me gusta</span
+                  >
                     <span
-                      class="link cursor-pointer"
+                      class="opacity-0 transition transition-duration-200 group-hover:opacity-100 link cursor-pointer"
                       @click="onResponder(comentario.id)"
                       >Responder</span
                     >
@@ -166,7 +179,7 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex";
+import { mapGetters } from 'vuex'
 export default {
   props: {
     // unique identifier for content-id
@@ -200,146 +213,142 @@ methods: {
     },
   },
   */
-  data() {
+  data () {
     return {
       comentarios: [],
-      respuesta: "",
+      respuesta: '',
       responderA: null,
-      nuevoComentario: "",
+      nuevoComentario: '',
       // para mixin likes.js
-      ccollection: "comentarios"
-    };
+      ccollection: 'comentarios'
+    }
   },
-  async fetch() {
-    await this.cargarComentarios();
+  async fetch () {
+    await this.cargarComentarios()
   },
   computed: {
-    ...mapGetters(["isAuthenticated"]),
-    comentariosPrimerNivel() {
-      return this.comentarios.filter(x => !x.respondiendo);
+    ...mapGetters(['isAuthenticated']),
+    comentariosPrimerNivel () {
+      return this.comentarios.filter(x => !x.respondiendo)
     },
-    comentariosSegundoNivel() {
-      return this.comentarios.filter(x => x.respondiendo);
+    comentariosSegundoNivel () {
+      return this.comentarios.filter(x => x.respondiendo)
     }
   },
   methods: {
-    mostrarNombre(user) {
-      return user.nombreSimbolico || user.username;
+    mostrarNombre (user) {
+      return user.nombreSimbolico || user.username
     },
-    getRespuestas(respuestas) {
-      const r = [];
+    getRespuestas (respuestas) {
+      const r = []
       for (const respuesta of respuestas) {
-        r.push(this.comentariosSegundoNivel.find(x => x.id === respuesta.id));
+        r.push(this.comentariosSegundoNivel.find(x => x.id === respuesta.id))
       }
-      return r;
+      return r
     },
-    async cargarComentarios() {
+    async cargarComentarios () {
       // console.log('fetch uid=', this.uid)
-      const comentarios = await this.$strapi.find("comentarios", {
+      const comentarios = await this.$strapi.find('comentarios', {
         uid: this.uid,
-        _sort: "updated_at:ASC"
-      });
-      this.$emit("count", comentarios.length);
-      this.comentarios = comentarios;
+        _sort: 'updated_at:ASC'
+      })
+      this.$emit('count', comentarios.length)
+      this.comentarios = comentarios
     },
-    async comentar() {
-      await this.$axios.$post("/api/comentarios", {
+    async comentar () {
+      await this.$axios.$post('/api/comentarios', {
         uid: this.uid,
         texto: this.nuevoComentario
-      });
-      this.nuevoComentario = "";
-      this.cargarComentarios();
+      })
+      this.nuevoComentario = ''
+      this.cargarComentarios()
     },
-    async responder(respondiendo) {
-      await this.$axios.$post("/api/comentarios", {
+    async responder (respondiendo) {
+      await this.$axios.$post('/api/comentarios', {
         uid: this.uid,
         respondiendo,
         texto: this.respuesta
-      });
-      this.responderA = null;
-      this.respuesta = "";
-      this.cargarComentarios();
+      })
+      this.responderA = null
+      this.respuesta = ''
+      this.cargarComentarios()
     },
-    onResponder(id) {
-      this.responderA = id;
+    onResponder (id) {
+      this.responderA = id
       this.$nextTick(() => {
-        this.$scrollTo("#respuesta-a-" + id, 500, { offset: -250 });
+        this.$scrollTo('#respuesta-a-' + id, 500, { offset: -250 })
         const el = document.querySelector(
-          "#respuesta-a-" + id + " input[type=text]"
-        );
-        if (el) el.focus();
-      });
+          '#respuesta-a-' + id + ' input[type=text]'
+        )
+        if (el) el.focus()
+      })
     },
 
     // ---- LIKES ----
-    likeit(comentario) {
+    likeit (comentario) {
       console.log('likeit', comentario)
       console.log('mi user id', this.$auth.user.id)
-      if (!this.$auth.user) return false;
-      return !!comentario.likes.find(x => x.id === this.$auth.user.id);
+      if (!this.$auth.user) return false
+      return !!comentario.likes.find(x => x.id === this.$auth.user.id)
     },
-    async refreshItem(id) {
+    async refreshItem (id) {
       console.log('refreshItem', id)
-      const likes = await this.$strapi.find("likes", { uid: 'comentarios-'+id });
-      this.saveRefreshedItem(id, likes.map(x=>x.user));
+      const likes = await this.$strapi.find('likes', {
+        uid: 'comentarios-' + id
+      })
+      this.saveRefreshedItem(
+        id,
+        likes.map(x => x.user)
+      )
     },
-    async like(id) {
-      if (!this.$auth.user) return;
+    async like (id) {
+      if (!this.$auth.user) return
       console.log('like comment', id)
-      this.likedItem(id);
-      await this.$axios.$put(`/api/comentarios/${id}/like`);
-      await this.$axios.$post("/api/likes", {
-        uid: 'comentarios-'+id
-      });
+      this.likedItem(id)
+      await this.$axios.$put(`/api/comentarios/${id}/like`)
+      await this.$axios.$post('/api/likes', {
+        uid: 'comentarios-' + id
+      })
       // este paso es opcional:
       // this.refreshItem(id);
     },
-    async dislike(id) {
-      if (!this.$auth.user) return;
+    async dislike (id) {
+      if (!this.$auth.user) return
       console.log('dislike comment', id)
-      this.dislikedItem(id);
-      await this.$axios.$put(`/api/comentarios/${id}/dislike`);
-      const results = await this.$strapi.find("likes", {
-        uid: 'comentarios-'+id,
+      this.dislikedItem(id)
+      await this.$axios.$put(`/api/comentarios/${id}/dislike`)
+      const results = await this.$strapi.find('likes', {
+        uid: 'comentarios-' + id,
         user: this.$auth.user.id
-      });
+      })
       if (results.length) {
-        await this.$axios.$delete(`/api/likes/${results[0].id}`);
+        await this.$axios.$delete(`/api/likes/${results[0].id}`)
         // este paso es opcional:
         // this.refreshItem(id);
       }
     },
-    likedItem(id) {
-      const comentario = this.comentarios.find(x => x.id === id);
+    likedItem (id) {
+      const comentario = this.comentarios.find(x => x.id === id)
       if (comentario) {
-        console.log("comentario", comentario);
-        comentario.likes.push({id: this.$auth.user.id})
+        console.log('comentario', comentario)
+        comentario.likes.push({ id: this.$auth.user.id })
       }
     },
-    dislikedItem(id) {
-      const comentario = this.comentarios.find(x => x.id === id);
+    dislikedItem (id) {
+      const comentario = this.comentarios.find(x => x.id === id)
       if (comentario) {
-        console.log("comentario", comentario);
-        const idx = comentario.likes.findIndex(x=>x.id===this.$auth.user.id)
-        if(idx > -1) comentario.likes.splice(idx, 1)
+        console.log('comentario', comentario)
+        const idx = comentario.likes.findIndex(x => x.id === this.$auth.user.id)
+        if (idx > -1) comentario.likes.splice(idx, 1)
       }
     },
-    saveRefreshedItem(id, likes) {
+    saveRefreshedItem (id, likes) {
       console.log('saveRefreshedItem', id, likes)
-      const comentario = this.comentarios.find(x => x.id === id);
+      const comentario = this.comentarios.find(x => x.id === id)
       console.log('found', comentario)
-      if (comentario) this.$set(comentario, "likes", likes);
+      if (comentario) this.$set(comentario, 'likes', likes)
     }
     // ---- end LIKES ----
   }
-};
+}
 </script>
-
-<style scoped>
-.mouse .actions {
-  @apply opacity-0 transition duration-200 pointer-events-none;
-}
-.mouse .comment:hover > div > section > .actions {
-  @apply opacity-100 pointer-events-auto;
-}
-</style>
