@@ -55,7 +55,7 @@
     description="Comunicados telepáticos mantenidos con los Guías Estelares a través de Chac Mool Puente"
     to="/comunicados"
     image="./imagenes/espacio-color.jpg"
-    class="bg-blue-gray-900 w-full"
+    class="bg-blue-dark-700 w-full"
    />
 
     <!-- contenido relacionado -->

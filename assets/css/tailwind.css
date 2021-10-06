@@ -104,7 +104,7 @@
   }
 
   .btn-warning {
-    @apply bg-orange-300 hover:bg-orange-200 text-orange-900 border-red;
+    @apply bg-orange-100 hover:bg-orange-50 text-orange-900 border-red;
   }
 
 

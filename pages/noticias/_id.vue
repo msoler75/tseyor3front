@@ -55,7 +55,7 @@
       description="Noticias de interés de la comunidad Tseyor"
       to="/novedades"
       image="./imagenes/tierra.jpg"
-      class="bg-blue-gray-900 w-full"
+      class="bg-teal-900 w-full"
     />
 
     <!-- contenido relacionado -->

@@ -18,7 +18,7 @@
         <div class="sm:w-1/2 lg:w-2/3">
           <div class="flex flex-col space-y-4 justify-center items-center sm:mx-auto">
             <p class="text-gray-200">Recibe en tu correo las novedades.</p>
-            <button class="btn btn-warning" :to="to">{{clabel}}</button>
+            <button class="btn btn-warning" :to="to"><icon icon="fas fa-bell" class="mr-3"/> {{clabel}}</button>
           </div>
           <div
             class="mt-4 text-center text-gray-400 px-2 xs:px-5 mb-7 sm:mx-6 lg:mx-12 text-diminished"
