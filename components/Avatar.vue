@@ -1,12 +1,12 @@
 <template>
-    <NLink v-if="cto" :to="cto" class="block flex-shrink-0 rounded-full overflow-hidden">
+    <NLink v-if="cto" :to="cto" class="block flex-shrink-0 rounded-full overflow-hidden border dark:border-gray-100">
         <nuxt-img v-if="cimage" :src="cimage" class="shadow w-full h-full" :alt="cname" :title="cname"/>
         <div v-else class="h-full flex justify-center items-center shadow uppercase" :style="'background: ' + color">
             {{initials}}
         </div>
     </NLink>
-    <nuxt-img v-else-if="cimage" :src="cimage" class="block flex-shrink-0 rounded-full shadow w-full h-full" :alt="cname" :title="cname"/>
-    <div v-else class="flex-shrink-0 rounded-full overflow-hidden flex justify-center items-center shadow uppercase" :style="'background: ' + color">
+    <nuxt-img v-else-if="cimage" :src="cimage" class="block flex-shrink-0 rounded-full shadow w-full h-full border dark:border-gray-100" :alt="cname" :title="cname"/>
+    <div v-else class="flex-shrink-0 rounded-full overflow-hidden flex justify-center items-center shadow uppercase border dark:border-gray-100" :style="'background: ' + color">
         {{initials}}
     </div>
 </template>

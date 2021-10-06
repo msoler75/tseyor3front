@@ -47,7 +47,7 @@ export default {
       // SEO:
       title: 'Entradas de blog',
       description: 'Artículos de la comunidad Tseyor',
-      image: 'imagen_a_definir'
+      image: '/imagenes/comunidad.jpg'
     }
   },
   methods: {

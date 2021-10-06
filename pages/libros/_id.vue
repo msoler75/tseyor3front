@@ -1,161 +1,198 @@
 <template>
-<div>
-  <Card class="p-2 sm:p-5 md:p-8 lg:p-12 w-full max-w-2xl mx-auto">
-      <section class="block xs:flex items-start">
-          <div class="book-container my-4 mx-auto xs:my-0 xs:mr-4 lg:mr-20 flex-shrink-0 flex-grow-0">
+  <div class="flex flex-col items-center">
+    <Config :contained="false" />
+
+    <div
+      class="px-3 sm:px-5 md:px-7 relative w-full shrink-0 flex-grow-1 max-w-3xl flex flex-col items-start"
+    >
+      <div
+        class="hidden 4xl:block absolute right-0 translate-x-3 5xl:translate-x-10 h-full"
+      >
+        
+      </div>
+
+      <Card class="shadow-none xs:shadow py-4 px-2 sm:p-5 md:p-8 lg:p-12 w-full max-w-2xl mx-auto mb-14">
+        <section class="block xs:flex items-start">
+          <div
+            class="book-container my-4 mr-5 xs:my-0 xs:mr-7 lg:mr-20 flex-shrink-0 flex-grow-0"
+          >
             <div class="book">
-        <nuxt-img
-          :src="cimage"
-          sizes="xs:40px sm:80px md:150px lg:200px"
-        />
-        </div>
-        </div>
-        <section class="flex-shrink md:max-w-sm">
-          <h1 class="break-all sm:break-normal">{{ ctitle }}</h1>
-          <div class="hidden lg:block mt-4 text-justify" v-html="ctext"/>
-          <section class="mt-3 text-diminished text-xs">
-            <span> {{libro.edicionNumero}}ª edición</span><span v-if="libro.edicionFecha">, {{libro.edicionFecha}}</span>
-            &nbsp;—&nbsp;
-            <span>{{libro.paginas}} páginas</span> 
-          </section>
-          <section class="flex mt-7 justify-end">
-              <a download :href="libro.documento.url"
-              class="btn btn-error"><icon icon="download" class="mr-2"/>Descargar</a>
+              <nuxt-img
+                :src="cimage"
+                sizes="xs:40px sm:80px md:150px lg:200px"
+              />
+            </div>
+          </div>
+          <section class="flex-grow flex-shrink md:max-w-sm">
+            <h1 class="break-all sm:break-normal">{{ ctitle }}</h1>
+            <div class="hidden lg:block mt-4 text-justify" v-html="ctext" />
+            <section class="mt-3 text-diminished text-xs">
+              <span> {{ libro.edicionNumero }}ª edición</span
+              ><span v-if="libro.edicionFecha">, {{ libro.edicionFecha }}</span>
+              &nbsp;—&nbsp;
+              <span>{{ libro.paginas }} páginas</span>
+            </section>
+            <section class="flex mt-7 justify-end">
+              <a download :href="libro.documento.url" class="btn btn-error"
+                ><icon icon="download" class="mr-2" />Descargar</a
+              >
+            </section>
           </section>
         </section>
-      </section>
-      <section class="lg:hidden mt-4 text-justify" v-html="libro.descripcion"/>
-  </Card>
-  <divider/>
-  <section>
-    <h2>Y además...</h2>
-    <HCarousel center
-    :items="relacionados"
-    :noText="true"
-    collection="libros"
-   />
-  </section>
+        <section
+          class="lg:hidden mt-4 text-justify"
+          v-html="libro.descripcion"
+        />
+      </Card>
+    </div>
 
 
-    <!-- share modal -->
-    <Comparte v-model="viendoCompartir" />
+    <section class="py-4 w-full mb-8 bg-opacity-80 bg-white dark:bg-transparent">
 
-    <SocialButtons
-      id="social"
-      :data="contenido"
-      @like="like(contenido.id)"
-      @dislike="dislike(contenido.id)"
-      @share="viendoCompartir = true"
-      class="mx-auto max-w-3xl my-7 lg:my-16"
+      <!-- share modal -->
+      <Comparte v-model="viendoCompartir" />
+
+      <SocialButtons
+        id="social"
+        :data="contenido"
+        @like="like(contenido.id)"
+        @dislike="dislike(contenido.id)"
+        @share="viendoCompartir = true"
+        class="mx-auto max-w-xl my-5 lg:my-16"
+      />
+
+    </section>
+
+    <section class="container xs:px-1 sm:px-3 md:px-6 mx-auto my-12">
+      <h2 class="text-center">Otros títulos...</h2>
+      <HCarousel
+        center
+        :items="relacionados"
+        :noText="true"
+        collection="libros"
+      />
+    </section>
+
+
+    <SuscriptionSection
+      id="suscription"
+      title="Biblioteca Tseyor"
+      description="Todos los libros emanados de las conversaciones interdimensionales mantenidas con nuestros Guías Estelares disponibles para descarga en formato PDF"
+      to="/novedades"
+      image="/imagenes/libros.jpg"
+      class="bg-blue-gray-900 w-full"
     />
-
-  
-  <SuscriptionSection
-    id="blog-info"
-    title="Biblioteca Tseyor"
-    description="Libros de Tseyor"
-    to="/novedades"
-    image="/imagenes/image1.jpg"
-    class="bg-blue-gray-900 w-full"
-   />
-
 
     <!-- comentarios -->
     <div id="comentarios" class="container mx-auto my-9 max-w-3xl">
       <h3 v-if="contenido.comentarios" class="text-center">
-        {{ contenido.comentarios + ' Comentario' + (contenido.comentarios!==1?'s':'') }}
+        {{
+          contenido.comentarios +
+            ' Comentario' +
+            (contenido.comentarios !== 1 ? 's' : '')
+        }}
       </h3>
       <h3 v-else class="text-center">Coméntalo</h3>
-      <Comentarios :uid="uid" @count="$set(contenido, 'comentarios', $event)" class="px-1 xs:px-2" />
+      <Comentarios
+        :uid="uid"
+        @count="$set(contenido, 'comentarios', $event)"
+        class="px-1 xs:px-2"
+      />
     </div>
-
-</div>
+  </div>
 </template>
 
 <script>
-import vercontenidomixin from "@/mixins/vercontenido.js";
+import vercontenidomixin from '@/mixins/vercontenido.js'
 import seo from '@/mixins/seo.js'
 export default {
   mixins: [vercontenidomixin, seo],
-  async asyncData({ $strapi, route, redirect }) {
+  async asyncData ({ $strapi, route, redirect }) {
     const id = route.params.id
-    const libros = await $strapi.find('libros', id.match(/\d+/)?{id}:{slug:id})
+    const libros = await $strapi.find(
+      'libros',
+      id.match(/\d+/) ? { id } : { slug: id }
+    )
     const contenido = libros[0]
-    contenido.likes = await $strapi.find('likes', {uid: `libros-${contenido.id}`})
-    const categoria = contenido.etiquetas.length?contenido.etiquetas[0].nombre:null
-    const filtro = categoria?{'etiquetas.nombre':categoria}:{}
-    const relacionados = await $strapi.find('libros', {...filtro, _limit: 8})
-    return { contenido, libro: contenido, relacionados };
-  },
-};
+    contenido.likes = await $strapi.find('likes', {
+      uid: `libros-${contenido.id}`
+    })
+    const categoria = contenido.etiquetas.length
+      ? contenido.etiquetas[0].nombre
+      : null
+    const filtro = categoria ? { 'etiquetas.nombre': categoria } : {}
+    const relacionados = await $strapi.find('libros', { ...filtro, _limit: 8 })
+    return { contenido, libro: contenido, relacionados }
+  }
+}
 </script>
 
 <style scoped>
 @media screen and (min-width: 1024px) {
-
-.book-container {
-  width: 200px;
-  height: 300px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  perspective: 400px;
-}
-
-.book {
-  transform: rotateY(-30deg);
-  position: relative;
-  transform-style: preserve-3d;
-  width: 200px;
-  height: 300px;
-  transition: transform 1s ease;
-  animation: 1s ease 0s 1 initAnimation;
-}
-
-.book:hover {
-  transform: rotate(0deg);
-}
-
-@keyframes initAnimation {
-  0% {
-    transform: rotateY(0deg);
+  .book-container {
+    width: 200px;
+    height: 300px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    perspective: 400px;
   }
-  100% {
+
+  .book {
     transform: rotateY(-30deg);
+    position: relative;
+    transform-style: preserve-3d;
+    width: 200px;
+    height: 300px;
+    transition: transform 1s ease;
+    animation: 1s ease 0s 1 initAnimation;
   }
-}
 
-.book > :first-child {
-  position: absolute;
-  background: #0d47a1aa;
-  width: 200px;
-  height: 300px;
-  border-top-right-radius: 3px;
-  border-bottom-right-radius: 3px;
-  box-shadow: 5px 5px 20px #666;
-}
+  .book:hover {
+    transform: rotate(0deg);
+  }
 
-.book::before {
-  content: ' ';
-  background: #fff;
-  height: calc(300px - 2 * 3px);
-  width: 50px;
-  top: 3px;
-  position: absolute;
-  transform: translateZ(-3px) translateX(calc(200px - 50px / 2 - 3px)) rotateY(90deg) translateX(calc(50px / 2))
-}
+  @keyframes initAnimation {
+    0% {
+      transform: rotateY(0deg);
+    }
+    100% {
+      transform: rotateY(-30deg);
+    }
+  }
 
-.book::after {
-  content: ' ';
-  position: absolute;
-  left: 0;
-  width: 200px;
-  height: 300px;
-  border-top-right-radius: 3px;
-  border-bottom-right-radius: 3px;
-  background: #01060f;
-  transform: translateZ(-50px);
-  box-shadow: -10px 0 50px 10px #666;
-}
+  .book > :first-child {
+    position: absolute;
+    background: #0d47a1aa;
+    width: 200px;
+    height: 300px;
+    border-top-right-radius: 3px;
+    border-bottom-right-radius: 3px;
+    box-shadow: 5px 5px 20px #666;
+  }
+
+  .book::before {
+    content: ' ';
+    background: #fff;
+    height: calc(300px - 2 * 3px);
+    width: 50px;
+    top: 3px;
+    position: absolute;
+    transform: translateZ(-3px) translateX(calc(200px - 50px / 2 - 3px))
+      rotateY(90deg) translateX(calc(50px / 2));
+  }
+
+  .book::after {
+    content: ' ';
+    position: absolute;
+    left: 0;
+    width: 200px;
+    height: 300px;
+    border-top-right-radius: 3px;
+    border-bottom-right-radius: 3px;
+    background: #01060f;
+    transform: translateZ(-50px);
+    box-shadow: -10px 0 50px 10px #666;
+  }
 }
 </style>

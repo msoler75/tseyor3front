@@ -6,24 +6,24 @@
           <div class="flex justify-center mb-4">
             <nuxt-link
               :to="to"
-              class="max-w-full w-32 rounded-full overflow-hidden"
+              class="max-w-full w-44 h-32 rounded-3xl overflow-hidden"
             >
-              <nuxt-img
-                :src="cimage"
-                class="w-full block"
-              />
+            <div :style="imageBg" class="w-full h-full block shadow"/>
             </nuxt-link>
           </div>
           <h2 class="text-gray-100 text-2xl text-center">
             {{title}}
           </h2>
         </div>
-        <div
-          class="text-gray-400 px-2 xs:px-5 sm:w-1/2 lg:w-1/3 text-center mt-6 mb-7 md:mt-0 text-diminished"
-          v-html="description"
-        />
-        <div class="flex justify-center items-center sm:mx-auto lg:w-1/3">
-          <button class="btn" :to="to">{{clabel}}</button>
+        <div class="sm:w-1/2 lg:w-2/3">
+          <div class="flex flex-col space-y-4 justify-center items-center sm:mx-auto">
+            <p class="text-gray-200">Recibe en tu correo las novedades.</p>
+            <button class="btn btn-warning" :to="to">{{clabel}}</button>
+          </div>
+          <div
+            class="mt-4 text-center text-gray-400 px-2 xs:px-5 mb-7 sm:mx-6 lg:mx-12 text-diminished"
+            v-html="description"
+          />
         </div>
       </div>
     </Section>
@@ -47,6 +47,14 @@ export default {
       },
       clabel() {
         return this.label || 'Suscríbete'
+      },
+      imageBg () {
+        const imgUrl = this.$img(this.cimage, {width: 300, format: 'webp', quality: 70})
+        return {
+          backgroundImage: `url('${imgUrl}')`,
+          backgroundPosition: 'center',
+          backgroundSize: 'cover'
+        }
       }
     }
 }

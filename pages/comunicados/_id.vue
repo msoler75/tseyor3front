@@ -11,21 +11,8 @@
         <div
           class="hidden 4xl:block absolute right-0 translate-x-3 5xl:translate-x-10 h-full"
         >
-          <aside class="sticky top-32 mb-6 text-xs 5xl:text-sm flex flex-col">
-            <div class="my-3">
-              <icon class="5xl:w-4" icon="far fa-heart" /> {{ contenido.likes.length }}
-            </div>
-            <a class="my-3" href="#comentarios" v-scroll-to="'#comentarios'">
-              <icon class="5xl:w-4" icon="far fa-comment" />
-              {{ contenido.comentarios }}</a
-            >
-            <div
-              class="cursor-pointer my-3 5xl:w-4"
-              @click="viendoCompartir = true"
-            >
-              <icon class="ml-3" icon="fas fa-share-alt" />
-            </div>
-          </aside>
+          <SocialIcons class="sticky top-32 mb-6 text-xs 5xl:text-sm"
+            :content="contenido" @share="viendoCompartir = true"/>
         </div>
 
         <!-- article wrapper -->
@@ -38,16 +25,8 @@
           >
             <span><icon icon="far fa-calendar-alt" /> 17-may</span>
 
-            <div class="4xl:hidden flex ml-auto">
-              <div>
-                <icon class="ml-3" icon="far fa-heart" /> {{ contenido.likes.length }}
-              </div>
-              <a class="ml-3" href="#comentarios" v-scroll-to="'#comentarios'">
-                <icon icon="far fa-comment" /> {{ contenido.comentarios }}</a
-              >
-              <div class="cursor-pointer" @click="viendoCompartir = true">
-                <icon class="ml-3" icon="fas fa-share-alt" />
-              </div>
+           <div class="4xl:hidden ml-auto">
+              <SocialIcons :content="contenido" :horizontal="true" @share="viendoCompartir=true"/>
             </div>
           </div>
 
@@ -67,16 +46,15 @@
       @like="like(contenido.id)"
       @dislike="dislike(contenido.id)"
       @share="viendoCompartir = true"
-      class="mx-auto max-w-3xl my-7 lg:my-16"
+      class="mx-auto max-w-xl my-7 lg:my-16"
     />
 
-
-
    <SuscriptionSection
+    id="suscription"
     title="Comunicados TSEYOR"
-    description="Comunicaciones recibidas de los hermanos de las estrellas"
+    description="Comunicados telepáticos mantenidos con los Guías Estelares a través de Chac Mool Puente"
     to="/comunicados"
-    image="./imagenes/imagen1.jpg"
+    image="./imagenes/espacio-color.jpg"
     class="bg-blue-gray-900 w-full"
    />
 

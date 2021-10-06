@@ -53,8 +53,8 @@ export default {
       cargando: false,
       // SEO:
       title: 'Libros',
-      description: 'Todos los libros emanados de las conversaciones interdimensionales y disponibles para descarga en formato PDF',
-      image: 'imagen_a_definir'
+      description: 'Todos los libros emanados de las conversaciones interdimensionales mantenidas con nuestros Guías Estelares disponibles para descarga en formato PDF',
+      image: '/imagenes/libros.jpg'
     };
   },
   watch: {

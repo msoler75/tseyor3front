@@ -28,10 +28,12 @@
           </a>
         </Grid>
 
-        <p class="mt-14 font-bold text-center">Aman este contenido:</p>
-        <div class="flex flex-wrap justify-center">
-            <Avatar v-for="user of likeslist" :key="user.id" :data="user" class="w-12 h-12 m-1" />
-        </div>
+        <template v-if="likeslist.length">
+            <p class="mt-14 mb-2 font-bold text-center">Nos gusta este contenido:</p>
+            <div class="flex flex-wrap justify-center">
+                <Avatar v-for="user of likeslist" :key="user.id" :data="user" class="w-12 h-12 m-1" />
+            </div>
+        </template>
       </section>
 </template>
 

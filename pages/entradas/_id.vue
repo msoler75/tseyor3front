@@ -11,21 +11,9 @@
         <div
           class="hidden 4xl:block absolute right-0 translate-x-3 5xl:translate-x-10 h-full"
         >
-          <aside class="sticky top-32 mb-6 text-xs 5xl:text-sm flex flex-col">
-            <div class="my-3">
-              <icon class="5xl:w-4" icon="far fa-heart" /> {{ contenido.likes.length }}
-            </div>
-            <a class="my-3" href="#comentarios" v-scroll-to="'#comentarios'">
-              <icon class="5xl:w-4" icon="far fa-comment" />
-              {{ contenido.comentarios }}</a
-            >
-            <div
-              class="cursor-pointer my-3 5xl:w-4"
-              @click="viendoCompartir = true"
-            >
-              <icon class="ml-3" icon="fas fa-share-alt" />
-            </div>
-          </aside>
+          <SocialIcons class="sticky top-32 mb-6 text-xs 5xl:text-sm"
+            :content="contenido" @share="viendoCompartir = true"/>
+          
         </div>
 
         <!-- article wrapper -->
@@ -38,27 +26,20 @@
           >
             <span><icon icon="far fa-calendar-alt" /> 17-may</span>
             <div class="ml-8 hidden sm:block">
-              <span class="capitalize"
-                ><icon icon="far fa-user" /> {{ entrada.blog.nombre }}</span
-              >
+              <span class="capitalize">
+                <icon icon="far fa-user" /> {{ entrada.blog.nombre }}
+              </span>
               <a
                 href="#blog-info"
                 v-scroll-to="'#blog-info'"
                 class="ml-2 rounded-full py-.5 px-2 text-xs bg-blue-400 text-blue-contrast"
-                >Seguir</a
               >
+              Seguir
+              </a>
             </div>
 
-            <div class="4xl:hidden flex ml-auto">
-              <div>
-                <icon class="ml-3" icon="far fa-heart" /> {{ contenido.likes.length }}
-              </div>
-              <a class="ml-3" href="#comentarios" v-scroll-to="'#comentarios'">
-                <icon icon="far fa-comment" /> {{ contenido.comentarios }}</a
-              >
-              <div class="cursor-pointer" @click="viendoCompartir = true">
-                <icon class="ml-3" icon="fas fa-share-alt" />
-              </div>
+            <div class="4xl:hidden ml-auto">
+              <SocialIcons :content="contenido" :horizontal="true" @share="viendoCompartir=true"/>
             </div>
           </div>
 
@@ -79,14 +60,27 @@
       @like="like(contenido.id)"
       @dislike="dislike(contenido.id)"
       @share="viendoCompartir = true"
-      class="mx-auto max-w-3xl my-7 lg:my-16"
+      class="mx-auto max-w-xl my-7 lg:my-16"
     />
-    
+
+
     <!-- contenido relacionado -->
     <div class="container mx-auto my-9">
       <h3 class="text-center">Y también...</h3>
       <HCarousel center :items="entrada.relacionados" />
     </div>
+
+
+    
+   <SuscriptionSection
+    id="suscription"
+    title="Blogs TSEYOR"
+    description="Artículos de la comunidad Tseyor"
+    to="/blogs"
+    image="./imagenes/comunidad.jpg"
+    class="bg-blue-gray-900 w-full"
+   />
+
 
     <!-- comentarios -->
     <div id="comentarios" class="container mx-auto my-9">

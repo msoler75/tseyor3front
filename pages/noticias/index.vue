@@ -84,8 +84,8 @@ export default {
       cargando: false,
       // SEO:
       title: 'Noticias',
-      description: 'Noticias de la comunidad Tseyor',
-      image: 'imagen_a_definir'
+      description: 'Noticias de interés de la comunidad Tseyor',
+      image: '/imagenes/tierra.jpg'
     }
   },
   methods: {

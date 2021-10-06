@@ -11,22 +11,8 @@
       <div
         class="hidden 4xl:block absolute right-0 translate-x-3 5xl:translate-x-10 h-full"
       >
-        <aside class="sticky top-32 mb-6 text-xs 5xl:text-sm flex flex-col">
-          <div class="my-3 cursor-pointer" v-scroll-to="'#social'">
-            <icon class="5xl:w-4" icon="far fa-heart" />
-            {{ contenido.likes.length }}
-          </div>
-          <a class="my-3" href="#comentarios" v-scroll-to="'#comentarios'">
-            <icon class="5xl:w-4" icon="far fa-comment" />
-            {{ contenido.comentarios }}</a
-          >
-          <div
-            class="cursor-pointer my-3 5xl:w-4"
-            @click="viendoCompartir = true"
-          >
-            <icon class="ml-3" icon="fas fa-share-alt" />
-          </div>
-        </aside>
+        <SocialIcons class="sticky top-32 mb-6 text-xs 5xl:text-sm"
+            :content="contenido" @share="viendoCompartir = true"/>
       </div>
 
       <!-- article wrapper -->
@@ -39,18 +25,9 @@
         >
           <span><icon icon="far fa-calendar-alt" /> 17-may</span>
 
-          <div class="4xl:hidden flex ml-auto">
-            <div class="cursor-pointer" v-scroll-to="'#social'">
-              <icon class="ml-3" icon="far fa-heart" />
-              {{ contenido.likes.length }}
+          <div class="4xl:hidden ml-auto">
+              <SocialIcons :content="contenido" :horizontal="true" @share="viendoCompartir=true"/>
             </div>
-            <a class="ml-3" href="#comentarios" v-scroll-to="'#comentarios'">
-              <icon icon="far fa-comment" /> {{ contenido.comentarios }}</a
-            >
-            <div class="cursor-pointer" @click="viendoCompartir = true">
-              <icon class="ml-3" icon="fas fa-share-alt" />
-            </div>
-          </div>
         </div>
 
         <!-- <nuxt-img :src="cimage" /> -->
@@ -69,14 +46,15 @@
       @like="like(contenido.id)"
       @dislike="dislike(contenido.id)"
       @share="viendoCompartir = true"
-      class="mx-auto max-w-3xl my-7 lg:my-16"
+      class="mx-auto max-w-xl my-7 lg:my-16"
     />
 
     <SuscriptionSection
+      id="suscription"
       title="Noticias TSEYOR"
-      description="Noticias de la comunidad Tseyor"
+      description="Noticias de interés de la comunidad Tseyor"
       to="/novedades"
-      image="./imagenes/imagen2.jpg"
+      image="./imagenes/tierra.jpg"
       class="bg-blue-gray-900 w-full"
     />
 

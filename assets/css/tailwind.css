@@ -103,6 +103,10 @@
     @apply bg-gray-200 hover:bg-gray-100 active:bg-gray-50 hover:shadow-lg text-gray-800 border-gray-400;
   }
 
+  .btn-warning {
+    @apply bg-orange-300 hover:bg-orange-200 text-orange-900 border-red;
+  }
+
 
   .btn-error {
     @apply bg-error hover:bg-red-600 active:bg-red-400 border-red-900 text-red-contrast;
