@@ -32,13 +32,13 @@ export default {
         return {
             items: [
                 {
-                    imagen: 'imagen1.jpg',
+                    imagen: '/imagenes/meditar-sol.jpg',
                     titulo: 'Guía para meditar',
                     descripcion: 'Puedes ver nuestra guía rápida para la meditación',
                     href: '/meditar/guia'
                 },
                 {
-                    imagen: 'imagen2.jpg',
+                    imagen: '/imagenes/audios.jpg',
                     titulo: 'Audios de Tseyor',
                     descripcion: 'Escucha nuestros audios y déjate guiar',
                     href: '/audios'
@@ -50,13 +50,13 @@ export default {
                     href: '/radio'
                 },
                 {
-                    imagen: 'imagen3.jpg',
+                    imagen: '/imagenes/sello.png',
                     titulo: 'Taller de Mente en Blanco',
                     descripcion: 'Practica la meditación del sello de Tseyor',
                     href: '/meditar/sello'
                 },
                 {
-                    imagen: 'imagen4.jpg',
+                    imagen: 'https://storage.googleapis.com/tseyorimagenes/La%20Mente.jpg',
                     titulo: 'Libro: La Meditación en Tseyor',
                     descripcion: 'Consulta nuestro libro donde se explican todos los procesos de meditación',
                     href: '/libros/1'

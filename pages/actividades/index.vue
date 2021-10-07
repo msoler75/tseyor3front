@@ -58,7 +58,7 @@ export default {
       // SEO:
       title: 'Actividades',
       description: 'Actividades de los diferentes equipos de Tseyor',
-      image: 'imagen_a_definir'
+      image: '/imagenes/unidos.jpg'
     };
   }
 };

@@ -16,7 +16,7 @@
         <div class="flex items-center whitespace-nowrap">
           <div class="w-14 h-14 mr-5 flex-shrink-0">
             <nuxt-img
-              :src="equipo.imagen.url"
+              :src="equipo.imagen?equipo.imagen.url:'/imagenes/equipo.jpg'"
               :width="70"
               :height="70"
               class="w-full h-full rounded-full"
@@ -92,7 +92,7 @@ export default {
       // SEO:
       title: 'Equipos',
       description: 'Listado de los diferentes equipos y Departamentos de Tseyor',
-      image: 'imagen_a_definir'
+      image: '/imagenes/reunion.jpg'
     };
   },
   computed: {

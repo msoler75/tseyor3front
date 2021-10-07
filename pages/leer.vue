@@ -19,19 +19,19 @@ export default {
         return {
             items: [
                 {
-                    imagen: 'imagen2.jpg',
+                    imagen: '/imagenes/espacio-color.jpg',
                     titulo: 'Comunicados de Tseyor',
                     descripcion: 'Lee los comunicados más recientes de nuestros Guías Estelares',
                     href: '/comunicados'
                 },
                 {
-                    imagen: 'imagen1.jpg',
+                    imagen: '/imagenes/libros.jpg',
                     titulo: 'Libros',
                     descripcion: 'Puedes visitar nuestra biblioteca y leer los libros de la filosofía de Tseyor',
                     href: '/libros'
                 },
                 {
-                    imagen: 'imagen3.jpg',
+                    imagen: '/imagenes/grupo-1.jpg',
                     titulo: 'Blogs',
                     descripcion: 'Lee nuestros artículos de los blogs y conocénos mejor',
                     href: '/blogs'

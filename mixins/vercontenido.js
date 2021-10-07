@@ -60,7 +60,7 @@ export default {
     },
     cimage() {
       let src = this.image || this.imagen || this.contenido.image || this.contenido.imagen;
-      if(typeof src === 'object')
+      if(src && typeof src === 'object')
         src = src.url 
       // if (src && src.search("/") > -1) return src;
       // return "./imagenes/" + src;

@@ -3,7 +3,7 @@
   <Config :contained="false"/>
 
   <GridFluid class="gap-4">
-    <div class="h-64 md:h-full" v-if="equipo.imagen&&equipo.imagen.url" :style="bgImage">
+    <div class="h-64 md:h-full" :style="bgImage">
     </div>
 
     <div class="surface p-5 text-center flex flex-col justify-center">
@@ -28,8 +28,11 @@
 
     <div class="surface p-5 overflow-auto">
       <h3>Miembros</h3>
-      <div class="flex flex-wrap">
+      <div class="flex flex-wrap" v-if="equipo.users.length">
         <Avatar v-for="user of equipo.users" :key="user.id" :data="user" :class="avatarClass" class="m-1" />
+      </div>
+      <div v-else class="flex flex-col flex-grow justify-center">
+        <p class="text-center">No hay miembros</p>
       </div>
     </div>
 
@@ -63,10 +66,8 @@ export default {
       const id = route.params.id
       const equipos = await $strapi.find('equipos', id.match(/\d+/)?{id}:{slug:id})
       const contenido = equipos[0]
-      for(var i=0;i<62;i++)
-        contenido.users.push(contenido.users[0])
       contenido.textoHTML = app.$renderMarkdownServer(contenido.pizarra/*, contenido.imagenes*/)
-      return { id: contenido.id, contenido, equipo: contenido };
+      return { contenido, equipo: contenido };
     }
     catch(error)
     {
@@ -81,7 +82,7 @@ export default {
       return n<16?'w-16 h-16':n<32?'w-12 h-12':n<64?'w-8 h-8':'w-4 h-4'
     },
     bgImage() {
-      const imgUrl = this.$img(this.equipo.imagen.url, {width: 400, format: 'webp', quality: 70})
+      const imgUrl = this.$img(this.equipo.imagen?this.equipo.imagen.url:'/imagenes/equipo.jpg', {width: 400, format: 'webp', quality: 70})
       return {
         backgroundImage: `url('${imgUrl}')`,
         backgroundPosition: 'center',
@@ -89,7 +90,7 @@ export default {
       }
     },
     soyMiembro () {
-      return this.equipo.users.find(x=>x.id===this.loggedInUser.id)
+      return this.equipo.users.find(x=>x.id===this.$auth.user.id)
     }
   },
   methods: {

@@ -77,7 +77,7 @@
     title="Blogs TSEYOR"
     description="Artículos de la comunidad Tseyor"
     to="/blogs"
-    image="./imagenes/comunidad.jpg"
+    image="./imagenes/grupo-1.jpg"
     class="bg-blue-gray-900 w-full"
    />
 

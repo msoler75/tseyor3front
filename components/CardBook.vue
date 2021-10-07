@@ -9,9 +9,9 @@
          />
         <!-- <nuxt-img class="block xs:hidden max-w-8" :src="'/imagenes/portadas/' + data.imagen"/> -->
       </section>
-      <section class="px-1 pb-4 xs:px-6 text-center flex flex-col flex-grow" :class="landscape?'flex flex-col justify-center':''">
+      <section class="px-1 xs:px-6 text-center flex flex-col flex-grow" :class="landscape?'flex flex-col justify-center':''">
         <NLink :to="chref">
-          <section class="font-bold text-xl mb-2">{{ ctitle }}</section>
+          <section class="font-bold text-xl" :class="noText?'':'mb-2'">{{ ctitle }}</section>
         </NLink>
         <v-clamp v-if="!noText && ctext" autoresize :max-lines="5"
         class="my-auto text-gray-700 text-base">{{cteaser}}</v-clamp>
