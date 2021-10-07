@@ -317,6 +317,12 @@ export default () => ({
       description: "Información y departamentos de la Universidad Tseyor de Granada",
       parent: "/organizacion"
     },
+    "/equipos/comision": {
+      name: "Comisión de Tseyor",
+      icon: "fas fa-play-circle fa-rotate-270",
+      description: "La Comisión de Tseyor es la Consciencia de Tseyor",
+      parent: "/equipos"
+    },
     "/comision": {
       name: "Comisión de Tseyor",
       icon: "fas fa-play-circle fa-rotate-270",

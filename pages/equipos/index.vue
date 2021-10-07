@@ -31,33 +31,17 @@
               </div>
             </div>
           </div>
-          <div class="ml-auto grid grid-cols-2 lg:grid-cols-4 gap-3">
+          <div class="ml-auto flex space-x-4 pr-5">
             <div class="flex flex-col justify-center items-center">
-              <div class="uppercase font-bold text-sm">miembros</div>
-              <span
-                ><icon icon="user" class="mr-2 text-gray" />
+              <span title="miembros">
+                  <icon icon="user" class="mr-1 text-gray" />
                 {{ equipo.users.length }}</span
               >
             </div>
             <div class="flex flex-col justify-center items-center">
-              <div class="uppercase font-bold text-sm">actividades</div>
-              <span
-                ><icon icon="hiking" class="mr-2 text-gray" />
+              <span title="actividades">
+                  <icon icon="hiking" class="mr-1 text-gray" />
                 {{ equipo.actividades.length }}</span
-              >
-            </div>
-            <div class="flex flex-col justify-center items-center">
-              <div class="uppercase font-bold text-sm">reuniones</div>
-              <span
-                ><icon icon="calendar-day" class="mr-2 text-gray" />
-                {{ equipo.reuniones.length }}</span
-              >
-            </div>
-            <div class="flex flex-col justify-center items-center">
-              <div class="uppercase font-bold text-sm">actas</div>
-              <span
-                ><icon icon="file-alt" class="mr-2 text-gray" />
-                {{ equipo.actas.length }}</span
               >
             </div>
           </div>

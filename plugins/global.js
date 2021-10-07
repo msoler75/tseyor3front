@@ -7,8 +7,9 @@ export default ({ app, $config, $md, $img }, inject) => {
     return texto ? texto.charAt(0).toUpperCase() + texto.slice(1) : "";
   };
   const teaser = (texto, len) => {
-    if (texto && texto.length < len) return texto;
-    return texto ? texto.substr(0, len) + "..." : "";
+    if(!texto) return ''
+    if (texto.length < len) return texto;
+    return texto.substr(0, len) + "...";
   };
 
   /**

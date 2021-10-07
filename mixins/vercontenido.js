@@ -21,8 +21,8 @@ export default {
     },
     cdescription() {
       if(this.contenido)
-        return this.contenido.descripcion || this.contenido.texto.substr(0,576)
-      return this.description || this.descripcion
+        return (this.contenido.descripcion || this.contenido.texto || this.contenido.frase || '').substr(0,576)
+      return (this.description || this.descripcion || '').substr(0,576)
     },
     cclase() {
         return (
