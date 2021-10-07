@@ -8,7 +8,6 @@
     <nuxt-img v-else-if="cimage" :src="cimage" class="block flex-shrink-0 rounded-full shadow w-full h-full dark:ring-1 dark:ring-gray-100" :alt="cname" :title="cname"/>
     <div v-else class="flex-shrink-0 rounded-full overflow-hidden flex justify-center items-center shadow uppercase dark:ring-1 dark:ring-gray-100" :style="'background: ' + ccolor">
         {{initials}}
-        {{ccolor}}
     </div>
 </template>
 
