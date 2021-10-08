@@ -29,7 +29,10 @@ export default {
             return 0
         },
         datetime () {
-            return this.$dayjs.tz('2024-01-01 '+this.data.hora, this.timezone).tz(this.tzLocal, false).add(this.offset, 'day')
+            var today = this.$dayjs()
+            while(today.format('dddd')!=='lunes')
+                today = today.add(1, 'day')
+            return this.$dayjs.tz(today.format('YYYY-MM-DD') + ' ' + this.data.hora, this.timezone).tz(this.tzLocal, false).add(this.offset, 'day')
         },
         hora (){
             return this.datetime.format("HH:mm")
