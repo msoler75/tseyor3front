@@ -35,7 +35,7 @@
             <div class="flex flex-col justify-center items-center">
               <span title="miembros">
                   <icon icon="user" class="mr-1 text-gray" />
-                {{ equipo.users.length }}</span
+                {{ miembros(equipo) }}</span
               >
             </div>
             <div class="flex flex-col justify-center items-center">
@@ -90,6 +90,13 @@ export default {
     },
   },
   methods: {
+    miembros(equipo) {
+      const m = equipo.coordinadores
+      for(const user of equipo.miembros)
+      if(!equipo.coordinadores.find(x=>x.id===user.id))
+        m.push(user)
+      return m.length
+    },
     async cargarMas() {
       if(!this.hayMas) return
       this.filters._start = this.equipos.length

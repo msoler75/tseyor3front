@@ -40,3 +40,17 @@ https://masteringnuxt.com/blog/setting-up-nuxt-for-social-cards-and-meta-tags-to
 
 likes
 imágenes
+
+
+
+
+usuarios pueden crear:
+
+coordinadores de un equipo:
+    reuniones
+    actas
+    anexos
+muul:
+    eventos
+    retroalimentacion
+    contacto

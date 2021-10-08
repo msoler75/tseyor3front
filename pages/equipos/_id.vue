@@ -26,14 +26,20 @@
       <div v-html="equipo.textoHTML"/>
     </div>
 
-    <div class="surface p-5 overflow-auto">
+    <div class="surface p-5 overflow-auto" :class="miembros.length>8?'cols-2':''">
       <h3>Miembros</h3>
-      <div class="flex flex-wrap" v-if="equipo.users.length">
-        <Avatar v-for="user of equipo.users" :key="user.id" :data="user" :class="avatarClass" class="m-1" />
+      <div class="flex flex-wrap" v-if="miembros.length">
+        <Avatar v-for="user of miembros" :key="user.id" :data="user" :class="avatarClass" class="m-1" />
       </div>
       <div v-else class="flex flex-col flex-grow justify-center">
         <p class="text-center">No hay miembros</p>
       </div>
+      <template v-if="equipo.coordinadores.length">
+      <h3>Coordinadores</h3>
+      <div class="flex flex-wrap">
+        <Avatar v-for="user of equipo.coordinadores" :key="user.id" :data="user" :class="avatarClass" class="m-1" />
+      </div>
+      </template>
     </div>
 
     <div v-if="equipo.actividades&&equipo.actividades.length" class="surface p-5">
@@ -62,24 +68,32 @@ export default {
   mixins: [vercontenidomixin, seo],
   middleware: 'auth', // requiere auth
   async asyncData({ app, $strapi, route }) {
+    let contenido = {miembros:[], coordinadores: []}
     try {
       const id = route.params.id
       const equipos = await $strapi.find('equipos', id.match(/\d+/)?{id}:{slug:id})
-      const contenido = equipos[0]
+      contenido = equipos[0]
       contenido.textoHTML = app.$renderMarkdownServer(contenido.pizarra/*, contenido.imagenes*/)
-      return { contenido, equipo: contenido };
     }
     catch(error)
     {
       console.error(error)
     }
+    return { contenido, equipo: contenido };
   },
   computed: {
     ...mapGetters(["loggedInUser"]),
+    miembros() {
+      const m = this.equipo.coordinadores
+      for(const user of this.equipo.miembros)
+      if(!this.equipo.coordinadores.find(x=>x.id===user.id))
+        m.push(user)
+      return m
+    },
     avatarClass() {
-      if(!this.equipo.users) return ''
-      const n = this.equipo.users.length
-      return n<16?'w-16 h-16':n<32?'w-12 h-12':n<64?'w-8 h-8':'w-4 h-4'
+      if(!this.miembros) return ''
+      const n = this.miembros.length
+      return n<8?'w-16 h-16':n<16?'w-12 h-12':n<64?'w-8 h-8':'w-4 h-4'
     },
     bgImage() {
       const imgUrl = this.$img(this.equipo.imagen?this.equipo.imagen.url:'/imagenes/equipo.jpg', {width: 400, format: 'webp', quality: 70})
@@ -90,7 +104,7 @@ export default {
       }
     },
     soyMiembro () {
-      return this.equipo.users.find(x=>x.id===this.$auth.user.id)
+      return !!this.miembros.find(x=>x.id===this.$auth.user.id)
     }
   },
   methods: {
@@ -108,7 +122,7 @@ export default {
     async refresh() {
       await this.$auth.fetchUser() // actualizamos los datos del usuario actual y el equipo con sus miembros después de la operación
       const equipos = await this.$strapi.find('equipos', {id: this.equipo.id})
-      this.$set(this.contenido, 'users', equipos[0].users) 
+      this.$set(this.contenido, 'users', equipos[0].miembros) 
     }
     /*
     async getEquipos() {

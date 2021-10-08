@@ -58,7 +58,6 @@
       </div>
     </GridFluid>
 
-    {{actividad}}
   </div>
 </template>
 

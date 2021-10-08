@@ -1,7 +1,15 @@
 <template>
   <section>
     <h1 class="text-center">Agenda de actividades</h1>
-    <div class="lg:flex lg:justify-center lg:items-start mx-auto">
+    <div v-if="!equipos.length">
+      <p class="text-center text-lg my-12">No hay actividades o no estás inscrito a ningún equipo</p>
+      <p class="flex justify-center">
+        <NLink class="btn" to="/equipos" >
+        Ver Equipos
+      </NLink>
+      </p>
+    </div>
+    <div v-else class="lg:flex lg:justify-center lg:items-start mx-auto">
       <Card class="order-2 p-5 lg:ml-12 mb-12">
         <h3 class="text-center hidden sm:block">Horarios Regulares</h3>
         <div
@@ -106,7 +114,7 @@ import qs from "qs";
 import seo from '@/mixins/seo.js'
 export default {
   mixins: [seo],
-  async asyncData({ $dayjs, $strapi }) {
+  async asyncData({ $axios, $dayjs, $strapi }) {
     const query = qs.stringify({
       _where: {
         _or: [
@@ -125,7 +133,8 @@ export default {
     });
 
     const eventos = await $strapi.find("eventos", query);
-    const agenda = await $strapi.find("agenda");
+    const response = await $axios.get("/api/agenda")
+    const agenda = response.data
     const equipos = [];
     const colores = [
       "bg-green-400 text-green-contrast",
