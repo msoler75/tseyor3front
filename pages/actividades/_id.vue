@@ -24,12 +24,13 @@
         :key="horario.id"
         class="my-1 text-center"
         :data="horario"
+        :timezone="zonahoraria"
       />
   </div>
 
     
       <div class="p-5 surface text-center flex flex-col justify-center" v-if="actividad.sala">
-        <h3 >Sala virtual</h3>
+        <h3>Sala virtual</h3>
         <strong class="my-5">
           {{actividad.sala.nombre}}
           </strong>
@@ -74,6 +75,14 @@ export default {
     )
     const contenido = actividades[0]
     return { contenido, actividad: contenido }
+  },
+  computed: {
+    zonahoraria() {
+      switch(this.actividad.equipo.zonahoraria) {
+        case 'Espana': return 'Europe/Madrid'
+        default:  return this.actividad.equipo.zonahoraria
+      }
+    }
   }
 }
 </script>

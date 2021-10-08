@@ -1,16 +1,43 @@
 <template>
     <div>
-        {{dia()}} a las {{$dayjs('2001-11-1 '+data.hora).format("HH:mm")}}
+        {{diafinal}} a las {{hora}}
     </div>
 </template>
 
 <script>
 export default {
     props: {
-        data: {}
+        data: {},
+        timezone: {
+            type: 'string',
+            required: false,
+            default: 'Europe/Madrid'
+        }
     },
-    methods: {
-        dia() {
+    computed: {
+        tzLocal () {
+            return this.$dayjs.tz.guess() // America/Chicago
+        },
+        // días offset
+        offset(){
+            if(this.data.dia.match(/martes/)) return 1
+            if(this.data.dia.match(/miercoles/)) return 2
+            if(this.data.dia.match(/jueves/)) return 3
+            if(this.data.dia.match(/viernes/)) return 4
+            if(this.data.dia.match(/sabado/)) return 5
+            if(this.data.dia.match(/domingo/)) return 6
+            return 0
+        },
+        datetime () {
+            return this.$dayjs.tz('2024-01-01 '+this.data.hora, this.timezone).tz(this.tzLocal, false).add(this.offset, 'day')
+        },
+        hora (){
+            return this.datetime.format("HH:mm")
+        },
+        dia1 () {
+            return this.datetime.format('dddd')        
+        },
+        dia2() {
           switch(this.data.dia) {
             case "no_definido": return 'No definido';
             case "lunes":       return 'Todos los lunes';
@@ -56,6 +83,14 @@ export default {
             case "domingo_cuarto_domingo_del_mes":                  return 'El cuarto domingo de cada mes';
             case "domingo_sin_definir":                             return 'En domingo (a definir)';
           }
+        },
+        diafinal() {
+            const regex = /lunes|martes|mi.rcoles|jueves|viernes|s.bado|domingo/
+            if(!this.dia2.match(regex))
+                return this.dia2
+            if(!this.dia2.match(this.dia1))
+                return this.dia2.replace(regex, this.dia1)
+            return this.dia2
         }
     }
 }
