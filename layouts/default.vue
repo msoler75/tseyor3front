@@ -507,15 +507,6 @@ export default {
       ],
     };
   },
-  async mounted() {
-    // console.log('loggedInUser', this.loggedInUser)
-    /* if(this.$strapi.user)
-    {
-      const users = await this.$strapi.find("users", {id: this.$strapi.user.id})
-      this.$auth.setUser(users[0])
-    } */
-    //console.log('fetched user', user)
-  },
   computed: {
     ...mapGetters(["description", "image", "type", "isAuthenticated", "loggedInUser", "pageContained", "pageBackground", "pageBreadcrumb", "menuUsuario", "hideMenus"]),
 
