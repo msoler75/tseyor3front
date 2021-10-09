@@ -98,7 +98,7 @@ export default {
     '@nuxtjs/proxy',
     // Doc: https://github.com/nuxt-community/dotenv-module
     // '@nuxtjs/dotenv',
-    '@nuxtjs/auth',
+    // '@nuxtjs/auth',
     // https://www.npmjs.com/package/@nuxtjs/svg
     '@nuxtjs/svg',
     // '@nuxt/content',
@@ -168,7 +168,9 @@ export default {
           },
           logout: false
         }
-      }
+      },
+      tokenRequired: true,
+      tokenType: 'bearer'
     }
   },
 
@@ -183,8 +185,8 @@ export default {
   },
 
   strapi: {
-    url: '/api'
-    // entities: ['noticias']
+    url: '/api',
+    entities: ['noticias', 'comunicados']
   },
 
   proxy: {

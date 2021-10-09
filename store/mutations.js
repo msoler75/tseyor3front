@@ -1,4 +1,8 @@
 export default {
+  SET_USER(state, user) {
+    console.log('SET_USER', user)
+    state.user = user
+  },
   setSEO (state, seo) {
     console.log('store.seo', seo)
     state.SEO.title = seo.title

@@ -88,7 +88,7 @@ export default {
   },
   methods: {
     async register() {
-      console.warn('register!!')
+      // console.warn('register!!')
       this.error = null;
       try {
         this.$axios.setToken(false);

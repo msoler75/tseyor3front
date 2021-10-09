@@ -1,10 +1,10 @@
 export default {
   // nuxt/auth
   isAuthenticated (state) {
-    return state.auth.loggedIn
+    return !!state.user
   },
   loggedInUser (state) {
-    return state.auth.user
+    return state.user
   },
 
   getIconRoute: state => (path) => {

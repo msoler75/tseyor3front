@@ -9,7 +9,7 @@ export default {
     props: {
         data: {},
         timezone: {
-            type: 'string',
+            type: String,
             required: false,
             default: 'Europe/Madrid'
         }

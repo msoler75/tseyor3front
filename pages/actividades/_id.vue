@@ -17,16 +17,16 @@
       <p >{{ actividad.descripcion }}</p>
     </div>
 
-  <div class="p-5 surface text-center flex flex-col justify-center">
-      <h3>Horarios</h3>
-      <Horario
-        v-for="horario of actividad.horarios"
-        :key="horario.id"
-        class="my-1 text-center"
-        :data="horario"
-        :timezone="zonahoraria"
-      />
-  </div>
+    <div class="p-5 surface text-center flex flex-col justify-center">
+        <h3>Horarios</h3>
+        <Horario
+          v-for="horario of actividad.horarios"
+          :key="horario.id"
+          class="my-1 text-center"
+          :data="horario"
+          :timezone="zonahoraria"
+        />
+    </div>
 
     
       <div class="p-5 surface text-center flex flex-col justify-center" v-if="actividad.sala">
@@ -57,6 +57,11 @@
             </table>
           </section>
       </div>
+
+       <div class="p-5 surface text-center flex flex-col cols-2 justify-center items-center" v-if="actividad.tipo=='reunion'">
+         
+      </div>
+
     </GridFluid>
 
   </div>
@@ -67,14 +72,21 @@ import vercontenidomixin from '@/mixins/vercontenido.js'
 import seo from '@/mixins/seo.js'
 export default {
   mixins: [vercontenidomixin, seo],
-  async asyncData ({ $strapi, route }) {
+  async asyncData ({ $axios, $strapi, route }) {
     const id = route.params.id
     const actividades = await $strapi.find(
       'actividades',
       id.match(/\d+/) ? { id } : { slug: id }
     )
     const contenido = actividades[0]
-    return { contenido, actividad: contenido }
+    let agenda = null
+    if(contenido) {
+      console.log(contenido)
+      
+      // agenda = response.data
+      //console.warn(response)
+    }
+    return { contenido, actividad: contenido, agenda }
   },
   computed: {
     zonahoraria() {
@@ -83,6 +95,13 @@ export default {
         default:  return this.actividad.equipo.zonahoraria
       }
     }
+  },
+  async fetch() {
+    this.$axios.get("/api/agenda?actividad="+this.contenido.id)
+    .then(response=>{
+      console.warn(response.data)
+    })
   }
+  
 }
 </script>

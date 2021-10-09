@@ -508,11 +508,12 @@ export default {
     };
   },
   async mounted() {
-    if(this.$auth.user)
+    // console.log('loggedInUser', this.loggedInUser)
+    /* if(this.$auth.user)
     {
       const users = await this.$strapi.find("users", {id: this.$auth.user.id})
       this.$auth.setUser(users[0])
-    }
+    } */
     //console.log('fetched user', user)
   },
   computed: {
@@ -540,6 +541,7 @@ export default {
   methods: {
     async logout() {
       await this.$auth.logout()
+      await this.$strapi.logout()
     },
     clickOff() {
        this.menuClick(null)

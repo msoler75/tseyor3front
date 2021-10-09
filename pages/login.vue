@@ -70,23 +70,32 @@ export default {
   methods: {
     async login() {
       this.error = null;
-      this.$auth.loginWith("local", {
+      try {
+       /*await this.$auth.loginWith("local", {
           data: {
             identifier: this.email,
             password: this.password
           }
-        })
-        .then( async (response)=> {
+        })*/
+        /*
+         .then( async (response)=> {
           // this.$auth.setUser(response.data.user) // this data is ok
+          console.log('response.data', response.data)
           const users = await this.$strapi.find("users", {id: response.data.user.id})
           this.$auth.setUser(users[0])
+          this.$strapi.setUser(users[0])
           // console.log('desde', this.$route.query)
-          this.$router.push(this.$route.query.desde || "/")
-        })
-        .catch ((e)=> {
-        console.error(e)
+        })*/
+
+         // https://github.com/Stun3R/nuxt-strapi-sdk/blob/master/examples/client/pages/auth/index.vue
+         console.log('login', this.email, this.password)
+         await this.$strapi.login({identifier: this.email, password: this.password})
+        
+        this.$router.push(this.$route.query.desde || "/")
+        } catch (e) {
+        console.error('login error:', e)
         this.error = e.response.data.message[0].messages[0].message;
-      });
+      }
     }
   }
 };
