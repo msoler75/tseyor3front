@@ -75,11 +75,16 @@ export default {
         return;
       }
       try {
-        await this.$axios.post("auth/reset-password", {
+        /* await this.$axios.post("auth/reset-password", {
           code: this.code,
           password: this.password1,
           passwordConfirmation: this.password2
-        });
+        });*/
+        await this.$strapì.resetPassword({
+          code: this.code,
+          password: this.password1,
+          passwordConfirmation: this.password2
+        })
         this.success =
           "Tu contraseña se ha actualizado. Ahora puedes iniciar sesión.";
       } catch (e) {

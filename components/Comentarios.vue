@@ -256,7 +256,7 @@ methods: {
       this.comentarios = comentarios
     },
     async comentar () {
-      await this.$axios.$post('/api/comentarios', {
+      await this.$strapi.$http.$post('/api/comentarios', {
         uid: this.uid,
         texto: this.nuevoComentario
       })
@@ -264,7 +264,7 @@ methods: {
       this.cargarComentarios()
     },
     async responder (respondiendo) {
-      await this.$axios.$post('/api/comentarios', {
+      await this.$strapi.$http.$post('/api/comentarios', {
         uid: this.uid,
         respondiendo,
         texto: this.respuesta
@@ -305,8 +305,8 @@ methods: {
       if (!this.$strapi.user) return
       console.log('like comment', id)
       this.likedItem(id)
-      await this.$axios.$put(`/api/comentarios/${id}/like`)
-      await this.$axios.$post('/api/likes', {
+      await this.$strapi.$http.$put(`/api/comentarios/${id}/like`)
+      await this.$strapi.$http.$post('/api/likes', {
         uid: 'comentarios-' + id
       })
       // este paso es opcional:
@@ -316,13 +316,13 @@ methods: {
       if (!this.$strapi.user) return
       console.log('dislike comment', id)
       this.dislikedItem(id)
-      await this.$axios.$put(`/api/comentarios/${id}/dislike`)
+      await this.$strapi.$http.$put(`/api/comentarios/${id}/dislike`)
       const results = await this.$strapi.find('likes', {
         uid: 'comentarios-' + id,
         user: this.$strapi.user.id
       })
       if (results.length) {
-        await this.$axios.$delete(`/api/likes/${results[0].id}`)
+        await this.$strapi.$http.$delete(`/api/likes/${results[0].id}`)
         // este paso es opcional:
         // this.refreshItem(id);
       }

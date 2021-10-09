@@ -97,10 +97,7 @@ export default {
     }
   },
   async fetch() {
-    this.$axios.get("/api/agenda?actividad="+this.contenido.id)
-    .then(response=>{
-      console.warn(response.data)
-    })
+    await this.$strapi.$http.$get("/api/agenda?actividad="+this.contenido.id)
   }
   
 }

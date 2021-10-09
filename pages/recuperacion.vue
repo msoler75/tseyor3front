@@ -46,9 +46,12 @@ export default {
     async forgotPassword() {
       try {
         this.error = null
-        await this.$axios.post("auth/forgot-password", {
+        /* await this.$axios.post("auth/forgot-password", {
           email: this.email
-        });
+        }); */
+        await this.$strapi.forgotPassword({
+          email: this.email
+        }); 
         this.success = `Se te ha enviado un enlace a tu correo para que puedas crear una nueva contraseña.`;
       } catch (e) {
         this.error = e.response.data.message[0].messages[0].message;

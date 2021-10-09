@@ -109,18 +109,18 @@ export default {
   },
   methods: {
      async entrar() {
-      await this.$axios.put('/api/equipos/'+this.equipo.id+'/join')
+      await this.$strapi.$http.$put('/api/equipos/'+this.equipo.id+'/join')
       //await this.$auth.fetchUser()
       // this.$router.app.refresh()  
       this.refresh()
     },
     async salir() {
-      await this.$axios.put('/api/equipos/'+this.equipo.id+'/leave')
+      await this.$strapi.$http.$put('/api/equipos/'+this.equipo.id+'/leave')
       // this.$router.app.refresh()  
       this.refresh()
     },
     async refresh() {
-      await this.$auth.fetchUser() // actualizamos los datos del usuario actual y el equipo con sus miembros después de la operación
+      await this.$strapi.fetchUser() // actualizamos los datos del usuario actual y el equipo con sus miembros después de la operación
       const equipos = await this.$strapi.find('equipos', {id: this.equipo.id})
       this.$set(this.contenido, 'users', equipos[0].miembros) 
     }
