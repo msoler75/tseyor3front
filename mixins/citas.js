@@ -28,7 +28,7 @@ export default {
   methods: {
     generarCitas (agenda, eventos, maxDias) {
       if (!maxDias) maxDias = 45
-
+      console.log('generarCitas', agenda, eventos)
       const now = this.$dayjs()
       const proximas = []
 
@@ -104,8 +104,10 @@ export default {
           }
         }
 
-        return proximas
+        
       }
+
+      return proximas
     }
   }
 }
