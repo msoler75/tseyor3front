@@ -50,7 +50,7 @@ export default {
             // LIKE
     likeit () {
       // console.log('likeit?', this.contenido.likes)
-      return this.$auth.user&&this.data.likes.find(x=>x.user&&x.user.id===this.$auth.user.id)
+      return this.$strapi.user&&this.data.likes.find(x=>x.user&&x.user.id===this.$strapi.user.id)
     }
     }
 }

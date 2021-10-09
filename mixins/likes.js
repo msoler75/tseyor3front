@@ -20,7 +20,7 @@ export default {
         this.saveRefreshedItem(id, likes)
     },
     async like (id) {
-      if(!this.$auth.user) return
+      if(!this.$strapi.user) return
       // console.log('like', id)
       this.likedItem(id)
       //this.$strapi.$http.setToken(this.$auth.getToken('local'))
@@ -35,12 +35,12 @@ export default {
       this.refreshItem(id)
     },
     async dislike (id) {
-      if(!this.$auth.user) return
+      if(!this.$strapi.user) return
       // console.log('dislike', id)
       this.dislikedItem(id)
       //this.$strapi.$http.setToken(this.$auth.getToken('local'))
       // await this.$strapi.$http.$put(`/${this.collection}/${id}/dislike`)
-      const results = await this.$strapi.find('likes', {uid: this.uid, user: this.$auth.user.id})
+      const results = await this.$strapi.find('likes', {uid: this.uid, user: this.$strapi.user.id})
       if(results.length) {
         await this.$axios.$delete(`/api/likes/${results[0].id}`)
         this.refreshItem(id)

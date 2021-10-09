@@ -66,7 +66,7 @@ import vercontenidomixin from "@/mixins/vercontenido.js";
 import seo from '@/mixins/seo.js'
 export default {
   mixins: [vercontenidomixin, seo],
-  middleware: 'auth', // requiere auth
+  middleware: 'logged', 
   async asyncData({ app, $strapi, route }) {
     let contenido = {miembros:[], coordinadores: []}
     try {
@@ -104,7 +104,7 @@ export default {
       }
     },
     soyMiembro () {
-      return !!this.miembros.find(x=>x.id===this.$auth.user.id)
+      return !!this.miembros.find(x=>x.id===this.$strapi.user.id)
     }
   },
   methods: {

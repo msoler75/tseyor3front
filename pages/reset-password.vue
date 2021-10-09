@@ -47,7 +47,7 @@
 import Notification from "~/components/Notification";
 
 export default {
-  middleware: "invitado",
+  middleware: "guest",
   components: {
     Notification
   },

@@ -58,8 +58,7 @@
 
 <script>
 export default {
-  // middleware: "invitado",
-  auth: 'guest',
+  middleware: "guest",
   data() {
     return {
       email: "",

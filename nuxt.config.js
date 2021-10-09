@@ -152,7 +152,7 @@ export default {
    ** Auth module configuration
    ** See https://auth.nuxtjs.org/schemes/local.html#options
    */
-  auth: {
+  /*auth: {
     strategies: {
       local: {
         endpoints: {
@@ -172,7 +172,7 @@ export default {
       tokenRequired: true,
       tokenType: 'bearer'
     }
-  },
+  }, */
 
   // PWA module configuration: https://go.nuxtjs.dev/pwa
   pwa: {

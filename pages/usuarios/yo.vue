@@ -59,7 +59,7 @@
 import { mapGetters } from "vuex";
 // import vercontenidomixin from "@/mixins/vercontenido.js";
 export default {
-  middleware: "auth",
+  middleware: "logged",
   computed: {
     ...mapGetters(["loggedInUser"]),
     usuario () {

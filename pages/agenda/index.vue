@@ -183,7 +183,7 @@ export default {
     }
   },
   mounted() {
-    this.proximas = this.generarAgenda(this.agenda, this.eventos, 45)
+    this.proximas = this.generarCitas(this.agenda, this.eventos, 45)
   }
 }
 </script>

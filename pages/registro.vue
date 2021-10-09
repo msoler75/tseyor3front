@@ -64,8 +64,8 @@
 
 <script>
 export default {
-  // middleware: "invitado",
-  auth: 'guest',
+  middleware: "guest",
+  // auth: 'guest',
   data() {
     return {
       nombreSimbolico: "",

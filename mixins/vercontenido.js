@@ -112,7 +112,7 @@ export default {
     },
         // ---- LIKES ----
         async like (id) {
-          if(!this.$auth.user) return
+          if(!this.$strapi.user) return
           // console.log('like', id)
           this.likedItem(id)
           //this.$strapi.$http.setToken(this.$auth.getToken('local'))
@@ -127,12 +127,12 @@ export default {
           // this.refreshItem(id);
         },
         async dislike (id) {
-          if(!this.$auth.user) return
+          if(!this.$strapi.user) return
           // console.log('dislike', id)
           this.dislikedItem(id)
           //this.$strapi.$http.setToken(this.$auth.getToken('local'))
           // await this.$strapi.$http.$put(`/${this.collection}/${id}/dislike`)
-          const results = await this.$strapi.find('likes', {uid: this.uid, user: this.$auth.user.id})
+          const results = await this.$strapi.find('likes', {uid: this.uid, user: this.$strapi.user.id})
           if(results.length) {
             await this.$axios.$delete(`/api/likes/${results[0].id}`)
             // este paso es opcional:
@@ -145,12 +145,12 @@ export default {
         },
         likedItem (id) {
           if(this.contenido.likes) 
-            this.contenido.likes.push({user: this.$auth.user})
+            this.contenido.likes.push({user: this.$strapi.user})
         },
         dislikedItem (id) { 
           if(this.contenido.likes) {
             console.log('disliked', id, this.contenido.likes)
-            const idx = this.contenido.likes.findIndex(x=>x.user.id===this.$auth.user.id)
+            const idx = this.contenido.likes.findIndex(x=>x.user.id===this.$strapi.user.id)
             if(idx > -1) this.contenido.likes.splice(idx, 1)
           }         
         },

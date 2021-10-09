@@ -26,7 +26,7 @@ const ordinal = ['primer', 'segund', 'tercer', 'cuart', 'quint']
 
 export default {
   methods: {
-    generarAgenda (agenda, eventos, maxDias) {
+    generarCitas (agenda, eventos, maxDias) {
       if (!maxDias) maxDias = 45
 
       const now = this.$dayjs()

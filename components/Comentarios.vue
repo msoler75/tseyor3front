@@ -287,9 +287,9 @@ methods: {
     // ---- LIKES ----
     likeit (comentario) {
       console.log('likeit', comentario)
-      console.log('mi user id', this.$auth.user.id)
-      if (!this.$auth.user) return false
-      return !!comentario.likes.find(x => x.id === this.$auth.user.id)
+      console.log('mi user id', this.$strapi.user.id)
+      if (!this.$strapi.user) return false
+      return !!comentario.likes.find(x => x.id === this.$strapi.user.id)
     },
     async refreshItem (id) {
       console.log('refreshItem', id)
@@ -302,7 +302,7 @@ methods: {
       )
     },
     async like (id) {
-      if (!this.$auth.user) return
+      if (!this.$strapi.user) return
       console.log('like comment', id)
       this.likedItem(id)
       await this.$axios.$put(`/api/comentarios/${id}/like`)
@@ -313,13 +313,13 @@ methods: {
       // this.refreshItem(id);
     },
     async dislike (id) {
-      if (!this.$auth.user) return
+      if (!this.$strapi.user) return
       console.log('dislike comment', id)
       this.dislikedItem(id)
       await this.$axios.$put(`/api/comentarios/${id}/dislike`)
       const results = await this.$strapi.find('likes', {
         uid: 'comentarios-' + id,
-        user: this.$auth.user.id
+        user: this.$strapi.user.id
       })
       if (results.length) {
         await this.$axios.$delete(`/api/likes/${results[0].id}`)
@@ -331,14 +331,14 @@ methods: {
       const comentario = this.comentarios.find(x => x.id === id)
       if (comentario) {
         console.log('comentario', comentario)
-        comentario.likes.push({ id: this.$auth.user.id })
+        comentario.likes.push({ id: this.$strapi.user.id })
       }
     },
     dislikedItem (id) {
       const comentario = this.comentarios.find(x => x.id === id)
       if (comentario) {
         console.log('comentario', comentario)
-        const idx = comentario.likes.findIndex(x => x.id === this.$auth.user.id)
+        const idx = comentario.likes.findIndex(x => x.id === this.$strapi.user.id)
         if (idx > -1) comentario.likes.splice(idx, 1)
       }
     },
