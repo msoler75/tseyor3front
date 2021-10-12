@@ -26,8 +26,11 @@ const ordinal = ['primer', 'segund', 'tercer', 'cuart', 'quint']
 
 export default {
   methods: {
+
     generarCitas (agenda, eventos, maxDias) {
       if (!maxDias) maxDias = 45
+      const tzLocal = this.$dayjs.tz.guess() // America/Chicago
+    
       console.log('generarCitas', agenda, eventos)
       const now = this.$dayjs()
       const proximas = []
@@ -87,7 +90,23 @@ export default {
               ok = true
             }
           }
-          if (ok) {
+          if (ok) {            
+            let tz = 'Europe/Madrid'
+            switch(item.equipo.zonahoraria) {
+              case 'Chile': tz = 'America/Santiago'; break;
+              case 'Mexico': tz = 'America/Mexico_City'; break;
+              case 'Colombia': tz = 'America/Bogota'; break;
+              case 'Argentina': tz = 'America/Argentina/Buenos_Aires'; break;              
+            }
+            console.log('tz del equipo', tz)
+            console.log('tzLocal', tzLocal)
+            const fecha2 = this.$dayjs.tz(fecha.format('YYYY-MM-DD ') + item.horario.hora, tz).tz(tzLocal, false)
+            const dia = fecha2.day()
+            const mes = fecha2.month()
+            const año = fecha2.year()
+            const sdia = dia_semana[dia] // lunes, martes, miercoles
+            const diadelmes = fecha2.date()
+
             proximas.push({
               tipo: 'actividad',
               fecha: {
@@ -97,7 +116,7 @@ export default {
                 mesnombre: meses[mes],
                 año
               },
-              hora: item.horario.hora,
+              hora: fecha2.format('HH:mm'),
               detalles: item,
               semi
             })
