@@ -533,6 +533,10 @@ export default {
     async logout() {
       // await this.$auth.logout()
       await this.$strapi.logout()
+      this.$store.commit(
+          "SET_USER",
+          null
+        );
     },
     clickOff() {
        this.menuClick(null)

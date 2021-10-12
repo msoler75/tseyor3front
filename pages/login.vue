@@ -89,7 +89,10 @@ export default {
          // https://github.com/Stun3R/nuxt-strapi-sdk/blob/master/examples/client/pages/auth/index.vue
          console.log('login', this.email, this.password)
          await this.$strapi.login({identifier: this.email, password: this.password})
-        
+         this.$store.commit(
+          "SET_USER",
+          await this.$strapi.fetchUser()
+        );
         this.$router.push(this.$route.query.desde || "/")
         } catch (e) {
         console.error('login error:', e)
