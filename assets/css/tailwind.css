@@ -99,12 +99,12 @@
 
   .btn {
     @apply cursor-pointer select-none transition duration-200  active:translate-y-px hover:shadow-lg font-semibold py-2 px-4 border rounded-lg shadow;
-    @apply bg-primary hover:bg-blue-700 active:bg-blue-600 border-blue-800 text-blue-contrast;
+    @apply bg-primary hover:bg-blue-700 active:bg-blue-600 border-blue-800 !text-blue-contrast;
     height: fit-content;
   }
 
   .btn-gray {
-    @apply bg-gray-200 hover:bg-gray-100 active:bg-gray-50 hover:shadow-lg text-gray-800 border-gray-400;
+    @apply bg-gray-200 hover:bg-gray-100 active:bg-gray-50 hover:shadow-lg !text-gray-800 border-gray-400;
   }
 
   .btn-warning {
@@ -113,7 +113,7 @@
 
 
   .btn-error {
-    @apply bg-error hover:bg-red-600 active:bg-red-400 border-red-900 text-red-contrast;
+    @apply bg-error hover:bg-red-600 active:bg-red-400 border-red-900 !text-red-contrast;
   }
 
   blockquote {

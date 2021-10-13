@@ -1,7 +1,8 @@
 <template>
-    <div class='form'>
+    <Card class='form py-5 px-2 xs:px-4 max-w-sm mx-auto bg-blue-gray-50 dark:bg-blue-gray-900'>
         <h1>{{ accion }} evento</h1>
-        <form @submit.prevent="submit" class="space-y-3">
+
+        <form @submit.prevent="submit" class="space-y-4">
             <div>
                 <label for="titulo">Título:</label>
                 <br />
@@ -38,19 +39,28 @@
                 <label>Fecha y hora de comienzo:</label>
                 <InputDateTime v-model="contenido.fechaComienzo"/>
             </div>
-            <div>
+
+            <div v-if="!tieneFinal">
+                <button class="btn btn-gray text-xs mt-1" @click="tieneFinal=true">Definir fecha final</button>
+            </div>
+            <div v-if="tieneFinal">
                 <label>Fecha y hora de final:</label>
                 <InputDateTime v-model="contenido.fechaFinal"/>
+                <button class="btn btn-gray text-xs mt-1" @click="contenido.fechaFinal=null;tieneFinal=false">Remover fecha final</button>
             </div>
             <div>
-                <label for="zonahoraria">Zona Horaria:</label>
+                <label for="zonahoraria">Zona Horaria:</label><br />
                 <select id="zonahoraria" v-model="contenido.zonahoraria">
                     <option value="Espana">España</option>
                     <option value="Chile">Chile</option>
                     <option value="Mexico">México</option>
                 </select>
             </div>
-            <div>
+
+            <div v-if="!tieneSala">
+                <button class="btn btn-gray text-xs mt-1" @click="tieneSala=true">Definir Sala virtual</button>
+            </div>
+            <div v-if="tieneSala">
                 <label for="sala">Sala virtual:</label>
                 <v-select
                     class="my-v"
@@ -65,8 +75,13 @@
                 >
                     <div slot="no-options">Ningún resultado</div>
                 </v-select>
+                <button class="btn btn-gray text-xs mt-1" @click="contenido.sala=null;tieneSala=false">Remover sala</button>
             </div>
-            <div>
+
+            <div v-if="!tieneCentro">
+                <button class="btn btn-gray text-xs mt-1" @click="tieneCentro=true">Definir Centro organizador</button>
+            </div>
+            <div v-if="tieneCentro">
                 <label for="sala">Organiza:</label>
                 <v-select
                     class="my-v"
@@ -81,12 +96,13 @@
                 >
                     <div slot="no-options">Ningún resultado</div>
                 </v-select>
+                <button class="btn btn-gray text-xs mt-1" @click="contenido.centro=null;tieneCentro=false">Remover centro</button>
             </div>
             <div>
                 <input class="btn" type="submit" :value="verbo" />
             </div>
         </form>
-    </div>
+    </Card>
 </template>
 
 <script>
@@ -106,7 +122,8 @@ export default {
             imagen: null,
             tipoEvento: 'encuentro',
             sala: null,
-            organiza: null
+            organiza: null,
+            autor: null
         }
         if (id && id !== 'nuevo') {
             const eventos = await $strapi.find(
@@ -115,7 +132,8 @@ export default {
             )
             contenido = eventos[0]
             contenido.sala = contenido.sala && contenido.sala.id ? contenido.sala.id : null
-            contenido.centro = contenido.centro && contenido.centro.id ? contenido.centro.id : null
+            contenido.organiza = contenido.organiza && contenido.organiza.id ? contenido.organiza.id : null
+            contenido.autor = contenido.autor && contenido.autor.id ? contenido.autor.id : null
         }
         const salas = await $strapi.find('salas')
         const centros = await $strapi.find('centros')
@@ -124,6 +142,9 @@ export default {
     data() {
         return {
             image: null,
+            tieneFinal: this.contenido&&this.contenido.fechaFinal,
+            tieneSala:this.contenido&&this.contenido.sala,
+            tieneCentro: this.contenido&&this.contenido.centro,
         }
     },
     computed: {
@@ -199,6 +220,10 @@ export default {
 
 
 <style scoped>
+
+label {
+    @apply font-bold text-lg mb-1;
+}
 .my-v {
     @apply relative;
 }
