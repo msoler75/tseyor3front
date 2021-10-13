@@ -35,20 +35,12 @@
                 </select>
             </div>
             <div>
-                {{contenido.fechaComienzo}}
-                <label for="fechaComienzo">Fecha y hora de comienzo:</label>
-                <div class="flex space-x-2">
-                    <input type="date" id="fechaComienzo" v-model="fechaComienzo" />
-                    <InputTime id="horaComienzo" v-model="horaComienzo" />
-                </div>
+                <label>Fecha y hora de comienzo:</label>
+                <InputDateTime v-model="contenido.fechaComienzo"/>
             </div>
             <div>
-                {{contenido.fechaFinal}}
-                <label for="fechaFinal">Fecha y hora de final:</label>
-                <div class="flex space-x-2">
-                    <input type="date" id="fechaFinal" v-model="fechaFinal" />
-                    <InputTime id="horaFinal" v-model="horaFinal" />
-                </div>
+                <label>Fecha y hora de final:</label>
+                <InputDateTime v-model="contenido.fechaFinal"/>
             </div>
             <div>
                 <label for="zonahoraria">Zona Horaria:</label>
@@ -141,46 +133,6 @@ export default {
         verbo() {
             return this.contenido.id ? 'Guardar' : 'Crear'
         },
-        fechaComienzo: {
-            get() {
-                if(!this.contenido.fechaComienzo)
-                    this.contenido.fechaComienzo = this.$dayjs().format("YYYY-MM-DDTHH:mm")
-                return this.contenido.fechaComienzo.substr(0,10)
-            },
-            set(fecha) {
-                this.contenido.fechaComienzo =  fecha + 'T' + this.horaComienzo
-            }
-        },
-        horaComienzo: {
-            get() {
-                if(!this.contenido.fechaComienzo)
-                    this.contenido.fechaComienzo = this.$dayjs().format("YYYY-MM-DDTHH:mm")
-                return this.contenido.fechaComienzo.substr(11,5)
-            },
-            set(hora) {
-                this.contenido.fechaComienzo = this.fechaComienzo + 'T' + hora
-            }
-        },
-        fechaFinal: {
-            get() {
-                if(!this.contenido.fechaFinal)
-                    this.contenido.fechaFinal = this.$dayjs().format("YYYY-MM-DDTHH:mm")
-                return this.contenido.fechaFinal.substr(0,10)
-            },
-            set(fecha) {
-                this.contenido.fechaFinal =  fecha + 'T' + this.horaFinal
-            }
-        },
-        horaFinal: {
-            get() {
-                if(!this.contenido.fechaFinal)
-                    this.contenido.fechaFinal = this.$dayjs().format("YYYY-MM-DDTHH:mm")
-                return this.contenido.fechaFinal.substr(11,5)
-            },
-            set(hora) {
-                this.contenido.fechaFinal = this.fechaFinal + 'T' + hora
-            }
-        }
     },
     methods: {
         onFileChange(e) {
