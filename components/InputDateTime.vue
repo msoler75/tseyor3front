@@ -1,14 +1,18 @@
 <template>
     <div class="flex space-x-2">
-        <input type="date" v-model="fecha" />
-        <InputTime v-model="hora" />
+        <input type="date" v-model="fecha" :required="required"/>
+        <InputTime v-model="hora" :required="required"/>
     </div>
 </template>
 
 <script>
 export default {
     props: {
-        value:{}
+        value:{},
+        required: {
+            type: Boolean,
+            default: false
+        }
     },
     data() {
         return {

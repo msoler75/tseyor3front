@@ -6,12 +6,12 @@
             <div>
                 <label for="titulo">Título:</label>
                 <br />
-                <input type="text" id="titulo" v-model="contenido.titulo" />
+                <input type="text" id="titulo" v-model="contenido.titulo" required/>
             </div>
             <div>
                 <label for="descripcion">Descripción corta:</label>
                 <br />
-                <textarea id="descripcion" v-model="contenido.descripcion" />
+                <textarea id="descripcion" v-model="contenido.descripcion" required/>
             </div>
             <div v-if="!image">
                 <label for="imagen">Imagen:</label>
@@ -37,7 +37,7 @@
             </div>
             <div>
                 <label>Fecha y hora de comienzo:</label>
-                <InputDateTime v-model="contenido.fechaComienzo"/>
+                <InputDateTime v-model="contenido.fechaComienzo" required/>
             </div>
 
             <div v-if="!tieneFinal">

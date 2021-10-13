@@ -1,5 +1,5 @@
 <template>
-    <div class="flex items-center bg-white pr-1 space-x-2">
+    <div class="flex items-center bg-white pr-1 space-x-2 relative">
         <select v-model="hora" v-on:keyup.esc="hora=labelHours">
             <option v-for="hora of horasList" :key="hora">{{ hora }}</option>
         </select>
@@ -7,6 +7,8 @@
         <select v-model="minutos" v-on:keyup.esc="minutos=labelMinutes">
             <option v-for="minuto of minutosList" :key="minuto">{{ minuto }}</option>
         </select>
+
+        <input class="absolute left-0 top-0 opacity-30 -z-10 " type="time" :required="required" v-model="localValue">
 
         <icon icon="far fa-clock" class="text-black" />
     </div>
@@ -18,6 +20,10 @@ export default {
         value: {required: true},
         labelHours: {default: 'hh'},
         labelMinutes: {default: 'mm'},
+        required: {
+            type: Boolean,
+            default: false
+        }
     },
     data() {
         var h = this.value?this.value.substr(3, 2):this.labelMinutes
