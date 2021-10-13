@@ -74,6 +74,10 @@
     @apply text-blue-gray-700 dark:text-gray-300;
   }
 
+  .surface-0 input, .surface-0 textarea, .surface-0 select {
+    @apply text-gray-800;
+  }
+
   .card,
   .surface {
     @apply bg-white dark:bg-gray-dark-900 text-gray-dark-700 dark:text-gray-300;
