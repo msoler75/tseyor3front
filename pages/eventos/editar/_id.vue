@@ -36,15 +36,19 @@
             </div>
             <div>
                 {{contenido.fechaComienzo}}
-                <label for="fechaComienzo">Fecha de comienzo:</label>
+                <label for="fechaComienzo">Fecha y hora de comienzo:</label>
                 <div class="flex space-x-2">
                     <input type="date" id="fechaComienzo" v-model="fechaComienzo" />
                     <InputTime id="horaComienzo" v-model="horaComienzo" />
                 </div>
             </div>
             <div>
-                <label for="fechaFinal">Fecha de final (opcional):</label>
-                <input type="date" id="fechaFinal" v-model="contenido.fechaFinal" />
+                {{contenido.fechaFinal}}
+                <label for="fechaFinal">Fecha y hora de final:</label>
+                <div class="flex space-x-2">
+                    <input type="date" id="fechaFinal" v-model="fechaFinal" />
+                    <InputTime id="horaFinal" v-model="horaFinal" />
+                </div>
             </div>
             <div>
                 <label for="zonahoraria">Zona Horaria:</label>
@@ -155,6 +159,26 @@ export default {
             },
             set(hora) {
                 this.contenido.fechaComienzo = this.fechaComienzo + 'T' + hora
+            }
+        },
+        fechaFinal: {
+            get() {
+                if(!this.contenido.fechaFinal)
+                    this.contenido.fechaFinal = this.$dayjs().format("YYYY-MM-DDTHH:mm")
+                return this.contenido.fechaFinal.substr(0,10)
+            },
+            set(fecha) {
+                this.contenido.fechaFinal =  fecha + 'T' + this.horaFinal
+            }
+        },
+        horaFinal: {
+            get() {
+                if(!this.contenido.fechaFinal)
+                    this.contenido.fechaFinal = this.$dayjs().format("YYYY-MM-DDTHH:mm")
+                return this.contenido.fechaFinal.substr(11,5)
+            },
+            set(hora) {
+                this.contenido.fechaFinal = this.fechaFinal + 'T' + hora
             }
         }
     },
