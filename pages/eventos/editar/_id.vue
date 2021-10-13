@@ -6,16 +6,19 @@
             <div>
                 <label for="titulo">Título:</label>
                 <br />
-                <input type="text" id="titulo" v-model="contenido.titulo" required/>
+                <input type="text" id="titulo" v-model="contenido.titulo" required :class="lightit('titulo')"/>
+                <p class="error">{{errors.titulo}}</p>
             </div>
             <div>
                 <label for="descripcion">Descripción corta:</label>
                 <br />
-                <textarea id="descripcion" v-model="contenido.descripcion" required/>
+                <textarea id="descripcion" v-model="contenido.descripcion" required :class="lightit('descripcion')"/>
+                <p class="error">{{errors.descripcion}}</p>
             </div>
             <div v-if="!image">
                 <label for="imagen">Imagen:</label>
-                <input id="imagen" type="file" @change="onFileChange" />
+                <input id="imagen" type="file" @change="onFileChange" :class="lightit('imagen')"/>
+                <p class="error">{{errors.imagen}}</p>
             </div>
             <div v-else>
                 <img :src="image" class="max-w-sm max-h-xs" />
@@ -24,20 +27,23 @@
             <div>
                 <label for="texto">Descripción detallada:</label>
                 <br />
-                <textarea id="texto" v-model="contenido.texto" />
+                <textarea id="texto" v-model="contenido.texto" rows="7" :class="lightit('texto')"/>
+                <p class="error">{{errors.texto}}</p>
             </div>
             <div>
-                <label for="tipo">Tipo de Evento:</label>
+                <label for="tipoEvento">Tipo de Evento:</label>
                 <br />
-                <select id="tipo" v-model="contenido.tipoEvento">
+                <select id="tipoEvento" v-model="contenido.tipoEvento" :class="lightit('tipoEvento')">
                     <option value="encuentro">Encuentro</option>
                     <option value="curso">Curso</option>
                     <option value="otros">Otros</option>
                 </select>
+                <p class="error">{{errors.tipoEvento}}</p>
             </div>
             <div>
                 <label>Fecha y hora de comienzo:</label>
-                <InputDateTime v-model="contenido.fechaComienzo" required/>
+                <InputDateTime id="fechaComienzo" v-model="contenido.fechaComienzo" required :class="lightit('fechaComienzo')"/>
+                <p class="error">{{errors.fechaComienzo}}</p>
             </div>
 
             <div v-if="!tieneFinal">
@@ -45,16 +51,18 @@
             </div>
             <div v-if="tieneFinal">
                 <label>Fecha y hora de final:</label>
-                <InputDateTime v-model="contenido.fechaFinal"/>
+                <InputDateTime id="fechaFinal" v-model="contenido.fechaFinal" :class="lightit('fechaFinal')"/>
+                <p class="error">{{errors.fechaFinal}}</p>
                 <button class="btn btn-gray text-xs mt-1" @click="contenido.fechaFinal=null;tieneFinal=false">Remover fecha final</button>
             </div>
             <div>
                 <label for="zonahoraria">Zona Horaria:</label><br />
-                <select id="zonahoraria" v-model="contenido.zonahoraria">
+                <select id="zonahoraria" v-model="contenido.zonahoraria" :class="lightit('zonahoraria')">
                     <option value="Espana">España</option>
                     <option value="Chile">Chile</option>
                     <option value="Mexico">México</option>
                 </select>
+                <p class="error">{{errors.zonahoraria}}</p>
             </div>
 
             <div v-if="!tieneSala">
@@ -63,6 +71,7 @@
             <div v-if="tieneSala">
                 <label for="sala">Sala virtual:</label>
                 <v-select
+                    id="sala"
                     class="my-v"
                     :options="salas"
                     v-model="contenido.sala"
@@ -145,6 +154,7 @@ export default {
             tieneFinal: this.contenido&&this.contenido.fechaFinal,
             tieneSala:this.contenido&&this.contenido.sala,
             tieneCentro: this.contenido&&this.contenido.centro,
+            errors: {}
         }
     },
     computed: {
@@ -156,6 +166,9 @@ export default {
         },
     },
     methods: {
+        lightit(field){
+            return this.errors[field]?'border-4 border-red':''
+        },
         onFileChange(e) {
             var files = e.target.files || e.dataTransfer.files
             if (!files.length) return
@@ -193,26 +206,34 @@ export default {
                 : fuse.list;
         },
         submit() {
+            for(const e in this.errors)
+                this.errors[e] = ''
             if (this.contenido.id)
                 this.$strapi
                     .update('eventos', this.contenido.id, this.contenido)
                     .catch(err => {
-                        console.log(err)
+                        this.setErr(err)
                     })
             else
                 this.$strapi.create('eventos', this.contenido).catch(err => {
-                    if (err.response.data.message === 'ValidationError') {
-                        const errors = err.response.data.data.errors
-                        for (const field in errors) {
-                            console.log('field: ', field)
-                            console.log(errors[field][0])
-                        }
-                    }
-                    console.log(err)
-                    console.log('message', err.message)
-                    console.log('response', err.response)
-                    console.log(JSON.stringify(err.response))
+                    this.setErr(err)
                 })
+        },
+        setErr(err) {
+            let firstEl = null
+            if (err.response.data.message === 'ValidationError') {
+                const errors = err.response.data.data.errors
+                for (const field in errors) {
+                    console.log('field', field)
+                    console.log('message', errors[field].join())
+                    this.$set(this.errors, field, errors[field].join(', '))
+                    if(!firstEl)
+                        firstEl = document.querySelector("#"+field)
+                }
+            }
+
+            if(firstEl)
+                this.$scrollTo('#'+firstEl.id, 500, { offset: -250 })
         }
     }
 }
@@ -252,4 +273,9 @@ label {
     @apply block absolute top-full mt-2 left-0 z-10 p-2 cursor-pointer text-gray-900 w-full max-h-40 overflow-y-auto shadow-md rounded text-left list-none bg-gray-100;
 }
 
+textarea { resize: vertical }
+
+p.error {
+    @apply text-red;
+}
 </style>
