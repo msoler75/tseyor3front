@@ -32,7 +32,6 @@
     "ipx": "^0.7.1",
     "markdown-it": "^12.1.0",
     "markdown-it-div": "^1.1.0",
-    "nuxt-build-optimisations": "^1.0.7",
     "nuxt-edge": "latest",
     "nuxt-gmaps": "^1.2.10",
     "vue-clamp": "^0.4.0",

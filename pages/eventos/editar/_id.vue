@@ -1,72 +1,113 @@
 <template>
-    <Card class='form py-5 px-2 xs:px-4 max-w-sm mx-auto bg-blue-gray-50 dark:bg-blue-gray-900'>
+    <Card class="form py-5 px-2 xs:px-4 max-w-sm mx-auto bg-blue-gray-50 dark:bg-blue-gray-900">
         <h1>{{ accion }} evento</h1>
-
+        {{ evento }}
         <form @submit.prevent="submit" class="space-y-4">
             <div>
                 <label for="titulo">Título:</label>
                 <br />
-                <input type="text" id="titulo" v-model="contenido.titulo" required :class="lightit('titulo')"/>
-                <p class="error">{{errors.titulo}}</p>
+                <input
+                    type="text"
+                    id="titulo"
+                    v-model="contenido.titulo"
+                    required
+                    :class="lightit('titulo')"
+                />
+                <p class="error">{{ errors.titulo }}</p>
             </div>
             <div>
                 <label for="descripcion">Descripción corta:</label>
                 <br />
-                <textarea id="descripcion" v-model="contenido.descripcion" required :class="lightit('descripcion')"/>
-                <p class="error">{{errors.descripcion}}</p>
+                <textarea
+                    id="descripcion"
+                    v-model="contenido.descripcion"
+                    required
+                    :class="lightit('descripcion')"
+                />
+                <p class="error">{{ errors.descripcion }}</p>
             </div>
             <div v-if="!image">
                 <label for="imagen">Imagen:</label>
-                <input id="imagen" type="file" @change="onFileChange" :class="lightit('imagen')"/>
-                <p class="error">{{errors.imagen}}</p>
+                <input id="imagen" type="file" @change="onFileChange" :class="lightit('imagen')" />
+                <p class="error">{{ errors.imagen }}</p>
             </div>
             <div v-else>
                 <img :src="image" class="max-w-sm max-h-xs" />
-                <button class="btn btn-gray text-xs mt-1" @click="removeImage">Remover imagen</button>
+                <button
+                    class="btn btn-gray text-xs mt-1"
+                    @click.prevent="removeImage"
+                >Remover imagen</button>
             </div>
             <div>
                 <label for="texto">Descripción detallada:</label>
                 <br />
-                <textarea id="texto" v-model="contenido.texto" rows="7" :class="lightit('texto')"/>
-                <p class="error">{{errors.texto}}</p>
+                <textarea id="texto" v-model="contenido.texto" rows="7" :class="lightit('texto')" />
+                <p class="error">{{ errors.texto }}</p>
             </div>
             <div>
                 <label for="tipoEvento">Tipo de Evento:</label>
                 <br />
-                <select id="tipoEvento" v-model="contenido.tipoEvento" :class="lightit('tipoEvento')">
+                <select
+                    id="tipoEvento"
+                    v-model="contenido.tipoEvento"
+                    :class="lightit('tipoEvento')"
+                >
                     <option value="encuentro">Encuentro</option>
                     <option value="curso">Curso</option>
                     <option value="otros">Otros</option>
                 </select>
-                <p class="error">{{errors.tipoEvento}}</p>
+                <p class="error">{{ errors.tipoEvento }}</p>
             </div>
             <div>
                 <label>Fecha y hora de comienzo:</label>
-                <InputDateTime id="fechaComienzo" v-model="contenido.fechaComienzo" required :class="lightit('fechaComienzo')"/>
-                <p class="error">{{errors.fechaComienzo}}</p>
+                <InputDateTime
+                    id="fechaComienzo"
+                    v-model="contenido.fechaComienzo"
+                    required
+                    :class="lightit('fechaComienzo')"
+                />
+                <p class="error">{{ errors.fechaComienzo }}</p>
             </div>
 
             <div v-if="!tieneFinal">
-                <button class="btn btn-gray text-xs mt-1" @click="tieneFinal=true">Definir fecha final</button>
+                <button
+                    class="btn btn-gray text-xs mt-1"
+                    @click.prevent="tieneFinal = true"
+                >Definir fecha final</button>
             </div>
             <div v-if="tieneFinal">
                 <label>Fecha y hora de final:</label>
-                <InputDateTime id="fechaFinal" v-model="contenido.fechaFinal" :class="lightit('fechaFinal')"/>
-                <p class="error">{{errors.fechaFinal}}</p>
-                <button class="btn btn-gray text-xs mt-1" @click="contenido.fechaFinal=null;tieneFinal=false">Remover fecha final</button>
+                <InputDateTime
+                    id="fechaFinal"
+                    v-model="contenido.fechaFinal"
+                    :class="lightit('fechaFinal')"
+                />
+                <p class="error">{{ errors.fechaFinal }}</p>
+                <button
+                    class="btn btn-gray text-xs mt-1"
+                    @click.prevent="contenido.fechaFinal = null; tieneFinal = false"
+                >Remover fecha final</button>
             </div>
             <div>
-                <label for="zonahoraria">Zona Horaria:</label><br />
-                <select id="zonahoraria" v-model="contenido.zonahoraria" :class="lightit('zonahoraria')">
+                <label for="zonahoraria">Zona Horaria:</label>
+                <br />
+                <select
+                    id="zonahoraria"
+                    v-model="contenido.zonahoraria"
+                    :class="lightit('zonahoraria')"
+                >
                     <option value="Espana">España</option>
                     <option value="Chile">Chile</option>
                     <option value="Mexico">México</option>
                 </select>
-                <p class="error">{{errors.zonahoraria}}</p>
+                <p class="error">{{ errors.zonahoraria }}</p>
             </div>
 
             <div v-if="!tieneSala">
-                <button class="btn btn-gray text-xs mt-1" @click="tieneSala=true">Definir Sala virtual</button>
+                <button
+                    class="btn btn-gray text-xs mt-1"
+                    @click.prevent="tieneSala = true"
+                >Definir Sala virtual</button>
             </div>
             <div v-if="tieneSala">
                 <label for="sala">Sala virtual:</label>
@@ -84,11 +125,17 @@
                 >
                     <div slot="no-options">Ningún resultado</div>
                 </v-select>
-                <button class="btn btn-gray text-xs mt-1" @click="contenido.sala=null;tieneSala=false">Remover sala</button>
+                <button
+                    class="btn btn-gray text-xs mt-1"
+                    @click.prevent="contenido.sala = null; tieneSala = false"
+                >Remover sala</button>
             </div>
 
             <div v-if="!tieneCentro">
-                <button class="btn btn-gray text-xs mt-1" @click="tieneCentro=true">Definir Centro organizador</button>
+                <button
+                    class="btn btn-gray text-xs mt-1"
+                    @click.prevent="tieneCentro = true"
+                >Definir Centro organizador</button>
             </div>
             <div v-if="tieneCentro">
                 <label for="sala">Organiza:</label>
@@ -105,10 +152,21 @@
                 >
                     <div slot="no-options">Ningún resultado</div>
                 </v-select>
-                <button class="btn btn-gray text-xs mt-1" @click="contenido.centro=null;tieneCentro=false">Remover centro</button>
+                <button
+                    class="btn btn-gray text-xs mt-1"
+                    @click.prevent="contenido.centro = null; tieneCentro = false"
+                >Remover centro</button>
             </div>
-            <div>
-                <input class="btn" type="submit" :value="verbo" />
+            <div class="flex justify-center">
+                <button
+                    class="flex items-center btn w-40 text-center"
+                    :class="modificado || guardando ? 'btn-warning' : 'btn-success'"
+                    type="submit"
+                    :disabled="!modificado"
+                >
+                    <icon class="!w-6" :icon="guardando?'sync spin': modificado ? 'sync' : 'check'" />
+                    <span class="inline-block w-28">{{ verbo }}</span>
+                </button>
             </div>
         </form>
     </Card>
@@ -151,10 +209,12 @@ export default {
     data() {
         return {
             image: null,
-            tieneFinal: this.contenido&&this.contenido.fechaFinal,
-            tieneSala:this.contenido&&this.contenido.sala,
-            tieneCentro: this.contenido&&this.contenido.centro,
-            errors: {}
+            tieneFinal: this.contenido && this.contenido.fechaFinal,
+            tieneSala: this.contenido && this.contenido.sala,
+            tieneCentro: this.contenido && this.contenido.centro,
+            errors: {},
+            guardando: false,
+            modificado: false
         }
     },
     computed: {
@@ -162,12 +222,20 @@ export default {
             return this.contenido.id ? 'Editar' : 'Nuevo'
         },
         verbo() {
-            return this.contenido.id ? 'Guardar' : 'Crear'
+            return !this.contenido.id ? 'Crear' : this.guardando ? 'Guardando' : this.modificado ? 'Guardar' : 'Guardado'
         },
+        contentJSON() {
+            return JSON.stringify(this.contenido)
+        }
+    },
+    watch: {
+        contentJSON(newValue) {
+            this.modificado = true
+        }
     },
     methods: {
-        lightit(field){
-            return this.errors[field]?'border-4 border-red':''
+        lightit(field) {
+            return this.errors[field] ? 'border-4 border-red' : ''
         },
         onFileChange(e) {
             var files = e.target.files || e.dataTransfer.files
@@ -206,18 +274,31 @@ export default {
                 : fuse.list;
         },
         submit() {
-            for(const e in this.errors)
+            for (const e in this.errors)
                 this.errors[e] = ''
-            if (this.contenido.id)
+            this.guardando = true
+            if (this.contenido.id) {
                 this.$strapi
                     .update('eventos', this.contenido.id, this.contenido)
+                    .then(() => {
+                        this.modificado = false
+                        this.guardando = false
+                    })
                     .catch(err => {
                         this.setErr(err)
+                        this.guardando = false
                     })
+            }
             else
-                this.$strapi.create('eventos', this.contenido).catch(err => {
-                    this.setErr(err)
-                })
+                this.$strapi.create('eventos', this.contenido)
+                    .then(() => {
+                        this.modificado = false
+                        this.guardando = false
+                    })
+                    .catch(err => {
+                        this.setErr(err)
+                        this.guardando = false
+                    })
         },
         setErr(err) {
             let firstEl = null
@@ -227,13 +308,13 @@ export default {
                     console.log('field', field)
                     console.log('message', errors[field].join())
                     this.$set(this.errors, field, errors[field].join(', '))
-                    if(!firstEl)
-                        firstEl = document.querySelector("#"+field)
+                    if (!firstEl)
+                        firstEl = document.querySelector("#" + field)
                 }
             }
 
-            if(firstEl)
-                this.$scrollTo('#'+firstEl.id, 500, { offset: -250 })
+            if (firstEl)
+                this.$scrollTo('#' + firstEl.id, 500, { offset: -250 })
         }
     }
 }
@@ -241,7 +322,6 @@ export default {
 
 
 <style scoped>
-
 label {
     @apply font-bold text-lg mb-1;
 }
@@ -273,7 +353,9 @@ label {
     @apply block absolute top-full mt-2 left-0 z-10 p-2 cursor-pointer text-gray-900 w-full max-h-40 overflow-y-auto shadow-md rounded text-left list-none bg-gray-100;
 }
 
-textarea { resize: vertical }
+textarea {
+    resize: vertical;
+}
 
 p.error {
     @apply text-red;

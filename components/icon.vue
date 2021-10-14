@@ -21,27 +21,27 @@ export default {
   },
   computed: {
     facleanicon() {
-      return this.icon.replace(/fa-(rotate|flip|spin|pulse)-?.*/g, '').replace(/\s+/g, ' ')
+      return this.icon.replace(/(fa-)?\b(rotate|flip|spin|pulse)\b[^\s]*/g, '').replace(/\s+/g, ' ').replace(/^\s|\s$/g, '')
     },
     faicon () {
       const words = this.facleanicon.split(/\s+/)
       const family = words.length>=2?words[0]:'fas'
       const icon = words.length>=2?words[1]:words[0] || ''
-      return [family, icon.replace(/^fa\-?/,'')]
+      return [family, icon.replace(/^fa-/,'')]
     },
     farotate () {
-      const matches = this.icon.match(/fa-rotate-(\d+)/)
+      const matches = this.icon.match(/\brotate-(\d+)/)
       return matches&&matches.length>1?parseInt(matches[1]) || 0:0
     },
     faflip () {
-      const matches = this.icon.match(/fa-flip-(\w+)/)
+      const matches = this.icon.match(/\bflip-(\w+)/)
       return matches&&matches.length>1?matches[1]:''
     },
     faspin() {
-      return !!this.icon.match(/fa-spin/)
+      return !!this.icon.match(/\bspin\b/)
     },
     fapulse() {
-      return !!this.icon.match(/fa-pulse/)
+      return !!this.icon.match(/\bpulse\b/)
     }
   }
 };
