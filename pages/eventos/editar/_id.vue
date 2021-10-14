@@ -13,7 +13,7 @@
                     id="titulo"
                     v-model="contenido.titulo"
                     required
-                    :class="lightit('titulo')"
+                    :class="fieldValidate('titulo')"
                 />
                 <p class="error">{{ errors.titulo }}</p>
             </div>
@@ -24,13 +24,13 @@
                     id="descripcion"
                     v-model="contenido.descripcion"
                     required
-                    :class="lightit('descripcion')"
+                    :class="fieldValidate('descripcion')"
                 />
                 <p class="error">{{ errors.descripcion }}</p>
             </div>
             <div v-if="!image">
                 <label for="imagen">Imagen:</label>
-                <input id="imagen" type="file" @change="onFileChange" :class="lightit('imagen')" />
+                <input id="imagen" type="file" @change="onFileChange" :class="fieldValidate('imagen')" />
                 <p class="error">{{ errors.imagen }}</p>
             </div>
             <div v-else>
@@ -43,7 +43,7 @@
             <div>
                 <label for="texto">Descripción detallada:</label>
                 <br />
-                <textarea id="texto" v-model="contenido.texto" rows="7" :class="lightit('texto')" />
+                <textarea id="texto" v-model="contenido.texto" rows="7" :class="fieldValidate('texto')" />
                 <p class="error">{{ errors.texto }}</p>
             </div>
             <div>
@@ -52,7 +52,7 @@
                 <select
                     id="tipoEvento"
                     v-model="contenido.tipoEvento"
-                    :class="lightit('tipoEvento')"
+                    :class="fieldValidate('tipoEvento')"
                 >
                     <option value="encuentro">Encuentro</option>
                     <option value="curso">Curso</option>
@@ -66,7 +66,7 @@
                     id="fechaComienzo"
                     v-model="contenido.fechaComienzo"
                     required
-                    :class="lightit('fechaComienzo')"
+                    :class="fieldValidate('fechaComienzo')"
                 />
                 <p class="error">{{ errors.fechaComienzo }}</p>
             </div>
@@ -77,12 +77,12 @@
                     @click.prevent="tieneFinal = true"
                 >Definir fecha final</div>
             </div>
-            <div v-if="tieneFinal">
+            <div v-else>
                 <label>Fecha y hora de final:</label>
                 <InputDateTime
                     id="fechaFinal"
                     v-model="contenido.fechaFinal"
-                    :class="lightit('fechaFinal')"
+                    :class="fieldValidate('fechaFinal')"
                 />
                 <p class="error">{{ errors.fechaFinal }}</p>
                 <div
@@ -96,7 +96,7 @@
                 <select
                     id="zonahoraria"
                     v-model="contenido.zonahoraria"
-                    :class="lightit('zonahoraria')"
+                    :class="fieldValidate('zonahoraria')"
                 >
                     <option value="Espana">España</option>
                     <option value="Chile">Chile</option>
@@ -111,11 +111,10 @@
                     @click.prevent="tieneSala = true"
                 >Definir Sala virtual</div>
             </div>
-            <div v-if="tieneSala">
+            <div v-else>
                 <label for="sala">Sala virtual:</label>
                 <v-select
                     id="sala"
-                    class="my-v"
                     :options="salas"
                     v-model="contenido.sala"
                     placeholder="Elige sala virtual..."
@@ -139,7 +138,7 @@
                     @click.prevent="tieneCentro = true"
                 >Definir Centro organizador</div>
             </div>
-            <div v-if="tieneCentro">
+            <div v-else>
                 <label for="sala">Organiza:</label>
                 <v-select
                     class="my-v"
@@ -177,6 +176,7 @@
 </template>
 
 <script>
+const relaciones11 = ['sala', 'organiza', 'autor']
 import vSelect from "vue-select";
 import Fuse from "fuse.js";
 export default {
@@ -197,14 +197,13 @@ export default {
             autor: null
         }
         if (id && id !== 'nuevo') {
-            const eventos = await $strapi.find(
+            const resultado = await $strapi.find(
                 'eventos',
                 id.match(/\d+/) ? { id } : { slug: id }
             )
-            contenido = eventos[0]
-            contenido.sala = contenido.sala && contenido.sala.id ? contenido.sala.id : null
-            contenido.organiza = contenido.organiza && contenido.organiza.id ? contenido.organiza.id : null
-            contenido.autor = contenido.autor && contenido.autor.id ? contenido.autor.id : null
+            contenido = resultado[0]
+            for(const campo of relaciones11)
+                contenido[campo] = contenido[campo] && contenido[campo].id?contenido[campo].id: null
         }
         const salas = await $strapi.find('salas')
         const centros = await $strapi.find('centros')
@@ -216,7 +215,6 @@ export default {
             tieneFinal: this.contenido && this.contenido.fechaFinal,
             tieneSala: this.contenido && this.contenido.sala,
             tieneCentro: this.contenido && this.contenido.centro,
-            errors: {},
             guardando: false,
             modificado: false
         }
@@ -241,9 +239,6 @@ export default {
         }
     },
     methods: {
-        lightit(field) {
-            return this.errors[field] ? 'border-4 border-red' : ''
-        },
         onFileChange(e) {
             var files = e.target.files || e.dataTransfer.files
             if (!files.length) return
@@ -281,8 +276,7 @@ export default {
                 : fuse.list;
         },
         async submit() {
-            for (const e in this.errors)
-                this.errors[e] = ''
+            this.clearErrors()
             this.guardando = true
             if (this.contenido.id) {
                 await this.$strapi
@@ -299,7 +293,12 @@ export default {
                     .then((contenido) => {
                         console.log('creado', contenido)
                         for(const field in contenido)
-                        this.$set(this.contenido, field, contenido[field])
+                        {
+                            if(relaciones11.includes(field))
+                                this.$set(this.contenido, field, contenido[field]?contenido[field].id:null)
+                            else
+                                this.$set(this.contenido, field, contenido[field])
+                        }
                         this.$nextTick(() => {
                             this.modificado = false
                         })
@@ -308,22 +307,6 @@ export default {
                         this.setErr(err)
                     })
             this.guardando = false
-        },
-        setErr(err) {
-            let firstEl = null
-            if (err.response.data.message === 'ValidationError') {
-                const errors = err.response.data.data.errors
-                for (const field in errors) {
-                    console.log('field', field)
-                    console.log('message', errors[field].join())
-                    this.$set(this.errors, field, errors[field].join(', '))
-                    if (!firstEl)
-                        firstEl = document.querySelector("#" + field)
-                }
-            }
-
-            if (firstEl)
-                this.$scrollTo('#' + firstEl.id, 500, { offset: -250 })
         }
     }
 }

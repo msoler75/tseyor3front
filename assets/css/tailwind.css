@@ -98,26 +98,26 @@
   }
 
   .btn {
-    @apply select-none transition duration-200  active:translate-y-px font-semibold py-2 px-4 border rounded-lg shadow;
-    @apply bg-primary active:bg-blue-600 border-blue-800 !text-blue-contrast;
+    @apply select-none transition duration-200 font-semibold py-2 px-4 border rounded-lg shadow;
+    @apply bg-primary  border-blue-800 !text-blue-contrast;
     height: fit-content;
   }
 
   .btn:not([disabled]) {
-    @apply cursor-pointer hover:shadow-lg;
-    @apply hover:bg-blue-700;
+    @apply cursor-pointer hover:shadow-lg active:translate-y-px;
+    @apply hover:bg-blue-700 active:bg-blue-600;
   }
 
   .btn[disabled] {
-    @apply cursor-default opacity-60;
+    @apply cursor-default opacity-50;
   }
 
   .btn-gray {
-    @apply bg-gray-200 active:bg-gray-50 !text-gray-800 border-gray-400;
+    @apply bg-gray-200  !text-gray-800 border-gray-400;
   }
 
   .btn-gray:not([disabled]) {
-    @apply hover:bg-gray-100;
+    @apply hover:bg-gray-100 active:bg-gray-50;
   }
 
   .btn-warning {
@@ -130,20 +130,20 @@
 
 
   .btn-error {
-    @apply bg-error active:bg-red-400 border-red-900 !text-red-contrast;
+    @apply bg-error  border-red-900 !text-red-contrast;
   }
 
   .btn-error:not([disabled]) {
-    @apply hover:bg-red-600;
+    @apply hover:bg-red-600 active:bg-red-400;
   }
 
 
   .btn-success {
-    @apply bg-success active:bg-green-200 border-green-900 !text-green-900;
+    @apply bg-success  border-green-900 !text-green-900;
   }
 
   .btn-success:not([disabled]) {
-    @apply hover:bg-green-300;
+    @apply hover:bg-green-300 active:bg-green-200;
   }
 
   blockquote {
@@ -187,6 +187,10 @@
 
   select  {
     @apply bg-white p-2;
+  }
+
+  input:disabled, textarea:disabled {
+    @apply bg-gray-100 text-gray-700;
   }
 
   .regular-form {
