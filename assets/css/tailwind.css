@@ -109,7 +109,7 @@
   }
 
   .btn[disabled] {
-    @apply cursor-default opacity-80;
+    @apply cursor-default opacity-60;
   }
 
   .btn-gray {
@@ -179,6 +179,10 @@
 
   .input-time select {
     @apply !border-0;
+  }
+
+  .input-datetime input[type="date"] {
+    @apply pl-2;
   }
 
   select  {

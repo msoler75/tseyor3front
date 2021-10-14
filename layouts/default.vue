@@ -546,15 +546,12 @@ export default {
     handleScroll (event) {
       const threshold = 120
       var y = window.scrollY
-      //console.log(y)
       const dy = y - this.lastY>0?1:-1
       if(dy!==this.lastDy) {
         // direction changed
         this.lastChangeY = y
       }
       const distance = Math.abs(y-this.lastChangeY)
-      console.log('pageFocused', this.pageFocused)
-      console.log('y', y, 'dy', dy, 'lastDy', this.lastDy, 'distance', distance)
       if(!this.pageFocused) 
         this.hideTopNavMenu = false
       else
@@ -562,7 +559,6 @@ export default {
         if(y>400)
         {
           this.hideTopNavMenu = true
-          console.log('hideIt!')
         }
       } else if(distance>threshold) {
         this.hideTopNavMenu = false

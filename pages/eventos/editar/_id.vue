@@ -2,9 +2,8 @@
     <Card class="form py-5 px-2 xs:px-4 max-w-sm mx-auto bg-blue-gray-50 dark:bg-blue-gray-900">
 
         <Config :focused="true" />
-        
+
         <h1>{{ accion }} evento</h1>
-        {{ evento }}
         <form @submit.prevent="submit" class="space-y-4">
             <div>
                 <label for="titulo">Título:</label>
@@ -36,10 +35,10 @@
             </div>
             <div v-else>
                 <img :src="image" class="max-w-sm max-h-xs" />
-                <button
+                <div
                     class="btn btn-gray text-xs mt-1"
                     @click.prevent="removeImage"
-                >Remover imagen</button>
+                >Remover imagen</div>
             </div>
             <div>
                 <label for="texto">Descripción detallada:</label>
@@ -73,10 +72,10 @@
             </div>
 
             <div v-if="!tieneFinal">
-                <button
+                <div
                     class="btn btn-gray text-xs mt-1"
                     @click.prevent="tieneFinal = true"
-                >Definir fecha final</button>
+                >Definir fecha final</div>
             </div>
             <div v-if="tieneFinal">
                 <label>Fecha y hora de final:</label>
@@ -86,10 +85,10 @@
                     :class="lightit('fechaFinal')"
                 />
                 <p class="error">{{ errors.fechaFinal }}</p>
-                <button
+                <div
                     class="btn btn-gray text-xs mt-1"
                     @click.prevent="contenido.fechaFinal = null; tieneFinal = false"
-                >Remover fecha final</button>
+                >Remover fecha final</div>
             </div>
             <div>
                 <label for="zonahoraria">Zona Horaria:</label>
@@ -107,10 +106,10 @@
             </div>
 
             <div v-if="!tieneSala">
-                <button
+                <div
                     class="btn btn-gray text-xs mt-1"
                     @click.prevent="tieneSala = true"
-                >Definir Sala virtual</button>
+                >Definir Sala virtual</div>
             </div>
             <div v-if="tieneSala">
                 <label for="sala">Sala virtual:</label>
@@ -128,17 +127,17 @@
                 >
                     <div slot="no-options">Ningún resultado</div>
                 </v-select>
-                <button
+                <div
                     class="btn btn-gray text-xs mt-1"
                     @click.prevent="contenido.sala = null; tieneSala = false"
-                >Remover sala</button>
+                >Remover sala</div>
             </div>
 
             <div v-if="!tieneCentro">
-                <button
+                <div
                     class="btn btn-gray text-xs mt-1"
                     @click.prevent="tieneCentro = true"
-                >Definir Centro organizador</button>
+                >Definir Centro organizador</div>
             </div>
             <div v-if="tieneCentro">
                 <label for="sala">Organiza:</label>
@@ -155,20 +154,22 @@
                 >
                     <div slot="no-options">Ningún resultado</div>
                 </v-select>
-                <button
+                <div
                     class="btn btn-gray text-xs mt-1"
                     @click.prevent="contenido.centro = null; tieneCentro = false"
-                >Remover centro</button>
+                >Remover centro</div>
             </div>
             <div class="flex justify-center">
                 <button
-                    class="flex items-center btn w-40 text-center"
-                    :class="modificado || guardando ? 'btn-warning' : 'btn-success'"
+                    class="btn w-full text-center"
+                    :class="modificado || guardando || creando ? 'btn-warning' : 'btn-success'"
                     type="submit"
                     :disabled="!modificado"
                 >
-                    <icon class="!w-6" :icon="guardando?'sync spin': modificado ? 'sync' : 'check'" />
-                    <span class="inline-block w-28">{{ verbo }}</span>
+                    <div class="flex justify-center items-center">
+                        <icon class="!w-6" :icon="guardando?'sync spin': creando?'plus-square' : modificado ? 'sync': 'check'" />
+                        <span class="inline-block w-28">{{ verbo }}</span>
+                    </div>
                 </button>
             </div>
         </form>
@@ -229,6 +230,9 @@ export default {
         },
         contentJSON() {
             return JSON.stringify(this.contenido)
+        },
+        creando() {
+            return !this.contenido||!this.contenido.id
         }
     },
     watch: {
