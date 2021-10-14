@@ -1,5 +1,5 @@
 <template>
-    <div class="flex items-center bg-white pr-1 space-x-2 relative">
+    <div class="input-time flex items-center bg-white pr-1 space-x-2 relative">
         <select v-model="hora" v-on:keyup.esc="hora=labelHours">
             <option v-for="hora of horasList" :key="hora">{{ hora }}</option>
         </select>

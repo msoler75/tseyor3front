@@ -273,32 +273,34 @@ export default {
                 ? fuse.search(search).map(({ item }) => item)
                 : fuse.list;
         },
-        submit() {
+        async submit() {
             for (const e in this.errors)
                 this.errors[e] = ''
             this.guardando = true
             if (this.contenido.id) {
-                this.$strapi
+                await this.$strapi
                     .update('eventos', this.contenido.id, this.contenido)
                     .then(() => {
                         this.modificado = false
-                        this.guardando = false
                     })
                     .catch(err => {
                         this.setErr(err)
-                        this.guardando = false
                     })
             }
             else
-                this.$strapi.create('eventos', this.contenido)
-                    .then(() => {
-                        this.modificado = false
-                        this.guardando = false
+                await this.$strapi.create('eventos', this.contenido)
+                    .then((contenido) => {
+                        console.log('creado', contenido)
+                        for(const field in contenido)
+                        this.$set(this.contenido, field, contenido[field])
+                        this.$nextTick(() => {
+                            this.modificado = false
+                        })
                     })
                     .catch(err => {
                         this.setErr(err)
-                        this.guardando = false
                     })
+            this.guardando = false
         },
         setErr(err) {
             let firstEl = null

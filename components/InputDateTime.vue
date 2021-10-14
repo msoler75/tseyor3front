@@ -1,5 +1,5 @@
 <template>
-    <div class="flex space-x-2">
+    <div class="input-datetime flex space-x-2">
         <input type="date" v-model="fecha" :required="required"/>
         <InputTime v-model="hora" :required="required"/>
     </div>

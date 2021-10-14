@@ -156,8 +156,33 @@
     @apply left-4 top-4 text-6xl text-blue-gray-300;
   }
 
-  input[type='text'], input[type='number'], input[type='search']:not(.search-input), input[type='password'], input[type='email'], input[type='tel'], input[type='url'], textarea {
-   @apply transition duration-150 appearance-none border border-blue-gray-900 border-opacity-20 focus:border-orange rounded-lg w-full p-3  text-gray-dark-800 font-light leading-tight placeholder-gray-dark-800 ring-deep-orange-400 focus:placeholder-gray-500 focus:outline-none focus:ring 
+  input[type='text'], input[type='number'], input[type='search']:not(.search-input), input[type='password'], input[type='email'], input[type='tel'], input[type='url'], textarea, 
+  input[type='date'], input[type='datetime'], input[type='datetime-local'], 
+  select {
+   @apply transition duration-150 border border-blue-gray-900 border-opacity-20 focus:border-orange rounded-lg text-gray-dark-800 font-light leading-tight placeholder-gray-dark-800 ring-deep-orange-400 focus:placeholder-gray-500 focus:outline-none focus:ring 
+  }
+
+
+  input[type='text'], input[type='number'], input[type='search']:not(.search-input), input[type='password'], input[type='email'], input[type='tel'], input[type='url'], 
+  textarea {
+   @apply p-3 bg-white w-full;
+  }
+
+
+  input[type='date'], input[type='datetime'], .input-time {
+    @apply bg-white;
+  }
+
+  .input-time {
+    @apply rounded-lg border border-blue-gray-900 border-opacity-20;
+  }
+
+  .input-time select {
+    @apply !border-0;
+  }
+
+  select  {
+    @apply bg-white p-2;
   }
 
   .regular-form {
