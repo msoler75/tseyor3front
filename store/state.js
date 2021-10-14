@@ -16,6 +16,7 @@ export default () => ({
   pageInContainer : true,
   pageBackground : true,
   pageBreadCrumb: true,
+  pageFocused: false,
   hideMenus: false,
   menuUsuario: false,
   breadcrumbs: {

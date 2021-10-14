@@ -88,6 +88,10 @@ export default {
     return state.pageBreadcrumb
   },
 
+  pageFocused (state) {
+    return state.pageFocused
+  },
+
   menuUsuario (state) {
     return state.menuUsuario
   },

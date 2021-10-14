@@ -1,6 +1,6 @@
 <template>
 <section class="relative">
-  <Config :contained="false"/>
+  <Config :contained="false" :focused="true"/>
 
   <nuxt-img :src="cimage" class="fixed top-[48px] sm:top-[51px] md:top-[68px] lg:top-[72px] xl:top-[76px] left-0 w-screen h-auto"
   fit="cover"

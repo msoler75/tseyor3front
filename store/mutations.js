@@ -33,6 +33,10 @@ export default {
     state.pageBreadcrumb = payload
   },
 
+  setFocused(state, payload) {
+    state.pageFocused = payload
+  },
+
   setMenuUsuario(state, payload) {
     state.menuUsuario = payload
   },

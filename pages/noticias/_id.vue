@@ -2,7 +2,7 @@
   <div class="flex flex-col items-center">
     <!-- Sin padding -->
     <!-- No tiene imagen de fondo -->
-    <Config :contained="false" :background="false" />
+    <Config :contained="false" :background="false" :focused="true" />
 
     <!-- article container -->
     <div

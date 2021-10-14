@@ -6,6 +6,7 @@
     <nav id="main-menu" 
     v-show="!hideMenus"
     class="flex transition duration-200 font-serif z-30 w-full mx-auto bg-white dark:bg-gray-900 text-gray-blue-800 dark:text-gray-200 dark:hover:text-gray-50  shadow select-none sticky top-0" 
+    :class="hideTopNavMenu?'-translate-y-20':''"
     style="min-height:48px"
     :submenu="currentTab !== ''">
  <div
@@ -302,6 +303,10 @@ export default {
           }
         },
       ],
+      lastY : 0,
+      lastDy: 0,
+      lastChangeY: 0,
+      hideTopNavMenu: false,
       buscarPor: '',
       showSidebar: false,
       currentTab: "",
@@ -508,7 +513,7 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(["description", "image", "type", "isAuthenticated", "loggedInUser", "pageContained", "pageBackground", "pageBreadcrumb", "menuUsuario", "hideMenus"]),
+    ...mapGetters(["description", "image", "type", "isAuthenticated", "loggedInUser", "pageContained", "pageBackground", "pageBreadcrumb", "pageFocused", "menuUsuario", "hideMenus"]),
 
     iconMode() {
       return this.$colorMode.value === "light" ? iconSun : iconMoon;
@@ -529,7 +534,42 @@ export default {
       return this.rutasMenu.filter(x=>!x.left)
     }
   },
+  created () {
+    if (process.client) 
+    window.addEventListener('scroll', this.handleScroll, {passive: true});
+  },
+  destroyed () {
+    if (process.client) 
+    window.removeEventListener('scroll', this.handleScroll);
+  },
   methods: {
+    handleScroll (event) {
+      const threshold = 120
+      var y = window.scrollY
+      //console.log(y)
+      const dy = y - this.lastY>0?1:-1
+      if(dy!==this.lastDy) {
+        // direction changed
+        this.lastChangeY = y
+      }
+      const distance = Math.abs(y-this.lastChangeY)
+      console.log('pageFocused', this.pageFocused)
+      console.log('y', y, 'dy', dy, 'lastDy', this.lastDy, 'distance', distance)
+      if(!this.pageFocused) 
+        this.hideTopNavMenu = false
+      else
+      if(dy>0) {
+        if(y>400)
+        {
+          this.hideTopNavMenu = true
+          console.log('hideIt!')
+        }
+      } else if(distance>threshold) {
+        this.hideTopNavMenu = false
+      } 
+      this.lastDy = dy
+      this.lastY = y
+    },
     async logout() {
       // await this.$auth.logout()
       await this.$strapi.logout()

@@ -19,6 +19,11 @@ export default {
             type: Boolean,
             required: false,
             default: true
+        },
+        focused: {
+            type: Boolean,
+            required: false,
+            default: false
         }
     },
     mounted() {
@@ -28,6 +33,8 @@ export default {
             this.$store.commit('setBackground', false)
         if(!this.breadcrumb)
             this.$store.commit('setBreadcrumb', false)
+        if(this.focused)
+            this.$store.commit('setFocused', true)
     }
 }
 </script>
