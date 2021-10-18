@@ -31,7 +31,7 @@ export default {
       if (!maxDias) maxDias = 45
       const tzLocal = this.$dayjs.tz.guess() // America/Chicago
     
-      console.log('generarCitas', agenda, eventos)
+      // console.log('generarCitas', agenda, eventos)
       const now = this.$dayjs()
       const proximas = []
 
@@ -98,8 +98,8 @@ export default {
               case 'Colombia': tz = 'America/Bogota'; break;
               case 'Argentina': tz = 'America/Argentina/Buenos_Aires'; break;              
             }
-            console.log('tz del equipo', tz)
-            console.log('tzLocal', tzLocal)
+            //console.log('tz del equipo', tz)
+            //console.log('tzLocal', tzLocal)
             const fecha2 = this.$dayjs.tz(fecha.format('YYYY-MM-DD ') + item.horario.hora, tz).tz(tzLocal, false)
             const dia = fecha2.day()
             const mes = fecha2.month()

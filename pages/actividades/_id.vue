@@ -41,7 +41,7 @@
 
        <div class="p-5 surface text-center flex flex-col cols-2 justify-center items-center" v-if="actividad.tipo=='reunion'">
          <h3>Agenda</h3>
-         <div v-for="cita of proximasMax" :key="cita">
+         <div v-for="cita, index of proximasMax" :key="index">
            {{cita.fecha.diasemana}} {{cita.fecha.dia}} de {{cita.fecha.mesnombre}} a las {{cita.hora.substr(0, 5)}}
          </div>
 
@@ -56,7 +56,7 @@
             </Card>
 
             <Card
-              :key="'b' + index"
+              :key="'z' + index"
               class="p-3 text-3xl flex font-bold justify-center items-center"
               >{{ a.fecha.dia }}</Card
             >
@@ -68,7 +68,7 @@
               }}</span>
             </Card>
 
-            <Card :key="'c' + index" class="p-3 text-center">
+            <Card :key="'d' + index" class="p-3 text-center">
               Reunion
             </Card>
 

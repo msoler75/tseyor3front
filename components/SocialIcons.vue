@@ -1,7 +1,7 @@
 <template>
   <div v-if="horizontal" class="flex">
-    <div title="Ver a quién le gustó" class="cursor-pointer" v-scroll-to="'#social'">
-      <icon class="ml-5" icon="far fa-heart" /> {{ content.likes.length }}
+    <div v-if="likes" title="Ver a quién le gustó" class="cursor-pointer" v-scroll-to="'#social'">
+      <icon class="ml-5" icon="far fa-heart" /> {{ content.likes?content.likes.length:0 }}
     </div>
     <div title="Ver comentarios"
         class="ml-5 cursor-pointer" href="#comentarios" v-scroll-to="'#comentarios'">
@@ -23,9 +23,9 @@
     </div>
   </div>
   <aside v-else class="flex flex-col">
-    <div title="Ver a quién le gustó" class="my-3 cursor-pointer" v-scroll-to="'#social'">
+    <div v-if="likes" title="Ver a quién le gustó" class="my-3 cursor-pointer" v-scroll-to="'#social'">
       <icon class="5xl:w-4" icon="far fa-heart" />
-      {{ content.likes.length }}
+      {{ content.likes?content.likes.length:0 }}
     </div>
     <div title="Ver comentarios"
         class="my-3 cursor-pointer" href="#comentarios" v-scroll-to="'#comentarios'">
@@ -61,6 +61,11 @@ export default {
       type: Boolean,
       required: false,
       default: false
+    },
+    likes: {
+      type: Boolean,
+      required: false,
+      default: true
     }
   }
 }
