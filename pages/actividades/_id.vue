@@ -9,7 +9,7 @@
     </section>
 
     <GridFluid class="gap-6">
-    
+   
     <div class="p-5 surface flex flex-col justify-center text-center">
       <h1>{{actividad.equipo.nombre}}</h1>
       <h2>
@@ -39,37 +39,39 @@
           <NLink class="btn w-auto mx-auto" :to="'/salas/'+actividad.sala.id">Acceder</NLink>
       </div>
 
-       <div class="p-5 surface text-center flex flex-col cols-2 justify-center items-center" v-if="actividad.tipo=='reunion'">
+       <div class="p-5 surface text-center flex flex-col rows-2 justify-center items-center" v-if="actividad.tipo=='reunion'">
          <h3>Agenda</h3>
-         <div v-for="cita, index of proximasMax" :key="index">
+         <div v-for="cita, index of citas" :key="index">
            {{cita.fecha.diasemana}} {{cita.fecha.dia}} de {{cita.fecha.mesnombre}} a las {{cita.hora.substr(0, 5)}}
          </div>
 
         <div class="grid proximas gap-2">
-         <template v-for="(a, index) of proximasMax">
+         <template v-for="(cita, index) of citas">
             <Card
-              v-if="a.seccion"
+              v-if="cita.seccion"
               :key="'a' + index"
               class="col-span-3 p-5 font-bold text-3xl text-center tracking-widest uppercase"
             >
-              {{ a.seccion }}
+              {{ cita.seccion }}
             </Card>
 
             <Card
               :key="'z' + index"
               class="p-3 text-3xl flex font-bold justify-center items-center"
-              >{{ a.fecha.dia }}</Card
+              >{{ cita.fecha.dia }}</Card
             >
 
             <Card :key="'c' + index" class="p-3 text-center">
-              <span>{{ a.fecha.diasemana }}</span>
+              <span>{{ cita.fecha.diasemana }}</span>
               <span class="font-bold text-xl">{{
-                $dayjs("1970/1/1 " + a.hora).format("HH:mm")
+                $dayjs("1970/1/1 " + cita.hora).format("HH:mm")
               }}</span>
             </Card>
 
-            <Card :key="'d' + index" class="p-3 text-center">
-              Reunion
+            <Card :key="'d' + index" class="p-3 text-center flex items-center">
+              <div v-if="cita.reunion">
+                <NLink class="btn gray" :to="`/reuniones/${cita.reunion.id}`">Reunion</NLink>
+              </div>
             </Card>
 
           </template>
@@ -124,9 +126,16 @@ export default {
       proximas: []
     }
   },
-  async fetch() {
+  async mounted() {
     // await this.$strapi.$http.$get("/api/agenda?actividad="+this.contenido.id)
-    this.proximas = this.generarCitas(this.agenda, [], 45)
+    const now = this.$dayjs().add(-1, 'days')
+    this.proximas = this.generarCitas(
+      {
+        agenda: this.agenda, 
+        // solo las reuniones futuras
+        reuniones: this.actividad.reuniones
+          .filter(x=>this.$dayjs(x.fecha).isAfter(now))
+      })
   },
   computed: {
     zonahoraria() {
@@ -135,9 +144,9 @@ export default {
         default:  return this.actividad.equipo.zonahoraria
       }
     },
-    proximasMax() {
+    citas() {
       let seccion = null;
-      return this.proximas.slice(0,3)
+      return this.proximas.slice(0, 7)
         .map(a => {
           a.seccion = null;
           if (a.fecha.mesnombre !== seccion) {
