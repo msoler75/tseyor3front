@@ -179,8 +179,10 @@
 const relaciones11 = ['sala', 'organiza', 'autor']
 import vSelect from "vue-select";
 import Fuse from "fuse.js";
+import validation from "@/mixins/validation"
 export default {
     components: { vSelect },
+    mixins: [validation],
     async asyncData({ $strapi, route }) {
         let id = route.params.id
         let contenido = {
