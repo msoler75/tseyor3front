@@ -194,8 +194,10 @@
   }
 
   .regular-form {
-    @apply max-w-lg w-full mx-auto px-1 py-4 sm:px-4 md:px-7 sm:py-8 bg-blue-gray-50 text-blue-gray select-none;
+    @apply max-w-lg w-full mx-auto px-1 py-4 sm:px-4 md:px-7 sm:py-8 select-none;
+    @apply bg-blue-gray-50 text-blue-gray;
   }
+
 }
 
 
