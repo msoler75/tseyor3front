@@ -26,9 +26,13 @@
         <div class="flex items-center justify-between">
           <button
             type="submit"
-            class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+            :disabled="entrando"
+            class="w-20 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
           >
-            Entrar
+            <div v-if="entrando" class="flex items-center justify-center">
+              <icon icon="sync spin"/> <span>&nbsp;</span>
+            </div>
+            <span v-else>Entrar</span>
           </button>
           <NLink
             to="/recuperacion"
@@ -63,7 +67,8 @@ export default {
     return {
       email: "",
       password: "",
-      error: null
+      error: null,
+      entrando: false
     };
   },
   methods: {
@@ -87,7 +92,8 @@ export default {
         })*/
 
          // https://github.com/Stun3R/nuxt-strapi-sdk/blob/master/examples/client/pages/auth/index.vue
-         console.log('login', this.email, this.password)
+         // console.log('login', this.email, this.password)
+         this.entrando = true
          await this.$strapi.login({identifier: this.email, password: this.password})
          this.$store.commit(
           "SET_USER",
@@ -97,6 +103,7 @@ export default {
         } catch (e) {
         console.error('login error:', e)
         this.error = e.response.data.message[0].messages[0].message;
+        this.entrando = false
       }
     }
   }
