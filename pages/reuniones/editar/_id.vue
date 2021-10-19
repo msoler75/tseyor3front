@@ -238,15 +238,6 @@ export default {
 
 
 <style scoped>
-label {
-    @apply font-bold text-lg mb-1;
-}
-
-textarea {
-    resize: vertical;
-}
-
-p.error {
-    @apply text-red;
-}
+@import '@/assets/css/form.css';
+@import '@/assets/css/vselect.css';
 </style>

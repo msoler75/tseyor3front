@@ -141,7 +141,6 @@
             <div v-else>
                 <label for="sala">Organiza:</label>
                 <v-select
-                    class="my-v"
                     :options="centros"
                     v-model="contenido.centro"
                     placeholder="Elige centro..."
@@ -316,42 +315,6 @@ export default {
 
 
 <style scoped>
-label {
-    @apply font-bold text-lg mb-1;
-}
-.my-v {
-    @apply relative;
-}
-.my-v >>> [role="combobox"] {
-    @apply flex;
-}
-.my-v >>> .vs__selected-options {
-    @apply flex-grow;
-}
-.my-v >>> .vs__actions {
-    @apply flex items-center px-2 pb-0;
-}
-.my-v >>> .vs__actions > * {
-    @apply cursor-pointer text-gray;
-}
-.my-v >>> .vs__clear {
-    @apply mr-3;
-}
-.my-v >>> .vs__selected {
-    @apply absolute top-0 left-2 bottom-0 flex items-center text-gray-700 px-1 py-1;
-}
-.my-v.vs--single.vs--searching >>> .vs__selected {
-    display: none;
-}
-.my-v >>> .vs__dropdown-menu {
-    @apply block absolute top-full mt-2 left-0 z-10 p-2 cursor-pointer text-gray-900 w-full max-h-40 overflow-y-auto shadow-md rounded text-left list-none bg-gray-100;
-}
-
-textarea {
-    resize: vertical;
-}
-
-p.error {
-    @apply text-red;
-}
+@import '@/assets/css/form.css';
+@import '@/assets/css/vselect.css';
 </style>

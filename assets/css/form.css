@@ -1,0 +1,10 @@
+label {
+    @apply font-bold text-lg mb-1;
+}
+
+textarea {
+    resize: vertical;
+}
+p.error {
+    @apply text-red;
+}
