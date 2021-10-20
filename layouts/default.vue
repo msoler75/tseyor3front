@@ -678,17 +678,17 @@ nav#main-menu li:after {
   width: 200px;
   height: 100%;
   margin-bottom: -8px;
+  z-index:1;
+  pointer-events: none;
 }
 
 nav#main-menu li:before {
   left: -199px;
   clip-path: path('M0,70 C111,70 190,70 200,70 L200,70 Z');
-  pointer-events: none;
 }
 nav#main-menu li:after {
   right: -199px;
   clip-path: path('M200,70 C89,70 10,70 0,70 L0,70 Z');
-  pointer-events: none;
 }
 
 nav#main-menu[submenu="true"] li[active="true"]:before {
