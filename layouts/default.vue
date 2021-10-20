@@ -2,6 +2,7 @@
   <div class="main-wrapper relative surface-0 w-full h-full flex-grow font-sans"
   :class="pageBackground?'':'no-background'"
   >
+
     <!-- Navigation starts -->
     <nav id="main-menu" 
     v-show="!hideMenus"
@@ -35,6 +36,7 @@
         </div>
         <div class="z-10 hidden xs:block w-10 h-10 md:w-14 md:h-14 transition duration-300 hover:transform-gpu translate-y-1 scale-125 hover:scale-150 cursor-pointer mx-auto items-center p-0.5 bg-white border-white rounded-full mt-2 shadow"
           @click="menuClick({ href: '/' })"
+          @mouseover="menuHover(null)"
          v-html="tseyorLogo">
         </div>
         <div class="flex items-center h-full">
@@ -595,7 +597,7 @@ export default {
       return this.$ucFirst(this.$route.name);
     },
     menuHover(item) {
-      if(item.href!=='/novedades')
+      if(item && item.href!=='/novedades')
         this.menuClick(item)
       else {
         this.currentTab = "";
@@ -663,7 +665,43 @@ nav#main-menu li[current="true"].menuitem {
 nav#main-menu[submenu="true"] li[current="true"][active="true"],
 nav#main-menu li:not([current="true"]).menuitem {
   border-color: transparent;
+  position: relative;
 }
+
+nav#main-menu li:before,
+nav#main-menu li:after {
+  content: "";
+  position: absolute;
+  top: 8px;
+  display: block;
+  @apply bg-gray-50 transition-all duration-200;
+  width: 200px;
+  height: 100%;
+  margin-bottom: -8px;
+}
+
+nav#main-menu li:before {
+  left: -199px;
+  clip-path: path('M0,70 C111,70 190,70 200,70 L200,70 Z');
+  pointer-events: none;
+}
+nav#main-menu li:after {
+  right: -199px;
+  clip-path: path('M200,70 C89,70 10,70 0,70 L0,70 Z');
+  pointer-events: none;
+}
+
+nav#main-menu[submenu="true"] li[active="true"]:before {
+  clip-path: path('M0,70 C111,68 190,60 200,25 L200,70 Z');
+  pointer-events: auto;
+}
+nav#main-menu[submenu="true"] li[active="true"]:after {
+  clip-path: path('M200,70 C89,68 10,60 0,25 L0,70 Z');
+  pointer-events: auto;
+}
+
+
+
 nav#main-menu:not([submenu="true"]) {
   border-bottom: 1px solid #aaa;
 }
@@ -676,7 +714,10 @@ nav#main-menu[submenu="true"] li[active="true"].menuitem {
 .dark nav#main-menu[submenu="true"] {
   background: #333;
 }
-.dark nav#main-menu[submenu="true"] li[active="true"].menuitem {
+.dark nav#main-menu[submenu="true"] li[active="true"].menuitem,
+.dark nav#main-menu[submenu="true"] li[active="true"]:before,
+.dark nav#main-menu[submenu="true"] li[active="true"]:after
+{
   @apply bg-gray-900;
 }
 .menu-subitem:hover {
