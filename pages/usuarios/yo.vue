@@ -15,7 +15,8 @@
           <span
             v-for="grupo of usuario.grupos"
             :key="grupo.id"
-            class="inline-block bg-gray-200 dark:bg-gray-dark-700 text-gray-700 dark:text-gray-400 rounded-full px-3 py-1 text-sm mr-2 mb-2">
+            class="inline-block bg-gray-200 dark:bg-gray-dark-700 text-gray-700 dark:text-gray-400 rounded-full px-3 py-1 text-sm mr-2 mb-2"
+            >
             {{ grupo.nombre }}
           </span>
         </div>
