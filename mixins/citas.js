@@ -32,7 +32,7 @@ export default {
     }
   },
   methods: {
-    nuevaCita (fecha, zonahoraria, item, semi, reunion){
+    nuevaCita (fecha, zonahoraria, item, semi){
 
       let timezone = 'Europe/Madrid'
       switch(zonahoraria) {
@@ -48,7 +48,7 @@ export default {
       const año = date.year()
       const sdia = dia_semana[dia] // lunes, martes, miercoles
       const diadelmes = date.date()
-
+      
       return {
         tipo: 'actividad',
         fechahora: fecha,
@@ -62,14 +62,19 @@ export default {
         },
         hora: date.format('HH:mm'),
         detalles: item,
-        reunion,
         semi
       }
     },
-    generarCitas ({agenda, eventos, reuniones, dias}) {
+    // podemos pasarle el array de todos los equipos, de todas las salas y/o de todas las actividades
+    // si no lo hacemos, obtendrá esos datos del resto de informaciones
+    generarCitas ({agenda, eventos, reuniones, dias, equipos, actividades, salas}) {
       if (!dias) dias = 45
       
       // console.log('generarCitas', agenda, eventos)
+      const actividades2 = [].concat(actividades?actividades:[])
+      const equipos2 = [].concat(equipos?equipos:[])
+      const salas2 = [].concat(salas?salas:[])
+
       const now = this.$dayjs()
       const proximas = []
        // clonamos reuniones
@@ -89,6 +94,10 @@ export default {
         if(eventos)
         for (const evento of eventos) {
           if (evento.insertado) continue
+
+          if(evento.equipo&&evento.equipo.id&&!equipos2.find(x=>x.id===evento.equipo.id)) equipos2.push(evento.equipo)
+          if(evento.sala&&evento.sala.id&&!salas2.find(x=>x.id===evento.sala.id)) salas2.push(evento.sala)
+
           if (!evento.fechaComienzo) continue
           const di = fecha.diff(evento.fechaComienzo, 'h')
           const df = fecha.diff(evento.fechaFinal, 'h')
@@ -124,6 +133,11 @@ export default {
         for (const item of agenda) {
           let ok = false
           let semi = false
+
+          if(item.actividad&&item.actividad.id&&!actividades2.find(x=>x.id===item.actividad.id)) actividades2.push(item.actividad)
+          if(item.equipo&&item.equipo.id&&!equipos2.find(x=>x.id===item.equipo.id)) equipos2.push(item.equipo)
+          if(item.sala&&item.sala.id&&!salas2.find(x=>x.id===item.sala.id)) salas2.push(item.sala)
+
           if (item.horario.dia === sdia) {
             // todos los lunes
             ok = true
@@ -138,14 +152,15 @@ export default {
           if (ok) {
             // buscamos si alguna reunión corresponde con algun horario programado segun agenda regular
             const idx = reunionesOrdenadas.findIndex(x=>fecha.isSame(x.fecha, 'minute'))
-            const reunioncita = idx>-1?reunionesOrdenadas[idx]:null
+            const reunion = idx>-1?reunionesOrdenadas[idx]:null
             // calculamos la fecha en formato date string YYYY-MM-DD HH:mm
             const datestr = fecha.format('YYYY-MM-DD ') + item.horario.hora
             // generamos la cita
-            const cita = this.nuevaCita(datestr, item.equipo.zonahoraria, item, semi, reunioncita)
+            const item2 = {...item, reunion}
+            const cita = this.nuevaCita(datestr, item.equipo.zonahoraria, item2, semi)
             proximas.push(cita)
             
-            if(reunioncita)
+            if(reunion)
               reunionesOrdenadas.splice(idx, 1) // quitamos la reunión del listado
 
             /*const fecha2 = this.$dayjs.tz(fecha.format('YYYY-MM-DD ') + item.horario.hora, timezone).tz(this.tzLocal, false)
@@ -173,12 +188,21 @@ export default {
         }
         
       }
+
+      console.log('equipos', equipos)
       // agregamos reuniones que no correspondan con horario regular
       if(reunionesOrdenadas)
         for(const reunion of reunionesOrdenadas)
         {
+          console.log(reunion)
           const idx = Math.max(0, proximas.findIndex(x=>this.$dayjs(x.fechahora).isAfter(reunion.fecha)))
-          const cita = this.nuevaCita(reunion.fecha, reunion.zonahoraria, null, false, reunion)
+          const item = {
+            actividad: actividades2.find(x=>x.id===reunion.actividad.id), 
+            equipo: equipos2.find(x=>x.id===reunion.equipo.id),            
+            sala: reunion.sala? salas2.find(x=>x.id===reunion.sala.id) : null,
+            reunion
+          }
+          const cita = this.nuevaCita(reunion.fecha, reunion.zonahoraria, item, false)
           proximas.splice(idx, 0, cita)
       }
 

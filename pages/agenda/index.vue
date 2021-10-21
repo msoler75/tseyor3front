@@ -10,7 +10,8 @@
       </p>
     </div>
     <div v-else class="lg:flex lg:justify-center lg:items-start mx-auto">
-      <Card class="order-2 p-5 lg:ml-12 mb-12">
+      <div class="mt-3 order-2 lg:ml-12 mb-12">
+      <Card class="p-5">
         <h3 class="text-center hidden sm:block">Horarios Regulares</h3>
         <div
           class="grid grid-cols-1 xs:grid-cols-2 md:grid-cols-3 lg:grid-cols-1 gap-3"
@@ -32,6 +33,16 @@
           </div>
         </div>
       </Card>
+     
+      <Card class="p-5 mt-7">
+      <p class="flex justify-center">
+        <NLink class="btn" to="/equipos" >
+        Ver Equipos
+      </NLink>
+      </p>
+      </Card>
+
+      </div>
 
       <div>
         <div class="order-3 lg:order-1">
@@ -79,10 +90,11 @@
             <NLink
                 v-if="a.tipo==='actividad'"
               :key="'d' + index"
-              class="card rounded font-bold text-center text-blue-600 flex justify-center items-center"
-              :to="'/actividades/' + a.detalles.actividad.id"
+              class="card rounded font-bold text-center flex justify-center items-center"
+              :class="a.detalles.reunion?'text-xl text-orange-800':'text-blue-600 '"
+              :to="a.detalles.reunion?'/reuniones/'+a.detalles.reunion.id:'/actividades/' + a.detalles.actividad.id"
             >
-              {{ a.detalles.actividad.titulo }}
+              {{ a.detalles.reunion?'Detalles':a.detalles.actividad.titulo }}
             </NLink>
 
             <NLink v-else :to="'/eventos/'+a.detalles.evento.id" :key="'v' + index"
@@ -116,7 +128,7 @@ import citas from '@/mixins/citas.js'
 export default {
   mixins: [seo, citas],
   async asyncData({ $dayjs, $strapi }) {
-    const query = qs.stringify({
+    const query_eventos = qs.stringify({
       _where: {
         _or: [
           {
@@ -133,9 +145,11 @@ export default {
       }
     })
 
-    const eventos = await $strapi.find("eventos", query)
+    const eventos = await $strapi.find("eventos", query_eventos)
     const agenda = await $strapi.find('agenda')
+    const salas = await $strapi.find('salas')
     const equipos = []
+    const actividades = []
     const colores = [
       "bg-green-400 text-green-contrast",
       "bg-red-900 text-red-contrast",
@@ -153,8 +167,62 @@ export default {
           color: colores[equipos.length % colores.length],
           viendo: true
         })
+      
+      if (!actividades.find(x => x.id === a.actividad.id))
+        actividades.push({
+          ...a.actividad
+        })
     }
-    return { equipos, agenda, eventos };
+
+    /*const query_reuniones = qs.stringify({
+      _where: {
+        _and: [
+          {
+            fecha_gt: $dayjs()
+              .add(-1, "days")
+              .milliseconds() * 1000
+              //.format("YYYY-MM-DDT00:00")
+          },
+          {
+            _or: 
+            actividades.map(x=>({'actividad.id_eq': x.id}))
+          }
+        ]
+      }
+    })*/
+
+   const fechaInicio = $dayjs()
+                    .add(-1, "days")
+                    .unix() * 1000
+    const query_reuniones = 
+      `query {
+        reuniones(
+          where: {
+            fecha_gt: ${fechaInicio},
+            equipo: { id_in: [${equipos.map(x=>x.id).join(",")}] }
+          }
+        ) {
+          id
+          fecha
+          equipo {
+            id
+          }
+          actividad {
+            id
+          }
+        }
+      }`
+
+    const resultado = await $strapi.graphql({query: query_reuniones})
+    const reuniones = resultado.reuniones.map(x=>{
+      // graphql devuelve los id como string
+      if(x.actividad&&x.actividad.id)x.actividad.id=parseInt(x.actividad.id)
+      if(x.equipo&&x.equipo.id)x.equipo.id=parseInt(x.equipo.id)
+      if(x.sala&&x.sala.id)x.sala.id=parseInt(x.sala.id)
+      return x
+      })
+
+    return { equipos, salas, actividades, reuniones, agenda, eventos };
   },
   data() {
     return {
@@ -168,9 +236,10 @@ export default {
   computed: {
     proximasFiltro() {
       let seccion = null;
+      console.log(this.proximas)
       return this.proximas
         .filter(
-          a => a.tipo==='evento' || this.equipos.find(x => x.id === a.detalles.equipo.id).viendo
+          a => a.tipo==='evento' || this.equipos.find(x => x.id===this.dameEquipo(a)).viendo
         )
         .map(a => {
           a.seccion = null;
@@ -182,8 +251,17 @@ export default {
         }); // ponemos la propiedad de seccion (mes actual) en los elementos
     }
   },
-  mounted() {
-    this.proximas = this.generarCitas(this.agenda, this.eventos, 45)
+  methods: {
+    dameEquipo(a) {
+      if(a.detalles && a.detalles.equipo) return a.detalles.equipo.id||a.detalles.equipo
+      if(a.reunion && a.reunion.equipo) return a.reunion.equipo.id||a.reunion.equipo
+      console.log('not found', a)
+      return -1
+    }
+  },
+   mounted() {
+     console.log('salas', this.salas)
+    this.proximas = this.generarCitas({agenda: this.agenda, reuniones: this.reuniones, eventos: this.eventos, dias: 45, salas: this.salas})
   }
 }
 </script>
