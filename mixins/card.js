@@ -73,7 +73,9 @@ export default {
         this.data.titulo ||
         this.data.titular ||
         this.data.name ||
-        this.data.nombre
+        this.data.nombre ||
+        this.data.nombreSimbolico ||
+        this.data.username
       );
     },
     ccollection() {

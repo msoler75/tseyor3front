@@ -210,6 +210,11 @@ export default {
 
   // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {
+    babel: {
+      plugins: [
+        ['@babel/plugin-proposal-private-methods', { loose: true }],
+        ["@babel/plugin-proposal-private-property-in-object", { "loose": true }]
+    ]},
     // analyze: true,
     extend(config, { isDev, isClient }) {
       // https://github.com/plotly/plotly.py/issues/2790

@@ -1,9 +1,7 @@
 <template>
   <Card center class="p-5">
     <slot>
-      <div class="mx-auto w-28 h-28 overflow-hidden rounded-full">
-        <nuxt-img :src="cimage" class="w-full h-full" fit="cover" />
-      </div>
+      <Avatar :data="data" class="w-32 h-32"/>
       <div class="py-4">
         <NLink :to="'/usuarios/' + data.id" class="inline-block w-full font-bold text-xl mb-2 mr-4">
             {{ ctitle }}
@@ -23,10 +21,5 @@
 import CardMix from '@/mixins/card'
 export default {
   mixins: [CardMix],
-  computed: {
-      cimage () {
-          return '/imagenes/usuarios/' + (this.image || this.data.image || this.data.imagen)
-      }
-  }
 };
 </script>
