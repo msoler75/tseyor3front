@@ -13,14 +13,14 @@
                     />
                     <div class="flex space-x-4 mt-5 justify-center">
                         <button class="btn" @click="cropit"><icon icon="crop" class="mr-2"/>{{textCrop}}</button>
-                         <button class="btn btn-error" @click="file=null"><icon icon="fas fa-trash" class="mr-2"/>{{textCancel}}</button>
+                         <button class="btn btn-error" @click="discard"><icon icon="fas fa-trash" class="mr-2"/>{{textCancel}}</button>
                     </div>
                 </template>
                 <div v-else-if="image">
                     <img :src="image" class="max-w-full mx-auto" />
                     <div class="flex space-x-4 mt-5 justify-center">
                         <button class="btn" @click="accept"><icon icon="check" class="mr-2"/>{{textAccept}}</button>
-                        <button class="btn btn-error" @click="file=null"><icon icon="fas fa-trash" class="mr-2"/>{{textCancel}}</button>
+                        <button class="btn btn-error" @click="discard"><icon icon="fas fa-trash" class="mr-2"/>{{textCancel}}</button>
                     </div>
                 </div>
             </div>
@@ -75,30 +75,32 @@ export default {
             const canvas = this.canvasCrop
             if(canvas) {
                 const dataURL = canvas.toDataURL('image/jpeg', 0.9)
+                this.image = dataURL
                 const blob = await (await fetch(dataURL)).blob()
                 const file = new File([blob], this.file.name, {type:"image/jpeg", lastModified: new Date()})
-                this.$emit('change', file)
                 this.verModal = false
+                this.$emit('change', {file, src: this.image})
             }
         },
         accept() {
-            this.$emit('change', this.file)
             this.verModal = false
+            this.$emit('change', {file: this.file, src: this.image})
+        },
+        discard() {
+            this.file = null
+            this.image = null
+            this.verModal = false
+            this.$emit('change', {file: null, src: null})
         }
     },
-    watch: {
-        file (value) {
-            if(!value) 
-                this.image = null
-        }
-    }
 }
 </script>
 
 <style scoped>
 
 .cropper {
-  min-height: 200px;
-  max-height: 70vh; 
+  min-height: 100px;
+  max-height: calc(100vh - 240px); 
 }
+img {max-height: calc(100vh - 240px)}
 </style>

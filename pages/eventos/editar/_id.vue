@@ -28,17 +28,11 @@
                 />
                 <p class="error">{{ errors.descripcion }}</p>
             </div>
-            <div v-if="!image">
+            <div>
                 <label for="imagen">Imagen:</label>
-                <input id="imagen" type="file" @change="onFileChange" :class="fieldValidate('imagen')" />
+                <img v-if="cimage" :src="cimage" class="mb-3">
+                <InputImage id="imagen" @change="onFileChange" :class="fieldValidate('imagen')" />
                 <p class="error">{{ errors.imagen }}</p>
-            </div>
-            <div v-else>
-                <img :src="image" class="max-w-sm max-h-xs" />
-                <div
-                    class="btn btn-gray text-xs mt-1"
-                    @click.prevent="removeImage"
-                >Remover imagen</div>
             </div>
             <div>
                 <label for="texto">Descripción detallada:</label>
@@ -88,7 +82,7 @@
                 <div
                     class="btn btn-gray text-xs mt-1"
                     @click.prevent="contenido.fechaFinal = null; tieneFinal = false"
-                >Remover fecha final</div>
+                ><span class="scale-150 mr-2">&times;</span> Remover fecha final</div>
             </div>
             <div>
                 <label for="zonahoraria">Zona Horaria:</label>
@@ -129,7 +123,7 @@
                 <div
                     class="btn btn-gray text-xs mt-1"
                     @click.prevent="contenido.sala = null; tieneSala = false"
-                >Remover sala</div>
+                ><span class="scale-150 mr-2">&times;</span> Remover sala</div>
             </div>
 
             <div v-if="!tieneCentro">
@@ -155,7 +149,7 @@
                 <div
                     class="btn btn-gray text-xs mt-1"
                     @click.prevent="contenido.centro = null; tieneCentro = false"
-                >Remover centro</div>
+                ><span class="scale-150 mr-2">&times;</span> Remover centro</div>
             </div>
             <div class="flex justify-center">
                 <button
@@ -212,7 +206,7 @@ export default {
     },
     data() {
         return {
-            image: null,
+            imagen: null,
             tieneFinal: this.contenido && this.contenido.fechaFinal,
             tieneSala: this.contenido && this.contenido.sala,
             tieneCentro: this.contenido && this.contenido.centro,
@@ -221,6 +215,9 @@ export default {
         }
     },
     computed: {
+        cimage() {
+            return this.imagen || (this.contenido.imagen?this.contenido.imagen.url:null)
+        },
         accion() {
             return this.contenido.id ? 'Editar' : 'Nuevo'
         },
@@ -240,23 +237,9 @@ export default {
         }
     },
     methods: {
-        onFileChange(e) {
-            var files = e.target.files || e.dataTransfer.files
-            if (!files.length) return
-            this.createImage(files[0])
-        },
-        createImage(file) {
-            var image = new Image()
-            var reader = new FileReader()
-            var vm = this
-
-            reader.onload = e => {
-                vm.image = e.target.result
-            }
-            reader.readAsDataURL(file)
-        },
-        removeImage: function (e) {
-            this.image = ''
+        onFileChange({file, src}){
+            console.log('filechange', file)
+            this.imagen = src
         },
         fuseSalas(options, search) {
             const fuse = new Fuse(options, {
