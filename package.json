@@ -34,6 +34,7 @@
     "markdown-it-div": "^1.1.0",
     "nuxt-edge": "latest",
     "nuxt-gmaps": "^1.2.10",
+    "vue-advanced-cropper": "^1.8.2",
     "vue-clamp": "^0.4.0",
     "vue-observe-visibility": "^1.0.0",
     "vue-scrollto": "^2.20.0",

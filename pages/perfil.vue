@@ -4,87 +4,74 @@
       <div class="my-4 mx-auto w-36 h-36 overflow-hidden rounded-full shadow">
         <nuxt-img :src="cimage" width="172" />
       </div>
-      {{loggedInUser}}
-    cimage: {{cimage}}
-      <div v-if="cimage==='/imagenes/usuario.jpg'">
-                <input id="imagen" type="file" @change="onFileChange"  />
-                <p class="error">{{ errors.imagen }}</p>
-            </div>
-            <div v-else>
-                <img :src="cimage" class="max-w-sm max-h-xs" />
-                <div
-                    class="btn btn-gray text-xs mt-1"
-                    @click.prevent="removeImage"
-                >Remover imagen</div>
-            </div>
-
-      <h1>{{ usuario.nombreSimbolico || usuario.username }}</h1>
       
+     <InputImage 
+        title="Actualizar foto del perfil" 
+        :stencil="{ aspectRatio: 1 / 1 }"
+        :crop="true" 
+        textCrop="Recortar y Guardar"
+        @change="subirImagen"
+      />
+ 
+      <h1>{{ usuario.nombreSimbolico || usuario.username }}</h1>
+
       <blockquote v-if="usuario.frase" class="mt-2 mb-4">
         <p>{{ usuario.frase }}</p>
       </blockquote>
-      
-    
+
       <divider />
       <section class="mb-9">
         <a class="btn inline-block mx-auto" icon="fas fa-mail">Contactar</a>
       </section>
-
     </Card>
   </section>
 </template>
 
 <script>
 import { mapGetters } from "vuex";
+import { Cropper } from 'vue-advanced-cropper'
+import 'vue-advanced-cropper/dist/style.css';
 export default {
   middleware: "logged",
+  components: {
+    Cropper,
+  },
+  data() {
+    return {
+      modalImagen: false,
+      errors: {},
+      nuevaImagen: null,
+    }
+  },
   computed: {
     ...mapGetters(["loggedInUser"]),
-    usuario () {
+    usuario() {
       return this.loggedInUser
     },
-    cimage () {
+    cimage() {
       return this.usuario && this.usuario.imagen && this.usuario.imagen.url
         ? this.usuario.imagen.url
         : '/imagenes/usuario.jpg'
     }
   },
-  data() {
-    return {
-      errors: {},
-    }
-  },
   methods: {
-      onFileChange(e) {
-          var files = e.target.files || e.dataTransfer.files
-          if (!files.length) return
-          this.createImage(files[0])
-      },
-     createImage(file) {
-       if(!this.usuario) return
-          var image = new Image()
-          var reader = new FileReader()
-          var vm = this
-
-          reader.onload = async e => {
-
-              await vm.$strapi.update('users', this.usuario.id, {imagen: e.target.result} )
-                vm.$store.commit(
-                "SET_USER",
-                await vm.$fetchUser()
-                )
-
-          }
-          reader.readAsDataURL(file)
-      },
-     removeImage: async function () {
-       if(!this.usuario) return
-          await this.$strapi.update('users', this.usuario.id, {imagen: null} )
+    async subirImagen(file) {
+      console.log('subirImagen', file)
+      if(!file) return
+      const form = new FormData()
+      form.append("files", file)
+      await this.$strapi.create("upload", form)
+        .then(async (response) => {
+          console.log('response', response)
+          /* if (response[0].url) {
+          await this.$strapi.update('users', this.usuario.id, { imagen: response[0].url })
           this.$store.commit(
-          "SET_USER",
-          await this.$fetchUser()
-        );
-      },
+            "SET_USER",
+            await this.$fetchUser()
+          )
+        }*/
+      })      
+    }
   }
 }
 </script>
@@ -96,4 +83,5 @@ divider {
 .card >>> h2 {
   @apply text-lg text-center tracking-wide uppercase;
 }
+
 </style>
