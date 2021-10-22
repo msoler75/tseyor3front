@@ -295,7 +295,7 @@ export default {
         {
           icon: "fas fa-user",
           name: "Ver Perfil",
-          href: "/usuarios/yo"
+          href: "/perfil"
         },
         {
           icon: "fas fa-sign-out-alt",
@@ -572,9 +572,10 @@ export default {
       // await this.$auth.logout()
       await this.$strapi.logout()
       this.$store.commit(
-          "SET_USER",
+        "SET_USER",
           null
         );
+      this.$router.push("/")
     },
     clickOff() {
        this.menuClick(null)

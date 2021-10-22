@@ -2,7 +2,37 @@ import Path from "path";
 // import sizeOf from "image-size";
 // import { LoremIpsum } from "lorem-ipsum";
 
-export default ({ app, $config, $md, $img }, inject) => {
+export default ({ app, $config, $strapi, $md, $img }, inject) => {
+
+  const fetchUser = async () => {
+    const u = await $strapi.fetchUser()
+    if(!u) return null
+
+    const query_user = `query {
+      users(where:{id: ${u.id}})  {
+        id
+        username
+        nombreSimbolico
+        frase,
+        imagen {
+          url
+          width
+          height
+        },
+        role {
+          id
+          name
+          description
+          type
+        }
+      }
+    }`
+
+    const res = await $strapi.graphql({query: query_user})
+     
+    return res.users[0]
+  }
+
   const ucFirst = texto => {
     return texto ? texto.charAt(0).toUpperCase() + texto.slice(1) : "";
   };
@@ -137,6 +167,7 @@ export default ({ app, $config, $md, $img }, inject) => {
     return html;
   };
 
+  inject("fetchUser", fetchUser);
   inject("ucFirst", ucFirst);
   inject("teaser", teaser);
   // inject("lorem", lorem);

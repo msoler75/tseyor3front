@@ -97,8 +97,8 @@ export default {
          await this.$strapi.login({identifier: this.email, password: this.password})
          this.$store.commit(
           "SET_USER",
-          await this.$strapi.fetchUser()
-        );
+          await this.$fetchUser()
+        ); 
         this.$router.push(this.$route.query.desde || "/")
         } catch (e) {
         console.error('login error:', e)
