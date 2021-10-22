@@ -1,6 +1,6 @@
 <template>
     <div>
-        <button class="btn btn-gray text-sm" @click="verModal = true">{{textButton}}</button>
+        <span class="btn btn-gray text-sm" @click="verModal = true">{{textButton}}</span>
         <Modal v-model="verModal" :title="title" class="min-w-sm max-w-screen">
             <div class="p-5 max-w-full md:max-w-md">
                 <Drop v-if="!image" @change="onFileChange" />

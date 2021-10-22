@@ -67,7 +67,7 @@
 
             <div v-if="!tieneFinal">
                 <div
-                    class="btn btn-gray text-xs mt-1"
+                    class="btn btn-gray text-xs mt-1 w-48"
                     @click.prevent="tieneFinal = true"
                 >Definir fecha final</div>
             </div>
@@ -80,7 +80,7 @@
                 />
                 <p class="error">{{ errors.fechaFinal }}</p>
                 <div
-                    class="btn btn-gray text-xs mt-1"
+                    class="btn btn-gray text-xs mt-1 w-48"
                     @click.prevent="contenido.fechaFinal = null; tieneFinal = false"
                 ><span class="scale-150 mr-2">&times;</span> Remover fecha final</div>
             </div>
@@ -101,7 +101,7 @@
 
             <div v-if="!tieneSala">
                 <div
-                    class="btn btn-gray text-xs mt-1"
+                    class="btn btn-gray text-xs mt-1 w-48"
                     @click.prevent="tieneSala = true"
                 >Definir Sala virtual</div>
             </div>
@@ -121,14 +121,14 @@
                     <div slot="no-options">Ningún resultado</div>
                 </v-select>
                 <div
-                    class="btn btn-gray text-xs mt-1"
+                    class="btn btn-gray text-xs mt-1 w-48"
                     @click.prevent="contenido.sala = null; tieneSala = false"
                 ><span class="scale-150 mr-2">&times;</span> Remover sala</div>
             </div>
 
             <div v-if="!tieneCentro">
                 <div
-                    class="btn btn-gray text-xs mt-1"
+                    class="btn btn-gray text-xs mt-1 w-48"
                     @click.prevent="tieneCentro = true"
                 >Definir Centro organizador</div>
             </div>
@@ -147,7 +147,7 @@
                     <div slot="no-options">Ningún resultado</div>
                 </v-select>
                 <div
-                    class="btn btn-gray text-xs mt-1"
+                    class="btn btn-gray text-xs mt-1 w-48"
                     @click.prevent="contenido.centro = null; tieneCentro = false"
                 ><span class="scale-150 mr-2">&times;</span> Remover centro</div>
             </div>
