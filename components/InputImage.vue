@@ -1,6 +1,6 @@
 <template>
     <div>
-        <span class="btn btn-gray text-sm" @click="verModal = true">{{textButton}}</span>
+        <span :disabled="disabled" class="btn btn-gray text-sm" @click="verModal = !disabled">{{textButton}}</span>
         <Modal v-model="verModal" :title="title" class="min-w-sm max-w-screen">
             <div class="p-5 max-w-full md:max-w-md">
                 <Drop v-if="!image" @change="onFileChange" />
@@ -8,8 +8,10 @@
                     <cropper                    
                         :src="image"
                         class="cropper"
-                        :stencil-props="stencil"
+                        :stencil-props="stencilProps"
+                        :stencil-component="stencilComponent"
                         @change="cropChange"
+                        
                     />
                     <div class="flex space-x-4 mt-5 justify-center">
                         <button class="btn" @click="cropit"><icon icon="crop" class="mr-2"/>{{textCrop}}</button>
@@ -39,7 +41,10 @@ export default {
         textCancel: { type: String, required: false, default: 'Descartar'},
         crop: {type: Boolean, required: false, default: false},
         title: { type: String, required: false, default: 'Elegir imagen' },
-        stencil: { type: Object, required: false, default: null }
+        stencilProps: { type: Object, required: false, default: null },
+        stencilComponent: { type: String, required: false, default: null },
+        disabled: { type: Boolean, required: false, default: false },
+        value: {} // to reset state
     },
     components: {
         Cropper,
@@ -93,6 +98,13 @@ export default {
             this.$emit('change', {file: null, src: null})
         }
     },
+    watch:
+    {
+        value(newValue) {
+            this.file = null
+            this.image = null
+        }
+    }
 }
 </script>
 
