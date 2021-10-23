@@ -30,7 +30,7 @@
             <div>
                 <label for="imagen">Imagen:</label>
                 <img v-if="cimage" :src="cimage" class="mb-3" />
-                <InputImage id="imagen" @change="onFileChange" :class="fieldValidate('imagen')" />
+                <InputImage id="imagen" @change="onFileChange" :class="fieldValidate('imagen')" :required="!cimage" />
                 <p class="error">{{ errors.imagen }}</p>
             </div>
             <div>
@@ -166,7 +166,7 @@
                     class="btn w-full text-center"
                     :class="modificado || guardando || creando ? 'btn-warning' : 'btn-success'"
                     type="submit"
-                    :disabled="!modificado"
+                    :disabled="guardando||!modificado"
                 >
                     <div class="flex justify-center items-center">
                         <icon
@@ -227,6 +227,7 @@ export default {
     data() {
         return {
             imagen: null,
+            fileImagen: null,
             tieneFinal: this.contenido && this.contenido.fechaFinal,
             tieneSala: this.contenido && this.contenido.sala,
             tieneCentro: this.contenido && this.contenido.centro,
@@ -254,12 +255,16 @@ export default {
     watch: {
         contentJSON(newValue) {
             this.modificado = true
+        },
+        imagen(newValue) {
+            this.modificado = true
         }
     },
     methods: {
         onFileChange({ file, src }) {
             console.log('filechange', file)
             this.imagen = src
+            this.fileImagen = file
         },
         fuseSalas(options, search) {
             const fuse = new Fuse(options, {
@@ -282,19 +287,41 @@ export default {
         async submit() {
             this.clearErrors()
             this.guardando = true
-            if (this.contenido.id) {
-                await this.$strapi
-                    .update('eventos', this.contenido.id, this.contenido)
-                    .then(() => {
-                        this.modificado = false
-                    })
-                    .catch(err => {
-                        this.setErr(err)
+            // primero subimos la imagen
+            if(this.imagen)
+            {
+                const form = new FormData()
+                const that = this
+                form.append("files", this.fileImagen)
+                this.$strapi.create("upload", form)
+                    .then(async (response) => {
+                        this.guardarEvento(response[0].id)
                     })
             }
             else
-                await this.$strapi.create('eventos', this.contenido)
+            this.guardarEvento()
+        },
+        async guardarEvento(idImage) {
+            const data = {...this.contenido}
+            if(idImage)
+                data.imagen = idImage?idImage:data.imagen.id
+            if (this.contenido.id) {
+                this.$strapi
+                    .update('eventos', this.contenido.id, data)
+                    .then(() => {
+                        this.modificado = false
+                        this.guardando = false
+                    })
+                    .catch(err => {
+                        this.setErr(err)
+                        this.guardando = false
+                    })
+            }
+            else
+                this.$strapi.create('eventos', data)
                     .then((contenido) => {
+                        this.$router.push(`/eventos/editar/${contenido.id}`)
+                        /*
                         console.log('creado', contenido)
                         for (const field in contenido) {
                             if (relaciones11.includes(field))
@@ -304,12 +331,12 @@ export default {
                         }
                         this.$nextTick(() => {
                             this.modificado = false
-                        })
+                        })*/
                     })
                     .catch(err => {
                         this.setErr(err)
+                        this.guardando = false
                     })
-            this.guardando = false
         }
     }
 }

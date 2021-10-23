@@ -1,6 +1,7 @@
 <template>
-    <div>
+    <div class="relative">
         <span :disabled="disabled" class="btn btn-gray text-sm" @click="verModal = !disabled">{{textButton}}</span>
+        <input :required="required" v-model="image" class="absolute left-0 opacity-0 pointer-events-none"/>
         <Modal v-model="verModal" :title="title" class="min-w-sm max-w-screen">
             <div class="p-5 max-w-full md:max-w-md">
                 <Drop v-if="!image" @change="onFileChange" accept="image/*"/>
@@ -44,6 +45,7 @@ export default {
         stencilProps: { type: Object, required: false, default: null },
         stencilComponent: { type: String, required: false, default: null },
         disabled: { type: Boolean, required: false, default: false },
+        required: { type: Boolean, required: false, default: false },
         value: {} // to reset state
     },
     components: {
