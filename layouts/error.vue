@@ -6,7 +6,7 @@
       >{{ code }}</h1>
       <h2>{{ message }}</h2>
     </div>
-    <nuxt-img src="/imagenes/trabajando.png" />
+    <nuxt-img :src="'/imagenes/'+image" />
   </div>
 </template>
 
@@ -28,6 +28,13 @@ export default {
       if (!this.error) return 'Error desconocido'
       if (this.error && this.error.message) return this.error.message
       return 'Error no reconocido'
+    },
+    image() {
+      switch(this.code) {
+        case 503: return 'escenario-noche.png'
+        default: 
+        return 'trabajando.png'
+      }
     }
   }
 }
