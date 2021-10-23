@@ -36,13 +36,6 @@ export default {
   components: {
     Cropper,
   },
-  data() {
-    return {
-      modalImagen: false,
-      errors: {},
-      nuevaImagen: null,
-    }
-  },
   computed: {
     ...mapGetters(["loggedInUser"]),
     usuario() {
@@ -55,8 +48,9 @@ export default {
     }
   },
   methods: {
-    async subirImagen(file) {
-      console.log('subirImagen', file)
+    async subirImagen(payload) {
+      console.log('subirImagen', payload)
+      const file = payload.file || payload
       if(!file) return
       const form = new FormData()
       form.append("files", file)
