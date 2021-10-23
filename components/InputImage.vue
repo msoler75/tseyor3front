@@ -3,7 +3,7 @@
         <span :disabled="disabled" class="btn btn-gray text-sm" @click="verModal = !disabled">{{textButton}}</span>
         <Modal v-model="verModal" :title="title" class="min-w-sm max-w-screen">
             <div class="p-5 max-w-full md:max-w-md">
-                <Drop v-if="!image" @change="onFileChange" />
+                <Drop v-if="!image" @change="onFileChange" accept="image/*"/>
                 <template v-if="crop && image" class="flex flex-col justify-center">
                     <cropper                    
                         :src="image"
@@ -65,7 +65,9 @@ export default {
             var files = e.target.files || e.dataTransfer.files
             this.file = null
             if (!files.length) return
-            this.createImage(files[0])
+            console.log('change', )
+            if(files[0].name.match(/\.(jpe?g|png|webp|gif)/i))
+                this.createImage(files[0])
         },
         createImage(file) {
             this.file = file

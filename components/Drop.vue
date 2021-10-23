@@ -1,6 +1,6 @@
 <template>
     <div style="border-style:solid;" @dragover.prevent @drop.prevent>
-      <input type="file" :multiple="multiple" @change="uploadFile"/>
+      <input type="file" :multiple="multiple" @change="uploadFile" :accept="accept"/>
       <div @drop="dragFile" class="bg-green-200 text-green-900 mt-4 mb-5 px-5 py-12 text-center">
         O arrastra el archivo aquí
         <div v-if="false && File.length">
@@ -15,7 +15,8 @@
 <script>
 export default {
     props: {
-        multiple: {type: Boolean, required: false, default: false}
+        multiple: {type: Boolean, required: false, default: false},
+        accept: {type: String, required: false, default: ''}
     },
     data: () => ({ File: []}),
     methods: {

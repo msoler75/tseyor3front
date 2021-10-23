@@ -95,7 +95,7 @@ export default {
       if(!usuarios.length)
         return $error(404, 'Usuario no encontrado')
       const usuario = usuarios[0]
-      return { usuario }
+      return { id, usuario }
     } catch (e) {
       $error(503)
     }
@@ -136,10 +136,13 @@ export default {
       return '/' + comentario.uid.replace('-', '/') + '#comentarios'
     },
     async fetchUser(){
-      this.$store.commit(
+      await this.$store.commit(
               "SET_USER",
               await this.$fetchUser()
             )
+      const usuarios = await this.$strapi.find('users', { id: this.id })
+      if(usuarios.length)
+        this.usuario = usuarios[0]
     },
     async guardarFrase() {
        this.subiendoFrase = true
