@@ -74,13 +74,6 @@ export default {
     },
     
   },
-  /*
-  watch: {
-    contenidoJSON (value) {
-      //console.log('noticias_id, watch title =', value)
-      // this.$store.commit('setSEO', this.ctitle)
-    }
-  }, */
   methods: {
     renderMarkdown(md) {
       let html = this.$md.render(md)

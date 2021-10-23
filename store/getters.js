@@ -59,7 +59,7 @@ export default {
     }
     return r
   },
-  title (state) {
+  /* title (state) {
     return state.SEO.title
   },
   description (state) {
@@ -70,7 +70,7 @@ export default {
   },
   type (state) {
     return state.SEO.type
-  },
+  }, */
   
   audioPlaying (state) {
     return state.audioPlaying

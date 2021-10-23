@@ -3,16 +3,6 @@ export default {
     console.log('SET_USER', user)
     state.user = user
   },
-  setSEO (state, seo) {
-    console.log('store.seo', seo)
-    state.SEO.title = seo.title
-    state.SEO.description = seo.description
-    state.SEO.image = seo.image
-    state.SEO.type = seo.type
-  },
-  setTitle (state, title) {
-    // state.SEO.title = title
-  },
   /**
    * Reproduce el audio
    * @param {*} payload que contiene { title, artist, src, pic }
