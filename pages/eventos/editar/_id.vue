@@ -1,6 +1,5 @@
 <template>
     <Card class="py-5 px-2 xs:px-4 max-w-md mx-auto bg-blue-gray-50 dark:bg-blue-gray-900">
-
         <Config :focused="true" />
 
         <h1>{{ accion }} evento</h1>
@@ -30,14 +29,19 @@
             </div>
             <div>
                 <label for="imagen">Imagen:</label>
-                <img v-if="cimage" :src="cimage" class="mb-3">
+                <img v-if="cimage" :src="cimage" class="mb-3" />
                 <InputImage id="imagen" @change="onFileChange" :class="fieldValidate('imagen')" />
                 <p class="error">{{ errors.imagen }}</p>
             </div>
             <div>
                 <label for="texto">Descripción detallada:</label>
                 <br />
-                <textarea id="texto" v-model="contenido.texto" rows="7" :class="fieldValidate('texto')" />
+                <textarea
+                    id="texto"
+                    v-model="contenido.texto"
+                    rows="7"
+                    :class="fieldValidate('texto')"
+                />
                 <p class="error">{{ errors.texto }}</p>
             </div>
             <div>
@@ -82,7 +86,9 @@
                 <div
                     class="btn btn-gray text-xs mt-1 w-48"
                     @click.prevent="contenido.fechaFinal = null; tieneFinal = false"
-                ><span class="scale-150 mr-2">&times;</span> Remover fecha final</div>
+                >
+                    <span class="scale-150 mr-2">&times;</span> Remover fecha final
+                </div>
             </div>
             <div>
                 <label for="zonahoraria">Zona Horaria:</label>
@@ -123,7 +129,9 @@
                 <div
                     class="btn btn-gray text-xs mt-1 w-48"
                     @click.prevent="contenido.sala = null; tieneSala = false"
-                ><span class="scale-150 mr-2">&times;</span> Remover sala</div>
+                >
+                    <span class="scale-150 mr-2">&times;</span> Remover sala
+                </div>
             </div>
 
             <div v-if="!tieneCentro">
@@ -149,7 +157,9 @@
                 <div
                     class="btn btn-gray text-xs mt-1 w-48"
                     @click.prevent="contenido.centro = null; tieneCentro = false"
-                ><span class="scale-150 mr-2">&times;</span> Remover centro</div>
+                >
+                    <span class="scale-150 mr-2">&times;</span> Remover centro
+                </div>
             </div>
             <div class="flex justify-center">
                 <button
@@ -159,7 +169,10 @@
                     :disabled="!modificado"
                 >
                     <div class="flex justify-center items-center">
-                        <icon class="!w-6" :icon="guardando?'sync spin': creando?'plus-square' : modificado ? 'sync': 'check'" />
+                        <icon
+                            class="!w-6"
+                            :icon="guardando ? 'sync spin' : creando ? 'plus-square' : modificado ? 'sync' : 'check'"
+                        />
                         <span class="inline-block w-28">{{ verbo }}</span>
                     </div>
                 </button>
@@ -176,33 +189,40 @@ import validation from "@/mixins/validation"
 export default {
     components: { vSelect },
     mixins: [validation],
-    async asyncData({ $strapi, route }) {
-        let id = route.params.id
-        let contenido = {
-            titulo: '',
-            texto: '',
-            descripcion: '',
-            zonahoraria: 'Espana',
-            fechaComienzo: null,
-            fechaFinal: null,
-            imagen: null,
-            tipoEvento: 'encuentro',
-            sala: null,
-            organiza: null,
-            autor: null
+    async asyncData({ $strapi, route, $error }) {
+        try {
+            let id = route.params.id
+            let contenido = {
+                titulo: '',
+                texto: '',
+                descripcion: '',
+                zonahoraria: 'Espana',
+                fechaComienzo: null,
+                fechaFinal: null,
+                imagen: null,
+                tipoEvento: 'encuentro',
+                sala: null,
+                organiza: null,
+                autor: null
+            }
+            if (id && id !== 'nuevo') {
+                const resultado = await $strapi.find(
+                    'eventos',
+                    id.match(/\d+/) ? { id } : { slug: id }
+                )
+                if(!resultado.length)
+                    return $error(404, 'Evento no encontrado')
+                contenido = resultado[0]
+                for (const campo of relaciones11)
+                    contenido[campo] = contenido[campo] && contenido[campo].id ? contenido[campo].id : null
+            }
+            const salas = await $strapi.find('salas')
+            const centros = await $strapi.find('centros')
+            return { contenido, evento: contenido, salas, centros }
         }
-        if (id && id !== 'nuevo') {
-            const resultado = await $strapi.find(
-                'eventos',
-                id.match(/\d+/) ? { id } : { slug: id }
-            )
-            contenido = resultado[0]
-            for(const campo of relaciones11)
-                contenido[campo] = contenido[campo] && contenido[campo].id?contenido[campo].id: null
+        catch (e) {
+            $error(503)
         }
-        const salas = await $strapi.find('salas')
-        const centros = await $strapi.find('centros')
-        return { contenido, evento: contenido, salas, centros }
     },
     data() {
         return {
@@ -216,7 +236,7 @@ export default {
     },
     computed: {
         cimage() {
-            return this.imagen || (this.contenido.imagen?this.contenido.imagen.url:null)
+            return this.imagen || (this.contenido.imagen ? this.contenido.imagen.url : null)
         },
         accion() {
             return this.contenido.id ? 'Editar' : 'Nuevo'
@@ -228,7 +248,7 @@ export default {
             return JSON.stringify(this.contenido)
         },
         creando() {
-            return !this.contenido||!this.contenido.id
+            return !this.contenido || !this.contenido.id
         }
     },
     watch: {
@@ -237,7 +257,7 @@ export default {
         }
     },
     methods: {
-        onFileChange({file, src}){
+        onFileChange({ file, src }) {
             console.log('filechange', file)
             this.imagen = src
         },
@@ -276,10 +296,9 @@ export default {
                 await this.$strapi.create('eventos', this.contenido)
                     .then((contenido) => {
                         console.log('creado', contenido)
-                        for(const field in contenido)
-                        {
-                            if(relaciones11.includes(field))
-                                this.$set(this.contenido, field, contenido[field]?contenido[field].id:null)
+                        for (const field in contenido) {
+                            if (relaciones11.includes(field))
+                                this.$set(this.contenido, field, contenido[field] ? contenido[field].id : null)
                             else
                                 this.$set(this.contenido, field, contenido[field])
                         }
@@ -298,6 +317,6 @@ export default {
 
 
 <style scoped>
-@import '@/assets/css/form.css';
-@import '@/assets/css/vselect.css';
+@import "@/assets/css/form.css";
+@import "@/assets/css/vselect.css";
 </style>

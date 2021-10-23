@@ -56,7 +56,7 @@ import seo from '@/mixins/seo.js'
 export default {
   mixins: [seo],
   components: { Hooper, Slide, Navigation },
-  async asyncData({ $content }) {
+  async asyncData() {
     // fetch our article here
     // const article = await $content('presentacion').fetch()
     const slides = [

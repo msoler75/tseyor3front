@@ -24,7 +24,8 @@
 import seo from '@/mixins/seo.js'
 export default {
   mixins: [seo],
-  async asyncData({$strapi}) {
+  async asyncData({$strapi, $error}) {
+    try{
       const filters = {
           _start: 0,
           _limit: 12, 
@@ -40,6 +41,9 @@ export default {
 
       var hayMas = boletines.length === filters._limit
       return { filters, boletines, hayMas }
+    }catch (e) {
+      $error(503)
+    }
   },
   data() {
     return {

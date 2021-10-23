@@ -1,12 +1,55 @@
-import Path from "path";
+import Path from 'path'
 // import sizeOf from "image-size";
 // import { LoremIpsum } from "lorem-ipsum";
 
-export default ({ app, $config, $strapi, $md, $img }, inject) => {
+export default ({ app, $config, $strapi, $md, $img, error }, inject) => {
+  const errMessage = code => {
+    switch (code) {
+      case 400:
+        return 'No se pudo interpretar la solicitud'
+      case 401:
+        return 'Requiere autenticación'
+      case 403:
+        return 'Acceso denegado'
+      case 404:
+        return 'Página no encontrada'
+      case 405:
+        return 'Método no permitido'
+      case 406:
+        return 'No se encontró contenido apropiado'
+      case 408:
+        return 'El tiempo de espera de respuesta caducó'
+      case 415:
+        return 'Tipo de multimedia no soportado'
+      case 429:
+        return 'Demasiadas solicitudes'
+      case 431:
+        return 'Campos de encabezado demasiado largos'
+      case 503:
+        return 'Servicio no disponible temporalmente'
+      case 500:
+        return 'Error interno'
+      case 501:
+        return 'No implementado'
+      case 502:
+        return 'Bad Gateway'
+      case 504:
+        return 'No se pudo obtener respuesta'
+      case 505:
+        return 'Versión HTTP no soportada'
+    }
+    return 'Error no reconocido'
+  }
+
+  const myError = (obj, msg) => {
+    let code = typeof obj ==='number'?obj:obj&&obj.statusCode?obj.statusCode:500
+    let message = msg&&typeof msg==='string'?msg:obj&&obj.message?obj.message:errMessage(code)
+    return error({ statusCode: code, message })
+  }
 
   const fetchUser = async () => {
     const u = await $strapi.fetchUser()
-    if(!u) return null
+    if (!u) return null
 
     const query_user = `query {
       users(where:{id: ${u.id}})  {
@@ -28,19 +71,19 @@ export default ({ app, $config, $strapi, $md, $img }, inject) => {
       }
     }`
 
-    const res = await $strapi.graphql({query: query_user})
-     
+    const res = await $strapi.graphql({ query: query_user })
+
     return res.users[0]
   }
 
   const ucFirst = texto => {
-    return texto ? texto.charAt(0).toUpperCase() + texto.slice(1) : "";
-  };
+    return texto ? texto.charAt(0).toUpperCase() + texto.slice(1) : ''
+  }
   const teaser = (texto, len) => {
-    if(!texto) return ''
-    if (texto.length < len) return texto;
-    return texto.substr(0, len) + "...";
-  };
+    if (!texto) return ''
+    if (texto.length < len) return texto
+    return texto.substr(0, len) + '...'
+  }
 
   /**
    * Generate Lorem Ipsum text
@@ -70,59 +113,57 @@ export default ({ app, $config, $strapi, $md, $img }, inject) => {
   }; */
 
   const slugify = str => {
-    str = str.replace(/^\s+|\s+$/g, ""); // trim
-    str = str.toLowerCase();
+    str = str.replace(/^\s+|\s+$/g, '') // trim
+    str = str.toLowerCase()
 
     // remove accents, swap ñ for n, etc
-    const from = "àáäâèéëêìíïîòóöôùúüûñç·/_,:;";
-    const to = "aaaaeeeeiiiioooouuuunc------";
+    const from = 'àáäâèéëêìíïîòóöôùúüûñç·/_,:;'
+    const to = 'aaaaeeeeiiiioooouuuunc------'
 
     for (let i = 0, l = from.length; i < l; i++)
-      str = str.replace(new RegExp(from.charAt(i), "g"), to.charAt(i));
+      str = str.replace(new RegExp(from.charAt(i), 'g'), to.charAt(i))
 
     str = str
-      .replace(/[^a-z0-9 -]/g, "") // remove invalid chars
-      .replace(/\s+/g, "-") // collapse whitespace and replace by -
-      .replace(/-+/g, "-"); // collapse dashes
+      .replace(/[^a-z0-9 -]/g, '') // remove invalid chars
+      .replace(/\s+/g, '-') // collapse whitespace and replace by -
+      .replace(/-+/g, '-') // collapse dashes
 
-    return str;
-  };
+    return str
+  }
 
   const renderMarkdownServer = (md, images, keepTitle) => {
-    if(!md) return ""
-    if(!keepTitle)
-    {
+    if (!md) return ''
+    if (!keepTitle) {
       const pos = md.search('----')
-      if(pos>-1 && pos<200)
-        md = md.replace(/.*\n---+\n/m, '')
+      if (pos > -1 && pos < 200) md = md.replace(/.*\n---+\n/m, '')
     }
-    var html = $md.render(md);
+    var html = $md.render(md)
     // console.warn(html);
     html = html
-      .replace(/(<img[^>]+>)<br \/>\n?\s*(<img)/gm, "$1\n$2")
-      .replace(/(<img[^>]+>)<br \/>\n?\s*(<img)/gm, "$1\n$2")
+      .replace(/(<img[^>]+>)<br \/>\n?\s*(<img)/gm, '$1\n$2')
+      .replace(/(<img[^>]+>)<br \/>\n?\s*(<img)/gm, '$1\n$2')
       .replace(
         /<p[^>]*>(?:<strong>)?((?:\s*<img[^>]+>[\s\n]*)+)(?:<\/strong>)?<\/p>/gm,
-        "$1"
+        '$1'
       )
       .replace(
         /<p[^>]*>(<img[^>]+>)<br\s*\/?>\n(.+?)<\/p>/g,
-        "<figure>$1<figcaption>$2</figcaption></figure>"
+        '<figure>$1<figcaption>$2</figcaption></figure>'
       )
       .replace(/<img[^>]+>/g, p0 => {
-        const data = p0.match(/src=['"]([^'"]+)['"]/);
-        if (!data || !data[1]) return p0;
-        const src = data[1];
-        var sizes = "xs:100vw xm:100vw sm:100vw md:100vw lg:100vw";
+        const data = p0.match(/src=['"]([^'"]+)['"]/)
+        if (!data || !data[1]) return p0
+        const src = data[1]
+        var sizes = 'xs:100vw xm:100vw sm:100vw md:100vw lg:100vw'
         const opts = {
-          format: "webp",
+          format: 'webp',
           quality: 80
-        };
-        if (images && src.charAt(0) === "/") {
+        }
+        if (images && src.charAt(0) === '/') {
           // console.warn('publicFolder', $config)
-          const img = images.find(x => x.url === src);
+          const img = images.find(x => x.url === src)
           if (img) {
-            console.log("found img", img);
+            console.log('found img', img)
             // console.log('dimensions', dimensions)
             const screens = {
               xs: 320,
@@ -133,44 +174,45 @@ export default ({ app, $config, $strapi, $md, $img }, inject) => {
               // xl: 1280,
               // xxl: 1536,
               // '2xl': 1536
-            };
-            sizes = [];
+            }
+            sizes = []
             for (const s in screens) {
-              if (img.width >= screens[s]) sizes.push(`${s}:100vw`);
+              if (img.width >= screens[s]) sizes.push(`${s}:100vw`)
               else {
-                sizes.push(`${s}:${img.width}px`);
-                break;
+                sizes.push(`${s}:${img.width}px`)
+                break
               }
             }
-            sizes = sizes.join(" ");
-            console.log("sizes for width", img.width, "are", sizes);
-            opts.width = img.width;
-            opts.height = img.height;
+            sizes = sizes.join(' ')
+            console.log('sizes for width', img.width, 'are', sizes)
+            opts.width = img.width
+            opts.height = img.height
           }
           const imgr = $img.getSizes(src, {
             sizes,
             modifiers: opts
-          });
-          console.warn(imgr);
+          })
+          console.warn(imgr)
 
           return `<img
             loading="lazy"
             src="${$img(src, { quality: 70 })}"
             srcset="${imgr.srcset}"
             sizes="${imgr.sizes}"
-          >`;
+          >`
         }
 
-        return p0;
-      });
+        return p0
+      })
 
-    return html;
-  };
+    return html
+  }
 
-  inject("fetchUser", fetchUser);
-  inject("ucFirst", ucFirst);
-  inject("teaser", teaser);
+  inject('error', myError)
+  inject('fetchUser', fetchUser)
+  inject('ucFirst', ucFirst)
+  inject('teaser', teaser)
   // inject("lorem", lorem);
-  inject("slugify", slugify);
-  inject("renderMarkdownServer", renderMarkdownServer);
-};
+  inject('slugify', slugify)
+  inject('renderMarkdownServer', renderMarkdownServer)
+}

@@ -1,63 +1,84 @@
 <template>
-<section class="relative px-7 mb-7">
-  <Config :contained="false"/>
+  <section class="relative px-7 mb-7">
+    <Config :contained="false" />
 
-  <GridFluid class="gap-4">
-    <div class="h-64 md:h-full" :style="bgImage">
-    </div>
+    <GridFluid class="gap-4">
+      <div class="h-64 md:h-full" :style="bgImage"></div>
 
-    <div class="surface p-5 text-center flex flex-col justify-center">
-        <h2 class="my-0">
-          {{ equipo.nombre }}
-        </h2>
-      <section class="text-3xl my-5">
-        <Icon icon="people-carry" />
-      </section>
-        <p>
-          {{equipo.descripcion}}
-        </p>
+      <div class="surface p-5 text-center flex flex-col justify-center">
+        <h2 class="my-0">{{ equipo.nombre }}</h2>
+        <section class="text-3xl my-5">
+          <Icon icon="people-carry" />
+        </section>
+        <p>{{ equipo.descripcion }}</p>
         <div class="mt-5 h-8 flex justify-center items-center">
-          <div v-if="soyMiembro" class="italic"><Icon icon="check-circle" class="text-green mr-1"/> Eres miembro</div>
-          <div v-else><Button @click="entrar" class="btn"><Icon icon="door-open" class="mr-2" />Inscríbete</Button></div>
+          <div v-if="soyMiembro" class="italic">
+            <Icon icon="check-circle" class="text-green mr-1" />Eres miembro
+          </div>
+          <div v-else>
+            <Button @click="entrar" class="btn">
+              <Icon icon="door-open" class="mr-2" />Inscríbete
+            </Button>
+          </div>
         </div>
-    </div>
-
-    <div class="surface p-5 cols-2 overflow-auto" v-if="equipo.pizarra">
-      <div v-html="equipo.textoHTML"/>
-    </div>
-
-    <div class="surface p-5 overflow-auto" :class="miembros.length>8?'cols-2':''">
-      <h3>Miembros</h3>
-      <div class="flex flex-wrap" v-if="miembros.length">
-        <Avatar v-for="user of miembros" :key="user.id" :data="user" :class="avatarClass" class="m-1" />
       </div>
-      <div v-else class="flex flex-col flex-grow justify-center">
-        <p class="text-center">No hay miembros</p>
+
+      <div class="surface p-5 cols-2 overflow-auto" v-if="equipo.pizarra">
+        <div v-html="equipo.textoHTML" />
       </div>
-      <template v-if="equipo.coordinadores.length">
-      <h3>Coordinadores</h3>
-      <div class="flex flex-wrap">
-        <Avatar v-for="user of equipo.coordinadores" :key="user.id" :data="user" :class="avatarClass" class="m-1" />
+
+      <div class="surface p-5 overflow-auto" :class="miembros.length > 8 ? 'cols-2' : ''">
+        <h3>Miembros</h3>
+        <div class="flex flex-wrap" v-if="miembros.length">
+          <Avatar
+            v-for="user of miembros"
+            :key="user.id"
+            :data="user"
+            :class="avatarClass"
+            class="m-1"
+          />
+        </div>
+        <div v-else class="flex flex-col flex-grow justify-center">
+          <p class="text-center">No hay miembros</p>
+        </div>
+        <template v-if="equipo.coordinadores.length">
+          <h3>Coordinadores</h3>
+          <div class="flex flex-wrap">
+            <Avatar
+              v-for="user of equipo.coordinadores"
+              :key="user.id"
+              :data="user"
+              :class="avatarClass"
+              class="m-1"
+            />
+          </div>
+        </template>
       </div>
-      </template>
-    </div>
 
-    <div v-if="equipo.actividades&&equipo.actividades.length" class="surface p-5">
-      <h3><Icon icon="hiking" class="mr-3"/>Actividades</h3>
-      <div class="flex flex-col space-y-4">
-        <NLink v-for="actividad of equipo.actividades" :key="actividad.id" class="p-3 btn btn-gray" :to="'/actividades/'+actividad.id">{{actividad.titulo}} <span v-if="actividad.descripcion" class="text-diminished"> — {{actividad.descripcion}}</span></NLink>
+      <div v-if="equipo.actividades && equipo.actividades.length" class="surface p-5">
+        <h3>
+          <Icon icon="hiking" class="mr-3" />Actividades
+        </h3>
+        <div class="flex flex-col space-y-4">
+          <NLink
+            v-for="actividad of equipo.actividades"
+            :key="actividad.id"
+            class="p-3 btn btn-gray"
+            :to="'/actividades/' + actividad.id"
+          >
+            {{ actividad.titulo }}
+            <span v-if="actividad.descripcion" class="text-diminished">— {{ actividad.descripcion }}</span>
+          </NLink>
+        </div>
       </div>
-    </div>
+    </GridFluid>
 
-
-
-  </GridFluid>
-
-  <section class="mt-7 flex">
-      <button v-if="soyMiembro" class="btn btn-gray ml-auto" @click="salir" ><Icon icon="sign-out-alt" class="mr-1" /> Salir del equipo</button>
+    <section class="mt-7 flex">
+      <button v-if="soyMiembro" class="btn btn-gray ml-auto" @click="salir">
+        <Icon icon="sign-out-alt" class="mr-1" />Salir del equipo
+      </button>
+    </section>
   </section>
-
-</section>
 </template>
 
 <script>
@@ -66,63 +87,69 @@ import vercontenidomixin from "@/mixins/vercontenido.js";
 import seo from '@/mixins/seo.js'
 export default {
   mixins: [vercontenidomixin, seo],
-  middleware: 'logged', 
-  async asyncData({ app, $strapi, route }) {
-    let contenido = {miembros:[], coordinadores: []}
+  middleware: 'logged',
+  async asyncData({ app, $strapi, route, $error }) {
     try {
-      const id = route.params.id
-      const equipos = await $strapi.find('equipos', id.match(/\d+/)?{id}:{slug:id})
-      contenido = equipos[0]
-      contenido.textoHTML = app.$renderMarkdownServer(contenido.pizarra/*, contenido.imagenes*/)
+      let contenido = { miembros: [], coordinadores: [] }
+      try {
+        const id = route.params.id
+        const equipos = await $strapi.find('equipos', id.match(/\d+/) ? { id } : { slug: id })
+        if(!equipos.length)
+          return $error(404, 'Equipo no encontrado')
+        contenido = equipos[0]
+        contenido.textoHTML = app.$renderMarkdownServer(contenido.pizarra/*, contenido.imagenes*/)
+      }
+      catch (error) {
+        console.error(error)
+      }
+      return { contenido, equipo: contenido }
     }
-    catch(error)
-    {
-      console.error(error)
+    catch (e) {
+      $error(503)
     }
-    return { contenido, equipo: contenido };
   },
   computed: {
     ...mapGetters(["loggedInUser"]),
     miembros() {
       const m = this.equipo.coordinadores
-      for(const user of this.equipo.miembros)
-      if(!this.equipo.coordinadores.find(x=>x.id===user.id))
-        m.push(user)
+      for (const user of this.equipo.miembros)
+        if (!this.equipo.coordinadores.find(x => x.id === user.id))
+          m.push(user)
       return m
     },
     avatarClass() {
-      if(!this.miembros) return ''
+      if (!this.miembros) return ''
       const n = this.miembros.length
-      return n<8?'w-16 h-16':n<16?'w-12 h-12':n<64?'w-8 h-8':'w-4 h-4'
+      return n < 8 ? 'w-16 h-16' : n < 16 ? 'w-12 h-12' : n < 64 ? 'w-8 h-8' : 'w-4 h-4'
     },
     bgImage() {
-      const imgUrl = this.$img(this.equipo.imagen?this.equipo.imagen.url:'/imagenes/equipo.jpg', {width: 400, format: 'webp', quality: 70})
+      const imgUrl = this.$img(this.equipo.imagen ? this.equipo.imagen.url : '/imagenes/equipo.jpg', { width: 400, format: 'webp', quality: 70 })
       return {
         backgroundImage: `url('${imgUrl}')`,
         backgroundPosition: 'center',
         backgroundSize: 'cover'
       }
     },
-    soyMiembro () {
-      return !!this.miembros.find(x=>x.id===this.$strapi.user.id)
+    soyMiembro() {
+      return !!this.miembros.find(x => x.id === this.$strapi.user.id)
     }
   },
   methods: {
-     async entrar() {
-      await this.$strapi.$http.$put('/api/equipos/'+this.equipo.id+'/join')
+    async entrar() {
+      await this.$strapi.$http.$put('/api/equipos/' + this.equipo.id + '/join')
       //await this.$auth.fetchUser()
       // this.$router.app.refresh()  
       this.refresh()
     },
     async salir() {
-      await this.$strapi.$http.$put('/api/equipos/'+this.equipo.id+'/leave')
+      await this.$strapi.$http.$put('/api/equipos/' + this.equipo.id + '/leave')
       // this.$router.app.refresh()  
       this.refresh()
     },
     async refresh() {
       // await this.$strapi.fetchUser() // actualizamos los datos del usuario actual y el equipo con sus miembros después de la operación
-      const equipos = await this.$strapi.find('equipos', {id: this.equipo.id})
-      this.$set(this.contenido, 'users', equipos[0].miembros) 
+      const equipos = await this.$strapi.find('equipos', { id: this.equipo.id })
+      this.$set(this.contenido, 'users', equipos[0].miembros)
     }
     /*
     async getEquipos() {

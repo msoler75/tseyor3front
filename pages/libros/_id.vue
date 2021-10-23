@@ -5,50 +5,38 @@
     <div
       class="px-3 sm:px-5 md:px-7 relative w-full shrink-0 flex-grow-1 max-w-3xl flex flex-col items-start"
     >
-      <div
-        class="hidden 4xl:block absolute right-0 translate-x-3 5xl:translate-x-10 h-full"
-      >
-        
-      </div>
+      <div class="hidden 4xl:block absolute right-0 translate-x-3 5xl:translate-x-10 h-full"></div>
 
-      <Card class="shadow-none xs:shadow py-4 px-2 sm:p-5 md:p-8 lg:p-12 w-full max-w-2xl mx-auto mb-14">
+      <Card
+        class="shadow-none xs:shadow py-4 px-2 sm:p-5 md:p-8 lg:p-12 w-full max-w-2xl mx-auto mb-14"
+      >
         <section class="block xs:flex items-start">
-          <div
-            class="book-container my-4 mr-5 xs:my-0 xs:mr-7 lg:mr-20 flex-shrink-0 flex-grow-0"
-          >
+          <div class="book-container my-4 mr-5 xs:my-0 xs:mr-7 lg:mr-20 flex-shrink-0 flex-grow-0">
             <div class="book">
-              <nuxt-img
-                :src="cimage"
-                sizes="xs:40px sm:80px md:150px lg:200px"
-              />
+              <nuxt-img :src="cimage" sizes="xs:40px sm:80px md:150px lg:200px" />
             </div>
           </div>
           <section class="flex-grow flex-shrink md:max-w-sm">
             <h1 class="break-all sm:break-normal">{{ ctitle }}</h1>
             <div class="hidden lg:block mt-4 text-justify" v-html="ctext" />
             <section class="mt-3 text-diminished text-xs">
-              <span> {{ libro.edicionNumero }}ª edición</span
-              ><span v-if="libro.edicionFecha">, {{ libro.edicionFecha }}</span>
+              <span>{{ libro.edicionNumero }}ª edición</span>
+              <span v-if="libro.edicionFecha">, {{ libro.edicionFecha }}</span>
               &nbsp;—&nbsp;
               <span>{{ libro.paginas }} páginas</span>
             </section>
             <section class="flex mt-7 justify-end">
-              <a download :href="libro.documento.url" class="btn btn-error"
-                ><icon icon="download" class="mr-2" />Descargar</a
-              >
+              <a download :href="libro.documento.url" class="btn btn-error">
+                <icon icon="download" class="mr-2" />Descargar
+              </a>
             </section>
           </section>
         </section>
-        <section
-          class="lg:hidden mt-4 text-justify"
-          v-html="libro.descripcion"
-        />
+        <section class="lg:hidden mt-4 text-justify" v-html="libro.descripcion" />
       </Card>
     </div>
 
-
     <section class="py-4 w-full mb-8 bg-opacity-80 bg-white dark:bg-transparent">
-
       <!-- share modal -->
       <Comparte v-model="viendoCompartir" />
 
@@ -60,19 +48,12 @@
         @share="viendoCompartir = true"
         class="mx-auto max-w-xl my-5 lg:my-16"
       />
-
     </section>
 
     <section class="container xs:px-1 sm:px-3 md:px-6 mx-auto my-12">
       <h2 class="text-center">Otros títulos...</h2>
-      <HCarousel
-        center
-        :items="relacionados"
-        :noText="true"
-        collection="libros"
-      />
+      <HCarousel center :items="relacionados" :noText="true" collection="libros" />
     </section>
-
 
     <SuscriptionSection
       id="suscription"
@@ -93,11 +74,7 @@
         }}
       </h3>
       <h3 v-else class="text-center">Coméntalo</h3>
-      <Comentarios
-        :uid="uid"
-        @count="$set(contenido, 'comentarios', $event)"
-        class="px-1 xs:px-2"
-      />
+      <Comentarios :uid="uid" @count="$set(contenido, 'comentarios', $event)" class="px-1 xs:px-2" />
     </div>
   </div>
 </template>
@@ -107,22 +84,28 @@ import vercontenidomixin from '@/mixins/vercontenido.js'
 import seo from '@/mixins/seo.js'
 export default {
   mixins: [vercontenidomixin, seo],
-  async asyncData ({ $strapi, route, redirect }) {
-    const id = route.params.id
-    const libros = await $strapi.find(
-      'libros',
-      id.match(/\d+/) ? { id } : { slug: id }
-    )
-    const contenido = libros[0]
-    contenido.likes = await $strapi.find('likes', {
-      uid: `libros-${contenido.id}`
-    })
-    const categoria = contenido.etiquetas.length
-      ? contenido.etiquetas[0].nombre
-      : null
-    const filtro = categoria ? { 'etiquetas.nombre': categoria } : {}
-    const relacionados = await $strapi.find('libros', { ...filtro, _limit: 8 })
-    return { contenido, libro: contenido, relacionados }
+  async asyncData({ $strapi, route, $error }) {
+    try {
+      const id = route.params.id
+      const libros = await $strapi.find(
+        'libros',
+        id.match(/\d+/) ? { id } : { slug: id }
+      )
+      if (!libros.length)
+        return $error(404, 'Libro no encontrado')
+      const contenido = libros[0]
+      contenido.likes = await $strapi.find('likes', {
+        uid: `libros-${contenido.id}`
+      })
+      const categoria = contenido.etiquetas.length
+        ? contenido.etiquetas[0].nombre
+        : null
+      const filtro = categoria ? { 'etiquetas.nombre': categoria } : {}
+      const relacionados = await $strapi.find('libros', { ...filtro, _limit: 8 })
+      return { contenido, libro: contenido, relacionados }
+    } catch (e) {
+      $error(503)
+    }
   }
 }
 </script>
@@ -172,7 +155,7 @@ export default {
   }
 
   .book::before {
-    content: ' ';
+    content: " ";
     background: #fff;
     height: calc(300px - 2 * 3px);
     width: 50px;
@@ -183,7 +166,7 @@ export default {
   }
 
   .book::after {
-    content: ' ';
+    content: " ";
     position: absolute;
     left: 0;
     width: 200px;

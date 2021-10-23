@@ -1,6 +1,5 @@
 <template>
     <Card class="py-5 px-2 xs:px-4 max-w-md mx-auto bg-blue-gray-50 dark:bg-blue-gray-900">
-
         <Config :focused="true" />
 
         <h1>{{ accion }} Reunión</h1>
@@ -8,28 +7,26 @@
             <div>
                 <label for="equipo">Equipo:</label>
                 <br />
-                <input
-                    type="text"
-                    disabled
-                    v-model="equipo.nombre"
-                />
+                <input type="text" disabled v-model="equipo.nombre" />
             </div>
             <div>
                 <label for="equipo">Actividad:</label>
                 <br />
-                <input
-                    type="text"
-                    disabled
-                    v-model="actividad.titulo"
-                />
+                <input type="text" disabled v-model="actividad.titulo" />
             </div>
             <div>
                 <label for="od">Orden del día:</label>
                 <br />
-                <textarea id="od" v-model="contenido.od" rows="7" :class="fieldValidate('od')" required />
+                <textarea
+                    id="od"
+                    v-model="contenido.od"
+                    rows="7"
+                    :class="fieldValidate('od')"
+                    required
+                />
                 <p class="error">{{ errors.od }}</p>
             </div>
-            
+
             <div>
                 <label>Fecha y hora de comienzo:</label>
                 <InputDateTime
@@ -39,7 +36,10 @@
                     :class="fieldValidate('fecha')"
                 />
                 <p class="error">{{ errors.fecha }}</p>
-                <p class="my-3"><span class="font-bold">Zona horaria:</span> {{equipo.zonahoraria}}</p>
+                <p class="my-3">
+                    <span class="font-bold">Zona horaria:</span>
+                    {{ equipo.zonahoraria }}
+                </p>
             </div>
 
             <div v-if="!tieneAnexos">
@@ -50,9 +50,8 @@
             </div>
             <div v-else>
                 <label>Anexos:</label>
-                <p>...</p>    
+                <p>...</p>
             </div>
-            
 
             <div v-if="!tieneActa">
                 <div
@@ -69,17 +68,15 @@
                 >Cancelar acta</div>
             </div>
 
-            
-
             <div v-if="!reunion.acta">
-                <input type="checkbox"
+                <input
+                    type="checkbox"
                     id="cancelada"
                     v-model="contenido.cancelada"
                     :class="fieldValidate('cancelada')"
-                >
+                />
                 <label for="cancelada">Reunión Cancelada</label>
             </div>
-
 
             <div class="flex justify-center">
                 <button
@@ -89,7 +86,10 @@
                     :disabled="!modificado"
                 >
                     <div class="flex justify-center items-center">
-                        <icon class="!w-6" :icon="guardando?'sync spin': creando?'plus-square' : modificado ? 'sync': 'check'" />
+                        <icon
+                            class="!w-6"
+                            :icon="guardando ? 'sync spin' : creando ? 'plus-square' : modificado ? 'sync' : 'check'"
+                        />
                         <span class="inline-block w-28">{{ verbo }}</span>
                     </div>
                 </button>
@@ -106,44 +106,47 @@ import validation from "@/mixins/validation"
 export default {
     components: { vSelect },
     mixins: [validation],
-    async asyncData({ $strapi, query, route }) {
-        console.warn('go')
-        let id = route.params.id
-        let contenido = {
-            equipo: null,
-            fecha: null,
-            od: '',
-            adjuntos: [],
-            cancelada: false,
-            actividad: query.actividad,
-            acta: null,
-            anexos: []
+    async asyncData({ $strapi, query, route, $error }) {
+        try {
+            let id = route.params.id
+            let contenido = {
+                equipo: null,
+                fecha: null,
+                od: '',
+                adjuntos: [],
+                cancelada: false,
+                actividad: query.actividad,
+                acta: null,
+                anexos: []
+            }
+            let resultado = null
+            if (id && id !== 'nueva') {
+                resultado = await $strapi.find('reuniones', { id })
+                if(!resultado.length)
+                    return $error(404, 'Reunión no encontrada')
+                contenido = resultado[0]
+                for (const campo of relaciones11)
+                    contenido[campo] = contenido[campo] && contenido[campo].id ? contenido[campo].id : null
+                contenido.anexos = contenido.anexos.map(x => x.id)
+            }
+            resultado = await $strapi.find('actividades', { id: contenido.actividad })
+            const actividad = resultado[0]
+            resultado = await $strapi.find('equipos', { id: actividad.equipo.id })
+            const equipo = resultado[0]
+            resultado = await $strapi.graphql({
+                query: 
+                `query  {
+                            anexos {
+                                titulo
+                            }
+                        }`})
+            const anexos = resultado.anexos
+            contenido.equipo = equipo.id
+            return { contenido, reunion: contenido, actividad, equipo, anexos, tieneAnexos: !!contenido.anexos.length }
         }
-        console.warn(id, contenido)
-        let resultado = null
-        if (id && id !== 'nueva') {
-            resultado = await $strapi.find('reuniones', { id })
-            contenido = resultado[0]
-            for(const campo of relaciones11)
-                contenido[campo] = contenido[campo] && contenido[campo].id?contenido[campo].id: null
-            contenido.anexos = contenido.anexos.map(x=>x.id)
+        catch (e) {
+            $error(503)
         }
-        
-        resultado =  await $strapi.find('actividades', { id: contenido.actividad })
-        const actividad = resultado[0]
-        console.warn(contenido)
-        console.warn(resultado)
-        resultado =  await $strapi.find('equipos', { id: actividad.equipo.id })
-        const equipo = resultado[0]
-        resultado = await $strapi.graphql({
-                                query: `query {
-                                    anexos {
-                                        titulo
-                                    }
-                                }`})        
-        const anexos = resultado.anexos
-        contenido.equipo = equipo.id
-        return { contenido, reunion: contenido, actividad, equipo, anexos, tieneAnexos: !!contenido.anexos.length }
     },
     data() {
         return {
@@ -163,7 +166,7 @@ export default {
             return JSON.stringify(this.contenido)
         },
         creando() {
-            return !this.contenido||!this.contenido.id
+            return !this.contenido || !this.contenido.id
         }
     },
     watch: {
@@ -216,10 +219,9 @@ export default {
                 await this.$strapi.create('reuniones', this.contenido)
                     .then((contenido) => {
                         console.log('creado', contenido)
-                        for(const field in contenido)
-                        {
-                            if(relaciones11.includes(field))
-                                this.$set(this.contenido, field, contenido[field]?contenido[field].id:null)
+                        for (const field in contenido) {
+                            if (relaciones11.includes(field))
+                                this.$set(this.contenido, field, contenido[field] ? contenido[field].id : null)
                             else
                                 this.$set(this.contenido, field, contenido[field])
                         }
@@ -238,6 +240,6 @@ export default {
 
 
 <style scoped>
-@import '@/assets/css/form.css';
-@import '@/assets/css/vselect.css';
+@import "@/assets/css/form.css";
+@import "@/assets/css/vselect.css";
 </style>

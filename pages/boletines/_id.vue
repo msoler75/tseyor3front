@@ -87,6 +87,8 @@ export default {
         "boletines",
         id.match(/\d+/) ? { id } : { slug: id }
       );
+      if(!boletines.length)
+        return $error(404, 'Boletín no encontrado')
       const contenido = boletines[0];
       return { contenido, boletin: contenido };
     } catch (error) {

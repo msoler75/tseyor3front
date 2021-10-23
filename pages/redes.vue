@@ -24,9 +24,14 @@
 
 <script>
 export default {
-  async asyncData({$strapi}) {
+  async asyncData({$strapi, $error}) {
+    try {
       const paginas = await $strapi.find('redes')
       return { paginas }
+    }
+    catch (e) {
+      $error(503)
+    }
   },
   data() {
     return {

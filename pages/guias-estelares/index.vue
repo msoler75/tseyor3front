@@ -3,7 +3,8 @@
     <div v-for="guia of guias" :key="guia.slug" class="p-3">
       <NLink :to="'/guias-estelares/' + guia.slug">
         <h2 class="text-lg mb-2">{{ guia.nombre }}</h2>
-        <nuxt-img v-if="guia.imagen"
+        <nuxt-img
+          v-if="guia.imagen"
           loading="lazy"
           :alt="guia.nombre"
           :src="guia.imagen.url"
@@ -30,24 +31,28 @@ const query_guias = `guias(sort: "nombre:asc")  {
 
 import seo from '@/mixins/seo.js'
 export default {
- mixins: [seo],
- async asyncData({$strapi}) {
-   const resultado = await $strapi.graphql({
-      query:
-        `query {
+  mixins: [seo],
+  async asyncData({ $strapi, $error }) {
+    try {
+      const resultado = await $strapi.graphql({
+        query:
+          `query {
           ${query_guias}
         }`
-    })
-   return {guias: resultado.guias}
- },
- data() {
-   return {
+      })
+      return { guias: resultado.guias }
+    } catch (e) {
+      $error(503)
+    }
+  },
+  data() {
+    return {
       // SEO:
       title: 'Guías Estelares',
       description: 'Hermanos de la Confederación de Mundos Habitados de la Galaxia que tutelan al grupo Tseyor',
       image: 'imagen_a_definir'
-   }
- }
+    }
+  }
 };
 </script>
 

@@ -127,7 +127,8 @@ import seo from '@/mixins/seo.js'
 import citas from '@/mixins/citas.js'
 export default {
   mixins: [seo, citas],
-  async asyncData({ $dayjs, $strapi }) {
+  async asyncData({ $dayjs, $strapi, $error }) {
+    try{
     const query_eventos = qs.stringify({
       _where: {
         _or: [
@@ -223,6 +224,10 @@ export default {
       })
 
     return { equipos, salas, actividades, reuniones, agenda, eventos };
+    }
+    catch (e) {
+      $error(503)
+    }
   },
   data() {
     return {

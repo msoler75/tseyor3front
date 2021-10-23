@@ -8,26 +8,27 @@
     <div
       class="px-3 sm:px-5 md:px-7 relative w-full shrink-0 flex-grow-1 max-w-3xl flex flex-col items-start"
     >
-      <div
-        class="hidden 4xl:block absolute right-0 translate-x-3 5xl:translate-x-10 h-full"
-      >
-        <SocialIcons class="sticky top-32 mb-6 text-xs 5xl:text-sm"
-            :content="contenido" @share="viendoCompartir = true"/>
+      <div class="hidden 4xl:block absolute right-0 translate-x-3 5xl:translate-x-10 h-full">
+        <SocialIcons
+          class="sticky top-32 mb-6 text-xs 5xl:text-sm"
+          :content="contenido"
+          @share="viendoCompartir = true"
+        />
       </div>
 
       <!-- article wrapper -->
       <ArticleWrapper>
         <!-- article heading -->
-        <h1 class="">{{ ctitle }}</h1>
+        <h1 class>{{ ctitle }}</h1>
 
-        <div
-          class="w-full flex mb-5 items-center justify-start text-xs sm:text-sm"
-        >
-          <span><icon icon="far fa-calendar-alt" /> 17-may</span>
+        <div class="w-full flex mb-5 items-center justify-start text-xs sm:text-sm">
+          <span>
+            <icon icon="far fa-calendar-alt" />17-may
+          </span>
 
           <div class="4xl:hidden ml-auto">
-              <SocialIcons :content="contenido" :horizontal="true" @share="viendoCompartir=true"/>
-            </div>
+            <SocialIcons :content="contenido" :horizontal="true" @share="viendoCompartir = true" />
+          </div>
         </div>
 
         <!-- <nuxt-img :src="cimage" /> -->
@@ -59,17 +60,9 @@
     />
 
     <!-- contenido relacionado -->
-    <div
-      class="container mx-auto my-9"
-      v-observe-visibility="cargarRelacionados"
-    >
+    <div class="container mx-auto my-9" v-observe-visibility="cargarRelacionados">
       <h3 class="text-center">Y también...</h3>
-      <HCarousel
-        center
-        :items="relacionados"
-        collection="noticias"
-        :no-text="true"
-      />
+      <HCarousel center :items="relacionados" collection="noticias" :no-text="true" />
     </div>
 
     <!-- comentarios -->
@@ -82,11 +75,7 @@
         }}
       </h3>
       <h3 v-else class="text-center">Coméntalo</h3>
-      <Comentarios
-        :uid="uid"
-        @count="$set(contenido, 'comentarios', $event)"
-        class="px-1 xs:px-2"
-      />
+      <Comentarios :uid="uid" @count="$set(contenido, 'comentarios', $event)" class="px-1 xs:px-2" />
     </div>
   </div>
 </template>
@@ -96,21 +85,27 @@ import vercontenidomixin from "@/mixins/vercontenido.js";
 import seo from "@/mixins/seo.js";
 export default {
   mixins: [vercontenidomixin, seo],
-  async asyncData({ app, $strapi, route }) {
-    const id = route.params.id;
-    const noticias = await $strapi.find(
-      "noticias",
-      id.match(/^\d+$/) ? { id } : { slug: id }
-    );
-    const contenido = noticias[0];
-    contenido.textoHTML = app.$renderMarkdownServer(
-      contenido.texto,
-      contenido.imagenes
-    );
-    contenido.likes = await $strapi.find("likes", {
-      uid: `noticias-${contenido.id}`
-    });
-    return { contenido, noticia: contenido };
+  async asyncData({ app, $strapi, route, $error }) {
+    try {
+      const id = route.params.id;
+      const noticias = await $strapi.find(
+        "noticias",
+        id.match(/^\d+$/) ? { id } : { slug: id }
+      );
+      if (!noticias.length)
+        return $error(404, 'Noticia no encontrada')
+      const contenido = noticias[0];
+      contenido.textoHTML = app.$renderMarkdownServer(
+        contenido.texto,
+        contenido.imagenes
+      );
+      contenido.likes = await $strapi.find("likes", {
+        uid: `noticias-${contenido.id}`
+      });
+      return { contenido, noticia: contenido }
+    } catch (e) {
+      $error(503)
+    }
   },
   methods: {
     async cargarRelacionados() {
