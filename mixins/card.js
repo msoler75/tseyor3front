@@ -115,7 +115,7 @@ export default {
     cimage() {
       let src = this.image || this.data.image || this.data.imagen;
       if (src && typeof src === "object") src = src.url;
-      return src;
+      return src
     },
     imageBg () {
       const imgUrl = this.$img(this.cimage, {width: this.imageWidth, format: 'webp', quality: 70})

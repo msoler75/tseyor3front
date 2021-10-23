@@ -17,6 +17,8 @@ export default {
     baseUrl: process.env.BASE_URL || 'https://tseyor.org',
     publicFolder: Path.resolve(__dirname, 'static'),
     twitter: '@TSEYOR',
+    defaultImage: '/imagenes/playa-atardecer.jpg',
+    defaultUserImage: '/imagenes/usuario.jpg'
   },
 
   // https://nuxtjs.org/docs/2.x/configuration-glossary/configuration-server

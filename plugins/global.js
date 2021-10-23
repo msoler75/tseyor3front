@@ -35,7 +35,8 @@ export default ({ app, $config, $strapi, $md, $img, error }, inject) => {
     }`
 
     const res = await $strapi.graphql({ query: query_user })
-
+    if(res.users.length)
+      res.users[0].id = parseInt(res.users[0].id)
     return res.users[0]
   }
 

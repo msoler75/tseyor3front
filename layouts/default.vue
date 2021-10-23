@@ -284,9 +284,15 @@ export default {
     }
   }, */
   watch: {
+    userLoggedIn(newValue){
+      this.actualizarUrlPerfil()
+    },
     mostrarMenuUsuario (newValue) {
       this.$store.commit('setMenuUsuario', newValue)
     }
+  },
+  mounted() {
+    this.actualizarUrlPerfil()
   },
   data() {
     return {
@@ -295,7 +301,7 @@ export default {
         {
           icon: "fas fa-user",
           name: "Ver Perfil",
-          href: "/perfil"
+          href: null
         },
         {
           icon: "fas fa-sign-out-alt",
@@ -516,7 +522,6 @@ export default {
   },
   computed: {
     ...mapGetters(["description", "image", "type", "isAuthenticated", "loggedInUser", "pageContained", "pageBackground", "pageBreadcrumb", "pageFocused", "menuUsuario", "hideMenus"]),
-
     iconMode() {
       return this.$colorMode.value === "light" ? iconSun : iconMoon;
     },
@@ -545,6 +550,14 @@ export default {
     window.removeEventListener('scroll', this.handleScroll);
   },
   methods: {
+    actualizarUrlPerfil() {
+      let url
+      if(!this.isAuthenticated) url = '/'
+      else url=`/usuarios/${this.loggedInUser.id}`
+      const menu = this.userMenuItems.find(x=>x.icon==="fas fa-user")
+      if(menu)
+      menu.href=url
+      },
     handleScroll (event) {
       const threshold = 120
       var y = window.scrollY

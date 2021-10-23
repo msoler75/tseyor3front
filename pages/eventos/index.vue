@@ -76,7 +76,7 @@
           :data="evento"
           collection="eventos"
           class="mb-4 max-w-md"
-        />
+        /> 
       </div>
     </section>
     <divider />
