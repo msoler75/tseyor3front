@@ -1,10 +1,16 @@
 <template>
-  <section class="relative">
+  <section>
     <Config :contained="false" :focused="true" />
+    
+    <NLink 
+      v-if="isAuthenticated&&loggedInUser.id===contenido.autor.id"
+      class="btn absolute top-24 right-4 w-12 h-12 flex justify-center items-center rounded-full sm:w-auto sm:h-auto sm:rounded-inherit"
+      :to="`/eventos/editar/${contenido.id}`"
+    >
+      <icon icon="edit"/> <span class="ml-2 hidden sm:inline">Editar</span>
+    </NLink>
 
     <section class="fixed left-0 top-0 w-screen h-[40vh] xl:h-[45vh]"  :style="imageBg"/>
-
-    <div class="absolute top-[60px] right-4 btn w-12 h-12 flex justify-center items-center rounded-full sm:(w-auto h-auto)"><icon icon="edit"/> <span class="ml-2 hidden sm:inline">Editar</span></div>
 
     <Card
       v-if="$dayjs().isAfter($dayjs(evento.fechaFinal))"
@@ -54,6 +60,7 @@
 </template>
 
 <script>
+import { mapGetters } from "vuex";
 import vercontenidomixin from "@/mixins/vercontenido.js";
 import seo from '@/mixins/seo.js'
 export default {
@@ -73,6 +80,7 @@ export default {
     }
   },
   computed: {
+    ...mapGetters(["isAuthenticated", "loggedInUser"]),
      imageBg () {
         const imgUrl = this.$img(this.cimage, {width: '100%', format: 'webp', quality: 70})
         return {
