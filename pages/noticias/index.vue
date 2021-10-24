@@ -43,7 +43,8 @@
 <script>
 const minLengthBuscar = 2
 // https://alexclark.co.nz/blog/using-apollo-and-graphql-with-nuxt-js/
-const query_noticias = `noticias(start: %start, limit: %limit, sort: "published_at:desc" %where)  {
+const query_noticias = `query {
+        noticias(start: %start, limit: %limit, sort: "published_at:desc" %where)  {
           id
           slug
           published_at
@@ -54,7 +55,8 @@ const query_noticias = `noticias(start: %start, limit: %limit, sort: "published_
             width
             height
           }
-        }`
+        }
+      }`
 
 const query_where = `, where: { _or: [{ titular_contains: "%search" }, { texto_contains: "%search" }] }`
 
@@ -72,10 +74,7 @@ export default {
 
       // TO-DO: https://strapi.io/documentation/developer-docs/latest/development/plugins/graphql.html#customize-the-graphql-schema
       const resultado = await $strapi.graphql({
-        query:
-          `query {
-          ${query_noticias}
-        }`
+        query: query_noticias
             .replace('%start', filters._start)
             .replace('%limit', filters._limit)
             .replace('%where', '')
@@ -126,13 +125,10 @@ export default {
       this.cargando = true
 
       const result = await this.$strapi.graphql({
-        query:
-          `query {
-          ${query_noticias},
-          } `
-            .replace(/%start/g, this.filters._start)
-            .replace(/%limit/g, this.filters._limit)
-            .replace(/%where/g, filtro._q ? query_where : '')
+        query: query_noticias
+            .replace('%start', this.filters._start)
+            .replace('%limit', this.filters._limit)
+            .replace('%where', filtro._q ? query_where : '')
             .replace(/%search/g, filtro._q)
       })
       // console.log('result', result)
