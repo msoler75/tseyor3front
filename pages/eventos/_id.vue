@@ -1,25 +1,27 @@
 <template>
   <section>
     <Config :contained="false" :focused="true" />
-    
-    <NLink 
-      v-if="isAuthenticated&&loggedInUser.id===contenido.autor.id"
+
+    <NLink
+      v-if="isAuthenticated && loggedInUser.id === contenido.autor.id"
       class="btn absolute top-24 right-4 w-12 h-12 flex justify-center items-center rounded-full sm:w-auto sm:h-auto sm:rounded-inherit"
       :to="`/eventos/editar/${contenido.id}`"
     >
-      <icon icon="edit"/> <span class="ml-2 hidden sm:inline">Editar</span>
+      <icon icon="edit" />
+      <span class="ml-2 hidden sm:inline">Editar</span>
     </NLink>
 
-    <section class="fixed left-0 top-0 w-screen h-[40vh] xl:h-[45vh]"  :style="imageBg"/>
+    <section class="fixed left-0 top-0 w-screen h-[40vh] xl:h-[45vh]" :style="imageBg" />
 
     <Card
       v-if="$dayjs().isAfter($dayjs(evento.fechaFinal))"
-      class="absolute right-1 mt-1 font-bold text-xs p-1 sm:p-4 sm:text-base bg-orange text-orange-contrast">
-      Evento Pasado
-    </Card>
+      class="absolute right-1 mt-1 font-bold text-xs p-1 sm:p-4 sm:text-base bg-orange text-orange-contrast"
+    >Evento Pasado</Card>
 
-    <div class="evento-wrapper bg-blue-gray dark:bg-blue-gray-900 grid w-full pb-9"
-    style="margin-top: calc(40vh - 170px)">
+    <div
+      class="evento-wrapper bg-blue-gray dark:bg-blue-gray-900 grid w-full pb-9"
+      style="margin-top: calc(40vh - 170px)"
+    >
       <div
         class="order-1 bg-red text-center flex justify-center items-center h-20 md:col-span-2 xl:col-span-1"
       >
@@ -40,7 +42,9 @@
           <p class="my-1">
             <icon icon="calendar-alt" class="!w-8 mr-2 text-gray" />
             {{ $dayjs(evento.fechaComienzo).format('D MMM YYYY') }}
-            <template v-if="evento.fechaFinal">
+            <template
+              v-if="evento.fechaFinal"
+            >
               <span class="text-diminished">—</span>
               {{ $dayjs(evento.fechaFinal).format('D MMM') }}
             </template>
@@ -53,9 +57,43 @@
             <icon icon="hourglass" class="!w-8 mr-2 text-gray" />
             {{ $dayjs(evento.fechaComienzo).fromNow() }}
           </p>
+          <button class="mt-9 btn mx-auto w-32" :disabled="actualizando" @click="quieroAsistir=!quieroAsistir">
+            <input class="pointer-events-none mr-4 scale-150" type="checkbox" readonly v-model="quieroAsistir"> <span>Asistiré</span>
+          </button>
         </Card>
       </div>
     </div>
+
+    <section class="surface w-full">
+      <!-- share modal -->
+      <Comparte v-model="viendoCompartir" />
+
+      <SocialButtons
+        id="social"
+        :data="contenido"
+        @like="like(contenido.id)"
+        @dislike="dislike(contenido.id)"
+        @share="viendoCompartir = true"
+        class="mx-auto max-w-xl lg:my-16 py-9"
+      />
+
+      <!-- comentarios -->
+      <div id="comentarios" class="mx-auto bg-opacity-90 bg-gray-200 py-8">
+        <h3 v-if="contenido.comentarios" class="text-center">
+          {{
+            contenido.comentarios +
+              " Comentario" +
+              (contenido.comentarios !== 1 ? "s" : "")
+          }}
+        </h3>
+        <h3 v-else class="text-center">Coméntalo</h3>
+        <Comentarios
+          :uid="uid" :content-title="ctitle"
+          @count="$set(contenido, 'comentarios', $event)"
+          class="px-1 xs:px-2"
+        />
+      </div>
+    </section>
   </section>
 </template>
 
@@ -72,24 +110,51 @@ export default {
       if (!eventos.length)
         return $error(404, 'Evento no encontrado')
       const contenido = eventos[0]
+      contenido.likes = await $strapi.find("likes", {
+        uid: `/eventos/${contenido.id}`
+      })
       contenido.textoHTML = app.$renderMarkdownServer(contenido.texto, contenido.imagenes)
-      return { contenido, evento: contenido };
+      let quieroAsistir = $strapi.user && !!contenido.asistentes.find(x=>x.id===$strapi.user.id)
+      return { quieroAsistir, contenido, evento: contenido };
     }
     catch (e) {
       $error(503)
     }
   },
+  data() {
+    return {
+      actualizando: false
+    }
+  },
+  watch: {
+    quieroAsistir(asistire) {
+      let valorAntes = this.quieroAsistir
+      if(!this.isAuthenticated) return
+      this.actualizando = true
+      this.$strapi.$http.$put(`/eventos/${this.contenido.id}/${asistire?'join':'leave'}`)
+      .then(result=>{
+        console.log('res as', result)
+          this.actualizando = false
+          this.$set(this.contenido, 'asistentes', result.asistentes)
+          this.quieroAsistir = this.isAuthenticated && !!this.contenido.asistentes.find(x=>x.id===this.loggedInUser.id)
+       })
+       .catch(err=>{
+         this.actualizando = false
+         this.quieroAsistir = valorAntes
+       })
+    }
+  },
   computed: {
     ...mapGetters(["isAuthenticated", "loggedInUser"]),
-     imageBg () {
-        const imgUrl = this.$img(this.cimage, {width: '100%', format: 'webp', quality: 70})
-        return {
-          backgroundImage: `url('${imgUrl}')`,
-          backgroundPosition: 'center',
-          backgroundSize: 'cover',
-          zIndex: -1
-        }
+    imageBg() {
+      const imgUrl = this.$img(this.cimage, { width: '100%', format: 'webp', quality: 70 })
+      return {
+        backgroundImage: `url('${imgUrl}')`,
+        backgroundPosition: 'center',
+        backgroundSize: 'cover',
+        zIndex: -1
       }
+    },
   }
 };
 </script>

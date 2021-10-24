@@ -68,7 +68,7 @@
         class="text-center"
       >{{ contenido.comentarios + ' Comentario' + (contenido.comentarios !== 1 ? 's' : '') }}</h3>
       <h3 v-else class="text-center">Coméntalo</h3>
-      <Comentarios :uid="uid" @count="$set(contenido, 'comentarios', $event)" class="px-1 xs:px-2" />
+      <Comentarios :uid="uid" :content-title="ctitle" @count="$set(contenido, 'comentarios', $event)" class="px-1 xs:px-2" />
     </div>
   </div>
 </template>

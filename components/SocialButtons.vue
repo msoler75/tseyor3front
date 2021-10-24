@@ -68,6 +68,8 @@ export default {
     // LIKE
     likeit() {
       // console.log('likeit?', this.contenido.likes)
+      if(typeof this.data.likes === 'undefined')
+        return console.error('Falta poner campo likes en contenido')
       return this.$strapi.user && this.data.likes.find(x => x.user && x.user.id === this.$strapi.user.id)
     }
   }
