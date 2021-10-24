@@ -8,11 +8,11 @@ export default {
     id () {
       return parseInt(this.$route.params.id)
     },
-    uid () {
-      // const parts = this.$route.path.split('/')
-      // return (this.collection || parts[parts.length-2]) + '-' + this.contenido.id 
-      return this.$route.path
-    },
+    /*uid () {
+      const parts = this.$route.path.split('/')
+      const collection = this.collection || parts[parts.length-2]
+      return `/${collection}/${this.id}`
+    },*/
     /* contenidoJSON () {
       return JSON.stringify(this.contenido)
     }, */

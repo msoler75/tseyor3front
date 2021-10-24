@@ -187,9 +187,20 @@ export default {
     // unique identifier for content-id
     uid: {
       type: String,
-      required: true
+      required: false,
+      default: null
     },
-    title: {
+    collection: {
+      type: String,
+      required: false,
+      default: null
+    },
+    contentId: {
+      type: Number,
+      required: true,
+      default: null
+    },
+    contentTitle: {
       type: String,
       required: true
     }
@@ -243,6 +254,12 @@ methods: {
     },
     comentariosSegundoNivel () {
       return this.comentarios.filter(x => x.respondiendo)
+    },
+    calculatedUid()
+    {
+      if(this.uid)
+        return this.uid
+      return `/${this.collection}/${this.contentId}`
     }
   },
   methods: {
@@ -259,7 +276,7 @@ methods: {
     async cargarComentarios () {
       // console.log('fetch uid=', this.uid)
       const comentarios = await this.$strapi.find('comentarios', {
-        uid: this.uid,
+        uid: this.calculatedUid,
         _sort: 'updated_at:ASC'
       })
       this.$emit('count', comentarios.length)
@@ -271,16 +288,17 @@ methods: {
         texto: this.nuevoComentario
       })*/
       this.$strapi.create('comentarios', {
-        uid: this.uid,
+        uid: this.calculatedUid,
         texto: this.nuevoComentario
       })
       .then(comentario=>{
         console.log('respuesta', comentario)
          // registro de actividad
-          this.$strapi.create('historial', {
+         console.log('this', this)
+          this.$strapi.create('historials', {
               accion: 'comentario',
-              titulo: this.title,
-              url: this.uid
+              titulo: this.contentTitle,
+              url: this.calculatedUid
           })
       })
       this.nuevoComentario = ''
@@ -288,17 +306,17 @@ methods: {
     },
     async responder (respondiendo) {
       await this.$strapi.create('comentarios', {
-        uid: this.uid,
+        uid: this.calculatedUid,
         respondiendo,
         texto: this.respuesta
       })
       .then(comentario=>{
         console.log('respuesta', comentario)
          // registro de actividad
-          this.$strapi.create('historial', {
+          this.$strapi.create('historials', {
               accion: 'comentario_respuesta',
-              titulo: this.title,
-              url: this.uid + '#comentario-'+respondiendo
+              titulo: this.contentTitle,
+              url: this.calculatedUid + '#comentario-'+respondiendo
           })
       })
       this.responderA = null
