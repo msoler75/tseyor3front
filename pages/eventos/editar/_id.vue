@@ -177,6 +177,17 @@
                     </div>
                 </button>
             </div>
+            <div v-if="contenido.id" class="mt-5 flex justify-center">
+                <NLink :to="`/eventos/${contenido.id}`"
+                    class="btn w-full text-center"
+                    :disabled="guardando||modificado"
+                >
+                    <div class="flex justify-center items-center">
+                        <icon class="!w-6" icon="eye"/>
+                        <span class="inline-block w-28">Ver Evento</span>
+                    </div>
+                </NLink>
+            </div>
         </form>
     </Card>
 </template>

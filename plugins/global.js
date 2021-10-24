@@ -1,4 +1,5 @@
-import Path from 'path'
+//import Path from 'path'
+import httpErrorMessage from '~/assets/js/httpErrorMessage'
 // import sizeOf from "image-size";
 // import { LoremIpsum } from "lorem-ipsum";
 
@@ -7,6 +8,8 @@ export default ({ app, $config, $strapi, $md, $img, error }, inject) => {
   const myError = (obj, msg) => {
     let code = typeof obj ==='number'?obj:obj&&obj.statusCode?obj.statusCode:500
     let message = msg&&typeof msg==='string'?msg:obj&&obj.message?obj.message:null
+    if(code&&!message)
+      message = httpErrorMessage(code)
     return error({ statusCode: code, message })
   }
 
