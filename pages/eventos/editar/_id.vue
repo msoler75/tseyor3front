@@ -254,7 +254,7 @@ export default {
             return this.contenido.id ? 'Editar' : 'Nuevo'
         },
         verbo() {
-            return !this.contenido.id ? 'Crear' : this.guardando ? 'Guardando' : this.modificado ? 'Guardar' : 'Guardado'
+            return !this.contenido.id ? 'Publicar' : this.guardando ? 'Publicando' : this.modificado ? 'Guardar' : 'Publicado'
         },
         contentJSON() {
             return JSON.stringify(this.contenido)
@@ -331,6 +331,15 @@ export default {
             else
                 this.$strapi.create('eventos', data)
                     .then((contenido) => {
+
+                        // registro de actividad
+                        this.$strapi.create('historial', {
+                            accion: 'evento_creado',
+                            titulo: contenido.titulo,
+                            url: `/eventos/${contenido.id}`
+                        })
+
+                        // recargamos la página para que se muestra en modo edición con la ruta correcta
                         this.$router.push(`/eventos/editar/${contenido.id}`)
                         /*
                         console.log('creado', contenido)

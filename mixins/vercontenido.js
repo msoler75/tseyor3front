@@ -9,8 +9,9 @@ export default {
       return parseInt(this.$route.params.id)
     },
     uid () {
-      const parts = this.$route.path.split('/')
-      return (this.collection || parts[parts.length-2]) + '-' + this.contenido.id 
+      // const parts = this.$route.path.split('/')
+      // return (this.collection || parts[parts.length-2]) + '-' + this.contenido.id 
+      return this.$route.path
     },
     /* contenidoJSON () {
       return JSON.stringify(this.contenido)

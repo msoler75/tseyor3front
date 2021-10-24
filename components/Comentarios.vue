@@ -6,11 +6,12 @@
     <div
       v-for="comentario of comentariosPrimerNivel"
       :key="comentario.id"
+      :id="`comentario-${comentario.id}`"
       class="comment flex flex-col mb-5"
     >
       <div class="flex w-full">
         <Avatar
-          :data="comentario.user"
+          :data="comentario.autor"
           class="text-3xl w-8 h-8 sm:w-16 sm:h-16 mr-2 sm:mr-3 lg:mr-5"
         />
         <section class="group select-none">
@@ -19,13 +20,13 @@
               class="flex justify-start items-baseline text-xs lg:text-sm text-blue-gray"
             >
               <NLink
-                v-if="comentario.user.id"
-                :to="'/usuarios/' + comentario.user.id"
+                v-if="comentario.autor.id"
+                :to="'/usuarios/' + comentario.autor.id"
                 class="font-bold mb-1"
-                >{{ mostrarNombre(comentario.user) }}</NLink
+                >{{ mostrarNombre(comentario.autor) }}</NLink
               >
               <span v-else class="font-bold">{{
-                mostrarNombre(comentario.user)
+                mostrarNombre(comentario.autor)
               }}</span>
               <span class="mx-2 opacity-50">•</span>
               <span class="text-xs">{{
@@ -74,11 +75,12 @@
             <div
               v-for="respuesta of getRespuestas(comentario.respuestas)"
               :key="respuesta.id"
+              :id="`comentario-${respuesta.id}`"
               class="comment flex flex-col mb-5"
             >
               <div class="flex w-full">
                 <Avatar
-                  :data="respuesta.user"
+                  :data="respuesta.autor"
                   class="text-3xl w-8 h-8 mr-2 sm:mr-3 lg:mr-5"
                 />
                 <section>
@@ -87,13 +89,13 @@
                       class="flex justify-start items-baseline text-xs lg:text-sm text-blue-gray"
                     >
                       <NLink
-                        v-if="respuesta.user.id"
-                        :to="'/usuarios/' + respuesta.user.id"
+                        v-if="respuesta.autor.id"
+                        :to="'/usuarios/' + respuesta.autor.id"
                         class="font-bold mb-1"
-                        >{{ mostrarNombre(respuesta.user) }}</NLink
+                        >{{ mostrarNombre(respuesta.autor) }}</NLink
                       >
                       <span v-else class="font-bold">{{
-                        mostrarNombre(respuesta.user)
+                        mostrarNombre(respuesta.autor)
                       }}</span>
                       <span class="mx-2 opacity-50">•</span>
                       <span class="text-xs">{{
@@ -186,15 +188,13 @@ export default {
     uid: {
       type: String,
       required: true
+    },
+    title: {
+      type: String,
+      required: true
     }
   },
   /*
-  async mounted() {
-  try {
-    await this.$recaptcha.init()
-  } catch (e) {
-    console.error(e);
-  }
 },
 beforeDestroy() {
   this.$recaptcha.destroy()
@@ -220,14 +220,24 @@ methods: {
       responderA: null,
       nuevoComentario: '',
       // para mixin likes.js
-      ccollection: 'comentarios'
+      ccollection: 'comentarios',
+      checkHash: null
     }
+  },
+  mounted() {
+    this.checkHash = setTimeout(() => {
+      if(this.$route.hash && this.$route.hash.match(/^#comentario/))
+        this.$scrollTo(this.$route.hash, 900, { offset: -250 })
+    }, 1000)
+  },
+  beforeUnmount(){
+    clearTimeout(this.checkHash)
   },
   async fetch () {
     await this.cargarComentarios()
   },
   computed: {
-    ...mapGetters(['isAuthenticated']),
+    ...mapGetters(['isAuthenticated', 'loggedInUser']),
     comentariosPrimerNivel () {
       return this.comentarios.filter(x => !x.respondiendo)
     },
@@ -256,18 +266,40 @@ methods: {
       this.comentarios = comentarios
     },
     async comentar () {
-      await this.$strapi.$http.$post('/api/comentarios', {
+      await /*this.$strapi.$http.$post('/comentarios', {
         uid: this.uid,
         texto: this.nuevoComentario
+      })*/
+      this.$strapi.create('comentarios', {
+        uid: this.uid,
+        texto: this.nuevoComentario
+      })
+      .then(comentario=>{
+        console.log('respuesta', comentario)
+         // registro de actividad
+          this.$strapi.create('historial', {
+              accion: 'comentario',
+              titulo: this.title,
+              url: this.uid
+          })
       })
       this.nuevoComentario = ''
       this.cargarComentarios()
     },
     async responder (respondiendo) {
-      await this.$strapi.$http.$post('/api/comentarios', {
+      await this.$strapi.create('comentarios', {
         uid: this.uid,
         respondiendo,
         texto: this.respuesta
+      })
+      .then(comentario=>{
+        console.log('respuesta', comentario)
+         // registro de actividad
+          this.$strapi.create('historial', {
+              accion: 'comentario_respuesta',
+              titulo: this.title,
+              url: this.uid + '#comentario-'+respondiendo
+          })
       })
       this.responderA = null
       this.respuesta = ''
@@ -286,10 +318,10 @@ methods: {
 
     // ---- LIKES ----
     likeit (comentario) {
+      if (!this.isAuthenticated) return false
       console.log('likeit', comentario)
-      console.log('mi user id', this.$strapi.user.id)
-      if (!this.$strapi.user) return false
-      return !!comentario.likes.find(x => x.id === this.$strapi.user.id)
+      console.log('mi user id', this.loggedInUser.id)
+      return !!comentario.likes.find(x => x.id === this.loggedInUser.id)
     },
     async refreshItem (id) {
       console.log('refreshItem', id)
@@ -298,31 +330,31 @@ methods: {
       })
       this.saveRefreshedItem(
         id,
-        likes.map(x => x.user)
+        likes.map(x => x.autor)
       )
     },
     async like (id) {
-      if (!this.$strapi.user) return
+      if (!this.isAuthenticated) return
       console.log('like comment', id)
       this.likedItem(id)
-      await this.$strapi.$http.$put(`/api/comentarios/${id}/like`)
-      await this.$strapi.$http.$post('/api/likes', {
+      await this.$strapi.$http.$put(`/comentarios/${id}/like`)
+      await this.$strapi.$http.$post('/likes', {
         uid: 'comentarios-' + id
       })
       // este paso es opcional:
       // this.refreshItem(id);
     },
     async dislike (id) {
-      if (!this.$strapi.user) return
+      if (!this.isAuthenticated) return
       console.log('dislike comment', id)
       this.dislikedItem(id)
-      await this.$strapi.$http.$put(`/api/comentarios/${id}/dislike`)
+      await this.$strapi.$http.$put(`/comentarios/${id}/dislike`)
       const results = await this.$strapi.find('likes', {
         uid: 'comentarios-' + id,
-        user: this.$strapi.user.id
+        autor: this.loggedInUser.id
       })
       if (results.length) {
-        await this.$strapi.$http.$delete(`/api/likes/${results[0].id}`)
+        await this.$strapi.$http.$delete(`/likes/${results[0].id}`)
         // este paso es opcional:
         // this.refreshItem(id);
       }
@@ -331,14 +363,14 @@ methods: {
       const comentario = this.comentarios.find(x => x.id === id)
       if (comentario) {
         console.log('comentario', comentario)
-        comentario.likes.push({ id: this.$strapi.user.id })
+        comentario.likes.push({ id: this.loggedInUser.id })
       }
     },
     dislikedItem (id) {
       const comentario = this.comentarios.find(x => x.id === id)
       if (comentario) {
         console.log('comentario', comentario)
-        const idx = comentario.likes.findIndex(x => x.id === this.$strapi.user.id)
+        const idx = comentario.likes.findIndex(x => x.id === this.loggedInUser.id)
         if (idx > -1) comentario.likes.splice(idx, 1)
       }
     },
