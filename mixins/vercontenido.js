@@ -118,7 +118,7 @@ export default {
           })  
           .then(like=>{
             this.$strapi.create('historials', {
-              accion: 'like',
+              accion: 'like_contenido',
               titulo: this.ctitle,
               url: this.uid
               })  
