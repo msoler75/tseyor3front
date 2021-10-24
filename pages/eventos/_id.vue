@@ -2,20 +2,18 @@
   <section class="relative">
     <Config :contained="false" :focused="true" />
 
-    <nuxt-img
-      :src="cimage"
-      class="fixed top-[48px] sm:top-[51px] md:top-[68px] lg:top-[72px] xl:top-[76px] left-0 w-screen h-auto"
-      fit="cover"
-      sizes="xl:100vw lg:100vw md:100vw sm:100vw xs:100vw"
-      style="min-height:200px; z-index:-1"
-    />
+    <section class="fixed left-0 top-0 w-screen h-[40vh] xl:h-[45vh]"  :style="imageBg"/>
 
-    <section class="h-image" />
+    <div class="absolute top-[60px] right-4 btn w-12 h-12 flex justify-center items-center rounded-full sm:(w-auto h-auto)"><icon icon="edit"/> <span class="ml-2 hidden sm:inline">Editar</span></div>
+
     <Card
       v-if="$dayjs().isAfter($dayjs(evento.fechaFinal))"
-      class="absolute right-1 mt-1 font-bold text-xs p-1 sm:p-4 sm:text-base bg-orange text-orange-contrast"
-    >Evento Pasado</Card>
-    <div class="evento-wrapper bg-blue-gray dark:bg-blue-gray-900 grid w-full pb-9">
+      class="absolute right-1 mt-1 font-bold text-xs p-1 sm:p-4 sm:text-base bg-orange text-orange-contrast">
+      Evento Pasado
+    </Card>
+
+    <div class="evento-wrapper bg-blue-gray dark:bg-blue-gray-900 grid w-full pb-9"
+    style="margin-top: calc(40vh - 170px)">
       <div
         class="order-1 bg-red text-center flex justify-center items-center h-20 md:col-span-2 xl:col-span-1"
       >
@@ -74,6 +72,17 @@ export default {
       $error(503)
     }
   },
+  computed: {
+     imageBg () {
+        const imgUrl = this.$img(this.cimage, {width: '100%', format: 'webp', quality: 70})
+        return {
+          backgroundImage: `url('${imgUrl}')`,
+          backgroundPosition: 'center',
+          backgroundSize: 'cover',
+          zIndex: -1
+        }
+      }
+  }
 };
 </script>
 
@@ -96,7 +105,7 @@ export default {
 }
 
 .h-image {
-  @apply h-32;
+  @apply h-24;
 }
 @screen sm {
   .h-image {
