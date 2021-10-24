@@ -102,7 +102,7 @@ export default {
         return $error(404, 'Entrada no encontrada')
       const contenido = entradas[0]
       contenido.textoHTML = app.$renderMarkdownServer(contenido.texto, contenido.imagenes)
-      contenido.likes = await $strapi.find('likes', { uid: `entradas-${contenido.id}` })
+      contenido.likes = await $strapi.find('likes', { uid: `/entradas/${contenido.id}` })
       return { contenido, entrada: contenido };
     }
     catch (e) {

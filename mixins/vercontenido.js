@@ -8,11 +8,11 @@ export default {
     id () {
       return parseInt(this.$route.params.id)
     },
-    /*uid () {
+    uid () {
       const parts = this.$route.path.split('/')
       const collection = this.collection || parts[parts.length-2]
-      return `/${collection}/${this.id}`
-    },*/
+      return `/${collection}/${this.contenido.id}`
+    },
     /* contenidoJSON () {
       return JSON.stringify(this.contenido)
     }, */
@@ -113,9 +113,16 @@ export default {
           //this.$strapi.
           // await this.$strapi.$http.$put(`/${this.collection}/${id}/like`)
           
-          await this.$strapi.$http.$post("/api/likes", {
+          await this.$strapi.create("likes", {
             uid: this.uid
-          })    
+          })  
+          .then(like=>{
+            this.$strapi.create('historials', {
+              accion: 'like',
+              titulo: this.ctitle,
+              url: this.uid
+              })  
+          })
           // este paso es opcional:
           // this.refreshItem(id);
         },
@@ -127,7 +134,7 @@ export default {
           // await this.$strapi.$http.$put(`/${this.collection}/${id}/dislike`)
           const results = await this.$strapi.find('likes', {uid: this.uid, user: this.$strapi.user.id})
           if(results.length) {
-            await this.$strapi.$http.$delete(`/api/likes/${results[0].id}`)
+            await this.$strapi.$http.$delete(`/likes/${results[0].id}`)
             // este paso es opcional:
             // this.refreshItem(id);
           }

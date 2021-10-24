@@ -187,18 +187,7 @@ export default {
     // unique identifier for content-id
     uid: {
       type: String,
-      required: false,
-      default: null
-    },
-    collection: {
-      type: String,
-      required: false,
-      default: null
-    },
-    contentId: {
-      type: Number,
-      required: true,
-      default: null
+      required: true
     },
     contentTitle: {
       type: String,
@@ -255,12 +244,6 @@ methods: {
     comentariosSegundoNivel () {
       return this.comentarios.filter(x => x.respondiendo)
     },
-    calculatedUid()
-    {
-      if(this.uid)
-        return this.uid
-      return `/${this.collection}/${this.contentId}`
-    }
   },
   methods: {
     mostrarNombre (user) {
@@ -276,7 +259,7 @@ methods: {
     async cargarComentarios () {
       // console.log('fetch uid=', this.uid)
       const comentarios = await this.$strapi.find('comentarios', {
-        uid: this.calculatedUid,
+        uid: this.uid,
         _sort: 'updated_at:ASC'
       })
       this.$emit('count', comentarios.length)
@@ -288,7 +271,7 @@ methods: {
         texto: this.nuevoComentario
       })*/
       this.$strapi.create('comentarios', {
-        uid: this.calculatedUid,
+        uid: this.uid,
         texto: this.nuevoComentario
       })
       .then(comentario=>{
@@ -298,7 +281,7 @@ methods: {
           this.$strapi.create('historials', {
               accion: 'comentario',
               titulo: this.contentTitle,
-              url: this.calculatedUid
+              url: this.uid
           })
       })
       this.nuevoComentario = ''
@@ -306,7 +289,7 @@ methods: {
     },
     async responder (respondiendo) {
       await this.$strapi.create('comentarios', {
-        uid: this.calculatedUid,
+        uid: this.uid,
         respondiendo,
         texto: this.respuesta
       })
@@ -316,7 +299,7 @@ methods: {
           this.$strapi.create('historials', {
               accion: 'comentario_respuesta',
               titulo: this.contentTitle,
-              url: this.calculatedUid + '#comentario-'+respondiendo
+              url: this.uid + '#comentario-'+respondiendo
           })
       })
       this.responderA = null
@@ -356,8 +339,15 @@ methods: {
       console.log('like comment', id)
       this.likedItem(id)
       await this.$strapi.$http.$put(`/comentarios/${id}/like`)
-      await this.$strapi.$http.$post('/likes', {
+      await this.$strapi.create('likes', {
         uid: 'comentarios-' + id
+      })
+      .then(like=>{
+        this.$strapi.create('historials', {
+              accion: 'like_comentario',
+              titulo: this.contentTitle,
+              url: this.uid + '#comentario-'+id
+          })
       })
       // este paso es opcional:
       // this.refreshItem(id);

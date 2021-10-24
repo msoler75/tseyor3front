@@ -100,7 +100,7 @@ export default {
         contenido.imagenes
       );
       contenido.likes = await $strapi.find("likes", {
-        uid: `noticias-${contenido.id}`
+        uid: `/noticias/${contenido.id}`
       });
       return { contenido, noticia: contenido }
     } catch (e) {

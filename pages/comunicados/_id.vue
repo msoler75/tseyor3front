@@ -87,7 +87,7 @@ export default {
       if (!comunicados.length)
         return $error(404, 'Comunicado no encontrado')
       const contenido = comunicados[0]
-      contenido.likes = await $strapi.find('likes', { uid: `comunicados-${contenido.id}` })
+      contenido.likes = await $strapi.find('likes', { uid: `/comunicados/${contenido.id}` })
       contenido.textoHTML = app.$renderMarkdownServer(contenido.texto, contenido.imagenes)
       return { contenido, comunicado: contenido }
     }

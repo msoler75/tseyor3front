@@ -28,7 +28,7 @@ export default {
       // await this.$strapi.$http.$put(`/${this.collection}/${id}/like`)
       
       await this.$axios
-      .$post("/api/likes", {
+      .$post("/likes", {
         uid: this.uid
       })
 
@@ -42,7 +42,7 @@ export default {
       // await this.$strapi.$http.$put(`/${this.collection}/${id}/dislike`)
       const results = await this.$strapi.find('likes', {uid: this.uid, user: this.$strapi.user.id})
       if(results.length) {
-        await this.$axios.$delete(`/api/likes/${results[0].id}`)
+        await this.$axios.$delete(`/likes/${results[0].id}`)
         this.refreshItem(id)
       }
     }

@@ -74,7 +74,7 @@
         }}
       </h3>
       <h3 v-else class="text-center">Coméntalo</h3>
-      <Comentarios collection="libros" :content-id="contenido.id" :content-title="contenido.titulo" @count="$set(contenido, 'comentarios', $event)" class="px-1 xs:px-2" />
+      <Comentarios :uid="uid" :content-title="contenido.titulo" @count="$set(contenido, 'comentarios', $event)" class="px-1 xs:px-2" />
     </div>
   </div>
 </template>
@@ -95,7 +95,7 @@ export default {
         return $error(404, 'Libro no encontrado')
       const contenido = libros[0]
       contenido.likes = await $strapi.find('likes', {
-        uid: `libros-${contenido.id}`
+        uid: `/libros/${contenido.id}`
       })
       const categoria = contenido.etiquetas.length
         ? contenido.etiquetas[0].nombre

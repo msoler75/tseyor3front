@@ -146,6 +146,10 @@
     @apply hover:bg-green-300 active:bg-green-200;
   }
 
+  a:not(.btn) {
+    @apply text-blue-800;
+  }
+
   blockquote {
     @apply max-w-2xl text-xl  bg-white dark:bg-black p-8 pl-14 rounded relative font-serif italic;
   }

@@ -54,6 +54,15 @@
       <divider />
 
       <section>
+        <h2>Registro de actividad</h2>
+        <div v-for="item of historial" :key="item.id" class="text-left">
+          <HistorialItem :data="item" :self="soyYo"/>
+        </div>
+        <button v-if="hayMasHistorial" class="mt-3 btn btn-gray text-xs" @click="cargarMasHistorial" :disabled="cargandoHistorial">Ver anteriores...</button>
+      </section>
+      <divider />
+
+      <section>
         <h2>Últimos Comentarios</h2>
         <div v-if="usuario.comentarios && usuario.comentarios.length" class="w-full space-y-4">
           <div v-for="comentario of usuario.comentarios" :key="comentario.id">
@@ -86,16 +95,37 @@
 </template>
 
 <script>
+
+const query_historial =
+  `query { 
+        historials(start: %start, limit: %limit, sort: "created_at:desc", where:{autor:%autor}) {
+          created_at
+          titulo
+          accion
+          url
+        }
+      }`
+
 import { mapGetters } from "vuex";
 export default {
    async asyncData({ route, $strapi, $error }) {
+     const filters = {
+        _start: 0,
+        _limit: 10
+      }
     try {
       const id = route.params.id;
       const usuarios = await $strapi.find('users', { id })
       if(!usuarios.length)
         return $error(404, 'Usuario no encontrado')
       const usuario = usuarios[0]
-      return { id, usuario }
+      const resultado = await $strapi.graphql({
+        query: query_historial
+          .replace('%start', filters._start)
+          .replace('%limit', filters._limit)
+          .replace('%autor', usuario.id)
+      })
+      return { hayMasHistorial: resultado.historials.length === filters._limit, filters, id, usuario, historial: resultado.historials }
     } catch (e) {
       $error(503)
     }
@@ -122,6 +152,7 @@ export default {
       subiendoImagen: false,
       cambiandoFrase: false,
       subiendoFrase: false,
+      cargandoHistorial: false,
       nuevaFrase: this.usuarioFrase
     }
   },
@@ -132,6 +163,22 @@ export default {
     }
   },
   methods: {
+    cargarMasHistorial(){
+      this.filters._start = this.historial.length
+      this.cargandoHistorial = true
+      this.$strapi.graphql({
+          query: query_historial
+          .replace('%start', this.filters._start)
+          .replace('%limit', this.filters._limit)
+          .replace('%autor', this.usuario.id)
+      })
+      .then((result)=>{
+        for(const h of result.historials)
+          this.historial.push(h)
+        this.hayMasHistorial = result.historials.length === this.filters._limit
+        this.cargandoHistorial = false
+      })
+    },
     contenidoref(comentario) {
       return '/' + comentario.uid.replace('-', '/') + '#comentarios'
     },
