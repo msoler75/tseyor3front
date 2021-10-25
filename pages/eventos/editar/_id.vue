@@ -40,17 +40,14 @@
                 <label for="imagenes">Imágenes adicionales (opcional):</label>
                 <p><i>Estas imágenes pueden tener texto</i></p>
                 <client-only>
-                <draggable tag="ul" :list="imagenesAdicionales" group="main" class="relative" :animation="200">
-
-                    <!-- Repeated for everything in 'list' -->
-                        <div v-for="item of imagenesAdicionales" :key="item.url" class="relative mb-3">
-                            <img :src="item.url" class="w-full">
-                            <div class="btn btn-error absolute right-2 top-2 text-xl p-0 w-7 h-7 flex justify-center items-center rounded-full" @click="eliminarDeImagenes(item.url)" title="Eliminar imagen" >
-                                &times;
+                    <draggable tag="ul" :list="imagenesAdicionales" group="main" class="relative" :animation="200" @change="dragged">
+                            <div v-for="item of imagenesAdicionales" :key="item.url" class="group relative mb-3">
+                                <img :src="item.url" class="w-full">
+                                <div class="btn btn-error absolute right-2 top-2 text-xl p-0 w-7 h-7 flex justify-center items-center rounded-full transition duration-200 opacity-0 group-hover:opacity-100" @click="eliminarDeImagenes(item.url)" title="Eliminar imagen" >
+                                    &times;
+                                </div>
                             </div>
-                        </div>
-
-                </draggable>
+                    </draggable>
                 </client-only>
                 <InputImage id="imagenes" :value="imagenesSubir" :multiple="true" @change="onImagenes" class="mt-3" :class="fieldValidate('imagenes')" 
                 textButton="Añadir"/>
@@ -276,6 +273,7 @@ export default {
             imagenesSubir: [],
             dragData: {},
             imagenesAdicionales: [],
+            ordenQueQuiero: [],
             tieneFinal: this.contenido && this.contenido.fechaFinal,
             tieneSala: this.contenido && this.contenido.sala,
             tieneCentro: this.contenido && this.contenido.centro,
@@ -319,10 +317,20 @@ export default {
         this.recalcularImagenesAdicionales()
     },
     methods: {
+        dragged() {
+            this.ordenQueQuiero = [...this.imagenesAdicionales]
+            this.modificado++
+        },
         recalcularImagenesAdicionales() {
             console.log('recalc imagenes')
+            const o = this.ordenQueQuiero
             // this.imagenesAdicionales = (this.contenido?this.contenido.imagenes:[]).concat(this.imagenesSubir.map(x=>({url: x.src})))
-            this.$set(this, 'imagenesAdicionales', (this.contenido?this.contenido.imagenes:[]).concat(this.imagenesSubir.map(x=>({url: x.src}))))
+            const list = (this.contenido?this.contenido.imagenes:[]).concat(this.imagenesSubir.map(x=>({url: x.src})))
+            this.$set(this, 'imagenesAdicionales', list.sort(function(a,b) {
+                const ia = o.findIndex(x=>x.url===a.url)
+                const ib = o.findIndex(x=>x.url===b.url)
+                return (ia===-1?999998:ia)-(ib===-1?999999:ib)
+            }))
         },
         eliminarDeImagenes(url) {
             console.log('eliminar', url)
@@ -384,7 +392,7 @@ export default {
             this.guardando = true
             // primero subimos la imagen
             let imagenId = null
-            let imagenesIds = []
+            let imagenes = []
             const promises = []
 
             if(this.imagenSubir&&this.imagenSubir.file)
@@ -419,10 +427,13 @@ export default {
                             console.log('upload multiple', img.file)
                             form.append("files", img.file)
                         }
+                        const imgs = this.imagenesSubir
                         this.$strapi.create("upload", form)
                             .then(async (response) => {
                                 console.log('uploaded imagenes', response)
-                                imagenesIds = response.map(x=>x.id)
+                                imagenes = response
+                                for(const i in imagenes)
+                                    imagenes[i].url = imgs[i].src                                
                                 success()
                             })
                         .catch(err=>{
@@ -435,13 +446,20 @@ export default {
 
             await Promise.all(promises)
 
-            this.guardarEvento(imagenId, imagenesIds)
+            this.guardarEvento(imagenId, imagenes)
         },
-        async guardarEvento(idImage, imagenesId) {
+        async guardarEvento(idImage, imagenes) {
             console.log('guardarEvento!')
+            const o = this.ordenQueQuiero
             const data = {...this.contenido}
             data.imagen = idImage?idImage:data.imagen.id
-            data.imagenes = data.imagenes.map(x=>x.id).concat(imagenesId)
+            data.imagenes = data.imagenes.concat(imagenes)
+                .sort(function(a,b) {
+                    const ia = o.findIndex(x=>x.url===a.url)
+                    const ib = o.findIndex(x=>x.url===b.url)
+                    return (ia===-1?999998:ia)-(ib===-1?999999:ib)
+                })
+                .map(x=>x.id)
             console.log(data)
             if (this.contenido.id) {
                 this.$strapi
@@ -450,6 +468,7 @@ export default {
                         console.log('updated', contenido)
                         this.imagenSubir = null
                         this.imagenesSubir = []
+                        this.ordenQueQuiero = []
                         for (const field in contenido) {
                             if (relaciones11.includes(field))
                                 this.$set(this.contenido, field, contenido[field] ? contenido[field].id : null)
