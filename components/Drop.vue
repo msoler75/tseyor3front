@@ -16,7 +16,7 @@
 export default {
     props: {
         multiple: {type: Boolean, required: false, default: false},
-        accept: {type: String, required: false, default: ''}
+        accept: {type: String, required: false, default: ''-}
     },
     data: () => ({ File: []}),
     methods: {
