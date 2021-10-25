@@ -17,7 +17,7 @@ export default {
                 case 'comentario':          return this.self?'Comentaste':'Comentó'
                 case 'comentario_respuesta':return this.self?'Respondiste un comentario en':'Respondió un comentario en'
                 case 'evento_creado':       return this.self?'Creaste el evento':'Creó el evento'
-                case 'evento_asiste':       return this.self?'Marcaste tu asistencia al evento':'Marcó su asistencia al evento'
+                case 'evento_asiste':       return this.self?'Asistes al evento':'Asiste al evento'
                 case 'reunion_creada':      return this.self?'Creaste la reunión':'Creó la reunión'
                 case 'acta_creada':         return this.self?'Creaste el acta':'Creó el acta'
                 case 'equipo_entrada':      return this.self?'Te uniste al equipo':'Se unió al equipo'

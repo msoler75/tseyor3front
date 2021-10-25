@@ -166,7 +166,7 @@
                     class="btn w-full text-center"
                     :class="modificado || guardando || creando ? 'btn-warning' : 'btn-success'"
                     type="submit"
-                    :disabled="guardando||!modificado"
+                    :disabled="eliminando||guardando||!modificado"
                 >
                     <div class="flex justify-center items-center">
                         <icon
@@ -177,10 +177,21 @@
                     </div>
                 </button>
             </div>
-            <div v-if="contenido.id" class="mt-5 flex justify-center">
+            <div v-if="contenido.id" class="mt-7 flex justify-center space-x-6">
+
+                <div @click="borrarEvento"
+                    class="btn btn-error w-full text-center"
+                    :disabled="eliminando || guardando"
+                >
+                    <div class="flex justify-center items-center">
+                        <icon class="!w-6" icon="trash"/>
+                        <span class="inline-block w-28">Borrar Evento</span>
+                    </div>
+                </div>
+
                 <NLink :to="`/eventos/${contenido.id}`"
                     class="btn w-full text-center"
-                    :disabled="guardando||modificado"
+                    :disabled="eliminando || guardando||modificado"
                 >
                     <div class="flex justify-center items-center">
                         <icon class="!w-6" icon="eye"/>
@@ -243,6 +254,7 @@ export default {
             tieneSala: this.contenido && this.contenido.sala,
             tieneCentro: this.contenido && this.contenido.centro,
             guardando: false,
+            eliminando: false,
             modificado: false
         }
     },
@@ -294,6 +306,19 @@ export default {
             return search.length
                 ? fuse.search(search).map(({ item }) => item)
                 : fuse.list;
+        },
+        borrarEvento() {
+            if(confirm("Esto eliminará permanentemente este evento")) {
+                this.eliminando = true
+            this.$strapi.delete('eventos', this.contenido.id)
+            .then(response=>{
+                this.$router.push('/eventos')
+            })
+            .catch(err=>{
+                console.error(err)
+                this.eliminando = false
+            })
+            }
         },
         async submit() {
             this.clearErrors()

@@ -57,7 +57,7 @@
             <icon icon="hourglass" class="!w-8 mr-2 text-gray" />
             {{ $dayjs(evento.fechaComienzo).fromNow() }}
           </p>
-          <button class="mt-9 btn mx-auto w-32" :disabled="actualizando" @click="quieroAsistir=!quieroAsistir">
+          <button class="mt-9 btn btn-warning text-lg mx-auto w-32" :disabled="actualizando" @click="quieroAsistir=!quieroAsistir">
             <input class="pointer-events-none mr-4 scale-150" type="checkbox" readonly v-model="quieroAsistir"> <span>Asistiré</span>
           </button>
         </Card>
@@ -128,19 +128,23 @@ export default {
   },
   watch: {
     quieroAsistir(asistire) {
-      let valorAntes = this.quieroAsistir
       if(!this.isAuthenticated) return
       this.actualizando = true
       this.$strapi.$http.$put(`/eventos/${this.contenido.id}/${asistire?'join':'leave'}`)
-      .then(result=>{
-        console.log('res as', result)
+      .then(evento=>{
+        console.log('res as', evento)
           this.actualizando = false
-          this.$set(this.contenido, 'asistentes', result.asistentes)
-          this.quieroAsistir = this.isAuthenticated && !!this.contenido.asistentes.find(x=>x.id===this.loggedInUser.id)
+          this.$set(this.contenido, 'asistentes', evento.asistentes)
+          const asiste = this.isAuthenticated && !!this.contenido.asistentes.find(x=>x.id===this.loggedInUser.id)
+          if(asiste)
+            this.$strapi.create('historials', {
+              accion: 'evento_asiste',
+              titulo: this.ctitle,
+              url: this.uid
+              })  
        })
        .catch(err=>{
          this.actualizando = false
-         this.quieroAsistir = valorAntes
        })
     }
   },
