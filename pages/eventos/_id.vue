@@ -32,7 +32,10 @@
       <div class="order-2 bg-red h-20 hidden xl:block xl:order-3" />
       <Card class="rounded-none rounded-b-md order-4 p-7 xl:order-2 xl:row-span-2">
         <h1 class="text-center">{{ ctitle }}</h1>
-        <Article class="text-justify" v-html="evento.textoHTML" />
+        <Article class="text-justify" v-html="evento.textoHTML || evento.descripcion" />
+        <div class="mt-5 space-y-3 mb-7">
+          <nuxt-img v-for="img of contenido.imagenes" :key="img.url" :src="img.url" class="mx-auto"/>
+        </div>
       </Card>
       <div class="order-5 md:order-3 xl:order-4 flex flex-col space-y-6 justify-start items-center">
         <Card class="p-7 m-5 mt-12 whitespace-nowrap text-gray-700 flex flex-wrap lg:flex-col">

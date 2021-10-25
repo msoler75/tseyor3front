@@ -208,7 +208,7 @@
 
                 <NLink :to="`/eventos/${contenido.id}`"
                     class="btn w-full text-center"
-                    :disabled="eliminando || guardando||modificado"
+                    :disabled="eliminando || guardando|| !!modificado"
                 >
                     <div class="flex justify-center items-center">
                         <icon class="!w-6" icon="eye"/>
