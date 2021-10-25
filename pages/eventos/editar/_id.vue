@@ -2,8 +2,10 @@
     <Card class="py-5 px-2 xs:px-4 max-w-md mx-auto bg-blue-gray-50 dark:bg-blue-gray-900">
         <Config :focused="true" />
 
+        {{dragData}}
+        {{contenido}}
         <h1>{{ accion }} evento</h1>
-        <form @submit.prevent="submit" class="regular-form bg-transparent space-y-4">
+        <form @submit.prevent="submit" class="regular-form bg-transparent space-y-9">
             <div>
                 <label for="titulo">Título:</label>
                 <br />
@@ -28,10 +30,29 @@
                 <p class="error">{{ errors.descripcion }}</p>
             </div>
             <div>
-                <label for="imagen">Imagen:</label>
+                <label for="imagen">Imagen de fondo:</label>
+                <p><i>Importante: Esta imagen no debe tener texto</i></p>
                 <img v-if="cimage" :src="cimage" class="mb-3" />
-                <InputImage id="imagen" @change="onFileChange" :class="fieldValidate('imagen')" :required="!cimage" />
+                <InputImage id="imagen" :value="imagenSubir" @change="onImagen" class="mt-3" :class="fieldValidate('imagen')" :required="!cimage" />
                 <p class="error">{{ errors.imagen }}</p>
+            </div>
+             <div>
+                <label for="imagenes">Imágenes adicionales (opcional):</label>
+                <p><i>Estas imágenes pueden tener texto</i></p>
+                <client-only>
+                <div class="list">
+                <div v-for="(image, index) of imagenesAdicionales" :key="image.url" :index="index" class="relative mb-3"
+                drag-direction="vertical">
+                    <img :src="image.url" class="w-full">
+                    <div class="btn btn-error absolute right-1 bottom-1 text-xl p-0 w-7 h-7 flex justify-center items-center rounded-full" @click="eliminarDeImagenes(image.url)" title="Eliminar imagen" >
+                        &times;
+                    </div>
+                </div>
+                </div>
+                </client-only>
+                <InputImage id="imagenes" :value="imagenesSubir" :multiple="true" @change="onImagenes" class="mt-3" :class="fieldValidate('imagenes')" 
+                textButton="Añadir"/>
+                <p class="error">{{ errors.imagenes }}</p>
             </div>
             <div>
                 <label for="texto">Descripción detallada:</label>
@@ -208,8 +229,9 @@ const relaciones11 = ['sala', 'organiza', 'autor']
 import vSelect from "vue-select";
 import Fuse from "fuse.js";
 import validation from "@/mixins/validation"
+import Sortable from 'vue-drag-sortable'
 export default {
-    components: { vSelect },
+    components: { vSelect, Sortable },
     mixins: [validation],
     async asyncData({ $strapi, route, $error }) {
         try {
@@ -248,20 +270,28 @@ export default {
     },
     data() {
         return {
-            imagen: null,
-            fileImagen: null,
+            imagenSubir: null,
+            imagenesSubir: [],
+            dragData: {},
+            imagenesAdicionales: [],
             tieneFinal: this.contenido && this.contenido.fechaFinal,
             tieneSala: this.contenido && this.contenido.sala,
             tieneCentro: this.contenido && this.contenido.centro,
             guardando: false,
             eliminando: false,
-            modificado: false
+            modificado: 0
         }
     },
     computed: {
         cimage() {
-            return this.imagen || (this.contenido.imagen ? this.contenido.imagen.url : null)
+            // la imagen que queremos subir o la del contenido 
+            return this.imagenSubir?this.imagenSubir.src: this.contenido.imagen ? this.contenido.imagen.url : null
         },
+        /* cimages () {
+            this.imagenesAdicionales = this.contenido.imagenes.concat(this.imagenesSubir.map(x=>({url: x.src})))
+            // las imágenes del contenido y las que queremos subir nuevas
+            return this.contenido.imagenes.concat(this.imagenesSubir.map(x=>({url: x.src})))
+        }, */
         accion() {
             return this.contenido.id ? 'Editar' : 'Nuevo'
         },
@@ -273,21 +303,45 @@ export default {
         },
         creando() {
             return !this.contenido || !this.contenido.id
-        }
+        },
     },
     watch: {
         contentJSON(newValue) {
-            this.modificado = true
+            this.modificado++
         },
-        imagen(newValue) {
-            this.modificado = true
+        modificado(newValue) {
+            this.recalcularImagenesAdicionales()
         }
     },
+    mounted() {
+        this.recalcularImagenesAdicionales()
+    },
     methods: {
-        onFileChange({ file, src }) {
-            console.log('filechange', file)
-            this.imagen = src
-            this.fileImagen = file
+        recalcularImagenesAdicionales() {
+            this.imagenesAdicionales = (this.contenido?this.contenido.imagenes:[]).concat(this.imagenesSubir.map(x=>({url: x.src})))
+        },
+        eliminarDeImagenes(url) {
+            console.log('eliminar', url)
+            let idx = this.contenido.imagenes.findIndex(x=>x.url===url)
+            if(idx>-1)
+                this.contenido.imagenes.splice(idx, 1)
+            idx = this.imagenesSubir.findIndex(x=>x.src===url)
+            if(idx>-1)
+                this.imagenesSubir.splice(idx, 1)
+            this.modificado++
+        },
+        onImagen(payload) {
+            console.log('filechange', payload)
+            this.imagenSubir = {
+                src: payload.images[0],
+                file: payload.files[0]
+            }
+            this.modificado++
+        },
+        onImagenes(payload) {
+            for(const i in payload.images) 
+                this.imagenesSubir.push({src: payload.images[i], file: payload.files[i]})
+            this.modificado++
         },
         fuseSalas(options, search) {
             const fuse = new Fuse(options, {
@@ -321,32 +375,87 @@ export default {
             }
         },
         async submit() {
+            console.log('submit')
             this.clearErrors()
             this.guardando = true
             // primero subimos la imagen
-            if(this.imagen)
+            let imagenId = null
+            let imagenesIds = []
+            const promises = []
+
+            if(this.imagenSubir&&this.imagenSubir.file)
             {
-                const form = new FormData()
-                const that = this
-                form.append("files", this.fileImagen)
-                this.$strapi.create("upload", form)
-                    .then(async (response) => {
-                        this.guardarEvento(response[0].id)
+                promises.push(
+                    new Promise((success, reject) => 
+                    {
+                        const form = new FormData()
+                        console.log('upload single', this.imagenSubir.file)
+                        form.append("files", this.imagenSubir.file)
+                        this.$strapi.create("upload", form)
+                            .then(async (response) => {
+                                imagenId = response[0].id
+                                success()
+                            })
+                        .catch(err=>{
+                            console.warn(err)
+                            reject(err)
+                        })
                     })
+                )
             }
-            else
-            this.guardarEvento()
+
+            if(this.imagenesSubir.length)
+            {
+                promises.push(
+                    new Promise((success, reject) => 
+                    {
+                        const form = new FormData()
+                        for(const img of this.imagenesSubir)
+                        {
+                            console.log('upload multiple', img.file)
+                            form.append("files", img.file)
+                        }
+                        this.$strapi.create("upload", form)
+                            .then(async (response) => {
+                                console.log('uploaded imagenes', response)
+                                imagenesIds = response.map(x=>x.id)
+                                success()
+                            })
+                        .catch(err=>{
+                            console.warn(err)
+                            reject(err)
+                        })
+                    })
+                )
+            }
+
+            await Promise.all(promises)
+
+            this.guardarEvento(imagenId, imagenesIds)
         },
-        async guardarEvento(idImage) {
+        async guardarEvento(idImage, imagenesId) {
+            console.log('guardarEvento!')
             const data = {...this.contenido}
-            if(idImage)
-                data.imagen = idImage?idImage:data.imagen.id
+            data.imagen = idImage?idImage:data.imagen.id
+            data.imagenes = data.imagenes.map(x=>x.id).concat(imagenesId)
+            console.log(data)
             if (this.contenido.id) {
                 this.$strapi
                     .update('eventos', this.contenido.id, data)
-                    .then(() => {
-                        this.modificado = false
-                        this.guardando = false
+                    .then((contenido) => {
+                        console.log('updated', contenido)
+                        this.imagenSubir = null
+                        this.imagenesSubir = []
+                        for (const field in contenido) {
+                            if (relaciones11.includes(field))
+                                this.$set(this.contenido, field, contenido[field] ? contenido[field].id : null)
+                            else
+                                this.$set(this.contenido, field, contenido[field])
+                        }
+                        this.$nextTick(() => {
+                            this.guardando = false
+                            this.modificado = 0
+                        })
                     })
                     .catch(err => {
                         this.setErr(err)
@@ -391,4 +500,13 @@ export default {
 <style scoped>
 @import "@/assets/css/form.css";
 @import "@/assets/css/vselect.css";
+
+.list {
+  position: relative; /* position of list container must be set to `relative` */
+}
+/* dragging item will be added with a `dragging` class */
+/* so you can use this class to define the appearance of it */
+.list > *.dragging {
+  box-shadow: 0 2px 10px 0 rgba(0,0,0,.2);
+}
 </style>
