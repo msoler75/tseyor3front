@@ -34,7 +34,7 @@
         <h1 class="text-center">{{ ctitle }}</h1>
         <Article class="text-justify" v-html="evento.textoHTML" />
       </Card>
-      <div class="order-5 md:order-3 xl:order-4 flex justify-center items-start">
+      <div class="order-5 md:order-3 xl:order-4 flex flex-col space-y-6 justify-start items-center">
         <Card class="p-7 m-5 mt-12 whitespace-nowrap text-gray-700 flex flex-wrap lg:flex-col">
           <p class="my-1" v-if="evento.sala">
             <icon icon="globe" class="!w-8 mr-2 text-gray" />Evento online
@@ -57,14 +57,24 @@
             <icon icon="hourglass" class="!w-8 mr-2 text-gray" />
             {{ $dayjs(evento.fechaComienzo).fromNow() }}
           </p>
+
+
           <button class="mt-9 btn btn-warning text-lg mx-auto w-32" :disabled="actualizando" @click="quieroAsistir=!quieroAsistir">
             <input class="pointer-events-none mr-4 scale-150" type="checkbox" readonly v-model="quieroAsistir"> <span>Asistiré</span>
           </button>
+
+        <template v-if="evento.asistentes.length">
+            <p class="mt-14 mb-2 font-bold text-center">Asistentes:</p>
+            <div class="flex flex-wrap justify-center">
+        <Avatar v-for="user of evento.asistentes" :key="user.id" :data="user" class="w-12 h-12 m-1" />
+      </div>
+    </template>
+
         </Card>
       </div>
     </div>
 
-    <section class="surface w-full">
+    <section class="surface w-full py-7">
       <!-- share modal -->
       <Comparte v-model="viendoCompartir" />
 
@@ -74,11 +84,11 @@
         @like="like(contenido.id)"
         @dislike="dislike(contenido.id)"
         @share="viendoCompartir = true"
-        class="mx-auto max-w-xl lg:my-16 py-9"
+        class="mx-auto max-w-xl lg:my-3 py-9"
       />
 
       <!-- comentarios -->
-      <div id="comentarios" class="mx-auto bg-opacity-90 bg-gray-200 py-8">
+      <div id="comentarios" class="mx-auto bg-opacity-90 bg-gray-200 py-9">
         <h3 v-if="contenido.comentarios" class="text-center">
           {{
             contenido.comentarios +
