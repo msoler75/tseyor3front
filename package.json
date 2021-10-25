@@ -36,12 +36,12 @@
     "nuxt-gmaps": "^1.2.10",
     "vue-advanced-cropper": "^1.8.2",
     "vue-clamp": "^0.4.0",
-    "vue-drag-sortable": "^0.2.2",
     "vue-observe-visibility": "^1.0.0",
     "vue-scrollto": "^2.20.0",
     "vue-select": "^3.13.2",
     "vue-social-sharing": "^3.0.8",
-    "vue-toastification": "^1.7.11"
+    "vue-toastification": "^1.7.11",
+    "vuedraggable": "^2.24.3"
   },
   "devDependencies": {
     "@fortawesome/free-brands-svg-icons": "^5.15.3",

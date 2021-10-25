@@ -40,15 +40,17 @@
                 <label for="imagenes">Imágenes adicionales (opcional):</label>
                 <p><i>Estas imágenes pueden tener texto</i></p>
                 <client-only>
-                <div class="list">
-                <div v-for="(image, index) of imagenesAdicionales" :key="image.url" :index="index" class="relative mb-3"
-                drag-direction="vertical">
-                    <img :src="image.url" class="w-full">
-                    <div class="btn btn-error absolute right-1 bottom-1 text-xl p-0 w-7 h-7 flex justify-center items-center rounded-full" @click="eliminarDeImagenes(image.url)" title="Eliminar imagen" >
-                        &times;
-                    </div>
-                </div>
-                </div>
+                <draggable tag="ul" :list="imagenesAdicionales" group="main" class="relative" :animation="200">
+
+                    <!-- Repeated for everything in 'list' -->
+                        <div v-for="item of imagenesAdicionales" :key="item.url" class="relative mb-3">
+                            <img :src="item.url" class="w-full">
+                            <div class="btn btn-error absolute right-2 top-2 text-xl p-0 w-7 h-7 flex justify-center items-center rounded-full" @click="eliminarDeImagenes(item.url)" title="Eliminar imagen" >
+                                &times;
+                            </div>
+                        </div>
+
+                </draggable>
                 </client-only>
                 <InputImage id="imagenes" :value="imagenesSubir" :multiple="true" @change="onImagenes" class="mt-3" :class="fieldValidate('imagenes')" 
                 textButton="Añadir"/>
@@ -229,9 +231,9 @@ const relaciones11 = ['sala', 'organiza', 'autor']
 import vSelect from "vue-select";
 import Fuse from "fuse.js";
 import validation from "@/mixins/validation"
-import Sortable from 'vue-drag-sortable'
+import draggable from "vuedraggable";
 export default {
-    components: { vSelect, Sortable },
+    components: { vSelect, draggable },
     mixins: [validation],
     async asyncData({ $strapi, route, $error }) {
         try {
@@ -318,7 +320,9 @@ export default {
     },
     methods: {
         recalcularImagenesAdicionales() {
-            this.imagenesAdicionales = (this.contenido?this.contenido.imagenes:[]).concat(this.imagenesSubir.map(x=>({url: x.src})))
+            console.log('recalc imagenes')
+            // this.imagenesAdicionales = (this.contenido?this.contenido.imagenes:[]).concat(this.imagenesSubir.map(x=>({url: x.src})))
+            this.$set(this, 'imagenesAdicionales', (this.contenido?this.contenido.imagenes:[]).concat(this.imagenesSubir.map(x=>({url: x.src}))))
         },
         eliminarDeImagenes(url) {
             console.log('eliminar', url)
@@ -500,13 +504,4 @@ export default {
 <style scoped>
 @import "@/assets/css/form.css";
 @import "@/assets/css/vselect.css";
-
-.list {
-  position: relative; /* position of list container must be set to `relative` */
-}
-/* dragging item will be added with a `dragging` class */
-/* so you can use this class to define the appearance of it */
-.list > *.dragging {
-  box-shadow: 0 2px 10px 0 rgba(0,0,0,.2);
-}
 </style>
