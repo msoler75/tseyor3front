@@ -287,11 +287,6 @@ export default {
             // la imagen que queremos subir o la del contenido 
             return this.imagenSubir?this.imagenSubir.src: this.contenido.imagen ? this.contenido.imagen.url : null
         },
-        /* cimages () {
-            this.imagenesAdicionales = this.contenido.imagenes.concat(this.imagenesSubir.map(x=>({url: x.src})))
-            // las imágenes del contenido y las que queremos subir nuevas
-            return this.contenido.imagenes.concat(this.imagenesSubir.map(x=>({url: x.src})))
-        }, */
         accion() {
             return this.contenido.id ? 'Editar' : 'Nuevo'
         },
@@ -322,18 +317,15 @@ export default {
             this.modificado++
         },
         recalcularImagenesAdicionales() {
-            console.log('recalc imagenes')
             const o = this.ordenQueQuiero
-            // this.imagenesAdicionales = (this.contenido?this.contenido.imagenes:[]).concat(this.imagenesSubir.map(x=>({url: x.src})))
             const list = (this.contenido?this.contenido.imagenes:[]).concat(this.imagenesSubir.map(x=>({url: x.src})))
             this.$set(this, 'imagenesAdicionales', list.sort(function(a,b) {
                 const ia = o.findIndex(x=>x.url===a.url)
                 const ib = o.findIndex(x=>x.url===b.url)
-                return (ia===-1?98:ia)-(ib===-1?97:ib)
+                return (ia===-1?998:ia)-(ib===-1?997:ib)
             }))
         },
         eliminarDeImagenes(url) {
-            console.log('eliminar', url)
             let idx = this.contenido.imagenes.findIndex(x=>x.url===url)
             if(idx>-1)
                 this.contenido.imagenes.splice(idx, 1)
@@ -343,7 +335,6 @@ export default {
             this.modificado++
         },
         onImagen(payload) {
-            console.log('filechange', payload)
             this.imagenSubir = {
                 src: payload.images[0],
                 file: payload.files[0]
@@ -387,7 +378,6 @@ export default {
             }
         },
         async submit() {
-            console.log('submit')
             this.clearErrors()
             this.guardando = true
             // primero subimos la imagen
@@ -401,7 +391,6 @@ export default {
                     new Promise((success, reject) => 
                     {
                         const form = new FormData()
-                        console.log('upload single', this.imagenSubir.file)
                         form.append("files", this.imagenSubir.file)
                         this.$strapi.create("upload", form)
                             .then(async (response) => {
@@ -424,16 +413,14 @@ export default {
                         const form = new FormData()
                         for(const img of this.imagenesSubir)
                         {
-                            console.log('upload multiple', img.file)
                             form.append("files", img.file)
                         }
                         const imgs = this.imagenesSubir
                         this.$strapi.create("upload", form)
                             .then(async (response) => {
-                                console.log('uploaded imagenes', response)
                                 imagenes = response
                                 for(const i in imagenes)
-                                    imagenes[i].src = imgs[i].src                                
+                                    imagenes[i].src = imgs[i].src  // para tener el src que corresponde a this.ordenQueQuiero
                                 success()
                             })
                         .catch(err=>{
@@ -449,23 +436,21 @@ export default {
             this.guardarEvento(imagenId, imagenes)
         },
         async guardarEvento(idImage, imagenes) {
-            console.log('guardarEvento!')
-            const o = this.ordenQueQuiero
             const data = {...this.contenido}
             data.imagen = idImage?idImage:data.imagen.id
+            const o = this.ordenQueQuiero
             data.imagenes = data.imagenes.concat(imagenes)
+            // importante guardar en el orden deseado por el usuario, o el que ya estaba antes
                 .sort(function(a,b) {
                     const ia = o.findIndex(x=>x.url===a.url||x.url===a.src)
                     const ib = o.findIndex(x=>x.url===b.url||x.url===b.src)
-                    return (ia===-1?98:ia)-(ib===-1?97:ib)
+                    return (ia===-1?998:ia)-(ib===-1?997:ib)
                 })
                 .map(x=>x.id)
-            console.log(data)
             if (this.contenido.id) {
                 this.$strapi
                     .update('eventos', this.contenido.id, data)
                     .then((contenido) => {
-                        console.log('updated', contenido)
                         this.imagenSubir = null
                         this.imagenesSubir = []
                         this.ordenQueQuiero = []
@@ -498,17 +483,6 @@ export default {
 
                         // recargamos la página para que se muestra en modo edición con la ruta correcta
                         this.$router.push(`/eventos/editar/${contenido.id}`)
-                        /*
-                        console.log('creado', contenido)
-                        for (const field in contenido) {
-                            if (relaciones11.includes(field))
-                                this.$set(this.contenido, field, contenido[field] ? contenido[field].id : null)
-                            else
-                                this.$set(this.contenido, field, contenido[field])
-                        }
-                        this.$nextTick(() => {
-                            this.modificado = false
-                        })*/
                     })
                     .catch(err => {
                         this.setErr(err)
