@@ -329,7 +329,7 @@ export default {
             this.$set(this, 'imagenesAdicionales', list.sort(function(a,b) {
                 const ia = o.findIndex(x=>x.url===a.url)
                 const ib = o.findIndex(x=>x.url===b.url)
-                return (ia===-1?999998:ia)-(ib===-1?999999:ib)
+                return (ia===-1?98:ia)-(ib===-1?97:ib)
             }))
         },
         eliminarDeImagenes(url) {
@@ -433,7 +433,7 @@ export default {
                                 console.log('uploaded imagenes', response)
                                 imagenes = response
                                 for(const i in imagenes)
-                                    imagenes[i].url = imgs[i].src                                
+                                    imagenes[i].src = imgs[i].src                                
                                 success()
                             })
                         .catch(err=>{
@@ -455,9 +455,9 @@ export default {
             data.imagen = idImage?idImage:data.imagen.id
             data.imagenes = data.imagenes.concat(imagenes)
                 .sort(function(a,b) {
-                    const ia = o.findIndex(x=>x.url===a.url)
-                    const ib = o.findIndex(x=>x.url===b.url)
-                    return (ia===-1?999998:ia)-(ib===-1?999999:ib)
+                    const ia = o.findIndex(x=>x.url===a.url||x.url===a.src)
+                    const ib = o.findIndex(x=>x.url===b.url||x.url===b.src)
+                    return (ia===-1?98:ia)-(ib===-1?97:ib)
                 })
                 .map(x=>x.id)
             console.log(data)
