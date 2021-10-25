@@ -27,18 +27,22 @@
         <p>{{ usuario.frase }}</p>
       </blockquote>
 
-      <button v-if="soyYo" class="btn w-48 mx-auto btn-gray text-sm inline-block mb-7" @click="cambiandoFrase=true;nuevaFrase=''">Cambiar mi frase</button>
-    
-    <Modal v-if="soyYo" v-model="cambiandoFrase" title="Mi nueva frase es...">
-      <form @submit.prevent="guardarFrase" class="p-7">
-        <label for="frase">Nueva frase:</label><br />
-        <input id="frase" type="text" maxlength="128" v-model="nuevaFrase"/>
-        <button class="btn btn-gray text-sm mt-3" :disabled="subiendoFrase">Guardar</button>
-      </form>
-    </Modal>
+      <button
+        v-if="soyYo"
+        class="btn w-48 mx-auto btn-gray text-sm inline-block mb-7"
+        @click="cambiandoFrase = true; nuevaFrase = ''"
+      >Cambiar mi frase</button>
 
+      <Modal v-if="soyYo" v-model="cambiandoFrase" title="Mi nueva frase es...">
+        <form @submit.prevent="guardarFrase" class="p-7">
+          <label for="frase">Nueva frase:</label>
+          <br />
+          <input id="frase" type="text" maxlength="128" v-model="nuevaFrase" />
+          <button class="btn btn-gray text-sm mt-3" :disabled="subiendoFrase">Guardar</button>
+        </form>
+      </Modal>
 
-    <divider />
+      <divider />
 
       <section>
         <h2>Equipos</h2>
@@ -56,9 +60,14 @@
       <section>
         <h2>Registro de actividad</h2>
         <div v-for="item of historial" :key="item.id" class="text-left">
-          <HistorialItem :data="item" :self="soyYo"/>
+          <HistorialItem :data="item" :self="soyYo" />
         </div>
-        <button v-if="hayMasHistorial" class="mt-3 btn btn-gray text-xs" @click="cargarMasHistorial" :disabled="cargandoHistorial">Ver anteriores...</button>
+        <button
+          v-if="hayMasHistorial"
+          class="mt-3 btn btn-gray text-xs"
+          @click="cargarMasHistorial"
+          :disabled="cargandoHistorial"
+        >Ver anteriores...</button>
       </section>
       <divider />
 
@@ -67,7 +76,7 @@
         <div v-if="usuario.comentarios && usuario.comentarios.length" class="w-full space-y-4">
           <div v-for="comentario of usuario.comentarios" :key="comentario.id">
             <Card class="p-2 bg-blue-gray-50 dark:bg-blue-gray-900">
-              <NLink :to="contenidoref(comentario)" class="flex items-center">
+              <NLink :to="linkComentario(comentario)" class="flex items-center">
                 <icon class="mr-2" icon="far fa-comment" />
                 <div v-html="$teaser(comentario.texto, 96)" />
               </NLink>
@@ -77,6 +86,12 @@
               >{{ $dayjs(comentario.published_at).fromNow() }}</div>
             </Card>
           </div>
+          <button
+            v-if="hayMasComentarios"
+            class="mt-3 btn btn-gray text-xs"
+            @click="cargarMasComentarios"
+            :disabled="cargandoComentarios"
+          >Ver anteriores...</button>
         </div>
         <p v-else class="text-center italic">No hay comentarios</p>
       </section>
@@ -85,12 +100,7 @@
       <section class="mb-9">
         <a class="btn inline-block mx-auto" icon="fas fa-mail">Contactar</a>
       </section>
-
     </Card>
-
-
-
-    
   </section>
 </template>
 
@@ -108,24 +118,24 @@ const query_historial =
 
 import { mapGetters } from "vuex";
 export default {
-   async asyncData({ route, $strapi, $error }) {
-     const filters = {
-        _start: 0,
-        _limit: 10
-      }
+  async asyncData({ route, $strapi, $error }) {
+    const filters = {
+      _limit: 10
+    }
     try {
       const id = route.params.id;
       const usuarios = await $strapi.find('users', { id })
-      if(!usuarios.length)
+      if (!usuarios.length)
         return $error(404, 'Usuario no encontrado')
       const usuario = usuarios[0]
       const resultado = await $strapi.graphql({
         query: query_historial
-          .replace('%start', filters._start)
+          .replace('%start', 0)
           .replace('%limit', filters._limit)
           .replace('%autor', usuario.id)
       })
-      return { hayMasHistorial: resultado.historials.length === filters._limit, filters, id, usuario, historial: resultado.historials }
+      usuario.comentarios.splice(10, usuario.comentarios.length)
+      return { hayMasComentarios: true, hayMasHistorial: resultado.historials.length === filters._limit, filters, id, usuario, historial: resultado.historials }
     } catch (e) {
       $error(503)
     }
@@ -133,12 +143,12 @@ export default {
   computed: {
     ...mapGetters(["isAuthenticated", "loggedInUser"]),
     soyYo() {
-      if(!this.isAuthenticated) return false
-      return this.loggedInUser.id===this.usuario.id
+      if (!this.isAuthenticated) return false
+      return this.loggedInUser.id === this.usuario.id
     },
-    usuarioFrase(){
-      console.log('usuarioFrase', this.usuario?this.usuario.frase:'')
-      return this.usuario?this.usuario.frase:''
+    usuarioFrase() {
+      console.log('usuarioFrase', this.usuario ? this.usuario.frase : '')
+      return this.usuario ? this.usuario.frase : ''
     },
     cimage() {
       return this.usuario && this.usuario.imagen && this.usuario.imagen.url
@@ -153,51 +163,61 @@ export default {
       cambiandoFrase: false,
       subiendoFrase: false,
       cargandoHistorial: false,
+      cargandoComentarios: false,
       nuevaFrase: this.usuarioFrase
     }
   },
   watch: {
     usuarioFrase(newValue) {
       console.log('usuarioFrase watch', newValue, this.usuarioFrase)
-      this.nuevaFrase=this.usuarioFrase
+      this.nuevaFrase = this.usuarioFrase
     }
   },
   methods: {
-    cargarMasHistorial(){
-      this.filters._start = this.historial.length
+    cargarMasHistorial() {
       this.cargandoHistorial = true
       this.$strapi.graphql({
-          query: query_historial
-          .replace('%start', this.filters._start)
+        query: query_historial
+          .replace('%start', this.historial.length)
           .replace('%limit', this.filters._limit)
           .replace('%autor', this.usuario.id)
       })
-      .then((result)=>{
-        for(const h of result.historials)
-          this.historial.push(h)
-        this.hayMasHistorial = result.historials.length === this.filters._limit
-        this.cargandoHistorial = false
-      })
+        .then((result) => {
+          for (const h of result.historials)
+            this.historial.push(h)
+          this.hayMasHistorial = result.historials.length === this.filters._limit
+          this.cargandoHistorial = false
+        })
     },
-    contenidoref(comentario) {
-      return '/' + comentario.uid.replace('-', '/') + '#comentarios'
+    cargarMasComentarios() {
+      this.cargandoComentarios = true
+      this.$strapi.find('comentarios', { _start: this.usuario.comentarios.length, _limit: this.filters._limit })
+        .then((comentarios) => {
+          for (const c of comentarios)
+            this.usuario.comentarios.push(c)
+          this.hayMasComentarios = comentarios.length === this.filters._limit
+          this.cargandoComentarios = false
+        })
     },
-    async fetchUser(){
+    linkComentario(comentario) {
+      return `${comentario.uid}#comentario-${comentario.id}`
+    },
+    async fetchUser() {
       await this.$store.commit(
-              "SET_USER",
-              await this.$fetchUser()
-            )
+        "SET_USER",
+        await this.$fetchUser()
+      )
       const usuarios = await this.$strapi.find('users', { id: this.id })
-      if(usuarios.length)
+      if (usuarios.length)
         this.usuario = usuarios[0]
     },
     async guardarFrase() {
-       this.subiendoFrase = true
-       this.$strapi.update('users', this.usuario.id, { frase: this.nuevaFrase }).then(response=>{
-         this.subiendoFrase = false
-         this.cambiandoFrase = false
-         this.fetchUser()
-       })
+      this.subiendoFrase = true
+      this.$strapi.update('users', this.usuario.id, { frase: this.nuevaFrase }).then(response => {
+        this.subiendoFrase = false
+        this.cambiandoFrase = false
+        this.fetchUser()
+      })
     },
     async subirImagen(payload) {
       console.log('subirImagen', payload)
@@ -213,12 +233,12 @@ export default {
           if (response[0].id) {
             await this.$strapi.update('users', this.usuario.id, { imagen: response[0].id })
             await this.fetchUser()
-            setTimeout(function(){that.subiendoImagen = false},500)
+            setTimeout(function () { that.subiendoImagen = false }, 500)
           }
           else
             this.subiendoImagen = false
         })
-        .catch(err=>{
+        .catch(err => {
           console.log(err)
           this.subiendoImagen = false
         })
