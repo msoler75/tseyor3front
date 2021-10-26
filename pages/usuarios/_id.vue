@@ -33,6 +33,13 @@
         @click="cambiandoFrase = true; nuevaFrase = ''"
       >Cambiar mi frase</button>
 
+      <template v-else>
+      <section class="my-5">
+        <a class="btn inline-block mx-auto">
+          <icon icon="envelope" class="mr-4"/>Contactar</a>
+      </section>
+      </template>
+
       <Modal v-if="soyYo" v-model="cambiandoFrase" title="Mi nueva frase es...">
         <form @submit.prevent="guardarFrase" class="p-7">
           <label for="frase">Nueva frase:</label>
@@ -55,9 +62,9 @@
           >{{ equipo.nombre }}</NLink>
         </div>
       </section>
-      <divider />
 
-      <section>
+      <section v-if="historial.length">
+      <divider />
         <h2>Registro de actividad</h2>
         <div v-for="item of historial" :key="item.id" class="text-left">
           <HistorialItem :data="item" :self="soyYo" />
@@ -93,13 +100,9 @@
             :disabled="cargandoComentarios"
           >Ver anteriores...</button>
         </div>
-        <p v-else class="text-center italic">No hay comentarios</p>
+        <p v-else class="text-center italic mb-9">Todavía no ha hecho ningún comentario</p>
       </section>
 
-      <divider />
-      <section class="mb-9">
-        <a class="btn inline-block mx-auto" icon="fas fa-mail">Contactar</a>
-      </section>
     </Card>
   </section>
 </template>
