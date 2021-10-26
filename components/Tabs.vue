@@ -101,6 +101,9 @@ export default {
   .tab.active {
     @apply shadow-sm bg-orange-300 dark:bg-orange text-red-900 
   }
+  .tab:not(.active):hover {
+    @apply bg-orange-50 text-brown-900;
+  }
   @screen xl {
     .tabs.normal .tab {
       min-width: 10rem
