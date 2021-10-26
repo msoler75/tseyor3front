@@ -1,10 +1,9 @@
 <template>
-    <div style="h-screen w-screen fixed t-0 l-0" class="flex py-7 justify-center items-center bg-white" ref="sdiv">
-
     <!-- Sin padding -->
     <!-- No tiene imagen de fondo -->
     <!-- Sin breadcrumb -->
-    <Config :contained="false" :background="false" :breadcrumb="false" />
+    <div class="h-screen w-screen fixed t-0 l-0 flex py-7 justify-center items-center bg-white" ref="sdiv"
+    contained="no" background="no" breadcrumb="no">
         <nuxt-img src="/imagenes/sello.png" fit="cover" height="100%" />
     </div>
 </template>

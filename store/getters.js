@@ -76,20 +76,12 @@ export default {
     return state.audioPlaying
   },
 
-  pageContained (state) {
-    return state.pageInContainer
+  pageConfig (state) {
+    return state.pageConfig
   },
 
-  pageBackground (state) {
-    return state.pageBackground
-  },
-
-  pageBreadcrumb (state) {
-    return state.pageBreadcrumb
-  },
-
-  pageFocused (state) {
-    return state.pageFocused
+  travelling (state) {
+    return state.travelling
   },
 
   menuUsuario (state) {
@@ -99,5 +91,5 @@ export default {
   hideMenus (state) {
     return state.hideMenus
   }
-
+  
 }

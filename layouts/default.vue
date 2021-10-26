@@ -1,6 +1,6 @@
 <template>
   <div class="main-wrapper relative surface-0 w-full h-full flex-grow font-sans"
-  :class="pageBackground?'':'no-background'"
+  :class="(travelling?'travelling ':'')+(pageConfig.background?'':'no-background')"
   >
 
     <!-- Navigation starts -->
@@ -224,8 +224,9 @@
       @click="clickOff"
     >
       <div>
-        <Breadcrumb v-if="pageBreadcrumb" class="text-xs xl:text-sm" />
-
+        <Breadcrumb v-if="pageConfig.breadcrumb" class="text-xs xl:text-sm" />
+        entered: {{travelling}}
+        config: {{pageConfig}}
         <h4 class="text-2xl font-bold leading-tight text-gray-800 dark:text-gray-200">
           <div v-if="false">
             {{ title }}
@@ -249,18 +250,18 @@
     </div>
     <!-- Page title ends -->
     <div @click="clickOff"
-    :class="pageContained?'container xs:px-1 sm:px-3 md:px-6 mx-auto':''">
+    :class="pageConfig.contained?'container xs:px-1 sm:px-3 md:px-6 mx-auto':''">
       <div class="w-full">
         <!-- Place your content here -->
         <nuxt class="mx-auto" 
-        :class="pageContained?'mb-5':''" />
+        :class="pageConfig.contained?'mb-5':''" />
       </div>
     </div>
     <Sidebar v-show="!hideMenus" v-model="showSidebar" :items="rutasMenu" class="xl:hidden"/>
     <Footer 
     v-show="!hideMenus"
     class="mt-auto"
-    :class="pageContained?'pt-9':''" />
+    :class="pageConfig.contained?'pt-9':''" />
   </div>
 </template>
 
@@ -521,7 +522,7 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(["description", "image", "type", "isAuthenticated", "loggedInUser", "pageContained", "pageBackground", "pageBreadcrumb", "pageFocused", "menuUsuario", "hideMenus"]),
+    ...mapGetters(["description", "image", "type", "isAuthenticated", "loggedInUser", "travelling", "pageConfig", "menuUsuario", "hideMenus"]),
     iconMode() {
       return this.$colorMode.value === "light" ? iconSun : iconMoon;
     },
@@ -567,7 +568,7 @@ export default {
         this.lastChangeY = y
       }
       const distance = Math.abs(y-this.lastChangeY)
-      if(!this.pageFocused) 
+      if(!this.pageConfig.focused) 
         this.hideTopNavMenu = false
       else
       if(dy>0) {
@@ -827,4 +828,18 @@ nav#submenu {
   opacity: 0.2;
 }*/
 
+</style>
+
+<style>
+    /* Transitions using the page hook */
+    .page-enter-active, .page-leave-active {
+      transition: all .30s ease-out;
+    }
+    .page-leave {
+      opacity: 0
+    }
+    .page-enter, .page-leave-active {
+      opacity: 0;
+      transform-origin: 50% 50%;
+    }
 </style>

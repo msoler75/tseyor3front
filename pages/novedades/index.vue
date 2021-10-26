@@ -1,6 +1,5 @@
 <template>
-  <SwipeX v-model="viendoCategoria" :values="categorias">
-    <Config :breadcrumb="false" />
+  <SwipeX v-model="viendoCategoria" :values="categorias" breadcrumb="no" >
 
     <h1 class="text-center">
       <icon icon="bolt" class="text-yellow-800 mr-3" />Novedades

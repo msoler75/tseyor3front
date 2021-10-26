@@ -1,6 +1,5 @@
 <template>
-    <div class="mt-5">
-        <Config :contained="false" />
+    <div class="mt-5" contained="no">
 
         <div class="container px-1 sm:px-0 mx-auto flex w-full flex-wrap">
             <!-- <div class="mx-auto my-10 justify-center items-center lg:my-0 w-60 lg:w-5/12 px-5 order-1 lg:order-3 flex mb-7" v-html="doorImage"/> -->

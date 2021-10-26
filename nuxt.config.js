@@ -1,4 +1,4 @@
-import Path from 'path';
+import Path from 'path'
 
 export default {
 
@@ -19,6 +19,34 @@ export default {
     twitter: '@TSEYOR',
     defaultImage: '/imagenes/playa-atardecer.jpg',
     defaultUserImage: '/imagenes/usuario.jpg'
+  },
+
+
+  pageTransition: {
+    name: 'page',
+    mode: 'in-out',
+    beforeEnter (el) {
+      console.log('Before enter...', el);
+      const config = {}
+      const pageConfigKeywords = ['background', 'breadcrumb', 'contained', 'focused']
+      for(const key of pageConfigKeywords)
+      {
+        const value = el.getAttribute(key)
+        if(value!==null)
+          config[key] = value&&value.toLowerCase()!=="no"&&value!=="0"
+      }
+      console.log('config', config)
+      this.$store.commit('setPageConfig', config)
+    },
+    afterEnter (el) {
+      console.log('After enter...', el);
+    },
+    beforeLeave(el) {
+      console.log('beforeLeave', el)
+    },
+    afterLeave(el) {
+      console.log('afterLeave', el)
+    },
   },
 
   // https://nuxtjs.org/docs/2.x/configuration-glossary/configuration-server

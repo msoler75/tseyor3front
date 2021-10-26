@@ -1,8 +1,7 @@
 <template>
-  <div class="flex flex-col items-center">
     <!-- Sin padding -->
     <!-- No tiene imagen de fondo -->
-    <Config :contained="false" :background="false" />
+  <div class="flex flex-col items-center" contained="no" background="no" >
 
     <!-- article container -->
     <div

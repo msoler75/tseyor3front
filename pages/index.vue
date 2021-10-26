@@ -1,7 +1,5 @@
 <template>
-  <div class="max-w-xl mx-auto">
-
-    <Config :breadcrumb="false" />
+  <div class="max-w-xl mx-auto" breadcrumb="no">
 
     <div v-if="$store.state.loggedIn" class="mx-auto max-w-sm mb-9">
       <div class="flex flex-col">

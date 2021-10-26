@@ -26,7 +26,11 @@ export default {
             default: false
         }
     },
+    created() {
+        console.log('config created')
+    },    
     mounted() {
+        console.log('config mounted')
         if(!this.contained)
             this.$store.commit('setContained', false)
         if(!this.background)

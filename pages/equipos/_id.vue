@@ -1,6 +1,5 @@
 <template>
-  <section class="relative px-7 mb-7">
-    <Config :contained="false" />
+  <section class="relative px-7 mb-7" contained="no">
 
     <GridFluid class="gap-4">
       <div class="h-64 md:h-full" :style="bgImage"></div>

@@ -1,6 +1,5 @@
 <template>
-  <section>
-    <Config :contained="false" :focused="true" />
+  <section contained="no" focused >
 
     <NLink
       v-if="isAuthenticated && loggedInUser.id === contenido.autor.id"

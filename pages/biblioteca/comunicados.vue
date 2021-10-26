@@ -1,6 +1,5 @@
 <template>
-  <div class="container max-w-4xl mx-auto">
-    <Config :contained="false" />
+  <div class="container max-w-4xl mx-auto" contained="no">
 
     <div class="px-1 xs:px-3 sm:px-7">
       <div class="mb-7">

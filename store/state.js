@@ -13,10 +13,13 @@ export default () => ({
     ufo: ufo,
     eyeClosed: eyeClosed
   },
-  pageInContainer : true,
-  pageBackground : true,
-  pageBreadCrumb: true,
-  pageFocused: false,
+  travelling: false,
+  pageConfig: {
+    contained : true,
+    background : true,
+    breadcrumb: true,
+    focused: false,
+  },
   hideMenus: false,
   menuUsuario: false,
   breadcrumbs: {

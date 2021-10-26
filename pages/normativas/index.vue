@@ -1,6 +1,5 @@
 <template>
-  <div>
-    <Config :breadcrumb="false" />
+  <div breadcrumb="no" >
 
     <h1 class="text-center">Normativas</h1>
 

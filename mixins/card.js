@@ -65,6 +65,11 @@ export default {
       }
     }
   },
+  data(){
+    return {
+      clicked: false
+    }
+  },
   computed: {
     ctitle() {
       return (

@@ -1,6 +1,5 @@
 <template>
-  <div class="flex flex-col items-center">
-    <Config :contained="false" />
+  <div class="flex flex-col items-center" contained="no" breadcrumb="true">
 
     <div
       class="px-3 sm:px-5 md:px-7 relative w-full shrink-0 flex-grow-1 max-w-3xl flex flex-col items-start"
@@ -89,7 +88,7 @@ export default {
       const id = route.params.id
       const libros = await $strapi.find(
         'libros',
-        id.match(/\d+/) ? { id } : { slug: id }
+        id.match(/^\d+$/) ? { id } : { slug: id }
       )
       if (!libros.length)
         return $error(404, 'Libro no encontrado')

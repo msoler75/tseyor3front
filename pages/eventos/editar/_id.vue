@@ -1,6 +1,6 @@
 <template>
-    <Card class="py-5 px-2 xs:px-4 max-w-md mx-auto bg-blue-gray-50 dark:bg-blue-gray-900">
-        <Config :focused="true" />
+    <Card class="py-5 px-2 xs:px-4 max-w-md mx-auto bg-blue-gray-50 dark:bg-blue-gray-900" focused>
+        
         <h1>{{ accion }} evento</h1>
         <form @submit.prevent="submit" class="regular-form bg-transparent space-y-9">
             <div>
