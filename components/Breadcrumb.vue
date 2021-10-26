@@ -65,7 +65,8 @@ export default {
   computed: {
     crumbs() {
       if (process.client) {
-        const path = this.$route.fullPath.replace(/\/\d+$/, '')
+        const pathShowing = this.$store.getters.getPathBreadcrumb || this.$route.fullPath
+        const path = pathShowing.replace(/\/\d+$/, '')
         let r = this.crumbsRecursive(path)
         if(r.length)
           return r

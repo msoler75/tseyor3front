@@ -220,19 +220,18 @@
     <!-- Page title starts -->
     <!-- Navigation ends -->
     <div
-      class="mt-5 mb-3 lg:mt-6 lg:mb-5 container xs:px-1 sm:px-3 md:px-6 mx-auto flex flex-col lg:flex-row items-start lg:items-center justify-between pb-4 border-gray-300"
+      class="mt-5 mb-3 lg:mt-6 lg:mb-5 container xs:px-1 sm:px-3 md:px-6 mx-auto flex flex-col lg:flex-row items-start lg:items-center justify-between pb-4 border-gray-300 relative"
       @click="clickOff"
     >
-      <div>
-        <Breadcrumb v-if="pageConfig.breadcrumb" class="text-xs xl:text-sm" />
-        entered: {{travelling}}
-        config: {{pageConfig}}
-        <h4 class="text-2xl font-bold leading-tight text-gray-800 dark:text-gray-200">
+      
+        <Breadcrumb :present="pageConfig.breadcrumb&&!travelling" class="absolute text-xs xl:text-sm" />
+      
+        <h4 class="mt-2 text-2xl font-bold leading-tight text-gray-800 dark:text-gray-200">
           <div v-if="false">
             {{ title }}
           </div>
         </h4>
-      </div>
+      
       <!--
       <div class="mt-6 lg:mt-0">
         <button
@@ -294,6 +293,9 @@ export default {
   },
   mounted() {
     this.actualizarUrlPerfil()
+    // emulamos comportamiento de beforeEnter de transición de página
+    this.$store.commit('updateBreadcrumb')
+    this.$store.commit('travelling', false)
   },
   data() {
     return {
@@ -828,12 +830,21 @@ nav#submenu {
   opacity: 0.2;
 }*/
 
+
+.breadcrumb {
+  transition: .6s all linear;
+}
+.breadcrumb:not([present]) {
+  filter: blur(10px);
+  opacity: 0;
+  pointer-events: none;
+}
 </style>
 
 <style>
     /* Transitions using the page hook */
     .page-enter-active, .page-leave-active {
-      transition: all .30s ease-out;
+      transition: all .5s ease-out;
     }
     .page-leave {
       opacity: 0

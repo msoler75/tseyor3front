@@ -202,6 +202,16 @@
     @apply bg-blue-gray-50 text-blue-gray;
   }
 
+
+  .card, .tabs {
+    @apply transition-opacity duration-300;
+  }
+
+  .travelling .card:not([clicked]),
+  .travelling .tabs {
+    @apply opacity-0 pointer-events-none;
+  }
+  
 }
 
 

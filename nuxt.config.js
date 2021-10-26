@@ -24,7 +24,7 @@ export default {
 
   pageTransition: {
     name: 'page',
-    mode: 'in-out',
+    mode: 'out-in',  // orden de páginas, primero desaparece (out) la página actual y luego aparece (in) la página nueva
     beforeEnter (el) {
       console.log('Before enter...', el);
       const config = {}
@@ -37,6 +37,8 @@ export default {
       }
       console.log('config', config)
       this.$store.commit('setPageConfig', config)
+      this.$store.commit('updateBreadcrumb')
+      this.$store.commit('travelling', false)
     },
     afterEnter (el) {
       console.log('After enter...', el);

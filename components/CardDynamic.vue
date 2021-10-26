@@ -15,6 +15,7 @@
   book-size="book-sm"
   :class="ccollection==='libros'?'py-5 text-center':''"
   :collection="collection"
+  :clicked="clicked"
   />
 </template>
 

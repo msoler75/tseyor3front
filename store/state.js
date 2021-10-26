@@ -13,7 +13,7 @@ export default () => ({
     ufo: ufo,
     eyeClosed: eyeClosed
   },
-  travelling: false,
+  travelling: true,
   pageConfig: {
     contained : true,
     background : true,
@@ -22,6 +22,8 @@ export default () => ({
   },
   hideMenus: false,
   menuUsuario: false,
+  pathBreadcrumb: '/',
+  nextPathBreadcrumb: '/',
   breadcrumbs: {
     "/": {
       icon: "fas fa-home"

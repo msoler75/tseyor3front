@@ -7,6 +7,10 @@ export default {
     return state.user
   },
 
+  getPathBreadcrumb(state) {
+    return state.pathBreadcrumb
+  },
+
   getIconRoute: state => (path) => {
     if(!path) {
       return ''

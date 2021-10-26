@@ -1,6 +1,8 @@
 <template>
   <div class="card flex flex-col rounded overflow-hidden"
-  :class="center?'text-center':''">
+  :class="center?'text-center':''"
+  :clicked="clicked"
+  >
     <slot>
       <!-- 
       <div v-if="cimage" class="card-img max-w-full h-40 overflow-hidden">
@@ -10,7 +12,8 @@
       -->
       <div v-if="cimage" :style="imageBg" class="card-img max-w-full h-40 flex-shrink-0"/>
       <div class="px-6 py-4 flex flex-col h-full">
-        <NLink :to="chref">
+        <NLink :to="chref"
+         @click.native.prevent="clicked=true">
           <section class="font-bold text-xl" :class="noText?'':'mb-2'">{{ ctitle }}</section>
         </NLink>
         <v-clamp v-if="!noText && ctext" autoresize :max-lines="5"

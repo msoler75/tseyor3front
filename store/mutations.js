@@ -19,7 +19,18 @@ export default {
     console.log(state.pageConfig)
   },
 
+  setNextPathBreadcrumb(state, payload){
+    console.log('setNextPathBreadcrumb', payload )
+    state.nextPathBreadcrumb = payload
+  }, 
+
+  updateBreadcrumb(state) {
+    console.log('updateBreadcrumb')
+    state.pathBreadcrumb = state.nextPathBreadcrumb
+  },
+
   travelling(state, payload) {
+    console.log('travelling=', payload)
     state.travelling = payload
   },
 

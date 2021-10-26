@@ -1,12 +1,14 @@
 <template>
-  <Card>
+  <Card
+  :clicked="clicked">
     <slot>
       <div class="h-40 overflow-hidden">
         <nuxt-img :src="cimage" class="w-full" />
       </div>
       <div class="px-6 py-4 flex flex-col">
         <div class="flex mb-2">
-          <NLink :to="'/eventos/' + data.id">
+          <NLink :to="'/eventos/' + data.id"
+           @click.native.prevent="clicked=true">
             <div class="font-bold text-xl mb-2 mr-4">{{ ctitle }}</div>
           </NLink>
           <CalendarDay :date="data.fechaComienzo" class="ml-auto" />

@@ -1,4 +1,4 @@
-export default function ({ res, store }) {
+export default function ({ res, route, store }) {
     // https://nuxtjs.org/docs/2.x/configuration-glossary/configuration-server#timing
     // res.timing.start('midd', 'Middleware timing description')
     
@@ -9,8 +9,8 @@ export default function ({ res, store }) {
     store.commit('setFocused', false)
     */
    store.commit('setMenuUsuario', false)
-
-    // store.commit('leftPage')
+    store.commit('setNextPathBreadcrumb', route.path)
+    store.commit('travelling', true)
     
     // res.timing.end('midd')
 }
