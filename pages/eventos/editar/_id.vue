@@ -248,7 +248,7 @@ export default {
             if (id && id !== 'nuevo') {
                 const resultado = await $strapi.find(
                     'eventos',
-                    id.match(/\d+/) ? { id } : { slug: id }
+                    id.match(/^\d+$/) ? { id } : { slug: id }
                 )
                 if(!resultado.length)
                     return $error(404, 'Evento no encontrado')

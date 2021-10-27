@@ -82,7 +82,10 @@ export default {
   async asyncData({ app, $strapi, route, $error }) {
     try {
       const id = route.params.id
-      const comunicados = await $strapi.find('comunicados', id.match(/^\d+$/) ? { id } : { slug: id })
+      const comunicados = await $strapi.find(
+        'comunicados', 
+        id.match(/^\d+$/) ? { id } : { slug: id }
+      )
       if (!comunicados.length)
         return $error(404, 'Comunicado no encontrado')
       const contenido = comunicados[0]

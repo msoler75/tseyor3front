@@ -96,7 +96,10 @@ export default {
   async asyncData({ app, $strapi, route, $error }) {
     try {
       const id = route.params.id
-      const entradas = await $strapi.find('entradas', id.match(/\d+/) ? { id } : { slug: id })
+      const entradas = await $strapi.find(
+        'entradas', 
+        id.match(/^\d+$/) ? { id } : { slug: id }
+      )
       if(!entradas.length)
         return $error(404, 'Entrada no encontrada')
       const contenido = entradas[0]

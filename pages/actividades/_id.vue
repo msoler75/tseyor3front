@@ -113,7 +113,7 @@ export default {
       const id = route.params.id
       const actividades = await $strapi.find(
         'actividades',
-        id.match(/\d+/) ? { id } : { slug: id }
+        id.match(/^\d+$/) ? { id } : { slug: id }
       )
 
       if (!actividades.length)

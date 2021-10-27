@@ -10,7 +10,10 @@ export default {
   async asyncData({ app, $strapi, route, $error }) {
     try {
       const id = route.params.id
-      const normativas = await $strapi.find('normativas', id.match(/\d+/) ? { id } : { slug: id })
+      const normativas = await $strapi.find(
+        'normativas', 
+        id.match(/^\d+$/) ? { id } : { slug: id }
+      )
       if (!normativas.length)
         return $error(404, 'Normativa no encontrada')
       const contenido = normativas[0]

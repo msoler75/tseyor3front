@@ -37,7 +37,10 @@ export default {
   async asyncData({ $strapi, route, $error }) {
     try {
       const id = route.params.id
-      const salas = await $strapi.find('salas', id.match(/^\d+$/) ? { id } : { slug: id })
+      const salas = await $strapi.find(
+        'salas', 
+        id.match(/^\d+$/) ? { id } : { slug: id }
+      )
       if(!salas.length)
         return $error(404, 'Sala no encontrada')
       const contenido = salas[0]

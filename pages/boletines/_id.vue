@@ -85,7 +85,7 @@ export default {
       const id = route.params.id;
       const boletines = await $strapi.find(
         "boletines",
-        id.match(/\d+/) ? { id } : { slug: id }
+        id.match(/^\d+$/) ? { id } : { slug: id }
       );
       if(!boletines.length)
         return $error(404, 'Boletín no encontrado')

@@ -92,7 +92,10 @@ export default {
       let contenido = { miembros: [], coordinadores: [] }
       try {
         const id = route.params.id
-        const equipos = await $strapi.find('equipos', id.match(/\d+/) ? { id } : { slug: id })
+        const equipos = await $strapi.find(
+          'equipos', 
+          id.match(/^\d+$/) ? { id } : { slug: id }
+        )
         if(!equipos.length)
           return $error(404, 'Equipo no encontrado')
         contenido = equipos[0]

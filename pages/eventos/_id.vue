@@ -118,7 +118,10 @@ export default {
   async asyncData({ app, $strapi, route, $error }) {
     try {
       const id = route.params.id
-      const eventos = await $strapi.find('eventos', id.match(/\d+/) ? { id } : { slug: id })
+      const eventos = await $strapi.find(
+        'eventos', 
+        id.match(/^\d+$/) ? { id } : { slug: id }
+        )
       if (!eventos.length)
         return $error(404, 'Evento no encontrado')
       const contenido = eventos[0]
