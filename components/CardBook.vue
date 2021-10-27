@@ -54,65 +54,6 @@ export default {
       if(this.bookSize==='auto') return 'xs:book-xs sm:book-sm md:book-md'
       return this.bookSize
     }
-  },
-  methods: {
-    portalize(event) {
-      this.clicked= true
-      /*console.log(event)
-      event.preventDefault()
-      let e = event.target;
-      while(e.tagName!=="A")
-        e=e.parentNode
-        console.log('target', e)
-      let card = e
-      while(card&&!card.classList.contains('card')) {
-        card = card.parentNode
-      }
-      if(card) {
-        let inn = document.createElement("DIV")
-        inn = card.cloneNode(true)
-        inn.classList.remove('card')
-        let box = document.createElement("DIV")
-        box.classList.add('surface')
-
-        document.body.appendChild(box)
-        document.body.appendChild(inn)
-        // document.body.appendChild(inn)
-        const pos = card.getBoundingClientRect()
-        box.classList.add('expand')
-        box.style.zIndex = 1000
-        box.style.position = 'fixed'
-        box.style.left = pos.left + 'px'
-        box.style.top = pos.top + 'px'
-        box.style.width = pos.width + 'px'
-        box.style.height = pos.height + 'px'
-        box.style.transition = 'all .5s ease-out'
-        box.style.pointerEvents = 'none'
-        box.style.border="5px solid black"
-
-        inn.style.zIndex = 1001
-        inn.style.position = 'fixed'
-        inn.style.left = pos.left + 'px'
-        inn.style.top = pos.top + 'px'
-        inn.style.width = pos.width + 'px'
-        inn.style.height = pos.height + 'px'
-        inn.style.transition = 'all .5s'
-        
-        setTimeout(()=>{
-          inn.style.opacity = 0
-          box.style.opacity = 0
-          box.style.left = 0
-          box.style.top = 0
-          box.style.width = screen.width + 'px'
-          box.style.height = screen.height + 'px'
-          setTimeout(()=>{
-            box.parentNode.removeChild(box)
-            inn.parentNode.removeChild(inn)
-          }, 2000)
-        }, 50)
-      }
-      return false*/
-    }
   }
 }
 </script>

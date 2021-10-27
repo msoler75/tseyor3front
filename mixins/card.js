@@ -130,5 +130,22 @@ export default {
         backgroundSize: 'cover'
       }
     }
+  },
+  watch: {
+    clicked(newValue) {
+      const card = this.$el
+      const pos = card.getBoundingClientRect()
+        const box = document.createElement("DIV")
+        document.body.appendChild(box)
+        box.classList.add('flash')
+        box.classList.add('surface')
+        box.style.left = pos.left + 'px'
+        box.style.top = pos.top + 'px'
+        box.style.width = pos.width + 'px'
+        box.style.height = pos.height + 'px'
+        setTimeout(()=>{
+            box.parentNode.removeChild(box)
+          }, 2500)
+    }
   }
 }
