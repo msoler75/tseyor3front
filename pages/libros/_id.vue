@@ -100,7 +100,7 @@ export default {
         ? contenido.etiquetas[0].nombre
         : null
       const filtro = categoria ? { 'etiquetas.nombre': categoria } : {}
-      const relacionados = await $strapi.find('libros', { ...filtro, _limit: 8 })
+      const relacionados = await $strapi.find('libros', { ...filtro, _limit: 10, id_ne: contenido.id })
       return { contenido, libro: contenido, relacionados }
     } catch (e) {
       $error(503)
