@@ -30,6 +30,11 @@ export default {
       required: false,
       default: false
     },
+    noDate: {
+      type: Boolean,
+      required: false,
+      default: false
+    },
     href: {
       type: String,
       required: false,
@@ -113,6 +118,9 @@ export default {
     },
     ctags() {
       return this.tags || this.data.tags || this.data.etiquetas;
+    },
+    cdate() {
+      return this.date || this.data.date || this.data.updated_at || this.data.created_at || this.data.fecha || null
     },
     cclase() {
       return this.data ? this.data.clase : "default";

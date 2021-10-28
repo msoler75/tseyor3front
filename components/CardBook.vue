@@ -28,6 +28,7 @@
         </div>
       </section>
     </section>
+    <div v-if="cdate" class="my-3 text-center text-diminished text-xs">{{$dayjs(cdate).fromNow()}}</div>
   </Card>
 </template>
 

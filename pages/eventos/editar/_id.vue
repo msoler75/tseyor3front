@@ -229,6 +229,7 @@ import draggable from "vuedraggable";
 export default {
     components: { vSelect, draggable },
     mixins: [validation],
+    middleware: 'logged',
     async asyncData({ $strapi, route, $error }) {
         try {
             let id = route.params.id

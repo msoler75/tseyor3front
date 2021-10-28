@@ -104,6 +104,10 @@
     height: fit-content;
   }
 
+  .btn-mini {
+    @apply py-1 px-2;
+  }
+
   .btn:not([disabled]) {
     @apply cursor-pointer hover:shadow-lg active:translate-y-px;
     @apply hover:bg-blue-700 active:bg-blue-600;

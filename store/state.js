@@ -127,6 +127,15 @@ export default () => ({
       parent: "/recursos"
     },
 
+    "/recopilaciones": {
+      name: "Recopilaciones de experiencias",
+      icon: "fas fa-paper-plane",
+      description: "Experiencias de campo y otros trabajos grupales",
+      parent: "/recursos"
+    },
+
+    
+
     "/actividades": {
       name: "Actividades",
       icon: "fas fa-walking",

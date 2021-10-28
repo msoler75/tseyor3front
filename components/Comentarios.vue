@@ -12,6 +12,7 @@
       <div class="flex w-full">
         <Avatar
           :data="comentario.autor"
+          :name="comentario.nombre"
           class="text-3xl w-8 h-8 sm:w-16 sm:h-16 mr-2 sm:mr-3 lg:mr-5"
         />
         <section class="group select-none">
@@ -20,14 +21,14 @@
               class="flex justify-start items-baseline text-xs lg:text-sm text-blue-gray"
             >
               <NLink
-                v-if="comentario.autor.id"
+                v-if="comentario.autor && comentario.autor.id"
                 :to="'/usuarios/' + comentario.autor.id"
                 class="font-bold mb-1"
                 >{{ mostrarNombre(comentario.autor) }}</NLink
               >
-              <span v-else class="font-bold">{{
-                mostrarNombre(comentario.autor)
-              }}</span>
+              <div v-else class="font-bold mb-1">
+                {{comentario.nombre}}
+              </div>
               <span class="mx-2 opacity-50">•</span>
               <span class="text-xs">{{
                 $dayjs(comentario.updated_at).fromNow()
@@ -81,6 +82,7 @@
               <div class="flex w-full">
                 <Avatar
                   :data="respuesta.autor"
+                  :name="respuesta.nombre"
                   class="text-3xl w-8 h-8 mr-2 sm:mr-3 lg:mr-5"
                 />
                 <section>
@@ -165,9 +167,9 @@
         <input
           type="text"
           v-model="nuevoComentario"
-          placeholder="Nuevo comentario..."
+          :placeholder="placeholder"
         />
-        <button type="submit" class="btn mt-3">Comentar</button>
+        <button type="submit" class="btn mt-3">{{buttonLabel}}</button>
       </form>
     </Card>
     <div v-else class="text-center">
@@ -192,6 +194,16 @@ export default {
     contentTitle: {
       type: String,
       required: true
+    },
+    placeholder: {
+      type: String,
+      required: false,
+      default: 'Nuevo comentario...'
+    },
+    buttonLabel: {
+      type: String,
+      required: false,
+      default: 'Comentar'
     }
   },
   /*

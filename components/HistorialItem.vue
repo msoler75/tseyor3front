@@ -20,6 +20,8 @@ export default {
                 case 'evento_asiste':       return this.self?'Asistes al evento':'Asiste al evento'
                 case 'reunion_creada':      return this.self?'Creaste la reunión':'Creó la reunión'
                 case 'acta_creada':         return this.self?'Creaste el acta':'Creó el acta'
+                case 'recopilacion_creada': return this.self?'Creaste una recopilación':'Creó una recopilación'
+                case 'experiencia_compartida':return this.self?'Compartiste una experiencia':'Compartió una experiencia'
                 case 'equipo_entrada':      return this.self?'Te uniste al equipo':'Se unió al equipo'
                 case 'equipo_salida':       return this.self?'Saliste del equipo':'Salió del equipo'
             }

@@ -11,6 +11,7 @@ export default {
         },
         translate(msg) {
             return msg
+            .replace('must be defined', 'debe estar definido')
             .replace('must be at least', 'debe ser de al menos')
             .replace('characters', 'caracteres')
         },

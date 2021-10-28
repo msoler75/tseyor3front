@@ -29,6 +29,7 @@
         </span>
       </div>
     </slot>
+    <div v-if="cdate && !nodate" class="my-3 text-center text-diminished text-xs">{{$dayjs(cdate).fromNow()}}</div>
   </div>
 </template>
 

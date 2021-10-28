@@ -36,8 +36,8 @@
         <icon class="mr-2 xs:mr-4" icon="far fa-comment" />
         <span
           v-if="data.comentarios"
-        >{{ data.comentarios + ' Comentario' + (data.comentarios !== 1 ? 's' : '') }}</span>
-        <span v-else>Coméntalo</span>
+        >{{ data.comentarios + ' ' + (data.comentarios !== 1 ? commentLabels[2] : commentLabels[1]) }}</span>
+        <span v-else>{{commentLabels[0]}}</span>
       </a>
     </Grid>
 
@@ -58,6 +58,11 @@ export default {
       type: Boolean, 
       required: false,
       default: true
+    },
+    commentLabels: {
+      type: Array,
+      required: false,
+      default: ['Coméntalo','Comentario','Comentarios']
     }
   },
   computed: {

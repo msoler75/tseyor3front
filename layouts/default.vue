@@ -378,6 +378,7 @@ export default {
             "/muul",
             "/redes",
             "/archivos",
+            "/recopilaciones",
             "/reuniones",
             "/recursos/listados",
             "/usuarios",
