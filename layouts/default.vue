@@ -1,6 +1,6 @@
 <template>
   <div
-    class="main-wrapper relative surface-0 w-full h-full flex-grow font-sans"
+    class="relative surface-0 w-full h-full flex-grow font-sans"
     :class="(travelling ? 'travelling ' : '') + (pageConfig.background ? '' : 'no-background')"
   >
     <!-- Navigation starts -->
@@ -700,6 +700,7 @@ nav#main-menu li:not([current="true"]).menuitem {
   position: relative;
 }
 
+/*
 nav#main-menu li:before,
 nav#main-menu li:after {
   content: "";
@@ -731,6 +732,7 @@ nav#main-menu[submenu="true"] li[active="true"]:after {
   clip-path: path("M200,70 C89,68 10,60 0,25 L0,70 Z");
   pointer-events: auto;
 }
+*/
 
 nav#main-menu:not([submenu="true"]) {
   border-bottom: 1px solid #aaa;
@@ -801,12 +803,24 @@ nav#submenu {
 
 <style>
 #__layout {
+  max-width: 100vw;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
 }
 
-.main-wrapper:before {
+#__layout {
+  @apply bg-center bg-no-repeat bg-cover bg-fixed;
+  /* background-image: linear-gradient(to top, #dff0ff 0%, white 100%); */
+  /* background-image: radial-gradient( circle farthest-corner at 50% 20%,  #e0f0ff 0%, #d9eaff 65%, #c7e0ff 80.5%, #fff0ef 100%); */
+  background-image: linear-gradient( to bottom , #eff6ff 0%, #d9eaff 65%, #c7e0ff 80.5%, #fff0ef 100%); 
+}
+
+.dark #__layout {
+  background-image: url(/imagenes/bg-dark.jpg)
+}
+
+/*.main-wrapper:before {
   content: "";
   @apply fixed left-0 top-0 w-screen h-screen bg-center bg-no-repeat bg-cover bg-fixed;
   z-index: -1;

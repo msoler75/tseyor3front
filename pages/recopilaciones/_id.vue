@@ -115,7 +115,7 @@
       </div>
 
   <section v-if="contenido.comentarios" class="my-9 max-w-[16rem] mx-auto text-center">
-      <div class="btn btn-warning w-auto"><icon icon="file-alt" class="mr-2"/> Exportar experiencias</div>
+      <div class="btn btn-warning w-auto" @click="exportar"><icon icon="download" class="mr-2"/> Exportar experiencias</div>
   </section>
 
       </section>
@@ -220,6 +220,29 @@ export default {
           this.enviando = false
           this.setErr(err)
         })
+    },
+    download(data) {
+      var c = document.createElement("a");
+      c.download = this.$dayjs(this.contenido.created_at).format('YYYY-MM-DD') + ' - ' + this.contenido.titulo + ".html";
+      var t = new Blob([data], {
+        type: "text/html"
+      });
+      c.href = window.URL.createObjectURL(t);
+      c.click();
+    },
+    async exportar() {
+      let html = ''
+      const comentarios = await this.$strapi.find('comentarios', 
+            { 
+              _sort: 'updated_at:ASC',
+              uid: `/recopilaciones/${this.contenido.id}`
+            })
+      for(const comentario of comentarios) {
+        const autor = comentario.autor&&comentario.autor.id?comentario.autor.nombreSimbolico||comentario.autor.username:comentario.nombre
+        html += '<div>' + autor + ': ' + this.$renderMarkdownServer(comentario.texto) + '</div><br/><br/>\n\n'
+      }
+
+      this.download(html)
     }
   }
 };
