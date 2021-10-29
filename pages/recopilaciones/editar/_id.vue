@@ -61,7 +61,7 @@
 
                 <section v-id="contenido.id" class="w-full">
                     <label class="w-full text-center font-bold uppercase">Enlace para compartir:</label>
-                    <div class="flex border rounded w-full p-2">
+                    <div class="flex border bg-gray-50 rounded w-full p-2">
                         <span>{{enlace}}</span>
                         <span class="ml-auto btn btn-mini btn-warning text-xs whitespace-nowrap"
                             @click="viendoCompartir=true">
@@ -131,8 +131,8 @@ export default {
             return !this.contenido || !this.contenido.id
         },
         enlace() {
-            if(!this.contenido) return '/recopilaciones'
-            return `/recopilacion/${this.contenido.id}`
+            if(!this.contenido) return this.$config.baseUrl + '/recopilaciones'
+            return this.$config.baseUrl + `/recopilacion/${this.contenido.id}`
         },
     },
     watch: {
@@ -165,7 +165,7 @@ export default {
                     .then((contenido) => {
 
                         // registro de actividad
-                        this.$strapi.create('historial', {
+                        this.$strapi.create('historials', {
                             accion: 'recopilacion_creada',
                             titulo: contenido.titulo,
                             url: `/recopilaciones/${contenido.id}`

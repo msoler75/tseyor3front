@@ -4,7 +4,7 @@
   <div class="flex flex-col items-center" focused contained="no">
 
     <NLink
-      v-if="isAuthenticated && loggedInUser.id === contenido.autor.id"
+      v-if="isAuthenticated && contenido && loggedInUser.id === contenido.autor.id"
       class="btn absolute top-24 right-4 w-12 h-12 flex justify-center items-center rounded-full sm:w-auto sm:h-auto sm:rounded-inherit"
       :to="`/recopilaciones/editar/${contenido.id}`"
     >
@@ -12,22 +12,23 @@
       <span class="ml-2 hidden sm:inline">Editar</span>
     </NLink>
 
-
-    <h1 v-if="!escribio">Recopilación de experiencias</h1>
-
     <!-- article heading -->
-    <Card class="py-5 px-2 xs:px-4 w-full max-w-md mx-auto bg-blue-gray-50 dark:bg-blue-gray-900">
+    <section class="py-5 px-2 xs:px-4 w-full max-w-md mx-auto bg-gray-50 dark:bg-gray-900 shadow">
       <div class="text-center xs:p-3 sm:p-5">
         <h2>{{ ctitle }}</h2>
         <p>{{ cdescription }}</p>
       </div>
-      <div class="mt-5 text-center italic">
-        <p v-if="!reciente" class="text-orange-900 font-bold">EXPERIENCIA EN CURSO</p>
-        <p v-else>{{ hace }}</p>
+      <div class="max-w-sm mx-auto mt-5 text-center italic font-bold text-lg">
+        <p v-if="reciente" class="text-xl text-orange-900">RECIBIENDO RECOPILACIONES</p>
+        <p v-else class="text-diminished">{{ hace }}</p>
       </div>
+    </section>
 
+    <Card v-if="!escribio" class="my-12 py-5 px-2 xs:px-4 w-full max-w-md mx-auto bg-blue-gray-50 dark:bg-blue-gray-900">
 
-      <form v-if="!escribio" @submit.prevent="submit" class="regular-form bg-transparent space-y-9" autocomplete="on">
+      <h3 v-if="!escribio" class="text-center">Registro de la experiencia</h3>
+
+      <form @submit.prevent="submit" class="regular-form bg-transparent space-y-9" autocomplete="on">
         <div v-if="!isAuthenticated" class="text-center">¿Ya tienes cuenta? <NLink :to="`/login/?desde=${$route.path}}`">Inicia sesión</NLink></div>
         <div>
           <label v-if="!isAuthenticated" for="nombre">Tu nombre:</label>
@@ -54,22 +55,24 @@
             <span class="inline-block w-28">{{ enviando ? 'Enviando' : 'Enviar' }}</span>
           </button>
         </div>
-      </form>
-      <p v-else-if="experiencias.length" class="my-12 flex justify-center">
-        <button
-          class="btn btn-gray"
-          v-scroll-to="`#comentario-${experiencias[0].id}`"
-        >Ver mi experiencia</button>
-      </p>
+      </form>      
     </Card>
+
+    <div v-if="experiencias.length" class="flex w-full max-w-md mx-auto justify-center items-center space-x-4 bg-blue-gray-100 dark:bg-gray-800 shadow p-5">
+
+      <div
+        v-if="experiencias.length"
+        class="btn btn-gray"
+        v-scroll-to="`#comentario-${experiencias[0].id}`"
+      >
+      <icon icon="eye" class="mr-2"/> 
+      Ver mi experiencia</div>      
+    
+    </div>
 
     <template v-if="escribio||esAutor">
 
-      <section class="my-9">
-        <div class="btn btn-warning"><icon icon="file-pdf" class="mr-2"/> Exportar experiencias en PDF</div>
-      </section>
-
-    <section class="w-full border-t border-gray bg-blue-50 dark:bg-blue-gray-900">
+    <section class="">
 
       <!-- share modal -->
       <Comparte v-model="viendoCompartir" />
@@ -82,7 +85,12 @@
         @share="viendoCompartir = true"
         class="mx-auto max-w-xl my-7 lg:my-16"
         :commentLabels="['Escribe', ' Experiencia', ' Experiencias']"
+        :showWhoLiked="dias>=2"
       />
+
+  </section>
+
+  <section class="w-full border-t border-gray bg-gray-100 dark:bg-gray-900">
 
       <!-- comentarios -->
       <div id="comentarios" class="container mx-auto my-9">
@@ -102,9 +110,18 @@
           :reload="recargar"
           @count="$set(contenido, 'comentarios', $event)"
           class="px-1 xs:px-2"
+          @commented="recargarExperiencias();escribio=true"
         />
       </div>
+
+  <section v-if="contenido.comentarios" class="my-9 max-w-[16rem] mx-auto text-center">
+      <div class="btn btn-warning w-auto"><icon icon="file-alt" class="mr-2"/> Exportar experiencias</div>
+  </section>
+
       </section>
+
+
+
     </template>
   </div>
 </template>
@@ -161,7 +178,7 @@ export default {
     },
     hace() {
       if (this.dias > 2)
-        return this.$dayjs(contenido.created_at).fromNow()
+        return this.$dayjs(this.contenido.created_at).fromNow()
       return 'Hace unas horas'
     },
     esAutor() {
@@ -169,6 +186,14 @@ export default {
     }
   },
   methods: {
+    async recargarExperiencias() {
+      this.$set(this, 'experiencias', 
+            await this.$strapi.find('comentarios', 
+            { 
+              uid: `/recopilaciones/${this.contenido.id}`, 
+              'autor.id': this.loggedInUser.id 
+            }))
+    },
     async submit() {
       this.enviando = true
       await this.$strapi.create('comentarios', {
@@ -179,19 +204,14 @@ export default {
       })
          .then(async comentario => {
           if(this.loggedInUser)
-            this.$set(this, 'experiencias', 
-            await this.$strapi.find('comentarios', 
-            { 
-              uid: `/recopilaciones/${this.contenido.id}`, 
-              'autor.id': this.loggedInUser.id 
-            }))
+            this.recargarExperiencias()
 
             this.recargar++
           // registro de actividad
           this.$strapi.create('historials', {
             accion: 'experiencia_compartida',
             titulo: this.ctitle,
-            url: this.uid
+            url: this.uid + '#comentario-'+comentario.id
           })
           this.escribio = true
           this.enviando = false

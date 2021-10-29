@@ -308,7 +308,8 @@ methods: {
           })
       })
       this.nuevoComentario = ''
-      this.cargarComentarios()
+      await this.cargarComentarios()
+      this.$emit('commented')
     },
     async responder (respondiendo) {
       await this.$strapi.create('comentarios', {
@@ -327,7 +328,8 @@ methods: {
       })
       this.responderA = null
       this.respuesta = ''
-      this.cargarComentarios()
+      await this.cargarComentarios()
+      this.$emit('commented')
     },
     onResponder (id) {
       this.responderA = id

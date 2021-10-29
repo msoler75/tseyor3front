@@ -843,10 +843,10 @@ nav#submenu {
 }*/
 
 .breadcrumb {
-  transition: 0.6s all linear;
+  transition: 0.6s opacity linear;
 }
 .breadcrumb:not([present]) {
-  filter: blur(10px);
+  /* filter: blur(10px); */
   opacity: 0;
   pointer-events: none;
 }

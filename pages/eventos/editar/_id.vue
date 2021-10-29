@@ -473,7 +473,7 @@ export default {
                     .then((contenido) => {
 
                         // registro de actividad
-                        this.$strapi.create('historial', {
+                        this.$strapi.create('historials', {
                             accion: 'evento_creado',
                             titulo: contenido.titulo,
                             url: `/eventos/${contenido.id}`

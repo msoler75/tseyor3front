@@ -1,5 +1,5 @@
 <template>
-  <div class="card flex flex-col rounded overflow-hidden"
+  <div class="card flex flex-col rounded-lg overflow-hidden"
   :class="center?'text-center':''"
   :clicked="clicked"
   >
