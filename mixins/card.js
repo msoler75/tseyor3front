@@ -35,6 +35,11 @@ export default {
       required: false,
       default: false
     },
+    creation: { // define la fecha segun la creación del contenido, no de la ultima modificación
+      type: Boolean,
+      required: false,
+      default: false
+    },
     href: {
       type: String,
       required: false,
@@ -120,7 +125,7 @@ export default {
       return this.tags || this.data.tags || this.data.etiquetas;
     },
     cdate() {
-      return this.date || this.data.date || this.data.updated_at || this.data.created_at || this.data.fecha || null
+      return this.date || this.data.date || (this.creation?this.data.created_at:this.data.updated_at) || (this.creation?this.data.updated_at:this.data.created_at) || this.data.fecha || null
     },
     cclase() {
       return this.data ? this.data.clase : "default";

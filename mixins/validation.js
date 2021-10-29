@@ -19,8 +19,9 @@ export default {
             return this.errors[field] ? 'border-4 border-red' : ''
         },
         setErr(err) {
+            console.log('setErr', err)
             let firstEl = null
-            if (err.response.data.message === 'ValidationError') {
+            if (err&&err.response&&err.response.data&&err.response.data.message === 'ValidationError') {
                 const errors = err.response.data.data.errors
                 for (const field in errors) {
                     this.$set(this.errors, field, this.translate(errors[field].join(', ')))

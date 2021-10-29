@@ -1,7 +1,18 @@
 <template>
   <!-- Sin padding -->
   <!-- No tiene imagen de fondo -->
-  <div class="flex flex-col items-center" focused>
+  <div class="flex flex-col items-center" focused contained="no">
+
+    <NLink
+      v-if="isAuthenticated && loggedInUser.id === contenido.autor.id"
+      class="btn absolute top-24 right-4 w-12 h-12 flex justify-center items-center rounded-full sm:w-auto sm:h-auto sm:rounded-inherit"
+      :to="`/recopilaciones/editar/${contenido.id}`"
+    >
+      <icon icon="edit" />
+      <span class="ml-2 hidden sm:inline">Editar</span>
+    </NLink>
+
+
     <h1 v-if="!escribio">Recopilación de experiencias</h1>
 
     <!-- article heading -->
@@ -39,7 +50,7 @@
 
         <div class="flex justify-center">
           <button class="btn w-full text-center" type="submit" :disabled="enviando">
-            <icon class="!w-6" :icon="enviando ? 'sync spin' : 'plus-square'" />
+            <icon class="!w-6" :icon="enviando ? 'sync spin' : 'paper-plane'" />
             <span class="inline-block w-28">{{ enviando ? 'Enviando' : 'Enviar' }}</span>
           </button>
         </div>
@@ -53,6 +64,13 @@
     </Card>
 
     <template v-if="escribio||esAutor">
+
+      <section class="my-9">
+        <div class="btn btn-warning"><icon icon="file-pdf" class="mr-2"/> Exportar experiencias en PDF</div>
+      </section>
+
+    <section class="w-full border-t border-gray bg-blue-50 dark:bg-blue-gray-900">
+
       <!-- share modal -->
       <Comparte v-model="viendoCompartir" />
 
@@ -81,10 +99,12 @@
           buttonLabel="Enviar"
           :uid="uid"
           :content-title="ctitle"
+          :reload="recargar"
           @count="$set(contenido, 'comentarios', $event)"
           class="px-1 xs:px-2"
         />
       </div>
+      </section>
     </template>
   </div>
 </template>
@@ -124,7 +144,8 @@ export default {
       correo: "",
       experiencia: "",
       errors: {},
-      enviando: false
+      enviando: false,
+      recargar: 0
     }
   },
   mounted() {
@@ -133,10 +154,10 @@ export default {
   computed: {
     ...mapGetters(["isAuthenticated", "loggedInUser"]),
     dias() {
-      return this.dias < 1
+      return this.$dayjs().diff(this.contenido.created_at, 'day') 
     },
     reciente() {
-      return this.contenido ? this.$dayjs().diff(this.contenido.created_at, 'day') : 0
+      return this.contenido ? this.dias < 1 : false
     },
     hace() {
       if (this.dias > 2)
@@ -159,11 +180,13 @@ export default {
          .then(async comentario => {
           if(this.loggedInUser)
             this.$set(this, 'experiencias', 
-            await $strapi.find('comentarios', 
+            await this.$strapi.find('comentarios', 
             { 
               uid: `/recopilaciones/${this.contenido.id}`, 
               'autor.id': this.loggedInUser.id 
             }))
+
+            this.recargar++
           // registro de actividad
           this.$strapi.create('historials', {
             accion: 'experiencia_compartida',

@@ -62,7 +62,7 @@ export default {
     commentLabels: {
       type: Array,
       required: false,
-      default: ['Coméntalo','Comentario','Comentarios']
+      default() { return ['Coméntalo','Comentario','Comentarios'] }
     }
   },
   computed: {

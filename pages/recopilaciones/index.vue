@@ -4,13 +4,14 @@
     <p>{{description}}</p>
   <nuxt-img :src="image" sizes="xm:100vw sm:480px" class="rounded-xl my-4 mx-auto" />
     <section class="my-7">
-      <NLink to="/recopilaciones/editar/nueva" class="btn mx-auto">Crear nueva recopilación</NLink>
+      <NLink to="/recopilaciones/editar/nueva" class="btn mx-auto"><icon class="!w-6" icon="plus-square" /> Crear nueva recopilación</NLink>
     </section>
     <Grid class="mt-12">
       <Card
         v-for="reco of recopilaciones"
         :key="reco.id"
         :data="reco"
+        creation="true"
         collection="recopilaciones"
       />
     </Grid>

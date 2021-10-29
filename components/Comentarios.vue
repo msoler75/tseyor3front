@@ -204,6 +204,11 @@ export default {
       type: String,
       required: false,
       default: 'Comentar'
+    },
+    reload: {
+      type: Boolean | Number,
+      required: false,
+      default: 0
     }
   },
   /*
@@ -225,6 +230,12 @@ methods: {
     },
   },
   */
+ watch: {
+   reload(newValue) {
+     console.log('changed reload', newValue)
+     this.$fetch()
+   }
+ },
   data () {
     return {
       comentarios: [],
@@ -274,8 +285,8 @@ methods: {
         uid: this.uid,
         _sort: 'updated_at:ASC'
       })
+      this.$set(this, 'comentarios', comentarios)
       this.$emit('count', comentarios.length)
-      this.comentarios = comentarios
     },
     async comentar () {
       await /*this.$strapi.$http.$post('/comentarios', {

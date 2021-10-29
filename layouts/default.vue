@@ -258,7 +258,7 @@
     >
       <div class="w-full">
         <!-- Place your content here -->
-        <nuxt class="mx-auto" :class="pageConfig.contained ? 'mb-5' : ''" />
+        <nuxt class="mx-auto" :class="pageConfig.contained ? 'mb-5' : ''"  ref="page"/>
       </div>
     </div>
     <Sidebar v-show="!hideMenus" v-model="showSidebar" :items="rutasMenu" class="xl:hidden" />
@@ -298,6 +298,19 @@ export default {
     // emulamos comportamiento de beforeEnter de transición de página
     this.$store.commit('updateBreadcrumb')
     this.$store.commit('travelling', false)
+    const el = this.$refs['page'].$el
+    console.log('page', el)
+    console.log('First page config...', el)
+      const config = {}
+      const pageConfigKeywords = ['background', 'breadcrumb', 'contained', 'focused']
+      for(const key of pageConfigKeywords)
+      {
+        const value = el.getAttribute(key)
+        if(value!==null)
+          config[key] = value&&value.toLowerCase()!=="no"&&value!=="0"
+      }
+      console.log('config', config)
+      this.$store.commit('setPageConfig', config)
   },
   data() {
     return {
