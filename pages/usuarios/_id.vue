@@ -224,12 +224,12 @@ export default {
     },
     async subirImagen(payload) {
       console.log('subirImagen', payload)
-      const file = payload.file || payload
-      if (!file) return
+      const files = payload.files
+      if (!files||!files.length) return
       this.subiendoImagen = true
       const form = new FormData()
+      form.append("files", files[0])
       const that = this
-      form.append("files", file)
       this.$strapi.create("upload", form)
         .then(async (response) => {
           console.log('response', response)

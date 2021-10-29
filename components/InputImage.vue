@@ -69,7 +69,6 @@ export default {
         },
         onFileSelect(e) {
             var files = e.target.files || e.dataTransfer.files
-            this.file = null
             if (!files.length) return
             this.createImages(files)
         },
@@ -101,7 +100,7 @@ export default {
             if(canvas) {
                 const dataURL = canvas.toDataURL('image/webp', 0.85)
                 const blob = await (await fetch(dataURL)).blob()
-                const file = new File([blob], this.file.name, {type:"image/webp", lastModified: new Date()})
+                const file = new File([blob], this.files[0].name, {type:"image/webp", lastModified: new Date()})
                 this.files = [file]
                 this.images = [dataURL]
                 this.verModal = false

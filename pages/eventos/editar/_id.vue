@@ -410,9 +410,7 @@ export default {
                     {
                         const form = new FormData()
                         for(const img of this.imagenesSubir)
-                        {
                             form.append("files", img.file)
-                        }
                         const imgs = this.imagenesSubir
                         this.$strapi.create("upload", form)
                             .then(async (response) => {
