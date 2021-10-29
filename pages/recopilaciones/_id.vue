@@ -19,7 +19,7 @@
         <p>{{ cdescription }}</p>
       </div>
       <div class="max-w-sm mx-auto mt-5 text-center italic font-bold text-lg">
-        <p v-if="reciente" class="text-xl text-orange-900">RECIBIENDO RECOPILACIONES</p>
+        <p v-if="reciente" class="text-xl text-orange-900">RECIBIENDO APORTACIONES</p>
         <p v-else class="text-diminished">{{ hace }}</p>
       </div>
     </section>

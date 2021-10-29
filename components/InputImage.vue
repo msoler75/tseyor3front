@@ -1,6 +1,7 @@
 <template>
     <div class="relative">
-        <span :disabled="disabled" class="btn btn-gray text-sm" @click="verModal = !disabled">{{textButton}}</span>
+        <span :disabled="disabled" class="btn btn-gray text-sm" @click="verModal = !disabled">
+            <icon v-if="icon" icon="images" :class="textButton?'mr-2':''"/>{{textButton}}</span>
         <input :required="required" v-model="images" class="absolute left-0 opacity-0 pointer-events-none"/>
         <Modal v-model="verModal" :title="title" class="min-w-sm max-w-screen">
             <div class="p-5 max-w-full" :class="images.length>1?'':'md:max-w-md'">
@@ -39,6 +40,7 @@ import { Cropper } from 'vue-advanced-cropper'
 import 'vue-advanced-cropper/dist/style.css';
 export default {
     props: {
+        icon: { type: Boolean, required: false, default: true},
         textButton: { type: String, required: false, default: 'Subir o cambiar imagen'},
         textCrop: { type: String, required: false, default: 'Recortar'},
         textAccept: { type: String, required: false, default: 'Aceptar'},

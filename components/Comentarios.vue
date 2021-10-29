@@ -38,6 +38,9 @@
               class="text-justify text-sm lg:text-base"
               v-html="$renderMarkdownServer(comentario.texto)"
             />
+            <div v-for="img, index of comentario.adjuntos" :key="index" class="my-2">
+              <nuxt-img :src="img.url" class="w-full" sizes="sm:100vw"/>
+            </div>
           </Card>
 
           <div
@@ -164,12 +167,25 @@
 
     <Card v-if="isAuthenticated" class="p-5">
       <form @submit.prevent="comentar">
-        <input
+        <textarea
+          rows="4"
           type="text"
           v-model="nuevoComentario"
           :placeholder="placeholder"
         />
-        <button type="submit" class="btn mt-3">{{buttonLabel}}</button>
+        <div>
+        <div v-for="item, index of imagenesSubir" :key="index" class="group relative my-2">
+            <nuxt-img :src="item.src" class="w-full" sizes="xs:100vw"/>
+            <div class="btn btn-error absolute right-2 top-2 text-xl p-0 w-7 h-7 flex justify-center items-center rounded-full transition duration-200 opacity-0 group-hover:opacity-100" 
+              @click="eliminarDeImagenes(index)" title="Eliminar imagen" >
+                &times;
+            </div>
+        </div>
+          </div>
+        <div class="mt-2 flex justify-between items-center">
+          <button type="submit" class="btn">{{buttonLabel}}</button>
+          <InputImage v-if="isAuthenticated" multiple id="imagen" :value="imagenesSubir" @change="onImagenes" class="my-3" textButton="" iconButton/>
+          </div>
       </form>
     </Card>
     <div v-else class="text-center">
@@ -242,6 +258,7 @@ methods: {
       respuesta: '',
       responderA: null,
       nuevoComentario: '',
+      imagenesSubir: [],
       // para mixin likes.js
       ccollection: 'comentarios',
       checkHash: null
@@ -269,6 +286,13 @@ methods: {
     },
   },
   methods: {
+    onImagenes(payload) {
+      for(const i in payload.images) 
+          this.imagenesSubir.push({src: payload.images[i], file: payload.files[i]})
+    },
+      eliminarDeImagenes(index) {
+            this.imagenesSubir.splice(index, 1)
+        },
     mostrarNombre (user) {
       return user.nombreSimbolico || user.username
     },
@@ -288,14 +312,30 @@ methods: {
       this.$set(this, 'comentarios', comentarios)
       this.$emit('count', comentarios.length)
     },
+    async subirImagenes () {
+      const form = new FormData()
+      for(const img of this.imagenesSubir)
+          form.append("files", img.file)
+      return await this.$strapi.create("upload", form)
+          .then(async (response) => {
+              return response
+          })
+      .catch(err=>{
+          console.warn(err)
+          return []
+      })
+    },
     async comentar () {
+      const imagenes = await this.subirImagenes() || []
+      console.log('imagenes subidas', imagenes)
       await /*this.$strapi.$http.$post('/comentarios', {
         uid: this.uid,
         texto: this.nuevoComentario
       })*/
       this.$strapi.create('comentarios', {
         uid: this.uid,
-        texto: this.nuevoComentario
+        texto: this.nuevoComentario,
+        adjuntos: imagenes.map(x=>x.id)
       })
       .then(comentario=>{
         console.log('respuesta', comentario)
@@ -307,6 +347,7 @@ methods: {
               url: this.uid
           })
       })
+      this.imagenesSubir = []
       this.nuevoComentario = ''
       await this.cargarComentarios()
       this.$emit('commented')
