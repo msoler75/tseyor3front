@@ -112,7 +112,7 @@ export default {
   },
   methods: {
     async cargarRelacionados() {
-      this.relacionados = await $strapi.find('libros', { ...this.filtro, _limit: 10, id_ne: this.contenido.id })
+      this.relacionados = await this.$strapi.find('libros', { ...this.filtro, _limit: 10, id_ne: this.contenido.id })
     }
   },
 
