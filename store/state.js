@@ -2,29 +2,33 @@ import ufo from "@/assets/svg/icons/ufo.svg?raw";
 import eyeClosed from "~/assets/svg/icons/eyeclosed.svg?raw";
 
 export default () => ({
-  /* SEO: {
-    title: "",
-    description: "",
-    image: "",
-    type: ""
-  }, */
+  // audio en reproducción
   audioPlaying: {},
+  // iconos de tipo svg
   svgIcons: {
     ufo: ufo,
     eyeClosed: eyeClosed
   },
-  travelling: true,
-  navHidden: false,
+  // configuración de página
   pageConfig: {
     contained : true,
     background : true,
     breadcrumb: true,
     focused: false,
   },
+  // ocultar menú navegación top
+  navHidden: false,
+  // ver solo el contenido (oculta menus y footer)
   onlyContent: false,
+  // ver menú de usuario
   menuUsuario: false,
-  pathBreadcrumb: '/',
+  // estamos viajando entre páginas
+  travelling: true,
+  // próximo path en la transición de cambio de página
   nextPathBreadcrumb: '/',
+  // path actual o breadcrumb actual
+  pathBreadcrumb: '/',
+  // listado de breadcrumbs:
   breadcrumbs: {
     "/": {
       icon: "fas fa-home"
