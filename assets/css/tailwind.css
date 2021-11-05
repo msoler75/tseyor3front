@@ -149,8 +149,8 @@
     @apply hover:bg-green-300 active:bg-green-200;
   }
 
-  a:not(.btn) {
-    @apply text-blue-800;
+  #__content a:not(.btn) {
+    @apply text-blue-800 dark:text-blue-300;
   }
 
   blockquote {

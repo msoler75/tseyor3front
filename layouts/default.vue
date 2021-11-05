@@ -258,7 +258,7 @@
     >
       <div class="w-full">
         <!-- Place your content here -->
-        <nuxt class="mx-auto" :class="pageConfig.contained ? 'mb-5' : ''"  ref="page"/>
+        <nuxt id="__content" class="mx-auto" :class="pageConfig.contained ? 'mb-5' : ''"  ref="page"/>
       </div>
     </div>
     <Sidebar v-show="!hideMenus" v-model="showSidebar" :items="rutasMenu" class="xl:hidden" />
