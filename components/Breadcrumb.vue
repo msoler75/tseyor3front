@@ -90,6 +90,22 @@ export default {
       }
       else return []
     }
+  },
+  jsonld() {
+    if(!this.crumbs.length) return null;
+    const items = this.crumbs.map((item, index) => ({
+      '@type': 'ListItem',
+      position: index + 1,
+      item: {
+        '@id': item.href,
+        name: item.name,
+      },
+    }));
+    return {
+      '@context': 'https://schema.org',
+      '@type': 'BreadcrumbList',
+      itemListElement: items,
+    }
   }
 }
 </script>
