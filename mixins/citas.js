@@ -107,7 +107,7 @@ export default {
             (evento.fechaFinal && df > -12 && df < 24)
           ) {
             evento.insertado = true
-            const cita = nuevaCita(evento.fechaComienzo, evento.zonahoraria, {evento}, false, null)
+            const cita = this.nuevaCita(evento.fechaComienzo, evento.zonahoraria, {evento}, false, null)
             proximas.push(
               cita
               /*{
