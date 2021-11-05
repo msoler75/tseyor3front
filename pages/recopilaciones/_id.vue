@@ -93,7 +93,7 @@
   <section class="w-full border-t border-gray bg-gray-100 dark:bg-gray-900">
 
       <!-- comentarios -->
-      <div id="comentarios" class="container mx-auto my-9">
+      <div id="comentarios" class="container mx-auto my-9" v-observe-visibility="(isVisible)=>{mostrarComentarios=mostrarComentarios||isVisible}">
         <h3 v-if="contenido.comentarios" class="text-center">
           {{
             contenido.comentarios +
@@ -102,7 +102,7 @@
           }}
         </h3>
         <h3 v-else class="text-center">Escribe tu experiencia</h3>
-        <Comentarios
+        <LazyComentarios v-if="mostrarComentarios" 
           placeholder="Escribe tu experiencia..."
           buttonLabel="Enviar"
           :uid="uid"

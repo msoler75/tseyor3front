@@ -63,13 +63,13 @@
     </div>
 
     <!-- comentarios -->
-    <div id="comentarios" class="container mx-auto my-9">
+    <div id="comentarios" class="container mx-auto my-9" v-observe-visibility="(isVisible)=>{mostrarComentarios=mostrarComentarios||isVisible}">
       <h3
         v-if="contenido.comentarios"
         class="text-center"
       >{{ contenido.comentarios + ' Comentario' + (contenido.comentarios !== 1 ? 's' : '') }}</h3>
       <h3 v-else class="text-center">Coméntalo</h3>
-      <Comentarios :uid="uid" :content-title="ctitle" @count="$set(contenido, 'comentarios', $event)" class="px-1 xs:px-2" />
+      <LazyComentarios v-if="mostrarComentarios" :uid="uid" :content-title="ctitle" @count="$set(contenido, 'comentarios', $event)" class="px-1 xs:px-2" />
     </div>
   </div>
 </template>
@@ -113,19 +113,21 @@ export default {
   },
   data() {
     return {
-      relacionados: []
+      relacionados: [],
     }
   },
   methods: {
-    async cargarRelacionados() {
-      const resultado = await this.$strapi.graphql({
-        query: query_relacionados
-            .replace('%limit', 12)
-            .replace('%id', this.contenido.id)
-            .replace('%idm10', this.contenido.id - 10)
-            .replace('%idp10', this.contenido.id + 10)
-      })      
-      this.relacionados = resultado.comunicados
+    async cargarRelacionados(isVisible) {
+      if(!this.relacionados.length&&isVisible) {
+        const resultado = await this.$strapi.graphql({
+          query: query_relacionados
+              .replace('%limit', 12)
+              .replace('%id', this.contenido.id)
+              .replace('%idm10', this.contenido.id - 10)
+              .replace('%idp10', this.contenido.id + 10)
+        })      
+        this.relacionados = resultado.comunicados
+        }
     },
   } 
   /*

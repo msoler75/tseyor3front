@@ -48,11 +48,14 @@ export default {
     } catch (e) {
       $error(503)
     }
-  },
+  }
+  /*
   methods: {
-    async cargarRelacionados() {
-      const filtro = { id_ne: id, id_lt: id + 10, id_gt: id - 10 }
-      this.relacionados = await $strapi.find('salas', { ...filtro, _limit: 7 })
+     async cargarRelacionados(isVisible) {
+      if(!this.relacionados.length&&isVisible) {
+        const filtro = { id_ne: id, id_lt: id + 10, id_gt: id - 10 }
+        this.relacionados = await $strapi.find('salas', { ...filtro, _limit: 7 })
+      }
     },
   },
   data() {
@@ -60,5 +63,6 @@ export default {
       relacionados: [],
     }
   }
+  */
 }
 </script>

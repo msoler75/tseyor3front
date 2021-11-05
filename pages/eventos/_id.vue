@@ -90,7 +90,7 @@
       />
 
       <!-- comentarios -->
-      <div id="comentarios" class="mx-auto bg-opacity-90 bg-gray-200 py-9">
+      <div id="comentarios" class="mx-auto bg-opacity-90 bg-gray-200 py-9" v-observe-visibility="(isVisible)=>{mostrarComentarios=mostrarComentarios||isVisible}">
         <h3 v-if="contenido.comentarios" class="text-center">
           {{
             contenido.comentarios +
@@ -99,7 +99,7 @@
           }}
         </h3>
         <h3 v-else class="text-center">Coméntalo</h3>
-        <Comentarios
+        <LazyComentarios v-if="mostrarComentarios" 
           :uid="uid" :content-title="ctitle"
           @count="$set(contenido, 'comentarios', $event)"
           class="px-1 xs:px-2"
