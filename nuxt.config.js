@@ -29,19 +29,7 @@ export default {
     name: 'page',
     mode: 'out-in',  // orden de páginas, primero desaparece (out) la página actual y luego aparece (in) la página nueva
     beforeEnter (el) {
-      console.log('Before enter...', el);
-      const config = {}
-      const pageConfigKeywords = ['background', 'breadcrumb', 'contained', 'focused']
-      for(const key of pageConfigKeywords)
-      {
-        const value = el.getAttribute(key)
-        if(value!==null)
-          config[key] = value&&value.toLowerCase()!=="no"&&value!=="0"
-      }
-      console.log('config', config)
-      this.$store.commit('setPageConfig', config)
-      this.$store.commit('updateBreadcrumb')
-      this.$store.commit('travelling', false)
+      this.$store.dispatch('beforeEnter', el)
     },
     afterEnter (el) {
       console.log('After enter...', el);

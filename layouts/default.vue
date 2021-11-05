@@ -299,7 +299,8 @@ export default {
     this.$store.commit('updateBreadcrumb')
     this.$store.commit('travelling', false)
     const el = this.$refs['page'].$el
-    console.log('page', el)
+    this.$store.dispatch('beforeEnter', el)
+    /*console.log('page', el)
     console.log('First page config...', el)
       const config = {}
       const pageConfigKeywords = ['background', 'breadcrumb', 'contained', 'focused']
@@ -310,7 +311,7 @@ export default {
           config[key] = value&&value.toLowerCase()!=="no"&&value!=="0"
       }
       console.log('config', config)
-      this.$store.commit('setPageConfig', config)
+      this.$store.commit('setPageConfig', config)*/
   },
   data() {
     return {
