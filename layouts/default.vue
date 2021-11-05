@@ -808,54 +808,25 @@ nav#submenu {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-}
 
-#__layout {
+  /* fondo */
   @apply bg-center bg-no-repeat bg-cover bg-fixed;
   /* background-image: linear-gradient(to top, #dff0ff 0%, white 100%); */
   /* background-image: radial-gradient( circle farthest-corner at 50% 20%,  #e0f0ff 0%, #d9eaff 65%, #c7e0ff 80.5%, #fff0ef 100%); */
   background-image: linear-gradient( to bottom , #eff6ff 0%, #d9eaff 65%, #c7e0ff 80.5%, #fff0ef 100%); 
 }
 
+.page-focused #__layout {
+  background-image: linear-gradient( to bottom , #fff 0%, #fff 90%, #fff0ef 100%); 
+}
+
 .dark #__layout {
   background-image: url(/imagenes/bg-dark.jpg)
 }
 
-/*.main-wrapper:before {
-  content: "";
-  @apply fixed left-0 top-0 w-screen h-screen bg-center bg-no-repeat bg-cover bg-fixed;
-  z-index: -1;
-  background-color: #f9fcff;
+.dark.page-focused #__layout {
+  background-image: linear-gradient( to bottom , #11151d 0%, #000 100%); 
 }
-.dark .main-wrapper:before {
-  background-color: black;
-}
-
-@screen sm {
-  .main-wrapper:before {
-    background-image: url(/imagenes/bg-light.jpg);
-  }
-  .dark .main-wrapper:before {
-    background-image: url(/imagenes/bg-dark.jpg);
-  }
-}
-
-.bg-dark-theme {
-  @apply relative;
-}
-.bg-dark-theme:before {
-  content: "";
-  @apply absolute left-0 top-0 w-full h-full bg-black bg-top bg-no-repeat bg-cover bg-fixed;
-  background-image: url(/imagenes/bg-dark.jpg);
-  z-index: -1;
-}
-
-.main-wrapper.no-background:before {
-  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=) !important;
-}
-/* .main-wrapper[obscure='true'] {
-  opacity: 0.2;
-}*/
 
 .breadcrumb {
   transition: 0.6s opacity linear;
