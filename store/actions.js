@@ -18,7 +18,9 @@ export default {
     for (const key of pageConfigKeywords) {
       const value = el.getAttribute(key)
       if (value !== null)
-        config[key] = value && value.toLowerCase() !== 'no' && value !== '0'
+      {
+        config[key] = value && value === true || (value.toLowerCase() !== 'no' && value !== '0')
+      }
     }
     console.log('config', config)
     store.commit('setPageConfig', config)

@@ -16,6 +16,26 @@ export default {
       focused: false,
       ...payload
     }
+
+
+    if (process.browser) {
+      const d = document
+      const de = d.documentElement
+
+      const pageConfigKeywords = [
+        'background',
+        'breadcrumb',
+        'contained',
+        'focused'
+      ]
+      for (const key of pageConfigKeywords) {
+      if(d && de && state.pageConfig[key])
+        de.classList.add('page-'+key)
+      else
+        de.classList.remove('page-'+key)
+      }
+    }
+
     console.log(state.pageConfig)
   },
 
