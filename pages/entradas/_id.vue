@@ -2,7 +2,6 @@
     <!-- Sin padding -->
     <!-- No tiene imagen de fondo -->
   <div class="flex flex-col items-center" contained="no" background="no" focused >
-
     <!-- article container -->
     <div
       class="px-3 sm:px-5 md:px-7 relative w-full shrink-0 flex-grow-1 max-w-3xl flex flex-col items-start"
@@ -62,9 +61,9 @@
     />
 
     <!-- contenido relacionado -->
-    <div class="container mx-auto my-9">
+    <div class="container mx-auto my-9" v-observe-visibility="cargarRelacionados">
       <h3 class="text-center">Y también...</h3>
-      <HCarousel center :items="entrada.relacionados" />
+      <HCarousel center :items="relacionados" collection="entradas" />
     </div>
 
     <SuscriptionSection
@@ -89,6 +88,22 @@
 </template>
 
 <script>
+
+const query_relacionados = `query {
+        entradas(limit: %limit, sort: "published_at:desc", where: { id_ne: %id} )  {
+          id
+          slug
+          published_at
+          titulo
+          imagen {
+            url
+            width
+            height
+          }
+        }
+      }`
+
+
 import vercontenidomixin from "@/mixins/vercontenido.js";
 import seo from '@/mixins/seo.js'
 export default {
@@ -110,6 +125,21 @@ export default {
     catch (e) {
       $error(503)
     }
+  },
+  data() {
+    return {
+      relacionados: []
+    }
+  },
+  methods: {
+    async cargarRelacionados() {
+      const resultado = await this.$strapi.graphql({
+        query: query_relacionados
+            .replace('%limit', 12)
+            .replace('%id', this.contenido.id)
+      })      
+      this.relacionados = resultado.entradas
+    },
   }
 };
 </script>

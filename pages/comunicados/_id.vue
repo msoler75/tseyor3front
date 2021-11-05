@@ -59,7 +59,7 @@
     <!-- contenido relacionado -->
     <div class="container mx-auto my-9" v-observe-visibility="cargarRelacionados">
       <h3 class="text-center">Y también...</h3>
-      <HCarousel center :items="relacionados" collection="comunicados" :no-text="true" />
+      <HCarousel center :items="relacionados" collection="comunicados" />
     </div>
 
     <!-- comentarios -->
@@ -75,6 +75,20 @@
 </template>
 
 <script>
+const query_relacionados = `query {
+        comunicados(limit: %limit, sort: "published_at:desc", where: { id_ne: %id, id_lt: %idp10, id_gt: %idm10 } )  {
+          id
+          slug
+          published_at
+          titulo
+          imagen {
+            url
+            width
+            height
+          }
+        }
+      }`
+
 import vercontenidomixin from '@/mixins/vercontenido.js'
 import seo from '@/mixins/seo.js'
 export default {
@@ -97,18 +111,23 @@ export default {
       $error(503)
     }
   },
-  methods: {
-    async cargarRelacionados() {
-      const id = this.contenido.id
-      const filtro = { id_ne: id, id_lt: id + 10, id_gt: id - 10 }
-      this.relacionados = await this.$strapi.find('comunicados', { ...filtro, _limit: 7 })
-    },
-  },
   data() {
     return {
       relacionados: []
     }
-  }
+  },
+  methods: {
+    async cargarRelacionados() {
+      const resultado = await this.$strapi.graphql({
+        query: query_relacionados
+            .replace('%limit', 12)
+            .replace('%id', this.contenido.id)
+            .replace('%idm10', this.contenido.id - 10)
+            .replace('%idp10', this.contenido.id + 10)
+      })      
+      this.relacionados = resultado.comunicados
+    },
+  } 
   /*
     asyncData ({ app, route }) {
       const id = parseInt(route.params.id)

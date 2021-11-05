@@ -62,6 +62,13 @@ export default {
           name: 'twitter:image',
           content: this.image || this.cimage
         }
+      ],
+      link: [
+        {
+          hid: 'canonical',
+          rel: 'canonical',
+          href: this.seourl
+        }
       ]
     }
   },
@@ -70,7 +77,7 @@ export default {
       '@context': 'http://schema.org',
       '@type': 'WebPage',
       name: this.seotitle + ' | TSEYOR',
-      url: this.$config.baseUrl + (this.url || this.$route.fullPath),
+      url: this.seourl,
       description: this.seodescription,
       "publisher": {
         "@type": "Organization",
@@ -86,6 +93,9 @@ export default {
     },
     seodescription () {
       return this.$teaser(this.description || this.cdescription, 156)
+    },
+    seourl () {
+      return this.$config.baseUrl + (this.url || this.$route.fullPath)
     }
   }
 }

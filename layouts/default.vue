@@ -526,6 +526,9 @@ export default {
   },
   head() {
     return {
+      htmlAttrs: {
+          lang: 'es-ES'
+      },
       meta: [
         {
           hid: "utf8",
@@ -537,7 +540,7 @@ export default {
           content:
             "width=device-width, initial-scale=1, user-scalable=1, maximum-scale=2",
         },
-      ],
+      ]
     };
   },
   computed: {
