@@ -19,14 +19,18 @@ export default {
       this.$refs.sdiv.addEventListener('mousemove', this.activate)
       this.$refs.sdiv.addEventListener('touch', this.activate)
     },
+    beforeUnmount() {
+      this.$refs.sdiv.removeEventListener('mousemove', this.activate)
+      this.$refs.sdiv.removeEventListener('touch', this.activate)
+    },
     methods:
     {
         activate() {
             const that = this
-            this.$store.commit('setHideMenus', false)
+            this.$store.commit('setOnlyContent', false)
             clearTimeout(this.timer)
             this.timer = setTimeout(function() {
-                that.$store.commit('setHideMenus', true)
+                that.$store.commit('setOnlyContent', true)
             }, 5000)
         }
     },

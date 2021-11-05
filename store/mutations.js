@@ -34,8 +34,11 @@ export default {
       else
         de.classList.remove('page-'+key)
       }
-    }
 
+    }
+    
+    // cuando cambiamos de página, además mostramos el menu top navigation
+    state.navHidden = false
     console.log(state.pageConfig)
   },
 
@@ -54,12 +57,16 @@ export default {
     state.travelling = payload
   },
 
+  setNavHidden(state, payload) {
+    state.navHidden = payload
+  },
+
   setMenuUsuario(state, payload) {
     state.menuUsuario = payload
   },
 
-  setHideMenus(state, payload) {
-    state.hideMenus = payload
+  setOnlyContent(state, payload) {
+    state.onlyContent = payload
   },
   /**
    * Reproduce el audio

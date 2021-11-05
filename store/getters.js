@@ -88,12 +88,16 @@ export default {
     return state.travelling
   },
 
+  navHidden (state) {
+    return state.navHidden
+  },
+
   menuUsuario (state) {
     return state.menuUsuario
   },
 
-  hideMenus (state) {
-    return state.hideMenus
+  onlyContent (state) {
+    return state.onlyContent
   }
   
 }

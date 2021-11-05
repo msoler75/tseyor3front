@@ -14,13 +14,14 @@ export default () => ({
     eyeClosed: eyeClosed
   },
   travelling: true,
+  navHidden: false,
   pageConfig: {
     contained : true,
     background : true,
     breadcrumb: true,
     focused: false,
   },
-  hideMenus: false,
+  onlyContent: false,
   menuUsuario: false,
   pathBreadcrumb: '/',
   nextPathBreadcrumb: '/',

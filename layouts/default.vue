@@ -6,9 +6,9 @@
     <!-- Navigation starts -->
     <nav
       id="main-menu"
-      v-show="!hideMenus"
+      v-show="!onlyContent"
       class="flex transition duration-200 font-serif z-30 w-full mx-auto bg-white dark:bg-gray-900 text-gray-blue-800 dark:text-gray-200 dark:hover:text-gray-50 shadow select-none sticky top-0"
-      :class="hideTopNavMenu ? '-translate-y-20' : ''"
+      :class="navHidden ? '-translate-y-20' : ''"
       style="min-height:48px"
       :submenu="currentTab !== ''"
     >
@@ -261,8 +261,8 @@
         <nuxt id="__content" class="mx-auto" :class="pageConfig.contained ? 'mb-5' : ''"  ref="page"/>
       </div>
     </div>
-    <Sidebar v-show="!hideMenus" v-model="showSidebar" :items="rutasMenu" class="xl:hidden" />
-    <Footer v-show="!hideMenus" class="mt-auto" :class="pageConfig.contained ? 'pt-9' : ''" />
+    <Sidebar v-show="!onlyContent" v-model="showSidebar" :items="rutasMenu" class="xl:hidden" />
+    <Footer v-show="!onlyContent" class="mt-auto" :class="pageConfig.contained ? 'pt-9' : ''" />
   </div>
 </template>
 
@@ -333,7 +333,6 @@ export default {
       lastY: 0,
       lastDy: 0,
       lastChangeY: 0,
-      hideTopNavMenu: false,
       buscarPor: '',
       showSidebar: false,
       currentTab: "",
@@ -542,7 +541,7 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(["isAuthenticated", "loggedInUser", "travelling", "pageConfig", "menuUsuario", "hideMenus"]),
+    ...mapGetters(["isAuthenticated", "loggedInUser", "travelling", "pageConfig", "menuUsuario", "navHidden", "onlyContent"]),
     iconMode() {
       return this.$colorMode.value === "light" ? iconSun : iconMoon;
     },
@@ -588,16 +587,15 @@ export default {
         this.lastChangeY = y
       }
       const distance = Math.abs(y - this.lastChangeY)
-      if (!this.pageConfig.focused)
-        this.hideTopNavMenu = false
-      else
+      if (this.pageConfig.focused) {
         if (dy > 0) {
           if (y > 400) {
-            this.hideTopNavMenu = true
+            this.$store.commit('setNavHidden', true)
           }
         } else if (distance > threshold) {
-          this.hideTopNavMenu = false
+          this.$store.commit('setNavHidden', false)
         }
+      }
       this.lastDy = dy
       this.lastY = y
     },
