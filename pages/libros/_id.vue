@@ -105,7 +105,34 @@ export default {
     } catch (e) {
       $error(503)
     }
-  }
+  },
+  jsonld () {
+    return {
+      '@context': 'http://schema.org',
+      '@type': 'Book',
+      bookFormat: "https://schema.org/EBook",
+      fileFormat: "application/pdf",
+      author: {
+        "@type": "Organization",
+        name: "Universidad TSEYOR de Granada"
+      },
+      copyrightYear: this.$dayjs(this.libro.edicionFecha).format("YYYY"),
+      numberOfPages: this.libro.paginas,
+      name: this.libro.titulo,
+      version: this.libro.edicionNumero,
+      image: this.libro.imagen.url,
+      url: this.$config.baseUrl + (this.url || this.$route.fullPath),
+      description: this.seodescription,
+      inLanguage: "es-ES",
+      genre: "Educational Materials",
+      publisher: {
+        "@type": "Organization",
+        name: "Universidad TSEYOR de Granada",
+        url: this.$config.baseUrl,
+        logo: this.$config.baseUrl + this.$config.imageLogoPath 
+      },
+    }
+  },
 }
 </script>
 
