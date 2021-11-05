@@ -115,9 +115,9 @@ export default {
       ],
 
       // SEO:
-      title: '',
+      title: 'Inicio',
       description: 'Portada de Tseyor',
-      image: '/imagenes/sello.png'
+      image: '/imagenes/poster-tseyor.jpg'
     }
   },
   computed: {

@@ -20,7 +20,7 @@ export default {
     imageLogoPath: '/imagenes/sello.png',
     publicFolder: Path.resolve(__dirname, 'static'),
     twitter: '@TSEYOR',
-    defaultImage: '/imagenes/playa-atardecer.jpg',
+    defaultImage: '/imagenes/poster-tseyor.jpg',
     defaultUserImage: '/imagenes/usuario.jpg'
   },
 
