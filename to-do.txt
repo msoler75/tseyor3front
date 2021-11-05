@@ -66,3 +66,14 @@ https://www.sitepoint.com/premium/library/books
 
 
 -"clicked" en cards de biblioteca
+
+- Envío de emails con strapi:
+https://antonioufano.com/articles/easily-send-emails-in-strapi-with-any-provider/
+
+
+Template:
+https://mobirise.com/extensions/gridm5/demo-blocks.html
+
+
+wORKFLOW:
+https://strapi.io/blog/automate-strapi-publication-workflow-with-n8n

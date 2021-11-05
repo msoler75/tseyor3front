@@ -271,9 +271,9 @@ import { mapGetters } from "vuex";
 import tseyorLogo from "~/assets/svg/sello-tseyor.svg?raw";
 import iconMoon from "~/assets/svg/icons/moon.svg?raw";
 import iconSun from "~/assets/svg/icons/sun.svg?raw";
-import seo from '@/mixins/seo.js'
+// import seo from '@/mixins/seo.js'
 export default {
-  mixins: [seo],
+  // mixins: [seo],
   /* watch: {
     showSidebar: {
       immediate: true,
@@ -541,7 +541,7 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(["description", "image", "type", "isAuthenticated", "loggedInUser", "travelling", "pageConfig", "menuUsuario", "hideMenus"]),
+    ...mapGetters(["isAuthenticated", "loggedInUser", "travelling", "pageConfig", "menuUsuario", "hideMenus"]),
     iconMode() {
       return this.$colorMode.value === "light" ? iconSun : iconMoon;
     },

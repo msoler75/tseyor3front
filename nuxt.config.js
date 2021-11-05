@@ -15,6 +15,9 @@ export default {
   // https://nuxtjs.org/docs/2.x/directory-structure/nuxt-config#publicruntimeconfig
   publicRuntimeConfig: {
     baseUrl: process.env.BASE_URL || 'https://tseyor.org',
+    siteName: 'TSEYOR',
+    organizationName: 'TSEYOR | ONG Mundo Armónico TSEYOR',
+    imageLogoPath: '/imagenes/sello.png',
     publicFolder: Path.resolve(__dirname, 'static'),
     twitter: '@TSEYOR',
     defaultImage: '/imagenes/playa-atardecer.jpg',

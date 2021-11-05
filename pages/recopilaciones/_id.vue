@@ -26,7 +26,7 @@
 
     <Card v-if="!escribio" class="my-12 py-5 px-2 xs:px-4 w-full max-w-md mx-auto bg-blue-gray-50 dark:bg-blue-gray-900">
 
-      <h3 v-if="!escribio" class="text-center">Registro de la experiencia</h3>
+      <h3 class="text-center">Registro de la experiencia</h3>
 
       <form @submit.prevent="submit" class="regular-form bg-transparent space-y-9" autocomplete="on">
         <div v-if="!isAuthenticated" class="text-center">¿Ya tienes cuenta? <NLink :to="`/login/?desde=${$route.path}}`">Inicia sesión</NLink></div>

@@ -33,7 +33,9 @@
 </template>
 
 <script>
+import seo from '@/mixins/seo.js'
 export default {
+  mixins: [seo],
   methods: {
     resizeTextarea() {
         const { statusMessage } = this.$refs;
@@ -110,7 +112,12 @@ export default {
           description: 'Visita guiada para conocer Tseyor',
           url: '/presentacion/visita'
         }, */
-      ]
+      ],
+
+      // SEO:
+      title: '',
+      description: 'Portada de Tseyor',
+      image: '/imagenes/sello.png'
     }
   },
   computed: {
