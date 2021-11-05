@@ -102,7 +102,7 @@
           }}
         </h3>
         <h3 v-else class="text-center">Escribe tu experiencia</h3>
-        <LazyComentarios v-if="mostrarComentarios" 
+        <LazyComments v-if="mostrarComentarios" 
           placeholder="Escribe tu experiencia..."
           buttonLabel="Enviar"
           :uid="uid"
