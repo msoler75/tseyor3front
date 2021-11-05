@@ -49,7 +49,7 @@
       />
     </section>
 
-    <section class="container xs:px-1 sm:px-3 md:px-6 mx-auto my-12">
+    <section class="container xs:px-1 sm:px-3 md:px-6 mx-auto my-12" v-observe-visibility="cargarRelacionados">
       <h2 class="text-center">Otros títulos...</h2>
       <HCarousel center :items="relacionados" :noText="true" collection="libros" />
     </section>
@@ -100,12 +100,22 @@ export default {
         ? contenido.etiquetas[0].nombre
         : null
       const filtro = categoria ? { 'etiquetas.nombre': categoria } : {}
-      const relacionados = await $strapi.find('libros', { ...filtro, _limit: 10, id_ne: contenido.id })
-      return { contenido, libro: contenido, relacionados }
+      return { filtro, contenido, libro: contenido }
     } catch (e) {
       $error(503)
     }
   },
+  data() {
+    return {
+      relacionados: []
+    }
+  },
+  methods: {
+    async cargarRelacionados() {
+      this.relacionados = await $strapi.find('libros', { ...this.filtro, _limit: 10, id_ne: this.contenido.id })
+    }
+  },
+
   jsonld () {
     return {
       '@context': 'http://schema.org',
