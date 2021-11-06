@@ -313,6 +313,7 @@ methods: {
       this.$emit('count', comentarios.length)
     },
     async subirImagenes () {
+      if(!this.imagenesSubir.length) return []
       const form = new FormData()
       for(const img of this.imagenesSubir)
           form.append("files", img.file)
