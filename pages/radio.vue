@@ -53,7 +53,7 @@ export default {
     const r = {
       beginOffset: 0,
       needToOffset: true,
-      endpoint: "https://tseyor.org/radio.php",
+      endpoint: "/tseyor/radio.php", //"https://tseyor.org/radio.php",
       emisoras: [
         {
           nombre: "Comunicados",
@@ -90,7 +90,11 @@ export default {
       console.log("playNextAudio");
       this.$axios
         .get(
-          `${this.endpoint}?station=${this.emisoraActiva.station}&station-name=${this.emisoraActiva.nombre}`
+          `${this.endpoint}?station=${this.emisoraActiva.station}&station-name=${this.emisoraActiva.nombre}`,
+          {headers:{
+            'Content-Type': 'application/json',
+        'X-Requested-With': 'XMLHttpRequest'
+          }}
         )
         .then(response => {
           console.log(response);

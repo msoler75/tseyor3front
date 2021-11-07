@@ -133,12 +133,12 @@ export default {
       this.cargando = false
     },
     play(audio) {
-      const mp3 = audio.audio.url
+      const src = audio.audio.url
       // console.log("play", mp3);
       this.$store.commit("setAudioPlay", {
         title: audio.titulo,
         artist: audio.descripcion,
-        src: mp3
+        src
       });
     },
     canplay() {

@@ -218,6 +218,12 @@ export default {
       pathRewrite: {
         '^/api': '/'
       }
+    },
+    '/tseyor': {
+      target: 'https://tseyor.org',
+      pathRewrite: {
+        '^/tseyor': '/'
+      }
     }
   },
 
