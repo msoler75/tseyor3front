@@ -90,11 +90,7 @@ export default {
       console.log("playNextAudio");
       this.$axios
         .get(
-          `${this.endpoint}?station=${this.emisoraActiva.station}&station-name=${this.emisoraActiva.nombre}`,
-          {headers:{
-            'Content-Type': 'application/json',
-        'X-Requested-With': 'XMLHttpRequest'
-          }}
+          `${this.endpoint}?station=${this.emisoraActiva.station}&station-name=${this.emisoraActiva.nombre}`
         )
         .then(response => {
           console.log(response);
