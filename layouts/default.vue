@@ -1,6 +1,6 @@
 <template>
   <div
-    class="relative surface-0 w-full h-full flex-grow font-sans"
+    class="relative surface-0 w-full h-full flex flex-col flex-grow font-sans"
     :class="(travelling ? 'travelling ' : '') + (pageConfig.background ? '' : 'no-background')"
   >
     <!-- Navigation starts -->
