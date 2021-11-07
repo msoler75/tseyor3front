@@ -99,7 +99,7 @@
           }}
         </h3>
         <h3 v-else class="text-center">Coméntalo</h3>
-        <Comentarios
+        <Comments
           :uid="uid" :content-title="ctitle"
           @count="$set(contenido, 'comentarios', $event)"
           class="px-1 xs:px-2"

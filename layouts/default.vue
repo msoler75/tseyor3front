@@ -810,7 +810,7 @@ nav#submenu {
   display: flex;
   flex-direction: column;
   position: relative;
-  z-index: -2;
+  z-index: 0;
 
   /* fondo */
   @apply bg-center bg-no-repeat bg-cover bg-fixed;
