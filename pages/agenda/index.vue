@@ -17,7 +17,7 @@
               <NLink
                 class="font-bold whitespace-nowrap text-blue-600"
                 :to="'/actividades/' + a.actividad.id"
-              >{{ a.actividad.titulo }}</NLink>de
+              >{{ a.actividad.titulo }}</NLink> de 
               <NLink
                 class="font-bold whitespace-nowrap px-3 py-1 rounded-lg shadow"
                 :class="equipos.find(x => x.id === a.equipo.id).color"

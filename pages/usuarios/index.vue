@@ -1,6 +1,7 @@
 <template>
   <div>
     <h1>Usuarios</h1>
+    {{usuariosListados}}
     <section class="flex flex-wrap sm:flex-nowrap justify-between items-baseline mb-5">
       <div class="mt-5 flex-grow order-2 sm:order-1">
         <p v-if="buscandoPor" class="text-center font-bold">Viendo resultados de: {{ buscandoPor }}</p>
@@ -35,7 +36,7 @@ const minLengthBuscar = 2
 const query_usuarios = `users(start: %start, limit: %limit, sort: "updated_at:desc" %where)  {
           id
           username
-          updated_at
+          created_at
           nombreSimbolico
           imagen {
             url
