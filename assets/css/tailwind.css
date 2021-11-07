@@ -149,7 +149,7 @@
     @apply hover:bg-green-300 active:bg-green-200;
   }
 
-  #__content a:not(.btn) {
+  #__content a:not(.btn):not([class*='text-']) {
     @apply text-blue-800 dark:text-blue-300;
   }
 
