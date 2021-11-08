@@ -124,7 +124,7 @@
   </button>
   -->
 
-      <a download :href="src" class="mx-auto flex justify-center items-center" title="Descargar audio">
+      <a download target="_blank" :href="src" class="mx-auto flex justify-center items-center" title="Descargar audio">
         <icon icon="download" />
       </a>
     </div>

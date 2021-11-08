@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="flex justify-start">
+    <div class="flex flex-wrap justify-start">
       <div class="mr-9 w-auto">
         <img class="w-24" src="~/assets/svg/radio-tseyor.svg" />
       </div>
@@ -8,6 +8,18 @@
         <h1>Radio Tseyor</h1>
         <p>Emisoras de radio las 24 horas del día los 7 días de la semana.</p>
       </div>
+        <client-only>
+      <AudioPlayer
+        v-if="currentAudio && currentAudio.src"
+        autoplay
+        :float="true"
+        :music="currentAudio"
+        @ended="mediaEnded"
+        @play="playEvent"
+        @canplay="canplay"
+        class="max-w-md mx-auto"
+      />
+    </client-only>
     </div>
     <divider />
     <div class="block md:flex justify-center">
@@ -30,18 +42,6 @@
         <img src="/imagenes/mujer-relajada.png" />
       </div>
     </div>
-
-    <client-only>
-      <AudioPlayer
-        v-if="currentAudio && currentAudio.src"
-        autoplay
-        :float="true"
-        :music="currentAudio"
-        @ended="mediaEnded"
-        @play="playEvent"
-        @canplay="canplay"
-      />
-    </client-only>
   </div>
 </template>
 
