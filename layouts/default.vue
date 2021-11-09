@@ -29,6 +29,7 @@
               class="transition duration-200 menuitem hover:text-black dark:hover:text-white px-3 cursor-pointer h-full flex items-center text-sm tracking-normal border-b-4 border-blue-500"
               @click="menuClick(item)"
               @mouseover="menuHover(item)"
+              :href="item.href"
             >
               <icon v-if="!item.name" :icon="item.icon" :class="item.iconClass" />
               {{ item.name }}
@@ -52,6 +53,7 @@
               class="transition duration-200 menuitem hover:text-black dark:hover:text-white px-3 cursor-pointer h-full flex items-center text-sm tracking-normal border-b-4 border-blue-500"
               @click="menuClick(item)"
               @mouseover="menuHover(item)"
+              :href="item.href"
             >
               <icon v-if="!item.name" :icon="item.icon" />
               {{ item.name }}
@@ -102,10 +104,13 @@
       <!-- SUBMENU -->
       <nav
         id="submenu"
-        class="absolute w-full hidden xl:block shadow text-gray-800 bg-gray-50 dark:bg-gray-900 dark:text-gray-200 text-sm overflow-y-auto"
+        class="absolute w-full hidden xl:block shadow text-gray-800 bg-gray-50 dark:bg-gray-900 dark:text-gray-200 text-sm overflow-y-auto lg:overflow-visible"
         style="max-height: calc(100vh - 72px); top:76px"
         @mouseleave="clickOff"
       >
+        <svg id="soft-svg">
+          <path id="soft-active" :d="softPath" />
+        </svg>
         <template v-for="item of rutasMenu">
           <div
             v-show="currentTab == item.href"
@@ -118,7 +123,7 @@
                 <NLink
                   :key="elem.href"
                   :to="elem.href"
-                  class="menu-subitem transition duration-200 place-items-center flex w-full h-full p-2 hover:bg-white dark:hover:bg-black"
+                  class="menu-subitem transition duration-200 place-items-center flex w-full h-full p-2 "
                   :class="elem.class"
                   @click.native="clickOff"
                 >
@@ -142,7 +147,7 @@
                       :key="leaf.href"
                       :to="leaf.href"
                       :class="
-                        'menu-subitem transition duration-200 place-items-center flex w-full h-full p-2 hover:bg-white dark:hover:bg-black ' +
+                        'menu-subitem transition duration-200 place-items-center flex w-full h-full p-2  ' +
                         leaf.bg
                       "
                       @click.native="clickOff"
@@ -183,7 +188,7 @@
               <div
                 v-for="item of searchitems"
                 :key="item.value"
-                class="flex items-center transition duration-200 hover:bg-white dark:hover:bg-black pl-5 rounded"
+                class="flex items-center transition duration-200  pl-5 rounded"
               >
                 <input
                   :id="'s-' + item.value"
@@ -258,7 +263,12 @@
     >
       <div class="w-full">
         <!-- Place your content here -->
-        <nuxt id="__content" class="mx-auto" :class="pageConfig.contained ? 'mb-5' : ''"  ref="page"/>
+        <nuxt
+          id="__content"
+          class="mx-auto"
+          :class="pageConfig.contained ? 'mb-5' : ''"
+          ref="page"
+        />
       </div>
     </div>
     <Sidebar v-show="!onlyContent" v-model="showSidebar" :items="rutasMenu" class="xl:hidden" />
@@ -291,7 +301,10 @@ export default {
     },
     mostrarMenuUsuario(newValue) {
       this.$store.commit('setMenuUsuario', newValue)
-    }
+    },
+    currentTab(newValue) {
+      this.updateSoftPath()
+    },
   },
   mounted() {
     this.actualizarUrlPerfil()
@@ -315,6 +328,7 @@ export default {
   },
   data() {
     return {
+      softPath: '',
       mostrarMenuUsuario: false,
       userMenuItems: [
         {
@@ -410,7 +424,8 @@ export default {
             "/mapa",
             {
               href: "/cursos",
-              class: "text-yellow-900 shadow ring-2 ring-yellow-500 bg-yellow-200 hover:text-yellow-900 hover:bg-yellow-100 dark:text-yellow-800 dark:hover:text-yellow-900",
+              class: "text-yellow-900 shadow ring-2 ring-yellow-500 bg-yellow-200 hover:text-yellow-900 hover:bg-yellow-100 dark:text-orange-800 dark:hover:text-yellow-900",
+              iconClass: "text-red"
             },
             {
               href: "/contactar",
@@ -431,7 +446,7 @@ export default {
             "/meditar",
             {
               href: "/actividades/guia",
-              class: "text-blue-800 shadow ring-2 ring-blue-500 bg-light-blue-50 hover:bg-white dark:text-blue-100 dark:hover:text-blue-900",
+              class: "text-blue-800 shadow ring-2 ring-blue-500 bg-light-blue-50 dark:bg-blue-dark-900 dark:hover:bg-blue-dark-800 hover:bg-white dark:text-blue-100 dark:hover:text-blue-900",
             },
             "/leer",
             "/telegram-whatsapp",
@@ -527,7 +542,7 @@ export default {
   head() {
     return {
       htmlAttrs: {
-          lang: 'es-ES'
+        lang: 'es-ES'
       },
       meta: [
         {
@@ -573,6 +588,23 @@ export default {
       window.removeEventListener('scroll', this.handleScroll);
   },
   methods: {
+    updateSoftPath() {
+      this.softPath = ''
+      const cur = this.currentTab
+      if (!process.client || !cur)
+        return
+      const tab = document.querySelector(`#main-menu ul li[href='${cur}']`)
+      if (tab) {
+        const r = tab.getBoundingClientRect()
+        const y = r.top + r.height - 38
+        const x0 = r.left
+        const x1 = r.left + r.width
+        const w = 380 // ancho de apertura
+        const h1 = 30  // alto de apertura
+        const h2 = 20  // alto hacia abajo
+        this.softPath = `M ${x0 - w} ${y+h2} L ${x0} ${y - h1} L ${x1} ${y - h1} L ${x1 + w} ${y+h2} Z`
+      }
+    },
     actualizarUrlPerfil() {
       let url
       if (!this.isAuthenticated) url = '/'
@@ -753,9 +785,9 @@ nav#main-menu[submenu="true"] li[active="true"].menuitem {
 .dark nav#main-menu[submenu="true"] li[active="true"]:after {
   @apply bg-gray-900;
 }
-.menu-subitem:hover {
+/* .menu-subitem:hover {
   box-shadow: 0 0 10px 5px white;
-}
+}*/
 .menu-subitem:hover .title-right {
   transform: translateX(0.2em);
 }
@@ -778,9 +810,9 @@ nav#main-menu[submenu="true"] li[active="true"].menuitem {
 .dark nav#main-menu:not([submenu="true"]) {
   border-bottom: 1px solid #111;
 }
-.dark .menu-subitem:hover {
+/*.dark .menu-subitem:hover {
   box-shadow: 0 0 10px 5px black;
-}
+} */
 .dark .menu-subitem:hover .icon {
   @apply text-blue-600;
 }
@@ -816,19 +848,25 @@ nav#submenu {
   @apply bg-center bg-no-repeat bg-cover bg-fixed;
   /* background-image: linear-gradient(to top, #dff0ff 0%, white 100%); */
   /* background-image: radial-gradient( circle farthest-corner at 50% 20%,  #e0f0ff 0%, #d9eaff 65%, #c7e0ff 80.5%, #fff0ef 100%); */
-  background-image: linear-gradient( to bottom , #eff6ff 0%, #d9eaff 65%, #c7e0ff 80.5%, #fff0ef 100%); 
+  background-image: linear-gradient(
+    to bottom,
+    #eff6ff 0%,
+    #d9eaff 65%,
+    #c7e0ff 80.5%,
+    #fff0ef 100%
+  );
 }
 
 .page-focused #__layout {
-  background-image: linear-gradient( to bottom , #fff 0%, #fff 90%, #fff0ef 100%); 
+  background-image: linear-gradient(to bottom, #fff 0%, #fff 90%, #fff0ef 100%);
 }
 
 .dark #__layout {
-  background-image: url(/imagenes/bg-dark.jpg)
+  background-image: url(/imagenes/bg-dark.jpg);
 }
 
 .dark.page-focused #__layout {
-  background-image: linear-gradient( to bottom , #11151d 0%, #000 100%); 
+  background-image: linear-gradient(to bottom, #11151d 0%, #000 100%);
 }
 
 .breadcrumb {
@@ -865,11 +903,27 @@ nav#submenu {
 
 @keyframes flash {
   0% {
-    transform: none; opacity: .5;
+    transform: none;
+    opacity: 0.5;
   }
   100% {
     transform: scale(1.5);
     opacity: 0;
   }
+}
+
+/* menu bordes suaves */
+#soft-svg {
+  position: absolute;
+  top: -38px;
+  pointer-events: none;
+  width: 100vw;
+  z-index: 900;
+}
+#soft-active {
+  pointer-events: all;
+  @apply text-gray-50 dark:text-gray-900;
+  /* color: red; */
+  fill: currentColor;
 }
 </style>
