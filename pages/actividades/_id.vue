@@ -3,9 +3,7 @@
     <section class="mb-5">
       <NLink class="btn btn-gray" :to="'/equipos/' + actividad.equipo.id">
         <Icon icon="chevron-left" class="mr-3" />
-        {{
-          actividad.equipo.nombre
-        }}
+        {{ actividad.equipo.nombre }}
       </NLink>
     </section>
 
@@ -76,26 +74,70 @@
       </div>
 
       <div
-        class="p-5 surface text-center flex flex-col justify-center items-center"
+        class="p-5 surface text-center flex flex-col items-center"
         v-if="actividad.tipo == 'reunion'"
       >
         <div v-if="!actividad.reuniones.length">No hay reuniones</div>
         <section v-else class="w-full">
-          <h3>Reuniones</h3>
-          <table class="w-full">
-            <tr v-for="reunion of actividad.reuniones" :key="reunion.id">
-              <td>
-                <span>{{ $dayjs(reunion.fecha).fromNow() }}</span>
-                <br />
-                <strong class="bg-gray-100">{{ $dayjs(reunion.fecha).format("DD-MMM") }}</strong>
-                <br />a las
-                <strong>{{ $dayjs(reunion.fecha).format("HH:mm") }}</strong>
-              </td>
-              <td>
-                <NLink class="btn" :to="'/reuniones/' + reunion.id">Ver</NLink>
-              </td>
-            </tr>
-          </table>
+          <Tabs
+            v-model="tabReuniones"
+            :labels="reuniones"
+            compact
+            :group="false"
+            center
+            class="mb-3"
+            tabClass="text-xs"
+          />
+          <div v-if="tabReuniones === 'Reuniones'" class="overflow-y-auto">
+            <table
+              v-if="actividad.reuniones.length"
+              class="w-full"
+              style="border-collapse:separate; border-spacing: .6em"
+            >
+              <tr v-for="reunion of actividad.reuniones" :key="reunion.id">
+                <td>
+                  <span class="text-sm">{{ $dayjs(reunion.fecha).fromNow() }}</span>
+                </td>
+                <td>
+                  <span
+                    class="font-bold bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded"
+                  >{{ $dayjs(reunion.fecha).format('DD-MMM') }}</span>
+                </td>
+                <td>
+                  <NLink class="btn btn-mini text-sm" :to="'/reuniones/' + reunion.id">Ver</NLink>
+                </td>
+              </tr>
+            </table>
+            <section
+              v-else
+              class="flex w-full h-40 justify-center items-center text-diminished"
+            >No hay reuniones</section>
+          </div>
+          <div v-else class="overflow-y-auto">
+            <table
+              v-if="actividad.actas.length"
+              class="w-full"
+              style="border-collapse:separate; border-spacing: .6em"
+            >
+              <tr v-for="acta of actividad.actas" :key="acta.id">
+                <td>
+                  <span class="text-sm">{{ $dayjs(acta.fecha).fromNow() }}</span>
+                </td>
+                <td>
+                  <span
+                    class="font-bold bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded"
+                  >{{ $dayjs(acta.fecha).format('DD-MMM') }}</span>
+                </td>
+                <td>
+                  <NLink class="btn btn-mini text-sm" :to="'/actas/' + acta.id">Ver</NLink>
+                </td>
+              </tr>
+            </table>
+            <section
+              v-else
+              class="flex w-full h-40 justify-center items-center text-diminished"
+            >No hay actas</section>
+          </div>
         </section>
       </div>
     </GridFluid>
@@ -109,19 +151,14 @@ import citas from '@/mixins/citas.js'
 export default {
   mixins: [vercontenidomixin, seo, citas],
   async asyncData({ $strapi, route, $error }) {
-    try {
+    try { 
       const id = route.params.id
-      const actividades = await $strapi.find(
-        'actividades',
-        id.match(/^\d+$/) ? { id } : { slug: id }
-      )
-
+      const actividades = await $strapi.find('actividades', { id })
       if (!actividades.length)
         return $error(404, 'Esta actividad no existe')
-
       const contenido = actividades[0]
+      contenido.actas = await $strapi.find('actas', 'actividad=' + contenido.id)
       const agenda = await $strapi.find('agenda', 'actividad=' + contenido.id)
-
       return { contenido, actividad: contenido, agenda }
     }
     catch (e) {
@@ -130,7 +167,9 @@ export default {
   },
   data() {
     return {
-      proximas: []
+      proximas: [],
+      tabReuniones: 'Reuniones',
+      reuniones: ['Reuniones', 'Actas']
     }
   },
   async mounted() {

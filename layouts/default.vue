@@ -211,7 +211,7 @@
       </nav>
     </nav>
 
-    <Card v-if="isAuthenticated" v-show="menuUsuario" class="py-3 px-5 w-52 fixed right-0 z-40">
+    <Card v-if="isAuthenticated" v-show="menuUsuario" class="py-3 px-5 w-52 fixed right-0 top-[48px] sm:top-[51px] md:top-[68px] lg:top-[72px] xl:top-[76px] z-40">
       <ul class="list-none">
         <li v-for="item of userMenuItems" :key="item.href">
           <NLink v-if="item.href" :to="item.href" class="block py-1">

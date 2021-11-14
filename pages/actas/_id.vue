@@ -18,9 +18,9 @@
 
     <!-- article container -->
     <div
-      class="py-9 rounded px-3 sm:px-5 md:px-7 relative w-full shrink-0 flex-grow-1 max-w-3xl flex flex-col items-start self-center"
+      class="surface py-9 rounded px-3 sm:px-5 md:px-7 relative w-full shrink-0 flex-grow-1 max-w-3xl flex flex-col items-start self-center"
     >
-      <h1 class="mb-0 flex items-center">{{contenido.actividad.titulo}}</h1>
+      <h1 class="mb-0 flex items-center text-xl">Acta {{$dayjs(contenido.fecha).format("DD·MMM")}} de {{contenido.equipo.nombre}} / {{contenido.actividad.titulo}}</h1>
       <div class="hidden 4xl:block absolute right-0 translate-x-3 5xl:translate-x-10 h-full">
         <SocialIcons
           class="sticky top-32 mb-6 text-xs 5xl:text-sm"
@@ -35,8 +35,8 @@
         <!-- article heading -->
         <h1 class>{{ ctitle }}</h1>
 
-         <div class="w-full flex mb-5 items-center justify-start">
-          <span class="flex items-center">
+        <div class="w-full flex mb-5 items-center justify-start">
+           <span class="flex items-center flex-wrap sm:flex-nowrap">
             <icon icon="far fa-calendar-alt" class="mr-1" /> {{$dayjs(contenido.fecha).format("DD·MMM·YYYY")}} <span class="px-2 py-1 text-xs shadow bg-yellow-300 dark:bg-yellow-600 dark:text-black rounded ml-4">{{$dayjs(contenido.fecha).fromNow()}}</span>
           </span>
 
@@ -45,9 +45,11 @@
           </div>
         </div>
 
-        <Card class="my-9 p-10">
-          <div class="text-justify" v-html="reunion.textoHTML" />
-        </Card>
+        <divider/>
+        
+        <div class="my-9">
+          <div class="text-justify" v-html="contenido.textoHTML" />
+        </div>
       </ArticleWrapper>
     </div>
 
@@ -68,10 +70,10 @@
 
     <SuscriptionSection
       id="suscription"
-      :title="reunion.equipo.nombre"
-      :description="reunion.equipo.descripcion"
-      :to="'/equipo/' + reunion.equipo.id"
-      :image="reunion.equipo.imagen"
+      :title="acta.equipo.nombre"
+      :description="acta.equipo.descripcion"
+      :to="'/equipo/' + acta.equipo.id"
+      :image="acta.equipo.imagen"
       label="Ver Equipo"
       class="bg-blue-gray-900 w-full"
     />
@@ -96,12 +98,12 @@ export default {
   async asyncData({ app, $strapi, route, $error }) {
     try {
       const id = route.params.id
-      const reuniones = await $strapi.find('reuniones', { id })
-      if(!reuniones.length)
-        return $error(404, 'Reunión no encontrada')
-      const contenido = reuniones[0]
+      const actas = await $strapi.find('actas', { id })
+      if(!actas.length)
+        return $error(404, 'Acta no encontrada')
+      const contenido = actas[0]
       contenido.textoHTML = app.$renderMarkdownServer(contenido.texto)
-      return { contenido, reunion: contenido }
+      return { contenido, acta: contenido }
     }
     catch (e) {
       $error(503)

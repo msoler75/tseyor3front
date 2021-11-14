@@ -1,6 +1,6 @@
 <template>
   <div class="tabs flex max-w-full select-none uppercase text-xs sm:text-sm md:tracking-wide lg:tracking-wider xl:tracking-widest font-sans"
-  :class="compact?'compact':'normal'">
+  :class="(compact?'compact':'normal')+(center?' justify-center':'')">
     <div
       v-for="(label, index) of labels"
       :key="getLabel(label)"
@@ -42,6 +42,11 @@ export default {
       type: Boolean | String,
       required: false,
       default: 'auto'
+    },
+    center: {
+      type: Boolean,
+      required: false,
+      default: false
     }
   },
   data() {
