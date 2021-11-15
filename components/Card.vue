@@ -1,5 +1,5 @@
 <template>
-  <div class="card flex flex-col rounded-lg overflow-hidden"
+  <div class="card flex rounded-lg overflow-hidden"
   :class="center?'text-center':''"
   :clicked="clicked"
   >
@@ -42,3 +42,8 @@ export default {
 }
 </script>
 
+<style scoped>
+.card:not(.flex-row) {
+  @apply flex-col;
+}
+</style>
