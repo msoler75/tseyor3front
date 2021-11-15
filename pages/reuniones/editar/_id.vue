@@ -1,5 +1,5 @@
 <template>
-    <Card class="py-5 px-2 xs:px-4 max-w-md mx-auto bg-blue-gray-50 dark:bg-blue-gray-900" focused >
+    <Card class="py-5 px-2 xs:px-4 max-w-md mx-auto bg-blue-gray-50 dark:bg-blue-gray-900" focused>
 
         <h1>{{ accion }} Reunión</h1>
         <form @submit.prevent="submit" class="regular-form bg-transparent space-y-4">
@@ -67,7 +67,7 @@
                 >Cancelar acta</div>
             </div>
 
-            <div v-if="!reunion.acta">
+            <div v-if="reunion.id&&!reunion.acta">
                 <input
                     type="checkbox"
                     id="cancelada"

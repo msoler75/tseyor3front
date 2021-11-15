@@ -154,6 +154,17 @@
         <h4 class="mt-0">Anexos</h4>
         <div v-for="anexo of anexos" :key="anexo.id">{{ anexo }}</div>
       </div>
+
+    <div v-if="soyCoordinador" class="p-5 surface text-center flex flex-col items-center h-full">
+      <div>
+        <NLink class="btn" :to="`/actas/editar/nueva?actividad=${contenido.id}`">Nueva Acta</NLink>
+      </div>
+      <div>
+        <NLink class="btn" :to="`/reuniones/editar/nueva?actividad=${contenido.id}`">Nueva Reunión</NLink>
+      </div>
+    </div>
+
+
     </GridFluid>
   </div>
 </template>
@@ -182,6 +193,9 @@ query {
         url
         width
         height
+      }
+      coordinadores {
+        id
       }
     }
     sala {
@@ -267,6 +281,9 @@ export default {
         case 'Espana': return 'Europe/Madrid'
         default: return this.actividad.equipo.zonahoraria
       }
+    },
+    soyCoordinador() {
+      return !!this.actividad.equipo.coordinadores.find(x=>parseInt(x.id)===this.$store.getters.loggedInUser.id)
     },
     citas() {
       let seccion = null;

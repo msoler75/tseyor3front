@@ -857,7 +857,7 @@ nav#submenu {
   );
 }
 
-.page-focused #__layout {
+html:not(.page-background) #__layout {
   background-image: linear-gradient(to bottom, #fff 0%, #fff 90%, #fff0ef 100%);
 }
 
@@ -865,7 +865,7 @@ nav#submenu {
   background-image: url(/imagenes/bg-dark.jpg);
 }
 
-.dark.page-focused #__layout {
+html.dark:not(.page-background) #__layout {
   background-image: linear-gradient(to bottom, #11151d 0%, #000 100%);
 }
 
