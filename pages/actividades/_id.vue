@@ -86,7 +86,6 @@
         class="p-5 surface text-center flex flex-col items-center"
         v-if="actividad.tipo == 'reunion'"
       >
-        <h4 class="mt-0">Archivo</h4>
         <div v-if="!actividad.reuniones.length">No hay reuniones</div>
         <section v-else class="w-full">
           <Tabs
