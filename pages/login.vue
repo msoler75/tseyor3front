@@ -27,7 +27,7 @@
           <button
             type="submit"
             :disabled="entrando"
-            class="w-20 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+            class="btn w-20 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
           >
             <div v-if="entrando" class="flex items-center justify-center">
               <icon icon="sync spin"/> <span>&nbsp;</span>
