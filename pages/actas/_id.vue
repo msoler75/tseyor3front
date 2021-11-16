@@ -3,6 +3,16 @@
     <!-- No tiene imagen de fondo -->
   <div class="flex flex-col" background="no" contained="no">
 
+    <NLink
+      v-if="soyCoordinador"
+      class="btn absolute top-24 right-4 w-12 h-12 flex justify-center items-center rounded-full sm:w-auto sm:h-auto sm:rounded-inherit"
+      :to="`/actas/editar/${contenido.id}`"
+    >
+      <icon icon="edit" />
+      <span class="ml-2 hidden sm:inline">Editar</span>
+    </NLink>
+
+
     <div class="max-w-full w-lg mx-auto">
      <section class="mb-5 px-3 sm:px-5 md:px-7 flex flex-col space-y-3 xm:flex-row xm:space-y-0 xm:space-x-3">
       <NLink class="btn btn-gray" :to="'/equipos/' + contenido.equipo.id">
@@ -103,7 +113,10 @@ export default {
         return $error(404, 'Acta no encontrada')
       const contenido = actas[0]
       contenido.textoHTML = app.$renderMarkdownServer(contenido.texto)
-      return { contenido, acta: contenido }
+      //contenido.equipo = await $strapi.find('equipos', {id: contenido.equipo.id})
+      const equipos = await $strapi.find('equipos', {id: contenido.equipo.id})
+      // console.log('equipo:', contenido.equipo)
+      return { equipo: equipos[0], contenido, acta: contenido }
     }
     catch (e) {
       $error(503)
@@ -113,6 +126,11 @@ export default {
     return {
       mostrarComentarios: false,
     }
+  },
+  computed: {
+     soyCoordinador() {
+        return !!this.equipo.coordinadores.find(x=>x.id===this.$store.getters.loggedInUser.id)
+        },
   }
 }
 </script>

@@ -1,6 +1,20 @@
 <template>
-    <Card class="py-5 px-2 xs:px-4 max-w-md mx-auto bg-blue-gray-50 dark:bg-blue-gray-900" focused>
+ <div class="max-w-full w-lg mx-auto" focused>
+      
+     <section class="mb-12 px-3 sm:px-5 md:px-7 flex flex-col space-y-3 xm:flex-row xm:space-y-0 xm:space-x-3">
+      <NLink class="btn btn-gray" :to="'/equipos/' + equipo.id">
+        <Icon icon="chevron-left" class="mr-3" />
+        {{ equipo.nombre }}
+      </NLink>
 
+       <NLink class="btn btn-gray" :to="'/actividades/' + actividad.id">
+        <Icon icon="chevron-left" class="mr-3" />
+        {{ actividad.titulo }}
+      </NLink>
+    </section>
+
+    <Card class="py-5 px-2 xs:px-4 max-w-md mx-auto bg-blue-gray-50 dark:bg-blue-gray-900">
+            
         <h1>{{ accion }} Reunión</h1>
         <form @submit.prevent="submit" class="regular-form bg-transparent space-y-4">
             <div>
@@ -14,16 +28,16 @@
                 <input type="text" disabled v-model="actividad.titulo" />
             </div>
             <div>
-                <label for="od">Orden del día:</label>
+                <label for="texto">Orden del día:</label>
                 <br />
                 <textarea
-                    id="od"
-                    v-model="contenido.od"
+                    id="texto"
+                    v-model="contenido.texto"
                     rows="7"
-                    :class="fieldValidate('od')"
+                    :class="fieldValidate('texto')"
                     required
                 />
-                <p class="error">{{ errors.od }}</p>
+                <p class="error">{{ errors.texto }}</p>
             </div>
 
             <div>
@@ -52,6 +66,7 @@
                 <p>...</p>
             </div>
 
+            <template v-if="contenido.id">
             <div v-if="!tieneActa">
                 <div
                     class="btn btn-gray text-xs mt-1"
@@ -66,6 +81,7 @@
                     @click.prevent="contenido.acta = null; tieneActa = false"
                 >Cancelar acta</div>
             </div>
+            </template>
 
             <div v-if="reunion.id&&!reunion.acta">
                 <input
@@ -87,7 +103,7 @@
                     <div class="flex justify-center items-center">
                         <icon
                             class="!w-6"
-                            :icon="guardando ? 'sync spin' : creando ? 'plus-square' : modificado ? 'sync' : 'check'"
+                            :icon="guardando ? 'sync spin' : creando ? 'plus-square' : modificado ? 'cloud-upload-alt' : 'check'"
                         />
                         <span class="inline-block w-28">{{ verbo }}</span>
                     </div>
@@ -95,6 +111,35 @@
             </div>
         </form>
     </Card>
+
+     <div
+            v-if="contenido.id"
+            class="w-[400px] max-w-full mx-auto mt-7 flex justify-center space-x-6"
+        >
+            <div
+                @click="borrarReunion"
+                class="btn btn-error w-full text-center"
+                :disabled="eliminando || guardando"
+            >
+                <div class="flex justify-center items-center">
+                    <icon class="!w-6" icon="trash" />
+                    <span class="inline-block w-28">Borrar Reunión</span>
+                </div>
+            </div>
+
+            <NLink
+                :to="`/reuniones/${contenido.id}`"
+                class="btn w-full text-center"
+                :disabled="eliminando || guardando"
+            >
+                <div class="flex justify-center items-center">
+                    <icon class="!w-6" icon="eye" />
+                    <span class="inline-block w-28">Ver Reunión</span>
+                </div>
+            </NLink>
+        </div>
+
+    </div>
 </template>
 
 <script>
@@ -110,16 +155,18 @@ export default {
             let id = route.params.id
             let contenido = {
                 equipo: null,
-                fecha: null,
-                od: '',
+                fecha: query.fechahora,
+                texto: '',
                 adjuntos: [],
                 cancelada: false,
                 actividad: query.actividad,
                 acta: null,
                 anexos: []
             }
+            console.log('contenido', contenido, query)
             let resultado = null
             if (id && id !== 'nueva') {
+                console.log('strapi fetch reunion', id)
                 resultado = await $strapi.find('reuniones', { id })
                 if(!resultado.length)
                     return $error(404, 'Reunión no encontrada')
@@ -141,7 +188,7 @@ export default {
                         }`})
             const anexos = resultado.anexos
             contenido.equipo = equipo.id
-            return { contenido, reunion: contenido, actividad, equipo, anexos, tieneAnexos: !!contenido.anexos.length }
+            return { query, contenido, reunion: contenido, actividad, equipo, anexos, tieneAnexos: !!contenido.anexos.length }
         }
         catch (e) {
             $error(503)
@@ -151,7 +198,8 @@ export default {
         return {
             tieneActa: false,
             guardando: false,
-            modificado: false
+            modificado: false,
+            eliminando: false,
         }
     },
     computed: {
@@ -200,6 +248,19 @@ export default {
             return search.length
                 ? fuse.search(search).map(({ item }) => item)
                 : fuse.list;
+        },
+        borrarReunion() {
+            if (confirm("Esto eliminará permanentemente esta reunión")) {
+                this.eliminando = true
+                this.$strapi.delete('reuniones', this.contenido.id)
+                    .then(response => {
+                        this.$router.push('/actividades/'+this.actividad.id)
+                    })
+                    .catch(err => {
+                        console.error(err)
+                        this.eliminando = false
+                    })
+            }
         },
         async submit() {
             this.clearErrors()

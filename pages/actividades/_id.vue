@@ -1,5 +1,6 @@
 <template>
   <div>
+    
     <section class="mb-5">
       <NLink class="btn btn-gray" :to="'/equipos/' + actividad.equipo.id">
         <Icon icon="chevron-left" class="mr-3" />
@@ -75,6 +76,12 @@
                     class="btn btn-mini mt-2"
                     :to="`/reuniones/${cita.detalles.reunion.id}`"
                   >Ver</NLink>
+                </div>
+                <div v-else-if="soyCoordinador">
+                  <NLink
+                    class="btn btn-mini btn-gray mt-2"
+                    :to="`/reuniones/editar/nueva?actividad=${contenido.id}&fechahora=${cita.fechahora}`"
+                  >Crear</NLink>
                 </div>
               </div>
             </Card>
@@ -155,7 +162,7 @@
         <div v-for="anexo of anexos" :key="anexo.id">{{ anexo }}</div>
       </div>
 
-    <div v-if="soyCoordinador" class="p-5 surface text-center flex flex-col items-center h-full">
+    <div v-if="soyCoordinador" class="p-5 surface text-center flex flex-col justify-center items-center h-full space-y-9">
       <div>
         <NLink class="btn" :to="`/actas/editar/nueva?actividad=${contenido.id}`">Nueva Acta</NLink>
       </div>
@@ -225,7 +232,7 @@ query {
   }
   actas(where: { actividad: %id }) {
     id
-    fechaAuxiliar
+    fecha
     reunion {
       id
       fecha
@@ -252,7 +259,7 @@ export default {
       return { contenido, actividad: contenido, actas, agenda }
     }
     catch (e) {
-      console.warn(e)
+      console.warn(e.original)
       $error(503)
     }
   },
