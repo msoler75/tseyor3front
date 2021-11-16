@@ -1,17 +1,5 @@
 <template>
  <div class="max-w-full w-lg mx-auto" focused>
-      
-     <section class="mb-12 px-3 sm:px-5 md:px-7 flex flex-col space-y-3 xm:flex-row xm:space-y-0 xm:space-x-3">
-      <NLink class="btn btn-gray" :to="'/equipos/' + equipo.id">
-        <Icon icon="chevron-left" class="mr-3" />
-        {{ equipo.nombre }}
-      </NLink>
-
-       <NLink class="btn btn-gray" :to="'/actividades/' + actividad.id">
-        <Icon icon="chevron-left" class="mr-3" />
-        {{ actividad.titulo }}
-      </NLink>
-    </section>
 
     <Card class="py-5 px-2 xs:px-4 max-w-md mx-auto bg-blue-gray-50 dark:bg-blue-gray-900">
             
@@ -265,6 +253,8 @@ export default {
         async submit() {
             this.clearErrors()
             this.guardando = true
+            // lo convertimos para que se guarde tal cual
+            this.contenido.fecha = this.contenido.fecha.replace(/Z$/, '') + 'Z'
             if (this.contenido.id) {
                 await this.$strapi
                     .update('reuniones', this.contenido.id, this.contenido)
