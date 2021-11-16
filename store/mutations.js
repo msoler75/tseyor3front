@@ -47,9 +47,10 @@ export default {
     state.nextPathBreadcrumb = payload
   }, 
 
-  updateBreadcrumb(state) {
+  updateBreadcrumb(state, payload) {
     console.log('updateBreadcrumb')
-    state.pathBreadcrumb = state.nextPathBreadcrumb
+    state.pathBreadcrumb = payload?payload:state.nextPathBreadcrumb
+    state.nextPathBreadcrumb = state.pathBreadcrumb
   },
 
   travelling(state, payload) {

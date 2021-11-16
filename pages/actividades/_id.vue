@@ -1,13 +1,6 @@
 <template>
   <div>
     
-    <section class="mb-5">
-      <NLink class="btn btn-gray" :to="'/equipos/' + actividad.equipo.id">
-        <Icon icon="chevron-left" class="mr-3" />
-        {{ actividad.equipo.nombre }}
-      </NLink>
-    </section>
-
     <GridFluid class="gap-6 grid-flow-row">
       <div class="p-5 surface flex flex-col justify-center text-center">
         <h1>{{ actividad.equipo.nombre }}</h1>
@@ -35,7 +28,7 @@
 
       <div
         class="p-5 surface text-center flex flex-col row-span-2 items-center md:overflow-y-auto h-full"
-        v-if="actividad.tipo == 'reunion'"
+        v-if="actividad.tipo == 'reunion' && citas.length"
       >
         <h3>Agenda</h3>
         <!--
@@ -91,7 +84,7 @@
 
       <div
         class="p-5 surface text-center flex flex-col items-center"
-        v-if="actividad.tipo == 'reunion'"
+        v-if="actividad.tipo == 'reunion'&&(actividad.reuniones.length||actas.length)"
       >
         <div v-if="!actividad.reuniones.length">No hay reuniones</div>
         <section v-else class="w-full">
@@ -281,6 +274,18 @@ export default {
         reuniones: this.actividad.reuniones
           .filter(x => this.$dayjs(x.fecha).isAfter(now))
       })
+
+    this.$store.commit('updateBreadcrumb', [
+      {... this.$store.getters.getRouteData('/actividades')},
+      {... this.$store.getters.getRouteData('/equipos')},
+      {
+        name: this.contenido.equipo.nombre,
+        href: `/equipos/${this.contenido.equipo.id}`
+      },
+      {
+        name: 'Actividades'
+      }
+    ])
   },
   computed: {
     zonahoraria() {

@@ -14,17 +14,7 @@
 
 
     <div class="max-w-full w-lg mx-auto">
-     <section class="mb-5 px-3 sm:px-5 md:px-7 flex flex-col space-y-3 xm:flex-row xm:space-y-0 xm:space-x-3">
-      <NLink class="btn btn-gray" :to="'/equipos/' + contenido.equipo.id">
-        <Icon icon="chevron-left" class="mr-3" />
-        {{ contenido.equipo.nombre }}
-      </NLink>
-
-       <NLink class="btn btn-gray" :to="'/actividades/' + contenido.actividad.id">
-        <Icon icon="chevron-left" class="mr-3" />
-        {{ contenido.actividad.titulo }}
-      </NLink>
-    </section>
+    
 
     <!-- article container -->
     <div
@@ -123,6 +113,20 @@ export default {
     return {
       mostrarComentarios: false,
     }
+  },
+  mounted() {
+    this.$store.commit('updateBreadcrumb', [
+      {... this.$store.getters.getRouteData('/actividades')},
+      {... this.$store.getters.getRouteData('/equipos')},
+      {
+        name: this.contenido.equipo.nombre,
+        href: `/equipos/${this.contenido.equipo.id}`
+      },
+      {
+        name: this.contenido.actividad.titulo,
+        href: `/actividades/${this.contenido.actividad.id}`
+      }
+    ])
   },
   computed: {
      soyCoordinador() {
