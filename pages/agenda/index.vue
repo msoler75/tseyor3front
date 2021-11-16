@@ -65,7 +65,8 @@
 
             <Card :key="'c' + index" class="p-3 text-center">
               <span>{{ a.fecha.diasemana }}</span>
-              <span class="font-bold text-xl">
+              <span class="">
+                <icon icon="far fa-clock" class="mr-1 text-xs" />
                 {{
                   $dayjs("1970/1/1 " + a.hora).format("HH:mm")
                 }}

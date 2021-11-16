@@ -148,7 +148,10 @@ export default {
             }
             if (ok) {
               // buscamos si alguna reunión corresponde con algun horario programado segun agenda regular
-              const idx = reunionesOrdenadas.findIndex(x=>this.$dayjs(datestr).isSame(x.fecha.replace(/[TZ]/g, ' '), 'minute'))
+              const idx = reunionesOrdenadas.findIndex(x=>{
+                console.log('comparando reunion', x.fecha.replace(/[TZ]/g, ' '), 'con cita', datestr) 
+                return this.$dayjs(datestr).isSame(x.fecha.replace(/[TZ]/g, ' '), 'minute')
+              })
               const reunion = idx>-1?reunionesOrdenadas[idx]:null
               // generamos la cita
               const item2 = {...item, reunion}
