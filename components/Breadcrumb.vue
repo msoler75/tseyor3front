@@ -7,7 +7,7 @@
     <li
       v-for="(crumb, index) of crumbs"
       :key="crumb.href"
-      class="flex"
+      class="flex items-center"
       property="itemListElement"
       typeof="ListItem"
     >
@@ -27,7 +27,7 @@
         </div>
         <span property="name" class>{{ crumb.name }}</span>
       </div>
-      <span v-if="index < crumbs.length - 1" class="sep text-diminished">&#8594;</span>
+      <icon v-if="index < crumbs.length - 1" icon="caret-right" class="mx-1 opacity-30 text-diminished"/>
     </li>
   </ul>
 </template>
@@ -116,9 +116,6 @@ export default {
 /* ul.breadcrumb li:last-child a {display: none !important} */
 .icon {
   width: 1.75em;
-}
-.sep {
-  margin: 0 0.22em;
 }
 svg {
   display: inline-block;
