@@ -6,17 +6,23 @@
         <h1>{{ accion }} Reunión</h1>
         <form @submit.prevent="submit" class="regular-form bg-transparent space-y-4">
             <div>
-                <label for="equipo">Equipo:</label>
+                <label>Equipo:</label>
                 <br />
                 <input type="text" disabled v-model="equipo.nombre" />
             </div>
             <div>
-                <label for="equipo">Actividad:</label>
+                <label>Actividad:</label>
                 <br />
                 <input type="text" disabled v-model="actividad.titulo" />
             </div>
             <div>
-                <label for="texto">Orden del día:</label>
+                <label for="titulo">Título:</label>
+                <br />
+                <input id="titulo" type="text" v-model="contenido.titulo" />
+                <small>(opcional)</small>
+            </div>
+            <div>
+                <label for="texto">Actividades/Orden del día:</label>
                 <br />
                 <textarea
                     id="texto"
@@ -189,6 +195,24 @@ export default {
             modificado: false,
             eliminando: false,
         }
+    },
+    mounted() {
+        this.$store.commit('updateBreadcrumb', [
+        {... this.$store.getters.getRouteData('/actividades')},
+        {... this.$store.getters.getRouteData('/equipos')},
+        {
+            name: this.equipo.nombre,
+            href: `/equipos/${this.equipo.id}`
+        },
+        {
+            name: this.actividad.titulo,
+            href: `/actividades/${this.actividad.id}`
+        },
+         {
+            name: this.contenido.titulo || this.$dayjs(this.contenido.fecha).format('DD-MMM'),
+            href: `/reuniones/${this.contenido.id}`
+        },
+        ])
     },
     computed: {
         accion() {

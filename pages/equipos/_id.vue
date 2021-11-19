@@ -1,6 +1,5 @@
 <template>
   <section class="relative px-7 mb-7" contained="no">
-
     <GridFluid class="gap-4">
       <div class="h-64 md:h-full" :style="bgImage"></div>
 
@@ -66,9 +65,21 @@
             :to="'/actividades/' + actividad.id"
           >
             {{ actividad.titulo }}
-            <span v-if="actividad.descripcion" class="text-diminished">— {{ actividad.descripcion }}</span>
+            <span
+              v-if="actividad.descripcion"
+              class="text-diminished"
+            >— {{ actividad.descripcion }}</span>
           </NLink>
         </div>
+      </div>
+
+      <div v-if="equipo.carpeta" class="p-5 surface flex flex-col">
+        <h3>{{ carpetaActual }}</h3>
+        <FolderBrowser
+          @change="carpetaActual = $event.id === equipo.carpeta.id ? 'Archivos' : $event.nombre"
+          :idFolder="equipo.carpeta.id"
+          class="w-full h-full overflow-y-auto"
+        />
       </div>
     </GridFluid>
 
@@ -93,10 +104,10 @@ export default {
       try {
         const id = route.params.id
         const equipos = await $strapi.find(
-          'equipos', 
+          'equipos',
           id.match(/^\d+$/) ? { id } : { slug: id }
         )
-        if(!equipos.length)
+        if (!equipos.length)
           return $error(404, 'Equipo no encontrado')
         contenido = equipos[0]
         contenido.textoHTML = app.$renderMarkdownServer(contenido.pizarra/*, contenido.imagenes*/)
@@ -108,6 +119,11 @@ export default {
     }
     catch (e) {
       $error(503)
+    }
+  },
+  data() {
+    return {
+      carpetaActual: { nombre: 'Archivos' }
     }
   },
   computed: {
