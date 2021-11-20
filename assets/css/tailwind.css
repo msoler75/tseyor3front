@@ -437,7 +437,32 @@
   }
 
 
+
+  @keyframes appearingAnim {
+    from {
+      opacity: 1;
+      -webkit-mask-position: 100%;
+    }
+    to {
+      opacity: 1;
+      -webkit-mask-position: 0%;
+    }
+  }
   
+
+  .in-page .animate-appearing:not(.group-animate),
+  .in-page .group-animate.animate-appearing > * {
+    animation-name: appearingAnim;
+    animation-duration: 1s;
+    animation-timing: linear;
+    animation-direction: normal;
+    animation-fill-mode: forwards;
+    animation-delay: var(--transition-delay);
+    opacity: 0;
+    -webkit-mask-image: linear-gradient(to left, #0000 25%, #000 75%);
+    -webkit-mask-size: 500%;
+  }
+
   @keyframes fadeInPulse {
     from {
       opacity: 0;
@@ -479,29 +504,30 @@
     }
   }
   
-  .in-page .animate-fadeInUp,
-  .in-page .block-animate-fadeInUp > * {  
+  .in-page .animate-fadeInUp:not(.group-animate),
+  .in-page .group-animate.animate-fadeInUp > * {  
       animation: fadeInUp .6s ease-out normal forwards var(--transition-delay);
       opacity: 0
-  }  
+  } 
+  
 
-  .block-animate-fadeInUp > *:nth-child(1) {
+  .group-animate > *:nth-child(1) {
     --transition-delay: .1s;
   }
 
-  .block-animate-fadeInUp > *:nth-child(2) {
+  .group-animate > *:nth-child(2) {
     --transition-delay: .22s;
   }
 
-  .block-animate-fadeInUp > *:nth-child(3) {
+  .group-animate > *:nth-child(3) {
     --transition-delay: .34s;
   }
 
-  .block-animate-fadeInUp > *:nth-child(4) {
+  .group-animate > *:nth-child(4) {
     --transition-delay: .46s;
   }
 
-  .block-animate-fadeInUp > *:nth-child(5) {
+  .group-animate > *:nth-child(5) {
     --transition-delay: .58s;
   }
 

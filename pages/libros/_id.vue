@@ -15,7 +15,7 @@
               <nuxt-img :src="cimage" sizes="xs:40px sm:80px md:150px lg:200px" />
             </div>
           </div>
-          <section class="flex-grow flex-shrink md:max-w-sm block-animate-fadeInUp">
+          <section class="flex-grow flex-shrink md:max-w-sm group-animate animate-appearing">
             <h1 class="break-all sm:break-normal">{{ ctitle }}</h1>
             <div class="hidden lg:block mt-4 text-justify" v-html="ctext" />
             <section class="mt-3 text-diminished text-xs">
@@ -25,13 +25,13 @@
               <span>{{ libro.paginas }} páginas</span>
             </section>
             <section class="flex mt-7 justify-end !animate-none !opacity-100">
-              <a download :href="libro.documento.url" class="btn btn-error animate-fadeInPulse !delay-1000">
+              <a download :href="libro.documento.url" class="btn btn-error motion-safe:animate-fadeInPulse !delay-1000">
                 <icon icon="download" class="mr-2" />Descargar
               </a>
             </section>
           </section>
         </section>
-        <section class="lg:hidden mt-4 text-justify" v-html="libro.descripcion" />
+        <section class="mt-4 text-justify lg:hidden " v-html="libro.descripcion" />
       </Card>
     </div>
 

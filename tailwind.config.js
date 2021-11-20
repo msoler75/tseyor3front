@@ -675,8 +675,10 @@ module.exports = {
         'dark-odd'
       ],
       borderColor: ['dark', 'dark-focus', 'dark-focus-within'],
-      textColor: ['dark', 'dark-hover', 'dark-active']
-    }
+      textColor: ['dark', 'dark-hover', 'dark-active'],
+    },
+    animation: ({after}) => after(['motion-safe', 'motion-reduce']),
+    transitionProperty: ({after}) => after(['motion-reduce']),
   },
   purgeCSS: {
     extend: {
