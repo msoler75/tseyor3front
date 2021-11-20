@@ -15,7 +15,7 @@
               <nuxt-img :src="cimage" sizes="xs:40px sm:80px md:150px lg:200px" />
             </div>
           </div>
-          <section class="flex-grow flex-shrink md:max-w-sm">
+          <section class="flex-grow flex-shrink md:max-w-sm block-animate-fadeInUp">
             <h1 class="break-all sm:break-normal">{{ ctitle }}</h1>
             <div class="hidden lg:block mt-4 text-justify" v-html="ctext" />
             <section class="mt-3 text-diminished text-xs">
@@ -24,8 +24,8 @@
               &nbsp;—&nbsp;
               <span>{{ libro.paginas }} páginas</span>
             </section>
-            <section class="flex mt-7 justify-end">
-              <a download :href="libro.documento.url" class="btn btn-error">
+            <section class="flex mt-7 justify-end !animate-none !opacity-100">
+              <a download :href="libro.documento.url" class="btn btn-error animate-fadeInPulse !delay-1000">
                 <icon icon="download" class="mr-2" />Descargar
               </a>
             </section>
@@ -75,6 +75,11 @@
       <h3 v-else class="text-center">Coméntalo</h3>
       <LazyComments :uid="uid" :content-title="ctitle" @count="$set(contenido, 'comentarios', $event)" class="px-1 xs:px-2" />
     </div>
+
+    <portal to="contenido">
+    <p>This slot content will be rendered wherever the portal-target with name 'destination'
+      is  located.</p>
+    </portal>
   </div>
 </template>
 
@@ -216,4 +221,8 @@ export default {
     box-shadow: -10px 0 50px 10px #666;
   }
 }
+
+
+
 </style>
+

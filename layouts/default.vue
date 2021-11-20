@@ -1,7 +1,7 @@
 <template>
   <div
     class="relative surface-0 w-full h-full flex flex-col flex-grow font-sans"
-    :class="(travelling ? 'travelling ' : '') + (pageConfig.background ? '' : 'no-background')"
+    :class="(travelling ? 'travelling ' : 'in-page') + (pageConfig.background ? '' : 'no-background')"
   >
     <!-- Navigation starts -->
     <nav
@@ -262,6 +262,9 @@
       :class="pageConfig.contained ? 'container xs:px-1 sm:px-3 md:px-6 mx-auto' : ''"
     >
       <div class="w-full">
+        <portal-target name="contenido">
+          pepito
+        </portal-target>
         <!-- Place your content here -->
         <nuxt
           id="__content"

@@ -435,6 +435,81 @@
       grid-template-columns: repeat(auto-fill, minmax(37.5rem, 1fr));
     }
   }
+
+
+  
+  @keyframes fadeInPulse {
+    from {
+      opacity: 0;
+      transform: scale(1);
+    }
+
+    20% {
+      transform: scale(1);
+    }
+  
+    60% {
+      transform: scale(1.05);
+      opacity: 1;
+    }
+  
+    to {
+      transform: scale(1);
+      opacity: 1;
+    }
+  }
+
+  .animate-fadeInPulse {
+    opacity: 0;
+  }
+  .in-page .animate-fadeInPulse {
+    animation: fadeInPulse .7s ease-in-out normal forwards var(--transition-delay);
+    transform-origin: center center;
+  }
+
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translate3d(0, 77px, 0);
+    }
+  
+    to {
+      opacity: 1;
+      transform: translate3d(0, 0, 0);
+    }
+  }
+  
+  .in-page .animate-fadeInUp,
+  .in-page .block-animate-fadeInUp > * {  
+      animation: fadeInUp .6s ease-out normal forwards var(--transition-delay);
+      opacity: 0
+  }  
+
+  .block-animate-fadeInUp > *:nth-child(1) {
+    --transition-delay: .1s;
+  }
+
+  .block-animate-fadeInUp > *:nth-child(2) {
+    --transition-delay: .22s;
+  }
+
+  .block-animate-fadeInUp > *:nth-child(3) {
+    --transition-delay: .34s;
+  }
+
+  .block-animate-fadeInUp > *:nth-child(4) {
+    --transition-delay: .46s;
+  }
+
+  .block-animate-fadeInUp > *:nth-child(5) {
+    --transition-delay: .58s;
+  }
+
+  .delay-1100	{--transition-delay: 1100ms}
+  .delay-1200	{--transition-delay: 1200ms}
+  .delay-1300	{--transition-delay: 1300ms}
+  .delay-1400	{--transition-delay: 1400ms}
+
 }
 
 /*

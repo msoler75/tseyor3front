@@ -147,7 +147,8 @@ export default {
       easing: "ease",
       offset: -120,
       force: true
-  }],
+    }],
+    'portal-vue/nuxt'
   ],
 
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
