@@ -12,9 +12,9 @@ export default {
     middleware: ['route']
   },
 
-  serverMiddleware: [
+  /* serverMiddleware: [
     '~/middleware/redirects.js'
-  ],
+  ], */
 
   // https://nuxtjs.org/docs/2.x/directory-structure/nuxt-config#publicruntimeconfig
   publicRuntimeConfig: {

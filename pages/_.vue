@@ -7,6 +7,7 @@
 
 <script>
 export default {
+  middleware: 'redirect',
   async asyncData({ $strapi, route, router, $error }) {
     try {
       if(route.fullPath === '/archivos')

@@ -6,7 +6,7 @@
         v-model="carpetaActualId"
         class="w-full h-full overflow-y-auto"
         @click="clickHandler"
-        :mainNavigation="true"
+        :mainNavigation="mainNavigation"
         @navigated="navegacion"
       />
     </Card>
@@ -46,7 +46,8 @@ export default {
   },
   data() {
     return {
-      carpetaActualId: null
+      carpetaActualId: null,
+      mainNavigation: false // poner a true para activar turbo navegación o false para navegación solo con $router
     }
   },
   mounted() {
@@ -84,18 +85,20 @@ export default {
     },
     updateBreadcrumb() {
       const carpeta = this.carpetaActual
-      const breadcrumb = [{ ... this.$store.getters.getRouteData('/archivos') }]
+      const rootData = this.$store.getters.getRouteData(this.$config.archivosRuta)
+      const breadcrumb = []
       const parts = carpeta.ruta.split("/").filter(x => !!x)
-      parts.shift()
-      let rutaParcial = '/archivos'
+      // parts.shift()
+      let rutaParcial = ''
       while (parts.length) {
         const part = parts.shift()
         rutaParcial += '/' + part
         const ruta = rutaParcial
+        // const base = ruta===this.$config.archivosRuta?this.$store.getters.getRouteData(ruta):{}
         breadcrumb.push({
           name: part,
           href: rutaParcial,
-          click: async (event) => {
+          click: this.mainNavigation?async (event) => {
             console.log('clicked!', event, ruta)
             event.preventDefault()
             event.stopPropagation();
@@ -104,8 +107,8 @@ export default {
             if (carpeta)
               this.carpetaActualId = carpeta.id
             return false
-          },
-          icon: breadcrumb[0].icon
+          }: null,
+          icon: rootData.icon
         })
       }
       this.$store.commit('updateBreadcrumb', breadcrumb)
