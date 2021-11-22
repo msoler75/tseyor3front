@@ -10,7 +10,6 @@
             <icon icon="spinner spin" />
         </div>
         <div v-else-if="carpetaActual" class="flex flex-col">
-            {{idRootFolder}}
             <div
                 v-for="carpeta of carpetas"
                 :key="carpeta.id"
@@ -23,14 +22,14 @@
                         <icon
                             icon="folder"
                             class="cursor-pointer"
-                            @click.native="navigateTo(carpeta)"
+                            @click.native="flexNavigateTo(carpeta)"
                         />
                     </div>
                     <div class="w-full">
                         <a
                             target="_blank"
                             class="cursor-pointer"
-                            @click.prevent="navigateTo(carpeta)"
+                            @click.prevent="flexNavigateTo(carpeta)"
                             :href="carpeta.ruta"
                         >{{ carpeta.nombre }}</a>
                         <div class="flex w-full justify-between text-xs text-diminished">
@@ -68,7 +67,8 @@ import vmodel from '~/mixins/vmodel.js'
 export default {
     props: {
         idRootFolder: { type: Number, required: false, default: 0 },
-        embedNavigation: {type: Boolean, required: false, default: false}
+        embedNavigation: { type: Boolean, required: false, default: false },
+        mainNavigation: { type: Boolean, required: false, default: false }
     },
     mixins: [vmodel],
     fetchOnServer: false,
@@ -91,7 +91,7 @@ export default {
             this.myfetch()
         }
     },
-    mounted() {
+    created() {
         this.myfetch()
     },
     data() {
@@ -103,37 +103,42 @@ export default {
     },
     methods: {
         // no consigo que funcione si lo pongo como el normal fetch()
-        myfetch(){
-        console.log('fetch!', this.localValue)
-        if (this.localValue) {
-            console.log('go on')
-            this.cargando = true
-            this.$strapi.findOne(
-                "carpetas",
-                this.localValue
-            ).then((carpeta) => {
-                console.log('fetch result', carpeta)
-                if (carpeta) {
-                    // this.$set(this, 'carpetaActual', carpeta)
-                    this.carpetaActual = carpeta
-                    // for(const k in carpeta)
-                    // this.$set(this.carpetaActual, k, carpeta[k])
-                    this.$emit('loaded', carpeta)
-                }
-                else
-                    this.error = true
-                this.cargando = false
-            })
-                .catch(e => {
-                    console.error(e)
-                    this.error = true
+        myfetch() {
+            console.log('fetch!', this.localValue)
+            if (this.localValue) {
+                console.log('go on')
+                this.cargando = true
+                this.$strapi.findOne(
+                    "carpetas",
+                    this.localValue
+                ).then((carpeta) => {
+                    console.log('fetch result', carpeta)
+                    if (carpeta) {
+                        // this.$set(this, 'carpetaActual', carpeta)
+                        this.carpetaActual = carpeta
+                        // for(const k in carpeta)
+                        // this.$set(this.carpetaActual, k, carpeta[k])
+                        this.$emit('loaded', carpeta)
+                    }
+                    else
+                        this.error = true
+                    this.cargando = false
                 })
-        }
+                    .catch(e => {
+                        console.error(e)
+                        this.error = true
+                    })
+            }
         },
-        navigateTo(carpeta) {
+        flexNavigateTo(carpeta) {
             console.log('navigated to', carpeta.id, this.embedNavigation)
-            if(this.embedNavigation)
+            if (this.embedNavigation)
                 this.localValue = carpeta.id
+            else if (this.mainNavigation) {
+                this.localValue = carpeta.id
+                history.pushState({}, null, carpeta.ruta)
+                this.$emit('navigated', carpeta)
+            }
             else this.$emit('click', carpeta)
         },
         /* ext(n) {

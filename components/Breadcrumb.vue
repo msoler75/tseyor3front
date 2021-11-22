@@ -14,7 +14,8 @@
       <NLink
         v-if="crumb.href"
         :to="crumb.href"
-        @click.native="crumb.click?crumb.click($event):{}"
+        event=""
+        @click.native="navigate($event, crumb)"
         class="transition duration-200 text-diminished hover:text-black dark:hover:text-white flex items-center"
       >
         <div v-if="crumb.icon" class="icon inline-flex opacity-70 justify-center items-center">
@@ -36,6 +37,12 @@
 <script>
 export default {
   methods: {
+    navigate(event, crumb) {
+      console.log('breadcrumb navigate!', event, crumb)
+      if(crumb.click)
+        return crumb.click(event)
+      this.$router.push(crumb.href)
+    },
     merge(arr1, arr2) {
       if (!arr1) return arr2
       if (!arr2) return arr1
@@ -125,4 +132,5 @@ svg {
   display: inline;
   width: 1rem;
 }
+/* BPASS capitel 737857 */
 </style>

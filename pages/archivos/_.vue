@@ -1,12 +1,15 @@
 <template>
-  <div class="container w-96 mx-auto">
-    <h1>{{ carpetaActual.nombre }}</h1>
-    {{carpetaActualId}}
-    <FolderBrowser v-if="carpetaRaiz"
-      v-model="carpetaActualId"
-      class="w-full h-full overflow-y-auto"
-      @click="cambioCarpeta"
-    />
+  <div class="w-full max-w-xl mx-auto">
+    <Card class="p-1 sm:p-5 md:p-9">
+      <h1>{{ carpetaActual.nombre }}</h1>
+      <FolderBrowser v-if="carpetaRaiz"
+        v-model="carpetaActualId"
+        class="w-full h-full overflow-y-auto"
+        @click="clickHandler"
+        :mainNavigation="true"
+        @navigated="navegacion"
+      />
+    </Card>
   </div>
 </template>
 
@@ -47,15 +50,34 @@ export default {
     }
   },
   mounted() {
-    // window.addEventListener('onpopstate', this.onchangeurl);
+    window.addEventListener('onpopstate', this.onchangeurl);
     this.updateBreadcrumb()
     this.carpetaActualId = this.carpetaActual.id
+
+
+    // event fire when pushState
+    this.$nuxt.$on('pushState', params => {
+      // do your logic with params
+    })
   },
-  // beforeUnmount() {
-  // window.removeEventListener('onpopstate', this.onchangeurl);
-  // },
+   beforeUnmount() {
+    window.removeEventListener('onpopstate', this.onchangeurl)
+
+    this.$nuxt.$off('pushState')
+  },
   methods: {
-    cambioCarpeta(carpeta) {
+    // este método se activa cuando la navegación main está activada
+    navegacion(carpeta) {
+      if (!carpeta) return
+      if (carpeta.id === this.carpetaActual.id) return
+      this.carpetaActual = carpeta
+      window.event.preventDefault()
+      return false
+      // Where there are history.pushState
+      // this.$nuxt.$emit('pushState', params)
+    },
+    // en cambio esta se activa cuando hay un 'click' en una carpeta
+    clickHandler(carpeta) {
       if (!carpeta) return
       if (carpeta.id === this.carpetaActual.id) return
       this.$router.push(carpeta.ruta)
@@ -76,12 +98,12 @@ export default {
           click: async (event) => {
             console.log('clicked!', event, ruta)
             event.preventDefault()
+            event.stopPropagation();
             const [carpeta] = await this.$strapi.find('carpetas', { ruta })
             console.log('carpeta', carpeta)
-            if (carpeta) {
-              for (const k in carpeta)
-                this.$set(this.carpetaActual, k, carpeta[k])
-            }
+            if (carpeta)
+              this.carpetaActualId = carpeta.id
+            return false
           },
           icon: breadcrumb[0].icon
         })
@@ -89,7 +111,7 @@ export default {
       this.$store.commit('updateBreadcrumb', breadcrumb)
     },
   },
-  /* onchangeurl (event) {
+   onchangeurl (event) {
     // alert("location: " + document.location + ", state: " + JSON.stringify(event.state));
     console.log('popstate', location.pathname)
     if(location.pathname!==this.carpetaActual.ruta) {
@@ -99,6 +121,16 @@ export default {
       if(carpeta)
         this.$set(this, 'carpeta', carpeta)
     }
-  } */
+  },
+  computed: {
+    carpetaActualJSON () {
+      return JSON.stringify(this.carpetaActual)
+    }
+  },
+  watch: {
+    carpetaActualJSON (newValue) {
+      this.updateBreadcrumb()
+    }
+  }
 }
 </script>
