@@ -73,14 +73,22 @@
         </div>
       </div>
 
-      <div v-if="equipo.carpeta" class="p-5 surface flex flex-col">
-        <h3>{{ carpetaActual }}</h3>
-        <FolderBrowser
-          @change="carpetaActual = $event.id === equipo.carpeta.id ? 'Archivos' : $event.nombre"
-          :idFolder="equipo.carpeta.id"
+      <div v-if="carpetaActualId" class="p-5 surface flex flex-col">
+        <h3>{{ carpetaActualNombre }}</h3>
+        <FolderBrowser          
+          @loaded="carpetaActual=$event"
+          v-model="carpetaActualId"
+          :idRootFolder="equipo.carpeta.id"
           class="w-full h-full overflow-y-auto"
+          :droppable="soyCoordinador"
+          :embedNavigation="true"
         />
+        <div v-if="soyCoordinador" class="flex justify-center">
+            <NLink class="btn" :to="`${carpetaActual.ruta}`">Administrar</NLink>
+        </div>
       </div>
+
+
     </GridFluid>
 
     <section class="mt-7 flex">
@@ -101,33 +109,43 @@ export default {
   async asyncData({ app, $strapi, route, $error }) {
     try {
       let contenido = { miembros: [], coordinadores: [] }
-      try {
         const id = route.params.id
-        const equipos = await $strapi.find(
+        let [equipo] = await $strapi.find(
           'equipos',
           id.match(/^\d+$/) ? { id } : { slug: id }
         )
-        if (!equipos.length)
+        if (!equipo)
           return $error(404, 'Equipo no encontrado')
-        contenido = equipos[0]
         contenido.textoHTML = app.$renderMarkdownServer(contenido.pizarra/*, contenido.imagenes*/)
-      }
-      catch (error) {
-        console.error(error)
-      }
-      return { contenido, equipo: contenido }
+        return { contenido: equipo, equipo }
     }
     catch (e) {
+      console.warn(e)
       $error(503)
     }
   },
   data() {
     return {
-      carpetaActual: { nombre: 'Archivos' }
+      carpetaActual: null,
+      carpetaActualId: null
+    }
+  },
+  mounted() {
+    if(this.equipo.carpeta)
+    {
+      this.$set(this, 'carpetaActual', this.equipo.carpeta)
+      this.carpetaActualId = this.equipo.carpeta.id
     }
   },
   computed: {
     ...mapGetters(["loggedInUser"]),
+    soyCoordinador() {
+      return !!this.equipo.coordinadores.find(x=>parseInt(x.id)===this.$store.getters.loggedInUser.id)
+    },
+    carpetaActualNombre() {
+      if(this.carpetaActual) return 'Archivos'
+      return this.carpetaActual.id===this.equipo.carpeta.id?'Archivos':this.carpetaActual.nombre
+    },
     miembros() {
       const m = this.equipo.coordinadores
       for (const user of this.equipo.miembros)

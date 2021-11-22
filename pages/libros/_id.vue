@@ -7,7 +7,7 @@
       <div class="hidden 4xl:block absolute right-0 translate-x-3 5xl:translate-x-10 h-full"></div>
 
       <Card
-        class="shadow-none xs:shadow py-4 px-2 sm:p-5 md:p-8 lg:p-12 w-full max-w-2xl mx-auto mb-14"
+        class="shadow-none xs:shadow py-4 px-2 xm:p-5 md:p-8 lg:p-12 w-full max-w-2xl mx-auto mb-14"
       >
         <section class="block xs:flex items-start">
           <div class="book-container my-4 mr-5 xs:my-0 xs:mr-7 lg:mr-20 flex-shrink-0 flex-grow-0">
@@ -31,7 +31,7 @@
             </section>
           </section>
         </section>
-        <section class="mt-4 text-justify lg:hidden " v-html="libro.descripcion" />
+        <section class="mt-4 text-justify lg:hidden animate-appearing" v-html="libro.descripcion" />
       </Card>
     </div>
 

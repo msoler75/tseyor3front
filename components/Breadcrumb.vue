@@ -14,6 +14,7 @@
       <NLink
         v-if="crumb.href"
         :to="crumb.href"
+        @click.native="crumb.click?crumb.click($event):{}"
         class="transition duration-200 text-diminished hover:text-black dark:hover:text-white flex items-center"
       >
         <div v-if="crumb.icon" class="icon inline-flex opacity-70 justify-center items-center">

@@ -12,6 +12,10 @@ export default {
     middleware: ['route']
   },
 
+  serverMiddleware: [
+    '~/middleware/redirects.js'
+  ],
+
   // https://nuxtjs.org/docs/2.x/directory-structure/nuxt-config#publicruntimeconfig
   publicRuntimeConfig: {
     baseUrl: process.env.BASE_URL || 'https://tseyor.org',
@@ -21,7 +25,8 @@ export default {
     publicFolder: Path.resolve(__dirname, 'static'),
     twitter: '@TSEYOR',
     defaultImage: '/imagenes/poster-tseyor.jpg',
-    defaultUserImage: '/imagenes/usuario.jpg'
+    defaultUserImage: '/imagenes/usuario.jpg',
+    archivosRuta: '/archivos'
   },
 
 

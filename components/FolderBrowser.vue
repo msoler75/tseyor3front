@@ -10,6 +10,7 @@
             <icon icon="spinner spin" />
         </div>
         <div v-else-if="carpetaActual" class="flex flex-col">
+            {{idRootFolder}}
             <div
                 v-for="carpeta of carpetas"
                 :key="carpeta.id"
@@ -22,14 +23,15 @@
                         <icon
                             icon="folder"
                             class="cursor-pointer"
-                            @click.native="carpetaActualId = carpeta.id"
+                            @click.native="navigateTo(carpeta)"
                         />
                     </div>
                     <div class="w-full">
                         <a
                             target="_blank"
                             class="cursor-pointer"
-                            @click.prevent="carpetaActualId = carpeta.id"
+                            @click.prevent="navigateTo(carpeta)"
+                            :href="carpeta.ruta"
                         >{{ carpeta.nombre }}</a>
                         <div class="flex w-full justify-between text-xs text-diminished">
                             <span>{{ $dayjs(carpeta.created_at).fromNow() }}</span>
@@ -62,25 +64,61 @@
 </template>
 
 <script>
+import vmodel from '~/mixins/vmodel.js'
 export default {
     props: {
-        idFolder: {},
-        topFolder: { type: Boolean, required: false, default: true }
+        idRootFolder: { type: Number, required: false, default: 0 },
+        embedNavigation: {type: Boolean, required: false, default: false}
     },
+    mixins: [vmodel],
     fetchOnServer: false,
-    async fetch() {
-        if (this.carpetaActualId) {
+    computed: {
+        carpetas() {
+            if (!this.carpetaActual) return []
+            if (!this.carpetaActual.padre || this.carpetaActual.id === this.idRootFolder) return this.carpetaActual.subcarpetas
+            return [{ ...this.carpetaActual.padre, nombre: '..' }, ...this.carpetaActual.subcarpetas]
+        },
+        archivos() {
+            return this.carpetaActual.archivos
+        },
+        myvalue() {
+            return this.localValue
+        }
+    },
+    watch: {
+        myvalue(newValue) {
+            console.log('localValue changed!!', newValue, this.localValue, this.$fetch)
+            this.myfetch()
+        }
+    },
+    mounted() {
+        this.myfetch()
+    },
+    data() {
+        return {
+            carpetaActual: null,
+            cargando: true,
+            error: false
+        }
+    },
+    methods: {
+        // no consigo que funcione si lo pongo como el normal fetch()
+        myfetch(){
+        console.log('fetch!', this.localValue)
+        if (this.localValue) {
+            console.log('go on')
             this.cargando = true
             this.$strapi.findOne(
                 "carpetas",
-                this.carpetaActualId
+                this.localValue
             ).then((carpeta) => {
+                console.log('fetch result', carpeta)
                 if (carpeta) {
-                    this.$set(this, 'carpetaActual', carpeta)
-                    this.$emit('change', carpeta)
-                    if (!this.carpetaBase)
-                        this.$set(this, 'carpetaBase', carpeta)
-                    this.carpetaActualId = carpeta ? carpeta.id : null
+                    // this.$set(this, 'carpetaActual', carpeta)
+                    this.carpetaActual = carpeta
+                    // for(const k in carpeta)
+                    // this.$set(this.carpetaActual, k, carpeta[k])
+                    this.$emit('loaded', carpeta)
                 }
                 else
                     this.error = true
@@ -91,32 +129,13 @@ export default {
                     this.error = true
                 })
         }
-    },
-    data() {
-        return {
-            carpetaBase: null,
-            carpetaActual: null,
-            carpetaActualId: this.idFolder,
-            cargando: true,
-            error: false
-        }
-    },
-    computed: {
-        carpetas() {
-            if (!this.carpetaActual) return []
-            if (this.carpetaActual.id === this.carpetaBase.id) return this.carpetaActual.subcarpetas
-            return [{ ...this.carpetaActual.padre, nombre: '..' }, ...this.carpetaActual.subcarpetas]
         },
-        archivos() {
-            return this.carpetaActual.archivos
-        }
-    },
-    watch: {
-        carpetaActualId(newValue) {
-            this.$fetch()
-        }
-    },
-    methods: {
+        navigateTo(carpeta) {
+            console.log('navigated to', carpeta.id, this.embedNavigation)
+            if(this.embedNavigation)
+                this.localValue = carpeta.id
+            else this.$emit('click', carpeta)
+        },
         /* ext(n) {
             const idx = n.lastIndexOf('.')
             return idx>-1?n.substr(idx+1):n
