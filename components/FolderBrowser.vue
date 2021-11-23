@@ -19,7 +19,13 @@
                     <div
                         class="flex w-16 mr-3 uppercase font-bold text-orange-200 justify-center items-center text-4xl"
                     >
-                        <icon
+                        <div v-if="carpeta.nombreMostrar==='..'" class="relative flex justify-center items-center cursor-pointer"
+                        @click="flexNavigateTo(carpeta)" >
+                            <icon icon="fas fa-folder" class="absolute"/>
+                            <icon icon="fas fa-arrow-left" class="text-xs text-black absolute"/>
+                        </div>
+                        <icon 
+                            v-else
                             icon="folder"
                             class="cursor-pointer"
                             @click.native="flexNavigateTo(carpeta)"
