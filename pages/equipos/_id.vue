@@ -81,7 +81,7 @@
           :idRootFolder="equipo.carpeta.id"
           class="w-full h-full overflow-y-auto"
           :droppable="soyCoordinador"
-          :embedNavigation="true"
+          navigationMode="Embed"
         />
         <div v-if="soyCoordinador" class="flex justify-center">
             <NLink class="btn" :to="`${carpetaActual.ruta}`">Administrar</NLink>

@@ -17,19 +17,26 @@
             >
                 <div class="flex w-full">
                     <div
-                        class="flex w-16 mr-3 uppercase font-bold text-orange-200 justify-center items-center text-4xl"
+                        class="flex w-16 mr-3 uppercase font-bold text-orange-200 justify-center items-center text-4xl group"
                     >
                         <div v-if="carpeta.nombreMostrar==='..'" class="relative flex justify-center items-center cursor-pointer"
                         @click="flexNavigateTo(carpeta)" >
                             <icon icon="fas fa-folder" class="absolute"/>
-                            <icon icon="fas fa-arrow-left" class="text-xs text-black absolute"/>
+                            <icon icon="fas fa-arrow-left" class="group-hover:-translate-x-1 text-xs text-black absolute"/>
                         </div>
-                        <icon 
-                            v-else
+                        <div v-else>
+                            <icon 
                             icon="folder"
-                            class="cursor-pointer"
+                            class="cursor-pointer group-hover:hidden"
                             @click.native="flexNavigateTo(carpeta)"
                         />
+                        <icon 
+                            icon="folder-open"
+                            class="hidden group-hover:block cursor-pointer"
+                            style="transform: translate(2.5px, -1px)"
+                            @click.native="flexNavigateTo(carpeta)"
+                        />
+                        </div>
                     </div>
                     <div class="w-full">
                         <a
