@@ -31,7 +31,7 @@
                             class="cursor-pointer"
                             @click.prevent="flexNavigateTo(carpeta)"
                             :href="carpeta.ruta"
-                        >{{ carpeta.nombre }}</a>
+                        >{{ carpeta.nombreMostrar || carpeta.nombre }}</a>
                         <div class="flex w-full justify-between text-xs text-diminished">
                             <span>{{ $dayjs(carpeta.created_at).fromNow() }}</span>
                         </div>
@@ -67,8 +67,9 @@ import vmodel from '~/mixins/vmodel.js'
 export default {
     props: {
         idRootFolder: { type: Number, required: false, default: 0 },
-        embedNavigation: { type: Boolean, required: false, default: false },
-        mainNavigation: { type: Boolean, required: false, default: false }
+        navigationMode: {type: String, validator(value) {
+            return ['Route', 'Main', 'Embed', 'Click'].includes(value)
+        }, required: false,default: 'Route'}
     },
     mixins: [vmodel],
     fetchOnServer: false,
@@ -76,7 +77,7 @@ export default {
         carpetas() {
             if (!this.carpetaActual) return []
             if (!this.carpetaActual.padre || this.carpetaActual.id === this.idRootFolder) return this.carpetaActual.subcarpetas
-            return [{ ...this.carpetaActual.padre, nombre: '..' }, ...this.carpetaActual.subcarpetas]
+            return [{ ...this.carpetaActual.padre, nombreMostrar: '..' }, ...this.carpetaActual.subcarpetas]
         },
         archivos() {
             return this.carpetaActual.archivos
@@ -131,15 +132,18 @@ export default {
             }
         },
         flexNavigateTo(carpeta) {
-            console.log('navigated to', carpeta.id, this.embedNavigation)
-            if (this.embedNavigation)
+            console.log('navigated to', carpeta.id, this.navigationMode)
+            if (this.navigationMode==='Embed')
                 this.localValue = carpeta.id
-            else if (this.mainNavigation) {
+            else if (this.navigationMode==='Main') {
                 this.localValue = carpeta.id
                 history.pushState({}, null, carpeta.ruta)
                 this.$emit('navigated', carpeta)
             }
-            else this.$emit('click', carpeta)
+            else if(this.navigationMode==='Click') {
+                this.$emit('click', carpeta)
+            }
+            else this.$router.push(carpeta.ruta)
         },
         /* ext(n) {
             const idx = n.lastIndexOf('.')

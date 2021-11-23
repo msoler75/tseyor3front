@@ -1,26 +1,29 @@
 <template>
-  <div class="w-full max-w-xl mx-auto">
-    <Card class="p-1 sm:p-5 md:p-9">
-      <h1>{{ carpetaActual.nombre }}</h1>
+    <div>
+      <h1>{{ carpetaActual.nombreOriginal || carpetaActual.nombre }}</h1>
       <FolderBrowser v-if="carpetaRaiz"
         v-model="carpetaActualId"
         class="w-full h-full overflow-y-auto"
         @click="clickHandler"
-        :mainNavigation="mainNavigation"
+        :navigationMode="navigationMode"
         @navigated="navegacion"
+        @loaded="loaded"
       />
-    </Card>
   </div>
 </template>
 
 <script>
+// poner a Main para activar turbo navegación o false para navegación solo con $router
+const NAVIGATION_MODE = 'Main'
+
 import seo from '@/mixins/seo.js'
 export default {
   mixins: [seo],
+  middleware: 'archivos',
   async asyncData({ route, $strapi, $error, $config }) {
     try {
       console.log('fullPath:', route.fullPath)
-      const parts = route.fullPath.split("/").filter(x => !!x)
+      const parts = route.fullPath.replace(/\?.*$/, '').split("/").filter(x => !!x)
       console.log('parts:', parts)
       // parts.shift()
       const ruta = parts.length > 0 ? "/" + parts.join("/") : "/"
@@ -47,28 +50,53 @@ export default {
   data() {
     return {
       carpetaActualId: null,
-      mainNavigation: false // poner a true para activar turbo navegación o false para navegación solo con $router
+      navigationMode: NAVIGATION_MODE
     }
   },
-  mounted() {
-    window.addEventListener('onpopstate', this.onchangeurl);
+   mounted() {
+     console.log('nuxt-child.mounted!')
+    this.carpetaActualId = this.carpetaActual?this.carpetaActual.id:this.carpetaActualId
+    console.log('***child.mounted.updateBreadcrumb')
     this.updateBreadcrumb()
-    this.carpetaActualId = this.carpetaActual.id
+    if(NAVIGATION_MODE==='Main') {
 
+     window.onpopstate =  this.onchangeurl
+
+    
 
     // event fire when pushState
     this.$nuxt.$on('pushState', params => {
       // do your logic with params
+      console.log('pushState', params)
     })
+
+    // event fire when pushState
+    this.$nuxt.$on('popState', params => {
+      // do your logic with params
+      console.log('popState', params)
+    })
+    }
   },
    beforeUnmount() {
-    window.removeEventListener('onpopstate', this.onchangeurl)
+    // window.removeEventListener('popstate', this.onchangeurl)
 
-    this.$nuxt.$off('pushState')
+    /*    this.$nuxt.$off('pushState')
+    this.$nuxt.$off('popState') */
   },
   methods: {
+    loaded(carpeta){
+      console.log('_ loaded!!!')
+      this.$store.commit('travelling', false)
+      this.$store.dispatch('beforeEnter', this.$el)
+
+      // this.carpetaActualId = this.carpetaActual?this.carpetaActual.id:this.carpetaActualId
+      this.carpetaActual = carpeta
+      console.log('***child.loaded.updateBreadcrumb')
+      this.updateBreadcrumb()
+    },
     // este método se activa cuando la navegación main está activada
     navegacion(carpeta) {
+      console.log('navigated to', carpeta)
       if (!carpeta) return
       if (carpeta.id === this.carpetaActual.id) return
       this.carpetaActual = carpeta
@@ -84,12 +112,14 @@ export default {
       this.$router.push(carpeta.ruta)
     },
     updateBreadcrumb() {
+      console.log('archivos.updateBreadcrumb()')
       const carpeta = this.carpetaActual
       const rootData = this.$store.getters.getRouteData(this.$config.archivosRuta)
       const breadcrumb = []
       const parts = carpeta.ruta.split("/").filter(x => !!x)
       // parts.shift()
       let rutaParcial = ''
+      const that = this
       while (parts.length) {
         const part = parts.shift()
         rutaParcial += '/' + part
@@ -98,41 +128,62 @@ export default {
         breadcrumb.push({
           name: part,
           href: rutaParcial,
-          click: this.mainNavigation?async (event) => {
+          click: this.navigationMode==='Main'?async (event) => {
             console.log('clicked!', event, ruta)
             event.preventDefault()
             event.stopPropagation();
             const [carpeta] = await this.$strapi.find('carpetas', { ruta })
             console.log('carpeta', carpeta)
+            console.log('current carpetaId', that.carpetaActualId)
             if (carpeta)
-              this.carpetaActualId = carpeta.id
+              that.carpetaActualId = carpeta.id
+            history.pushState({}, null, carpeta.ruta)
+            // that.updateBreadcrumb()
             return false
           }: null,
           icon: rootData.icon
         })
       }
-      this.$store.commit('updateBreadcrumb', breadcrumb)
+
+      this.$store.commit('setNextPathBreadcrumb', breadcrumb)
+      this.$store.commit('updateBreadcrumb')
+      
     },
   },
    onchangeurl (event) {
     // alert("location: " + document.location + ", state: " + JSON.stringify(event.state));
-    console.log('popstate', location.pathname)
-    if(location.pathname!==this.carpetaActual.ruta) {
+    console.log('popstate!', event, location.pathname)
+    /* if(location.pathname!==this.carpetaActual.ruta) {
       const carpetas = this.$strapi.find('carpetas', {ruta: newValue})
       const carpeta = carpetas[0]
       console.log('carpeta con ruta', newValue, carpeta)
       if(carpeta)
         this.$set(this, 'carpeta', carpeta)
-    }
+    } */
   },
   computed: {
     carpetaActualJSON () {
       return JSON.stringify(this.carpetaActual)
-    }
+    },
+    rutaActual() {
+      return this.$route.fullPath 
+    } 
   },
   watch: {
     carpetaActualJSON (newValue) {
+      console.log('***child.watched.carpetaActual.updateBreadcrumb')
       this.updateBreadcrumb()
+    },
+    rutaActual(newValue) {
+      console.log('!watched rutaActual')
+      /*
+      this.$nextTick(()=>{
+        this.$store.commit('travelling', false)
+        this.$store.dispatch('beforeEnter', this.$el)
+        this.carpetaActualId = this.carpetaActual?this.carpetaActual.id:this.carpetaActualId
+        this.updateBreadcrumb()
+      })
+      */
     }
   }
 }

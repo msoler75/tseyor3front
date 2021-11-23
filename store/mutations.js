@@ -48,7 +48,7 @@ export default {
   }, 
 
   updateBreadcrumb(state, payload) {
-    console.log('updateBreadcrumb')
+    console.log('store.updateBreadcrumb()')
     state.pathBreadcrumb = payload?payload:state.nextPathBreadcrumb
     state.nextPathBreadcrumb = state.pathBreadcrumb
   },

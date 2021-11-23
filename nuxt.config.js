@@ -34,7 +34,17 @@ export default {
     name: 'page',
     mode: 'out-in',  // orden de páginas, primero desaparece (out) la página actual y luego aparece (in) la página nueva
     beforeEnter (el) {
+      console.log('nuxt.config.beforeEnter')
       this.$store.dispatch('beforeEnter', el)
+    },
+    beforeRouteUpdate(to, from, next) {
+      console.log('nuxt.config.beforeEnterUpdate')
+    },
+    beforeRouteEnter(to, from, next) {
+      console.log('nuxt.config.beforeRouteEnter')
+    },
+    beforeRouteLeave(to, from, next) {
+      console.log('nuxt.config.beforeRouteLeave')
     },
     afterEnter (el) {
       console.log('After enter...', el);

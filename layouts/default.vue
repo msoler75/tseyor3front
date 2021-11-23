@@ -312,10 +312,10 @@ export default {
   mounted() {
     this.actualizarUrlPerfil()
     // emulamos comportamiento de beforeEnter de transición de página
-    this.$store.commit('updateBreadcrumb')
     this.$store.commit('travelling', false)
     const el = this.$refs['page'].$el
     this.$store.dispatch('beforeEnter', el)
+    this.$store.commit('updateBreadcrumb')
     /*console.log('page', el)
     console.log('First page config...', el)
       const config = {}

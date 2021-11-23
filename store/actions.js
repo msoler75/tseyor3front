@@ -7,7 +7,7 @@ export default {
   },
   // page transition
   beforeEnter (store, el) {
-    console.log('Before enter...', el)
+    console.log('store.BeforeEnter...', el)
     const config = {}
     const pageConfigKeywords = [
       'background',

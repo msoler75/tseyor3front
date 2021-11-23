@@ -14,7 +14,7 @@
       <NLink
         v-if="crumb.href"
         :to="crumb.href"
-        event=""
+        event
         @click.native="navigate($event, crumb)"
         class="transition duration-200 text-diminished hover:text-black dark:hover:text-white flex items-center"
       >
@@ -29,19 +29,37 @@
         </div>
         <span property="name" class>{{ crumb.name }}</span>
       </div>
-      <icon v-if="index < crumbs.length - 1" icon="caret-right" class="mx-1 opacity-30 text-diminished"/>
+      <icon
+        v-if="index < crumbs.length - 1"
+        icon="caret-right"
+        class="mx-1 opacity-30 text-diminished"
+      />
     </li>
   </ul>
 </template>
 
 <script>
 export default {
+  data() {
+    return {
+      newKey: 1
+    }
+  },
   methods: {
     navigate(event, crumb) {
       console.log('breadcrumb navigate!', event, crumb)
-      if(crumb.click)
+      if (crumb.click) {
+        console.log('has click')
         return crumb.click(event)
-      this.$router.push(crumb.href)
+      }
+      console.log('current route', this.$route.fullPath)
+      console.log('no click function, so we route to ', ruta)
+      let ruta = crumb.href
+      if (this.$route.fullPath !== ruta)
+      this.$router.push(ruta)
+      else
+       this.$router.go({path:ruta, force: true})
+       //this.$nuxt.refresh()
     },
     merge(arr1, arr2) {
       if (!arr1) return arr2

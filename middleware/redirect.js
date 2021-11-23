@@ -1,9 +1,9 @@
-import route from "./route"
+//import route from './route'
 
 export default function (ctx) {
-    console.log('ctx!',ctx)
-    let { route, redirect } = ctx
-    console.warn('route.path', route.path)
+  // console.log('ctx!',ctx)
+  let { route, redirect } = ctx
+  // console.warn('route.path', route.path)
   const redirects = [
     {
       from: '/archivos',
@@ -11,7 +11,7 @@ export default function (ctx) {
     }
   ]
   const mustRedirect = redirects.find(r => r.from === route.path)
-  console.warn('mustRedirect', mustRedirect)
-  
+  // console.warn('mustRedirect', mustRedirect)
+
   if (mustRedirect) redirect(mustRedirect.to)
 }
