@@ -1,10 +1,8 @@
 <template>
   <div class="w-full max-w-xl mx-auto">
-    <Card class="p-1 sm:p-5 md:p-9">
       <nuxt-child :key="$route.fullPath">
           <NLink to="/archivos/">Ver Archivos</NLink>
       </nuxt-child>
-    </Card>
   </div>
 </template>
 

@@ -75,7 +75,7 @@
 
       <div v-if="carpetaActualId" class="p-5 surface flex flex-col">
         <h3>{{ carpetaActualNombre }}</h3>
-        <FolderBrowser          
+        <FilesFolder          
           @loaded="carpetaActual=$event"
           v-model="carpetaActualId"
           :idRootFolder="equipo.carpeta.id"

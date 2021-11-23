@@ -56,20 +56,20 @@
                 :key="archivo.id"
                 class="w-full border-gray-200 border-b"
             >
-                <div class="flex w-full">
-                    <div
-                        class="flex w-16 mr-3 uppercase font-bold text-gray justify-center items-center text-3xl"
-                    >
-                        <icon :icon="iconFile(archivo.media.ext)" />
-                    </div>
-                    <div class="w-full">
-                        <a target="_blank" :href="archivo.media.url" download>{{ archivo.nombre }}</a>
-                        <div class="flex w-full justify-between text-xs text-diminished">
-                            <span class>{{ $dayjs(archivo.media.updated_at).fromNow() }}</span>
-                            <span class="ml-auto">{{ archivo.media.size }} Kb</span>
-                        </div>
+            <div class="flex w-full">
+                <div
+                    class="flex w-16 mr-3 uppercase font-bold text-gray justify-center items-center text-3xl"
+                >
+                    <icon :icon="iconFromExt(archivo.media.ext)" />
+                </div>
+                <div class="w-full">
+                    <a target="_blank" :href="archivo.media.url" download>{{ archivo.nombre }}</a>
+                    <div class="flex w-full justify-between text-xs text-diminished">
+                        <span class>{{ $dayjs(archivo.media.updated_at).fromNow() }}</span>
+                        <span class="ml-auto">{{ archivo.media.size }} Kb</span>
                     </div>
                 </div>
+            </div>
             </div>
         </div>
     </div>
@@ -77,6 +77,7 @@
 
 <script>
 import vmodel from '~/mixins/vmodel.js'
+import fileIcon from '~/mixins/fileIcon.js'
 export default {
     props: {
         idRootFolder: { type: Number, required: false, default: 0 },
@@ -84,7 +85,7 @@ export default {
             return ['Route', 'Main', 'Embed', 'Click'].includes(value)
         }, required: false,default: 'Route'}
     },
-    mixins: [vmodel],
+    mixins: [vmodel, fileIcon],
     fetchOnServer: false,
     computed: {
         carpetas() {
@@ -157,44 +158,6 @@ export default {
                 this.$emit('click', carpeta)
             }
             else this.$router.push(carpeta.ruta)
-        },
-        /* ext(n) {
-            const idx = n.lastIndexOf('.')
-            return idx>-1?n.substr(idx+1):n
-        }, */
-        iconFile(ext) {
-            switch (ext.toLowerCase().substr(1)) {
-                case 'pdf': return 'file-pdf'
-                case 'doc':
-                case 'docx': return 'file-word'
-                case 'txt':
-                case 'rtf': return 'file-alt'
-                case 'mp3':
-                case 'au':
-                case 'wma':
-                case 'm4a':
-                case 'wav':
-                case 'aac':
-                case 'opus':
-                case 'flac': return 'file-audio'
-                case 'mp4':
-                case 'avi':
-                    return 'file-video'
-                case 'ppt':
-                case 'pps':
-                case 'pptx':
-                case 'ppsx':
-                    return 'file-powerpoint'
-                case 'zip':
-                case 'rar': return 'file-archive'
-                case 'jpeg':
-                case 'jpg':
-                case 'webp':
-                case 'svg':
-                case 'png':
-                case 'gif': return 'file-image'
-                default: return 'file'
-            }
         }
     }
 }

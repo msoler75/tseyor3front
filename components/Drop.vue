@@ -3,8 +3,8 @@
       <input type="file" :multiple="multiple" @change="uploadFile" :accept="accept"/>
       <div @drop="dragFile" class="bg-green-200 text-green-900 mt-4 mb-5 px-5 py-12 text-center">
         O arrastra el archivo aquí
-        <div v-if="false && File.length">
-          <ul v-for="file in File" :key="file.name">
+        <div v-if="false && files.length">
+          <ul v-for="file in files" :key="file.name">
             <li>{{file.name}}</li>
           </ul>
         </div>
@@ -18,14 +18,14 @@ export default {
         multiple: {type: Boolean, required: false, default: false},
         accept: {type: String, required: false, default: ''}
     },
-    data: () => ({ File: []}),
+    data: () => ({ files: []}),
     methods: {
       uploadFile(e) {
-        this.File = e.target.files;
+        this.files = e.target.files;
         this.$emit("change", e)
       },
       dragFile(e) {
-        this.File = e.dataTransfer.files;
+        this.files = e.dataTransfer.files;
         this.$emit("change", e)
       }
 }
