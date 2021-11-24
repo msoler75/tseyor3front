@@ -79,15 +79,18 @@
           @loaded="carpetaActual=$event"
           v-model="carpetaActualId"
           :idRootFolder="equipo.carpeta.id"
-          class="w-full h-full overflow-y-auto"
+          class="w-full max-w-full h-full overflow-y-auto max-h-[240px]"
           :droppable="soyCoordinador"
           navigationMode="Embed"
+          iconClass="text-xl"
+          textClass="text-sm"
+          subtextClass="text-xs"
+          boxClass="w-8 mr-2"
         />
-        <div v-if="soyCoordinador" class="flex justify-center">
-            <NLink class="btn" :to="`${carpetaActual.ruta}`">Administrar</NLink>
+        <div class="flex justify-center mt-2">
+            <NLink class="ml-auto text-xs btn btn-gray btn-mini" :to="`${carpetaActual.ruta}`"><icon icon="search"/></NLink>
         </div>
       </div>
-
 
     </GridFluid>
 

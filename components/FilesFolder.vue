@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div v-if="error" class="flex w-full h-full text-3xl justify-center items-center">
+        <div v-if="error" class="flex w-full  h-full text-3xl justify-center items-center">
             <span>Error al cargar la carpeta</span>
         </div>
         <div
@@ -15,38 +15,51 @@
                 :key="carpeta.id"
                 class="w-full border-gray-200 border-b"
             >
-                <div class="flex w-full">
+                <div class="flex w-full overflow-hidden">
                     <div
-                        class="flex w-16 mr-3 uppercase font-bold text-orange-200 justify-center items-center text-4xl group"
+                        class="flex flex-shrink-0 text-orange-200 justify-center items-center group"
+                        :class="boxClass"
                     >
-                        <div v-if="carpeta.nombreMostrar==='..'" class="relative flex justify-center items-center cursor-pointer"
-                        @click="flexNavigateTo(carpeta)" >
-                            <icon icon="fas fa-folder" class="absolute"/>
-                            <icon icon="fas fa-arrow-left" class="group-hover:-translate-x-1 text-xs text-black absolute"/>
+                        <div
+                            v-if="carpeta.nombreMostrar === '..'"
+                            class="relative flex justify-center items-center cursor-pointer"
+                            @click="flexNavigateTo(carpeta)"
+                        >
+                            <icon icon="fas fa-folder" class="absolute" :class="iconClass" />
+                            <icon
+                                icon="fas fa-arrow-left"
+                                class="group-hover:-translate-x-1 text-xs text-black absolute"
+                            />
                         </div>
-                        <div v-else>
-                            <icon 
-                            icon="folder"
-                            class="cursor-pointer group-hover:hidden"
-                            @click.native="flexNavigateTo(carpeta)"
-                        />
-                        <icon 
-                            icon="folder-open"
-                            class="hidden group-hover:block cursor-pointer"
-                            style="transform: translate(2.5px, -1px)"
-                            @click.native="flexNavigateTo(carpeta)"
-                        />
+                        <div v-else class="flex items-center justify-center">
+                            <icon
+                                icon="folder"
+                                class="cursor-pointer group-hover:hidden"
+                                :class="iconClass"
+                                @click.native="flexNavigateTo(carpeta)"
+                            />
+                            <icon
+                                icon="folder-open"
+                                class="hidden group-hover:block cursor-pointer"
+                                :class="iconClass"
+                                style="transform: translate(2.5px, -1px)"
+                                @click.native="flexNavigateTo(carpeta)"
+                            />
                         </div>
                     </div>
-                    <div class="w-full">
+                    <div class="w-full overflow-ellipsis">
                         <a
                             target="_blank"
                             class="cursor-pointer"
+                            :class="textClass"
                             @click.prevent="flexNavigateTo(carpeta)"
                             :href="carpeta.ruta"
                         >{{ carpeta.nombreMostrar || carpeta.nombre }}</a>
-                        <div class="flex w-full justify-between text-xs text-diminished">
-                            <span>{{ $dayjs(carpeta.created_at).fromNow() }}</span>
+                        <div
+                            class="flex w-full justify-between text-xs text-diminished"
+                            :class="subtextClass"
+                        >
+                            <span v-if="showDate" class="ml-auto">{{ $dayjs(carpeta.created_at).fromNow() }}</span>
                         </div>
                     </div>
                 </div>
@@ -56,37 +69,124 @@
                 :key="archivo.id"
                 class="w-full border-gray-200 border-b"
             >
-            <div class="flex w-full">
-                <div
-                    class="flex w-16 mr-3 uppercase font-bold text-gray justify-center items-center text-3xl"
-                >
-                    <icon :icon="iconFromExt(archivo.media.ext)" />
-                </div>
-                <div class="w-full">
-                    <a target="_blank" :href="archivo.media.url" download>{{ archivo.nombre }}</a>
-                    <div class="flex w-full justify-between text-xs text-diminished">
-                        <span class>{{ $dayjs(archivo.media.updated_at).fromNow() }}</span>
-                        <span class="ml-auto">{{ archivo.media.size }} Kb</span>
+                <div class="flex w-full overflow-hidden">
+                    <div
+                        class="flex flex-shrink-0 text-gray justify-center items-center"
+                        :class="boxClass"
+                    >
+                        <icon :icon="iconFromExt(archivo.media.ext)" :class="iconClass" />
+                    </div>
+                    <div class="w-full flex justify-between items-center">
+                        <div class="w-full overflow-ellipsis">
+                            <a
+                                target="_blank"
+                                :href="archivo.media.url"
+                                download
+                                class="leading-4 inline-flex"
+                                :class="textClass"
+                                style="    display: inline-block;
+    max-width: 90%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;"
+                            >{{ archivo.nombre }}</a>
+                            <div
+                                class="flex w-full justify-between text-xs text-diminished"
+                                :class="subtextClass"
+                            >
+                                <span
+                                    v-if="showSize"
+                                    class="w-1/3 flex-grow-0 flex-shrink-0"
+                                >{{ archivo.media.size }} Kb</span>
+                                <span
+                                    v-if="showDate"
+                                    class="ml-auto w-1/3 text-right"
+                                >{{ $dayjs(archivo.media.updated_at).fromNow() }}</span>
+                            </div>
+                        </div>
+                        <span v-if="showControls" class="cursor-pointer text-gray pl-4">&vellip;</span>
                     </div>
                 </div>
-            </div>
             </div>
         </div>
     </div>
 </template>
 
 <script>
+
+const query_carpeta =
+    `query {
+  carpetas(where: { id: %id }) {
+    id
+    nombre
+    slug
+    descripcion
+    created_at
+    updated_at
+    ruta
+    padre {
+      id
+      nombre
+      slug
+      descripcion
+      ruta
+    }
+    subcarpetas {
+      id
+      nombre
+      slug
+      descripcion
+      ruta
+    }
+    archivos {
+      id
+      nombre
+      media {
+        id
+        name
+        ext
+        size
+        hash
+        url
+        created_at
+        updated_at
+      }
+      autor {
+        id
+        username
+        nombreSimbolico
+        imagen {
+            url
+            width
+            height
+        }
+      }
+    }
+  }
+}`
+
 import vmodel from '~/mixins/vmodel.js'
 import fileIcon from '~/mixins/fileIcon.js'
 export default {
     props: {
         idRootFolder: { type: Number, required: false, default: 0 },
-        navigationMode: {type: String, validator(value) {
-            return ['Route', 'Main', 'Embed', 'Click'].includes(value)
-        }, required: false,default: 'Route'}
+        navigationMode: {
+            type: String, validator(value) {
+                return ['Route', 'Main', 'Embed', 'Click'].includes(value)
+            }, required: false, default: 'Route'
+        },
+        textClass: {},
+        subtextClass: {},
+        iconClass: {type: String, required: false, default: 'text-4xl'},
+        boxClass: {type: String, required: false, default:'w-16 mr-3'},
+        showControls: {},
+        showUploader: {},
+        showDate: {},
+        showDescription: {},
+        refresh: {}, // to reset state,
     },
     mixins: [vmodel, fileIcon],
-    fetchOnServer: false,
+    // fetchOnServer: false,
     computed: {
         carpetas() {
             if (!this.carpetaActual) return []
@@ -103,6 +203,9 @@ export default {
     watch: {
         myvalue(newValue) {
             console.log('localValue changed!!', newValue, this.localValue, this.$fetch)
+            this.myfetch()
+        },
+        refresh(newValue) {
             this.myfetch()
         }
     },
@@ -123,22 +226,28 @@ export default {
             if (this.localValue) {
                 console.log('go on')
                 this.cargando = true
-                this.$strapi.findOne(
-                    "carpetas",
-                    this.localValue
-                ).then((carpeta) => {
-                    console.log('fetch result', carpeta)
-                    if (carpeta) {
-                        // this.$set(this, 'carpetaActual', carpeta)
-                        this.carpetaActual = carpeta
-                        // for(const k in carpeta)
-                        // this.$set(this.carpetaActual, k, carpeta[k])
-                        this.$emit('loaded', carpeta)
-                    }
-                    else
-                        this.error = true
-                    this.cargando = false
-                })
+                //this.$strapi.findOne(
+                //"carpetas",
+                //this.localValue
+                //)
+                //.then((carpeta) => {
+
+                this.$strapi.graphql({ query: query_carpeta.replace('%id', this.localValue) })
+                    .then((results) => {
+                        console.log('myfetch result', results)
+                        const carpeta = results.carpetas[0]
+                        console.log('fetch result', carpeta)
+                        if (carpeta) {
+                            // this.$set(this, 'carpetaActual', carpeta)
+                            this.carpetaActual = carpeta
+                            // for(const k in carpeta)
+                            // this.$set(this.carpetaActual, k, carpeta[k])
+                            this.$emit('loaded', carpeta)
+                        }
+                        else
+                            this.error = true
+                        this.cargando = false
+                    })
                     .catch(e => {
                         console.error(e)
                         this.error = true
@@ -147,14 +256,14 @@ export default {
         },
         flexNavigateTo(carpeta) {
             console.log('navigated to', carpeta.id, this.navigationMode)
-            if (this.navigationMode==='Embed')
+            if (this.navigationMode === 'Embed')
                 this.localValue = carpeta.id
-            else if (this.navigationMode==='Main') {
+            else if (this.navigationMode === 'Main') {
                 this.localValue = carpeta.id
                 history.pushState({}, null, carpeta.ruta)
                 this.$emit('navigated', carpeta)
             }
-            else if(this.navigationMode==='Click') {
+            else if (this.navigationMode === 'Click') {
                 this.$emit('click', carpeta)
             }
             else this.$router.push(carpeta.ruta)

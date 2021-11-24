@@ -10,15 +10,28 @@
         :navigationMode="navigationMode"
         @navigated="navegacion"
         @loaded="loaded"
+        :refresh="refresh"
+        :showUploader="true"
+        :showDate="true"
+        :showSize="true"
+        :showDescription="true"
+        :showControls="true"
       />
     </Card>
-    <div class="flex">
-    <InputFiles
-            :multiple="true"
-            @change="onUpload"
-            class="ml-auto mt-5"
-            textButton="Añadir Archivos"
-        />
+    <div class="flex mt-5">
+      <progress
+        max="100"
+        :value="currentProgress"
+        class="w-full h-8 rounded"
+        v-if="uploading"
+      />
+      <InputFiles
+        v-else
+        :multiple="true"
+        @change="onUpload"
+        class="ml-auto mt-5"
+        textButton="Añadir Archivos"
+      />
     </div>
   </div>
 </template>
@@ -61,7 +74,10 @@ export default {
   data() {
     return {
       carpetaActualId: null,
-      navigationMode: NAVIGATION_MODE
+      navigationMode: NAVIGATION_MODE,
+      refresh: 1,
+      uploading: false,
+      currentProgress: 0
     }
   },
   mounted() {
@@ -70,11 +86,7 @@ export default {
     console.log('***child.mounted.updateBreadcrumb')
     this.updateBreadcrumb()
     if (NAVIGATION_MODE === 'Main') {
-
       window.onpopstate = this.onchangeurl
-
-
-
       // event fire when pushState
       this.$nuxt.$on('pushState', params => {
         // do your logic with params
@@ -159,19 +171,61 @@ export default {
       this.$store.commit('setNextPathBreadcrumb', breadcrumb)
       this.$store.commit('updateBreadcrumb')
     },
-  onchangeurl(event) {
-    // alert("location: " + document.location + ", state: " + JSON.stringify(event.state));
-    console.log('popstate!', event, location.pathname)
-    /* if(location.pathname!==this.carpetaActual.ruta) {
-      const carpetas = this.$strapi.find('carpetas', {ruta: newValue})
-      const carpeta = carpetas[0]
-      console.log('carpeta con ruta', newValue, carpeta)
-      if(carpeta)
-        this.$set(this, 'carpeta', carpeta)
-    } */
-  },
-   onUpload(payload) {
-     console.log('onUpload', payload)
+
+    onchangeurl(event) {
+      // alert("location: " + document.location + ", state: " + JSON.stringify(event.state));
+      console.log('popstate!', event, location.pathname)
+      /* if(location.pathname!==this.carpetaActual.ruta) {
+        const carpetas = this.$strapi.find('carpetas', {ruta: newValue})
+        const carpeta = carpetas[0]
+        console.log('carpeta con ruta', newValue, carpeta)
+        if(carpeta)
+          this.$set(this, 'carpeta', carpeta)
+      } */
+    },
+    onProgress(progress) {
+      console.log('progress', progress)
+      this.currentProgress = Math.round((progress.loaded / progress.total) * 100);
+    },
+    onUpload(files) {
+      console.log('onUpload', files)
+      this.uploading = true
+      this.currentProgress = 0
+      const form = new FormData()
+      for (const file of files)
+        form.append("files", file)
+      const token = this.$strapi.getToken()
+      this.$axios.$post(
+        '/api/upload',
+        form, // <-- this formData has a big file attachment
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          },
+          onUploadProgress: (progress) => this.onProgress(progress) // <-- this updates the progress bar
+        })
+
+
+        //this.$strapi.create("upload", form)
+        .then(async (response) => {
+          console.log('uploaded!')
+          console.log(response)
+          for (const result of response) {
+            console.log(result)
+            console.log('crearemos archivos en la carpeta', this.carpetaActualId)
+            await this.$strapi.create("archivos", { carpeta: this.carpetaActualId, nombre: result.name, media: result.id })
+              .catch(err => {
+                console.warn(err)
+              })
+          }
+          this.refresh++
+          // alert('archivos cargados')
+          this.currentProgress = 100
+          this.uploading = false
+        })
+        .catch(err => {
+          console.warn(err)
+        })
     },
   },
   computed: {
