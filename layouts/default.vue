@@ -299,7 +299,7 @@ export default {
     }
   }, */
   watch: {
-    userLoggedIn(newValue) {
+    loggedInUser(newValue) {
       this.actualizarUrlPerfil()
     },
     mostrarMenuUsuario(newValue) {

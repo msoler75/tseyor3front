@@ -35,6 +35,14 @@ https://masteringnuxt.com/blog/setting-up-nuxt-for-social-cards-and-meta-tags-to
 
 
 
+PERMISOS CARPETAS
+
+carpetas pueden ser accesibles
+lectura -> publica/usuarios autenticados/muul/ usuarios de un equipo concreto / usuarios de un grupo concreto
+escritura
+
+
+
 
 -------------------
 
@@ -77,3 +85,5 @@ https://mobirise.com/extensions/gridm5/demo-blocks.html
 
 wORKFLOW:
 https://strapi.io/blog/automate-strapi-publication-workflow-with-n8n
+
+
