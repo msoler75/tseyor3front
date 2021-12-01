@@ -920,7 +920,7 @@ html.dark:not(.page-background) #__layout {
   position: absolute;
   top: -38px;
   pointer-events: none;
-  width: 100vw;
+  width: 100%;
   z-index: 900;
 }
 #soft-active {
