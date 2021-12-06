@@ -1,7 +1,6 @@
 <template>
   <div>
     <Card class="p-1 sm:p-5 md:p-9">
-      <h1>{{ carpetaActual.nombreOriginal || carpetaActual.nombre }}</h1>
       <FilesFolder
         v-if="carpetaRaiz"
         v-model="carpetaActualId"
@@ -19,7 +18,9 @@
       />
     </Card>
     <FolderProps v-model="nuevaCarpeta" :showIt="verModalCarpeta" @close="verModalCarpeta=false" textAccept="Crear carpeta"/>
-    <div class="mt-5">
+    <div class="mt-5"
+    v-if="tengoPermiso(carpetaActual, 'creacion')||tengoPermiso(carpetaActual, 'administracion')"
+    >
       <progress v-if="uploading" max="100" :value="currentProgress" class="w-full h-8 rounded" />
       <div v-else class="flex space-x-4 items-center justify-end">
         <div class="btn btn-gray text-sm" @click="verModalCarpeta=true">
@@ -39,9 +40,10 @@
 // poner a Main para activar turbo navegación o false para navegación solo con $router
 const NAVIGATION_MODE = 'Main'
 
-import seo from '@/mixins/seo.js'
+import seo from '@/mixins/seo'
+import permisos from '@/mixins/permisos'
 export default {
-  mixins: [seo],
+  mixins: [seo, permisos],
   middleware: 'archivos',
   async asyncData({ route, $strapi, $error, $config }) {
     try {
@@ -78,10 +80,13 @@ export default {
       uploading: false,
       currentProgress: 0,
       verModalCarpeta: false,
-      nuevaCarpeta: {nombre:'', permisos:{}}
+      nuevaCarpeta: {nombre:'', autor: {id:null}, permisos:{}}
     }
   },
   mounted() {
+    // para que la nueva carpeta proporcione los permisos de autor al usuario actual
+    if(this.isAuthenticated)
+      this.nuevaCarpeta.autor.id = this.loggedInUser.id
     console.log('nuxt-child.mounted!')
     this.carpetaActualId = this.carpetaActual ? this.carpetaActual.id : this.carpetaActualId
     console.log('***child.mounted.updateBreadcrumb')
@@ -205,7 +210,6 @@ export default {
           },
           onUploadProgress: (progress) => this.onProgress(progress) // <-- this updates the progress bar
         })
-
 
         //this.$strapi.create("upload", form)
         .then(async (response) => {

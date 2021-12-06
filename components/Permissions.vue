@@ -11,23 +11,15 @@
                     <label for="lectura-heredado">Heredar permisos <span class="text-xs text-diminished">(copia los permisos de carpeta padre)</span></label> 
                 </div>
             </div>
-            <div class="flex flex-wrap space-x-5">
-                <div class="flex items-center whitespace-nowrap space-x-1">
-                    <input id="lectura-publico" type="checkbox" v-model="localValue.lectura.publico" class="scale-125" :disabled="localValue.lectura.heredado" />
-                    <label for="lectura-publico">Público</label>
-                </div>
-                <div class="flex items-center whitespace-nowrap space-x-1">
-                <input id="lectura-autenticados" type="checkbox" v-model="localValue.lectura.autenticados" class="scale-125" :disabled="localValue.lectura.heredado"  />
-                <label for="lectura-autenticados">Usuarios registrados</label>
-                </div>
-                <div class="flex items-center whitespace-nowrap space-x-1">
-                <input id="lectura-delegados" type="checkbox" v-model="localValue.lectura.delegados" class="scale-125" :disabled="localValue.lectura.heredado" />
-                <label for="lectura-delegados">Delegados</label>
-                </div>
-                <div class="flex items-center whitespace-nowrap space-x-1">
-                <input id="lectura-muul" type="checkbox" v-model="localValue.lectura.muul"  class="scale-125" :disabled="localValue.lectura.heredado"/>
-                <label for="lectura-muul">Muul</label>
-                </div>
+            <div class="flex flex-wrap space-x-5 items-center">
+                <label for="lectura-rol">Rol:</label>
+                <select id="lectura-rol" v-model="localValue.lectura.rol" :disabled="localValue.lectura.heredado">
+                      <option value="Publico">Público</option>
+                        <option value="Autenticados">Usuarios registrados</option>
+                        <option value="Delegados">Delegados</option>
+                        <option value="Muul">Muul</option>
+                        <option value="Nadie">Nadie</option>
+                </select>
             </div>
             <div v-if="(localValue.lectura.grupos && localValue.lectura.grupos.length) ||
             (localValue.lectura.equipos && localValue.lectura.equipos.length) ||
@@ -63,22 +55,14 @@
                 </div>
             </div>
             <div class="flex flex-wrap space-x-5">
-                <div class="flex items-center whitespace-nowrap space-x-1">
-                <input id="creacion-publico" type="checkbox" v-model="localValue.creacion.publico" class="scale-125"  :disabled="localValue.creacion.heredado" />
-                <label for="creacion-publico">Público</label>
-                </div>
-                <div class="flex items-center whitespace-nowrap space-x-1">
-                <input id="creacion-autenticados" type="checkbox" v-model="localValue.creacion.autenticados" class="scale-125"  :disabled="localValue.creacion.heredado" />
-                <label for="creacion-autenticados">Usuarios registrados</label>
-                </div>
-                <div class="flex items-center whitespace-nowrap space-x-1">
-                <input id="creacion-delegados" type="checkbox" v-model="localValue.creacion.delegados" class="scale-125"  :disabled="localValue.creacion.heredado" />
-                <label for="creacion-delegados">Delegados</label>
-                </div>
-                <div class="flex items-center whitespace-nowrap space-x-1">
-                <input id="creacion-muul" type="checkbox" v-model="localValue.creacion.muul" class="scale-125"  :disabled="localValue.creacion.heredado" />
-                <label for="creacion-muul">Muul</label>
-                </div>
+                <label for="creacion-rol">Rol:</label>
+                <select id="creacion-rol" v-model="localValue.creacion.rol" :disabled="localValue.creacion.heredado">
+                      <option value="Publico">Público</option>
+                        <option value="Autenticados">Usuarios registrados</option>
+                        <option value="Delegados">Delegados</option>
+                        <option value="Muul">Muul</option>
+                        <option value="Nadie">Nadie</option>
+                </select>
             </div>
             <div v-if="(localValue.creacion.grupos && localValue.creacion.grupos.length) ||
             (localValue.creacion.equipos && localValue.creacion.equipos.length) ||
@@ -110,17 +94,11 @@
 const PERMISOS_POR_DEFECTO = {
     lectura: {
         heredado: true,
-        publico: false,
-        autenticados: false,
-        delegados: true,
-        muul: true
+        rol: 'Autenticados',
     },
     creacion: {
         heredado: true,
-        publico: false,
-        autenticados: false,
-        delegados: false,
-        muul: false
+        rol: 'Nadie'
     }
 }
 

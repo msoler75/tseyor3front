@@ -1,7 +1,5 @@
 <template>
     <div class="select-none">
-        {{ mostrarPropsCarpetas }}
-        {{ mostrarPropsArchivos }}
         <div v-if="error" class="flex w-full h-full text-3xl justify-center items-center">
             <span>Error al cargar la carpeta</span>
         </div>
@@ -12,6 +10,21 @@
             <icon icon="spinner spin" />
         </div>
         <div v-else-if="carpetaActual" class="flex flex-col">
+            <h1 v-if="showTitle" class="flex justify-between">
+                {{ carpetaActual.nombreOriginal || carpetaActual.nombre }}
+                <span
+                    class="self-center cursor-pointer text-gray text-xl ml-2 pl-2 pr-1"
+                    @click="mostrarPropsCarpetaActual = true"
+                >&vellip;</span>
+            </h1>
+            <FolderProps
+                v-if="showTitle && showControls"
+                textAccept="Guardar"
+                :value="carpetaActual"
+                @change="guardarPropsCarpeta($event)"
+                :showIt="mostrarPropsCarpetaActual"
+                @close="mostrarPropsCarpetaActual = false"
+            />
             <div
                 v-for="(carpeta, index) of carpetas"
                 :key="'carpeta' + carpeta.id"
@@ -69,14 +82,14 @@
                     </div>
                     <span
                         v-if="showControls && carpeta.nombreMostrar !== '..'"
-                        class="self-center cursor-pointer text-gray text-xl pl-4"
+                        class="self-center cursor-pointer text-gray text-xl ml-2 pl-2 pr-1"
                         @click="$set(mostrarPropsCarpetas, index, true)"
                     >&vellip;</span>
-                    <span v-else-if="showControls" class="pl-4">&nbsp;</span>
+                    <span v-else-if="showControls" class="ml-2 pl-2 pr-1">&nbsp;</span>
                     <FolderProps
-                        v-if="showControls"
+                        v-if="showControls && carpeta.nombreMostrar !== '..'"
                         textAccept="Guardar"
-                        :value="carpetas.find(x => x.id === carpeta.id)"
+                        :value="carpeta"
                         @change="guardarPropsCarpeta($event)"
                         :showIt="mostrarPropsCarpetas[index]"
                         @close="$set(mostrarPropsCarpetas, index, false)"
@@ -125,7 +138,7 @@
                         </div>
                         <span
                             v-if="showControls"
-                            class="cursor-pointer text-gray text-xl pl-4"
+                            class="cursor-pointer text-gray text-xl ml-2 pl-2 pr-1"
                             @click="$set(mostrarPropsArchivos, index, true)"
                         >&vellip;</span>
                     </div>
@@ -141,10 +154,7 @@ const query_permisos = `
         id
         lectura {
             heredado
-            publico
-            autenticados
-            delegados
-            muul
+            rol
             grupos {
                 id
                 nombre
@@ -160,10 +170,7 @@ const query_permisos = `
         }
         creacion {
             heredado
-            publico
-            autenticados
-            delegados
-            muul
+            rol
             grupos {
                 id
                 nombre
@@ -247,6 +254,7 @@ export default {
         subtextClass: {},
         iconClass: { type: String, required: false, default: 'text-4xl' },
         boxClass: { type: String, required: false, default: 'w-16 mr-3' },
+        showTitle: { default: true},
         showControls: {},
         showUploader: {},
         showDate: {},
@@ -263,7 +271,7 @@ export default {
             return [{ ...this.carpetaActual.padre, nombreMostrar: '..' }, ...this.carpetaActual.subcarpetas]
         },
         archivos() {
-            return this.carpetaActual?this.carpetaActual.archivos:[]
+            return this.carpetaActual ? this.carpetaActual.archivos : []
         },
         myvalue() {
             return this.localValue
@@ -294,6 +302,7 @@ export default {
             carpetaActual: null,
             cargando: true,
             error: false,
+            mostrarPropsCarpetaActual: false,
             mostrarPropsCarpetas: [],
             mostrarPropsArchivos: [],
         }
@@ -311,8 +320,10 @@ export default {
                 //)
                 //.then((carpeta) => {
 
-                this.$strapi.graphql({ query: query_carpeta.replace('%id', this.localValue)
-                .replace(/%permisos/g, this.showControls?query_permisos:'') })
+                this.$strapi.graphql({
+                    query: query_carpeta.replace('%id', this.localValue)
+                        .replace(/%permisos/g, this.showControls ? query_permisos : '')
+                })
                     .then((results) => {
                         console.log('myfetch result', results)
                         const carpeta = results.carpetas[0]
@@ -351,43 +362,43 @@ export default {
         guardarPropsCarpeta(carpeta) {
             console.log('GuardarPropsCarpeta', carpeta)
             this.$strapi.update('carpetas', carpeta.id, carpeta)
-            .then(result=> {
-                this.$toast.success("Datos de carpeta guardados", {
-                    position: "bottom-left",
-                    timeout: 5000,
-                    closeOnClick: true,
-                    pauseOnFocusLoss: true,
-                    pauseOnHover: true,
-                    draggable: true,
-                    draggablePercent: 0.6,
-                    showCloseButtonOnHover: false,
-                    hideProgressBar: true,
-                    closeButton: "button",
-                    icon: true,
-                    rtl: false
-                });
-            })
-            .catch(error=>{
-                console.warn(JSON.stringify(error))
-                let msg = 'Error al guardar'
-                switch(error.statusCode){
-                    case 403: msg='No tienes permisos'
-                }
-                this.$toast.error(msg, {
-                    position: "bottom-left",
-                    timeout: 5000,
-                    closeOnClick: true,
-                    pauseOnFocusLoss: true,
-                    pauseOnHover: true,
-                    draggable: true,
-                    draggablePercent: 0.6,
-                    showCloseButtonOnHover: false,
-                    hideProgressBar: true,
-                    closeButton: "button",
-                    icon: true,
-                    rtl: false
-                });
-            })
+                .then(result => {
+                    this.$toast.success("Datos de carpeta guardados", {
+                        position: "bottom-left",
+                        timeout: 5000,
+                        closeOnClick: true,
+                        pauseOnFocusLoss: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        draggablePercent: 0.6,
+                        showCloseButtonOnHover: false,
+                        hideProgressBar: true,
+                        closeButton: "button",
+                        icon: true,
+                        rtl: false
+                    });
+                })
+                .catch(error => {
+                    console.warn(JSON.stringify(error))
+                    let msg = 'Error al guardar'
+                    switch (error.statusCode) {
+                        case 403: msg = 'No tienes permisos'
+                    }
+                    this.$toast.error(msg, {
+                        position: "bottom-left",
+                        timeout: 5000,
+                        closeOnClick: true,
+                        pauseOnFocusLoss: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        draggablePercent: 0.6,
+                        showCloseButtonOnHover: false,
+                        hideProgressBar: true,
+                        closeButton: "button",
+                        icon: true,
+                        rtl: false
+                    });
+                })
         },
         mostrarArchivo(index) {
             console.log('mostrarArchivo', index)
