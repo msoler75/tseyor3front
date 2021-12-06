@@ -1,6 +1,8 @@
 <template>
-    <div>
-        <div v-if="error" class="flex w-full  h-full text-3xl justify-center items-center">
+    <div class="select-none">
+        {{ mostrarPropsCarpetas }}
+        {{ mostrarPropsArchivos }}
+        <div v-if="error" class="flex w-full h-full text-3xl justify-center items-center">
             <span>Error al cargar la carpeta</span>
         </div>
         <div
@@ -11,8 +13,8 @@
         </div>
         <div v-else-if="carpetaActual" class="flex flex-col">
             <div
-                v-for="carpeta of carpetas"
-                :key="carpeta.id"
+                v-for="(carpeta, index) of carpetas"
+                :key="'carpeta' + carpeta.id"
                 class="w-full border-gray-200 border-b"
             >
                 <div class="flex w-full overflow-hidden">
@@ -59,14 +61,31 @@
                             class="flex w-full justify-between text-xs text-diminished"
                             :class="subtextClass"
                         >
-                            <span v-if="showDate" class="ml-auto">{{ $dayjs(carpeta.created_at).fromNow() }}</span>
+                            <span
+                                v-if="showDate"
+                                class="ml-auto"
+                            >{{ $dayjs(carpeta.created_at).fromNow() }}</span>
                         </div>
                     </div>
+                    <span
+                        v-if="showControls && carpeta.nombreMostrar !== '..'"
+                        class="self-center cursor-pointer text-gray text-xl pl-4"
+                        @click="$set(mostrarPropsCarpetas, index, true)"
+                    >&vellip;</span>
+                    <span v-else-if="showControls" class="pl-4">&nbsp;</span>
+                    <FolderProps
+                        v-if="showControls"
+                        textAccept="Guardar"
+                        :value="carpetas.find(x => x.id === carpeta.id)"
+                        @change="guardarPropsCarpeta($event)"
+                        :showIt="mostrarPropsCarpetas[index]"
+                        @close="$set(mostrarPropsCarpetas, index, false)"
+                    />
                 </div>
             </div>
             <div
-                v-for="archivo of archivos"
-                :key="archivo.id"
+                v-for="(archivo, index) of archivos"
+                :key="'archivo-' + archivo.id"
                 class="w-full border-gray-200 border-b"
             >
                 <div class="flex w-full overflow-hidden">
@@ -104,7 +123,11 @@
                                 >{{ $dayjs(archivo.media.updated_at).fromNow() }}</span>
                             </div>
                         </div>
-                        <span v-if="showControls" class="cursor-pointer text-gray pl-4">&vellip;</span>
+                        <span
+                            v-if="showControls"
+                            class="cursor-pointer text-gray text-xl pl-4"
+                            @click="$set(mostrarPropsArchivos, index, true)"
+                        >&vellip;</span>
                     </div>
                 </div>
             </div>
@@ -113,6 +136,49 @@
 </template>
 
 <script>
+const query_permisos = `
+    permisos {
+        id
+        lectura {
+            heredado
+            publico
+            autenticados
+            delegados
+            muul
+            grupos {
+                id
+                nombre
+            }        
+            equipos {
+                id
+                nombre
+            }
+            usuarios {
+                id
+                nombreSimbolico
+            }
+        }
+        creacion {
+            heredado
+            publico
+            autenticados
+            delegados
+            muul
+            grupos {
+                id
+                nombre
+            }        
+            equipos {
+                id
+                nombre
+            }
+            usuarios {
+                id
+                nombreSimbolico
+            }
+        }        
+    }
+`
 
 const query_carpeta =
     `query {
@@ -137,6 +203,7 @@ const query_carpeta =
       slug
       descripcion
       ruta
+      %permisos
     }
     archivos {
       id
@@ -162,6 +229,7 @@ const query_carpeta =
         }
       }
     }
+    %permisos
   }
 }`
 
@@ -177,12 +245,13 @@ export default {
         },
         textClass: {},
         subtextClass: {},
-        iconClass: {type: String, required: false, default: 'text-4xl'},
-        boxClass: {type: String, required: false, default:'w-16 mr-3'},
+        iconClass: { type: String, required: false, default: 'text-4xl' },
+        boxClass: { type: String, required: false, default: 'w-16 mr-3' },
         showControls: {},
         showUploader: {},
         showDate: {},
         showDescription: {},
+        showSize: {},
         refresh: {}, // to reset state,
     },
     mixins: [vmodel, fileIcon],
@@ -194,7 +263,7 @@ export default {
             return [{ ...this.carpetaActual.padre, nombreMostrar: '..' }, ...this.carpetaActual.subcarpetas]
         },
         archivos() {
-            return this.carpetaActual.archivos
+            return this.carpetaActual?this.carpetaActual.archivos:[]
         },
         myvalue() {
             return this.localValue
@@ -207,6 +276,14 @@ export default {
         },
         refresh(newValue) {
             this.myfetch()
+        },
+        carpetas(newValue) {
+            for (var i = 0; i < newValue.length; i++)
+                this.mostrarPropsCarpetas[i] = false
+        },
+        archivos(newValue) {
+            for (var i = 0; i < newValue.length; i++)
+                this.mostrarPropsArchivos[i] = false
         }
     },
     created() {
@@ -216,7 +293,9 @@ export default {
         return {
             carpetaActual: null,
             cargando: true,
-            error: false
+            error: false,
+            mostrarPropsCarpetas: [],
+            mostrarPropsArchivos: [],
         }
     },
     methods: {
@@ -232,7 +311,8 @@ export default {
                 //)
                 //.then((carpeta) => {
 
-                this.$strapi.graphql({ query: query_carpeta.replace('%id', this.localValue) })
+                this.$strapi.graphql({ query: query_carpeta.replace('%id', this.localValue)
+                .replace(/%permisos/g, this.showControls?query_permisos:'') })
                     .then((results) => {
                         console.log('myfetch result', results)
                         const carpeta = results.carpetas[0]
@@ -267,6 +347,52 @@ export default {
                 this.$emit('click', carpeta)
             }
             else this.$router.push(carpeta.ruta)
+        },
+        guardarPropsCarpeta(carpeta) {
+            console.log('GuardarPropsCarpeta', carpeta)
+            this.$strapi.update('carpetas', carpeta.id, carpeta)
+            .then(result=> {
+                this.$toast.success("Datos de carpeta guardados", {
+                    position: "bottom-left",
+                    timeout: 5000,
+                    closeOnClick: true,
+                    pauseOnFocusLoss: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    draggablePercent: 0.6,
+                    showCloseButtonOnHover: false,
+                    hideProgressBar: true,
+                    closeButton: "button",
+                    icon: true,
+                    rtl: false
+                });
+            })
+            .catch(error=>{
+                console.warn(JSON.stringify(error))
+                let msg = 'Error al guardar'
+                switch(error.statusCode){
+                    case 403: msg='No tienes permisos'
+                }
+                this.$toast.error(msg, {
+                    position: "bottom-left",
+                    timeout: 5000,
+                    closeOnClick: true,
+                    pauseOnFocusLoss: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    draggablePercent: 0.6,
+                    showCloseButtonOnHover: false,
+                    hideProgressBar: true,
+                    closeButton: "button",
+                    icon: true,
+                    rtl: false
+                });
+            })
+        },
+        mostrarArchivo(index) {
+            console.log('mostrarArchivo', index)
+            // this.mostrarPropsArchivos[index] = true
+            this.$set(this.mostrarPropsArchivos, index, true)
         }
     }
 }

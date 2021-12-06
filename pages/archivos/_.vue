@@ -18,20 +18,19 @@
         :showControls="true"
       />
     </Card>
-    <div class="flex mt-5">
-      <progress
-        max="100"
-        :value="currentProgress"
-        class="w-full h-8 rounded"
-        v-if="uploading"
-      />
-      <InputFiles
-        v-else
-        :multiple="true"
-        @change="onUpload"
-        class="ml-auto mt-5"
-        textButton="Añadir Archivos"
-      />
+    <FolderProps v-model="nuevaCarpeta" :showIt="verModalCarpeta" @close="verModalCarpeta=false" textAccept="Crear carpeta"/>
+    <div class="mt-5">
+      <progress v-if="uploading" max="100" :value="currentProgress" class="w-full h-8 rounded" />
+      <div v-else class="flex space-x-4 items-center justify-end">
+        <div class="btn btn-gray text-sm" @click="verModalCarpeta=true">
+          <icon icon="folder-plus" class="mr-2" />Crear carpeta
+        </div>
+        <InputFiles
+          :multiple="true"
+          @change="onUpload"
+          textButton="Añadir Archivos"
+        />
+      </div>
     </div>
   </div>
 </template>
@@ -77,7 +76,9 @@ export default {
       navigationMode: NAVIGATION_MODE,
       refresh: 1,
       uploading: false,
-      currentProgress: 0
+      currentProgress: 0,
+      verModalCarpeta: false,
+      nuevaCarpeta: {nombre:'', permisos:{}}
     }
   },
   mounted() {

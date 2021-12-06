@@ -3,7 +3,7 @@
         <span :disabled="disabled" class="btn btn-gray text-sm" @click="verModal = !disabled">
             <icon v-if="icon" icon="images" :class="textButton?'mr-2':''"/>{{textButton}}</span>
         <input :required="required" v-model="images" class="absolute left-0 opacity-0 pointer-events-none"/>
-        <Modal v-model="verModal" :title="title" class="min-w-sm max-w-screen">
+        <Modal v-model="verModal" :title="title" class="sm:min-w-sm max-w-screen">
             <div class="p-5 max-w-full" :class="images.length>1?'':'md:max-w-md'">
                 <Drop v-if="!images.length" @change="onFileSelect" :multiple="multiple && !crop" accept="image/*"/>
                 <template v-if="crop && images.length" class="flex flex-col justify-center">

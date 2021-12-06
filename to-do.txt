@@ -87,3 +87,7 @@ wORKFLOW:
 https://strapi.io/blog/automate-strapi-publication-workflow-with-n8n
 
 
+
+formulario de contacto y demás:
+https://github.com/excl-networks/strapi-plugin-ezforms
+

@@ -1,7 +1,7 @@
 <template>
-    <div class="relative">
+    <div>
         <span :disabled="disabled" class="btn btn-gray text-sm" @click="verModal = !disabled">
-            <icon v-if="icon" icon="plus-square" :class="textButton ? 'mr-2' : ''" />
+            <icon v-if="icon" :icon="icon" :class="textButton ? 'mr-2' : ''" />
             {{ textButton }}
         </span>
         <input
@@ -9,7 +9,7 @@
             v-model="files"
             class="absolute left-0 opacity-0 pointer-events-none"
         />
-        <Modal v-model="verModal" :title="title" class="min-w-sm max-w-screen">
+        <Modal v-model="verModal" :title="title" class="sm:min-w-sm max-w-screen">
             <div class="p-5 max-w-full">
                 <Drop
                     v-if="!files.length"
@@ -55,14 +55,11 @@
 import fileIcon from '~/mixins/fileIcon.js'
 export default {
     props: {
-        icon: { type: Boolean, required: false, default: true },
+        icon: { type: String | Boolean, required: false, default: 'file-upload' },
         textButton: { type: String, required: false, default: 'Subir o cambiar archivo' },
         textAccept: { type: String, required: false, default: 'Aceptar' },
         textCancel: { type: String, required: false, default: 'Descartar' },
-        crop: { type: Boolean, required: false, default: false },
         title: { type: String, required: false, default: 'Elegir archivo/s' },
-        stencilProps: { type: Object, required: false, default: null },
-        stencilComponent: { type: String, required: false, default: null },
         disabled: { type: Boolean, required: false, default: false },
         required: { type: Boolean, required: false, default: false },
         multiple: { type: Boolean, required: false, default: false },
