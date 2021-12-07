@@ -17,7 +17,7 @@
         :showControls="true"
       />
     </Card>
-    <FolderProps v-model="nuevaCarpeta" :showIt="verModalCarpeta" @close="verModalCarpeta=false" textAccept="Crear carpeta"/>
+    <FolderProps v-model="nuevaCarpeta" :showIt="verModalCarpeta" @accept="crearCarpeta" @close="verModalCarpeta=false" textAccept="Crear carpeta"/>
     <div class="mt-5"
     v-if="tengoPermiso(carpetaActual, 'creacion')||tengoPermiso(carpetaActual, 'administracion')"
     >
@@ -85,8 +85,7 @@ export default {
   },
   mounted() {
     // para que la nueva carpeta proporcione los permisos de autor al usuario actual
-    if(this.isAuthenticated)
-      this.nuevaCarpeta.autor.id = this.loggedInUser.id
+      this.resetNuevaCarpeta()
     console.log('nuxt-child.mounted!')
     this.carpetaActualId = this.carpetaActual ? this.carpetaActual.id : this.carpetaActualId
     console.log('***child.mounted.updateBreadcrumb')
@@ -232,6 +231,41 @@ export default {
           console.warn(err)
         })
     },
+    resetNuevaCarpeta() {
+      this.nuevaCarpeta = {nombre:'', autor: {id:null}, permisos:{}}
+      if(this.isAuthenticated)
+        this.nuevaCarpeta.autor.id = this.loggedInUser.id
+      this.nuevaCarpeta.padre = this.carpetaActualId  
+    },
+    crearCarpeta() {
+      /// this.nuevaCarpeta
+      this.$strapi.create("carpetas", this.nuevaCarpeta)
+      .then(response=>{
+        this.refresh++
+        this.resetNuevaCarpeta()
+      })
+      .catch(error=>{
+        console.warn(JSON.stringify(error))
+                    let msg = 'Error al guardar'
+                    switch (error.statusCode) {
+                        case 403: msg = 'No tienes permisos'
+                    }
+                    this.$toast.error(msg, {
+                        position: "bottom-left",
+                        timeout: 5000,
+                        closeOnClick: true,
+                        pauseOnFocusLoss: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        draggablePercent: 0.6,
+                        showCloseButtonOnHover: false,
+                        hideProgressBar: true,
+                        closeButton: "button",
+                        icon: true,
+                        rtl: false
+                    });
+      })
+    }
   },
   computed: {
     carpetaActualJSON() {
@@ -245,6 +279,7 @@ export default {
     carpetaActualJSON(newValue) {
       console.log('***child.watched.carpetaActual.updateBreadcrumb')
       this.updateBreadcrumb()
+      this.nuevaCarpeta.padre = this.carpetaActualId
     },
     rutaActual(newValue) {
       console.log('!watched rutaActual')

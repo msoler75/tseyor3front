@@ -21,7 +21,7 @@
                 v-if="showTitle && showControls"
                 textAccept="Guardar"
                 :value="carpetaActual"
-                @change="guardarPropsCarpeta($event)"
+                @accept="guardarPropsCarpeta"
                 :showIt="mostrarPropsCarpetaActual"
                 @close="mostrarPropsCarpetaActual = false"
             />
@@ -90,7 +90,7 @@
                         v-if="showControls && carpeta.nombreMostrar !== '..'"
                         textAccept="Guardar"
                         :value="carpeta"
-                        @change="guardarPropsCarpeta($event)"
+                        @accept="guardarPropsCarpeta"
                         :showIt="mostrarPropsCarpetas[index]"
                         @close="$set(mostrarPropsCarpetas, index, false)"
                     />
@@ -197,6 +197,10 @@ const query_carpeta =
     created_at
     updated_at
     ruta
+    autor {
+        id
+        nombreSimbolico
+    }
     padre {
       id
       nombre
@@ -210,6 +214,10 @@ const query_carpeta =
       slug
       descripcion
       ruta
+      autor {
+        id
+        nombreSimbolico
+      }
       %permisos
     }
     archivos {
@@ -363,6 +371,14 @@ export default {
             console.log('GuardarPropsCarpeta', carpeta)
             this.$strapi.update('carpetas', carpeta.id, carpeta)
                 .then(result => {
+                    if(result.id===parseInt(this.carpetaActual.id)) 
+                        this.$set(this, 'carpetaActual', result)
+                    //this.refresh++
+                    else {
+                        const idx = this.carpetaActual.subcarpetas.findIndex(x=>parseInt(x.id)===result.id)
+                        this.$set(this.carpetaActual.subcarpetas, idx, result)
+                    }
+                    
                     this.$toast.success("Datos de carpeta guardados", {
                         position: "bottom-left",
                         timeout: 5000,

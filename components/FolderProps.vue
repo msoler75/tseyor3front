@@ -1,7 +1,7 @@
 <template>
     <div class="relative">
         <Modal v-model="verModal" :title="title" class="sm:min-w-sm max-w-screen">
-            <form v-if="tengoPermiso(localValue, 'creacion')||tengoPermiso(localValue, 'administracion')" class="p-5 max-w-full space-y-9 overflow-y-auto" @submit="accept">
+            <form v-if="tengoPermiso(localValue, 'administracion')" class="p-5 max-w-full space-y-9 overflow-y-auto" @submit="accept">
                 <div class="space-y-2">
                     <label for="nombre" class="font-bold">Nombre de la carpeta:</label>
                     <input
@@ -16,6 +16,15 @@
                 <Permissions v-model="localValue.permisos" >
                    <slot/>
                 </Permissions>
+
+                <div class="space-y-2">
+                    <label class="font-bold">Información de carpeta:</label>
+                    <table>
+                        <tr><td><label class="text-diminished mr-4">Ubicada en:  </label> </td><td><span>{{localValue.ruta}}</span></td></tr>
+                        <tr><td><label class="text-diminished mr-4">Creada en:  </label></td><td><span>{{$dayjs(localValue.created_at)}}</span></td></tr>
+                        <tr><td><label class="text-diminished mr-4">Creada por:  </label></td><td><span>{{localValue.autor?localValue.autor.nombreSimbolico:'Administradores'}}</span></td></tr>
+                    </table>
+                </div>
                 <div class="flex space-x-4 mt-9 justify-center">
                     <button type="submit" class="btn" >
                         <icon icon="check" class="mr-2" />
@@ -26,13 +35,14 @@
                         {{ textCancel }}
                     </button>
                 </div>
+                
             </form>
             <div v-else class="space-y-9 p-5 sm:p-9">                
                 <table>
-                <tr><td><label class="text-diminished mr-4">Nombre: </label> </td><td><span>{{localValue.nombre}}</span></td></tr>
-                <tr><td><label class="text-diminished mr-4">Ubicada en:  </label> </td><td><span>{{localValue.ruta}}</span></td></tr>
-                <tr><td><label class="text-diminished mr-4">Creada en:  </label></td><td><span>{{$dayjs(localValue.created_at)}}</span></td></tr>
-                <tr><td><label class="text-diminished mr-4">Creada por:  </label></td><td><span>{{localValue.autor?localValue.autor.nombreSimbolico:'Administradores'}}</span></td></tr>
+                    <tr><td><label class="text-diminished mr-4">Nombre: </label> </td><td><span>{{localValue.nombre}}</span></td></tr>
+                    <tr><td><label class="text-diminished mr-4">Ubicada en:  </label> </td><td><span>{{localValue.ruta}}</span></td></tr>
+                    <tr><td><label class="text-diminished mr-4">Creada en:  </label></td><td><span>{{$dayjs(localValue.created_at)}}</span></td></tr>
+                    <tr><td><label class="text-diminished mr-4">Creada por:  </label></td><td><span>{{localValue.autor?localValue.autor.nombreSimbolico:'Administradores'}}</span></td></tr>
                 </table>
                 <div class="flex justify-center">
                     <button type="submit" class="btn" @click="verModal=false">
@@ -68,7 +78,7 @@ export default {
     methods: {
         accept() {
             this.verModal = false
-            this.$emit('change', this.localValue)
+            this.$emit('accept', this.localValue)
         },
         discard() {
             this.verModal = false
@@ -84,7 +94,7 @@ export default {
     },*/
     watch: {
         localValue(value) {
-            this.$emit('input', this.localValue)
+            //this.$emit('input', this.localValue)
         },
         value(value) {
             this.localValue = value

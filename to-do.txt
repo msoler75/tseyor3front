@@ -1,3 +1,8 @@
+-arreglar editar nombre de carpeta actual, dos veces, cambiando nombre y cancelar, aunque cancela el  nombre de la carpeta se ve cambiado, no debería ser
+
+
+
+
 https://www.vuemastery.com/blog/why-nuxtjs-is-the-perfect-framework-for-building-static-websites/
 https://nuxt-lifecycle.krutiepatel.com/
 

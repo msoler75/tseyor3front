@@ -1,6 +1,7 @@
 <template>
-    <div v-if="localValue" class="ease-in-out transition duration-300 fixed top-0 left-0 z-40 w-full h-screen flex justify-center items-center backdrop-brightness-50 backdrop-filter backdrop-blur-md"
-    @mousedown.self="localValue=false">
+    <div tabIndex="0" ref="backdrop" v-if="localValue" class="ease-in-out transition duration-300 fixed top-0 left-0 z-40 w-full h-screen flex justify-center items-center backdrop-brightness-50 backdrop-filter backdrop-blur-md"
+    @mousedown.self="localValue=false"
+    @keydown.esc="localValue=false">
         <Card class="dark:outline-white max-h-screen">
             <div v-if="title" class="w-full flex items-center p-3 border-b border-gray-300 dark:border-gray-800 dark:bg-gray-900 shadow-sm">
                 <span class="font-bold flex-grow text-lg text-center">{{title}}</span>
@@ -18,6 +19,16 @@ export default {
     mixins: [vmodel],
     props: {
         title: {}
+    },
+    watch:{
+        value(newValue) {
+            if(newValue) {
+                // no funciona... ESC
+                const el = this.$refs.backdrop
+                if(el)
+                    el.focus()
+            }
+        }
     }
 }
 </script>

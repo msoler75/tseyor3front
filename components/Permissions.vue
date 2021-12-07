@@ -5,21 +5,22 @@
         <div class="space-y-2">
             <p class="font-bold">Permisos de lectura:</p>
             <p class="text-diminished text-xs">Usuarios que pueden ver y leer los contenidos de la carpeta</p>
-            <div class="flex flex-wrap space-x-5">
-                 <div class="flex items-center whitespace-nowrap space-x-1">
+            <div class="flex flex-wrap space-x-7 justify-between">
+                <div class="space-y-1">
                     <input id="lectura-heredado" type="checkbox" v-model="localValue.lectura.heredado" class="scale-125" />
-                    <label for="lectura-heredado">Heredar permisos <span class="text-xs text-diminished">(copia los permisos de carpeta padre)</span></label> 
+                    <label for="lectura-heredado">Heredar permisos</label> 
+                    <br><span class="text-xs text-diminished">(copia los permisos de carpeta padre)</span>
                 </div>
-            </div>
-            <div class="flex flex-wrap space-x-5 items-center">
-                <label for="lectura-rol">Rol:</label>
-                <select id="lectura-rol" v-model="localValue.lectura.rol" :disabled="localValue.lectura.heredado">
-                      <option value="Publico">Público</option>
-                        <option value="Autenticados">Usuarios registrados</option>
-                        <option value="Delegados">Delegados</option>
-                        <option value="Muul">Muul</option>
-                        <option value="Nadie">Nadie</option>
-                </select>
+                <div class="space-y-1">
+                    <label for="lectura-rol" class="text-xs">Permisos para:</label><br>
+                    <select id="lectura-rol" v-model="localValue.lectura.rol" :disabled="localValue.lectura.heredado">
+                        <option value="Publico">Público</option>
+                            <option value="Autenticados">Usuarios registrados</option>
+                            <option value="Delegados">Delegados</option>
+                            <option value="Muul">Muul</option>
+                            <option value="Nadie">Nadie</option>
+                    </select>
+                </div>
             </div>
             <div v-if="(localValue.lectura.grupos && localValue.lectura.grupos.length) ||
             (localValue.lectura.equipos && localValue.lectura.equipos.length) ||
@@ -48,21 +49,22 @@
         <div class="space-y-2">
             <p class="font-bold">Permisos de creación:</p>
             <p class="text-diminished text-xs">Usuarios que pueden subir nuevos contenidos a la carpeta y crear nuevas carpetas</p>
-            <div class="flex flex-wrap space-x-5">
-                 <div class="flex items-center whitespace-nowrap space-x-1">
+            <div class="flex flex-wrap space-x-7 justify-between">
+                <div class="space-y-1">
                     <input id="creacion-heredado" type="checkbox" v-model="localValue.creacion.heredado" class="scale-125" />
-                    <label for="creacion-heredado">Heredar permisos <span class="text-xs text-diminished">(copia los permisos de carpeta padre)</span></label> 
+                    <label for="creacion-heredado">Heredar permisos</label> 
+                    <br><span class="text-xs text-diminished">(copia los permisos de carpeta padre)</span>
                 </div>
-            </div>
-            <div class="flex flex-wrap space-x-5">
-                <label for="creacion-rol">Rol:</label>
-                <select id="creacion-rol" v-model="localValue.creacion.rol" :disabled="localValue.creacion.heredado">
-                      <option value="Publico">Público</option>
-                        <option value="Autenticados">Usuarios registrados</option>
-                        <option value="Delegados">Delegados</option>
-                        <option value="Muul">Muul</option>
-                        <option value="Nadie">Nadie</option>
-                </select>
+                <div class="space-y-1">
+                    <label for="creacion-rol" class="text-xs">Permisos para:</label><br>
+                    <select id="creacion-rol" v-model="localValue.creacion.rol" :disabled="localValue.creacion.heredado">
+                        <option value="Publico">Público</option>
+                            <option value="Autenticados">Usuarios registrados</option>
+                            <option value="Delegados">Delegados</option>
+                            <option value="Muul">Muul</option>
+                            <option value="Nadie">Nadie</option>
+                    </select>
+                </div>
             </div>
             <div v-if="(localValue.creacion.grupos && localValue.creacion.grupos.length) ||
             (localValue.creacion.equipos && localValue.creacion.equipos.length) ||

@@ -7,27 +7,26 @@ export default {
   methods: {
     // comprueba si el usuario tiene acceso segun los permisos indicados
     tengoPermiso (contenido, modo) {
-      if( this.soyAutor(contenido) ) return true
-      if(!('permisos' in contenido))
-        return false
+      if (this.soyAutor(contenido)) return true
+      if (!('permisos' in contenido)) return false
       const permisos = contenido.permisos
       // console.log('tengo acceso?', permisos)
       if (!permisos) return true
       const p = permisos[modo]
-      if(!p) return false
+      if (!p) return false
       // console.log('permisos son', p)
-      if (p.rol==='Publico') return true
+      if (p.rol === 'Publico') return true
       const user = this.isAuthenticated ? this.loggedInUser : null
       console.log('user', user)
       if (user && user.id) {
         // console.log('miramos permisos de usuario', user)
-        if (p.rol==='Autenticados') {
+        if (p.rol === 'Autenticados') {
           return true
         }
-        if (p.rol==='Delegados' && user.role.type === 'delegado') {
+        if (p.rol === 'Delegados' && user.role.type === 'delegado') {
           return true
         }
-        if (p.rol==='Muul' && user.role.type ==='muul') {
+        if (p.rol === 'Muul' && user.role.type === 'muul') {
           return true
         }
         if (p.usuarios.find(x => x.id === user.id)) {
@@ -46,10 +45,12 @@ export default {
       }
       return false
     },
-    soyAutor(contenido) {
-        const user = this.isAuthenticated ? this.loggedInUser : null
-        if(!user||!user.id||!('autor' in contenido) || !contenido.autor) return false
-        return contenido.autor.id===user.id
+    soyAutor (contenido) {
+      const user = this.isAuthenticated ? this.loggedInUser : null
+      if (!user || !user.id || !('autor' in contenido) || !contenido.autor)
+        return false
+      const aid = contenido.autor.id ? contenido.autor.id : contenido.autor
+      return aid === user.id || parseInt(aid) === user.id
     }
   }
 }
