@@ -15,18 +15,7 @@
           />
         </div>
         <div class="mb-6">
-          <div class="relative">
-            <div class="flex w-8 justify-center items-center absolute right-3 top-3 py-1 cursor-pointer" @click="viewing = !viewing">
-              <icon :icon="viewing?'eye-slash':'eye'" />
-            </div>
-            <input
-              id="password"
-              v-model="password"
-              :type="viewing ? 'text' : 'password'"
-              placeholder="Contraseña"
-              required
-            />
-          </div>
+          <InputPassword v-model="password"/>
         </div>
         <div class="flex items-center justify-between">
           <button
@@ -71,7 +60,6 @@ export default {
       password: "",
       error: null,
       entrando: false,
-      viewing: false
     };
   },
   methods: {
