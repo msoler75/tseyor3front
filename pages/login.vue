@@ -15,13 +15,18 @@
           />
         </div>
         <div class="mb-6">
-          <input
-            id="password"
-            v-model="password"
-            type="password"
-            placeholder="Contraseña"
-            required
-          />
+          <div class="relative">
+            <div class="flex w-8 justify-center items-center absolute right-3 top-3 py-1 cursor-pointer" @click="viewing = !viewing">
+              <icon :icon="viewing?'eye-slash':'eye'" />
+            </div>
+            <input
+              id="password"
+              v-model="password"
+              :type="viewing ? 'text' : 'password'"
+              placeholder="Contraseña"
+              required
+            />
+          </div>
         </div>
         <div class="flex items-center justify-between">
           <button
@@ -30,7 +35,8 @@
             class="btn w-20 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
           >
             <div v-if="entrando" class="flex items-center justify-center">
-              <icon icon="sync spin"/> <span>&nbsp;</span>
+              <icon icon="sync spin" />
+              <span>&nbsp;</span>
             </div>
             <span v-else>Entrar</span>
           </button>
@@ -38,9 +44,7 @@
             to="/recuperacion"
             class="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800"
             href="#"
-          >
-            He olvidado la contraseña
-          </NLink>
+          >He olvidado la contraseña</NLink>
         </div>
         <divider class="my-5" />
         <div class="flex justify-center">
@@ -50,9 +54,7 @@
               to="/registro"
               class="inline-block align-baseline font-bold text-blue-500 hover:text-blue-800"
               href="#"
-            >
-              Registrarse
-            </NLink>
+            >Registrarse</NLink>
           </p>
         </div>
       </form>
@@ -68,19 +70,20 @@ export default {
       email: "",
       password: "",
       error: null,
-      entrando: false
+      entrando: false,
+      viewing: false
     };
   },
   methods: {
     async login() {
       this.error = null;
       try {
-       /*await this.$auth.loginWith("local", {
-          data: {
-            identifier: this.email,
-            password: this.password
-          }
-        })*/
+        /*await this.$auth.loginWith("local", {
+           data: {
+             identifier: this.email,
+             password: this.password
+           }
+         })*/
         /*
          .then( async (response)=> {
           // this.$auth.setUser(response.data.user) // this data is ok
@@ -91,16 +94,16 @@ export default {
           // console.log('desde', this.$route.query)
         })*/
 
-         // https://github.com/Stun3R/nuxt-strapi-sdk/blob/master/examples/client/pages/auth/index.vue
-         // console.log('login', this.email, this.password)
-         this.entrando = true
-         await this.$strapi.login({identifier: this.email, password: this.password})
-         this.$store.commit(
+        // https://github.com/Stun3R/nuxt-strapi-sdk/blob/master/examples/client/pages/auth/index.vue
+        // console.log('login', this.email, this.password)
+        this.entrando = true
+        await this.$strapi.login({ identifier: this.email, password: this.password })
+        this.$store.commit(
           "SET_USER",
           await this.$fetchUser()
-        ); 
+        );
         this.$router.push(this.$route.query.desde || "/")
-        } catch (e) {
+      } catch (e) {
         console.error('login error:', e)
         this.error = e.response.data.message[0].messages[0].message;
         this.entrando = false
