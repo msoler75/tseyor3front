@@ -403,5 +403,5 @@ export default () => ({
       name: "Buscar",
       icon: "fas fa-search"
     }
-  }
+  },
 });

@@ -9,7 +9,6 @@
       v-show="!onlyContent"
       class="flex transition duration-200 font-serif z-30 w-full mx-auto bg-white dark:bg-gray-900 text-gray-blue-800 dark:text-gray-200 dark:hover:text-gray-50 shadow select-none sticky top-0"
       :class="navHidden ? '-translate-y-20' : ''"
-      style="min-height:48px"
       :submenu="currentTab !== ''"
     >
       <div
@@ -276,6 +275,7 @@
     </div>
     <Sidebar v-show="!onlyContent" v-model="showSidebar" :items="rutasMenu" class="xl:hidden" />
     <Footer v-show="!onlyContent" class="mt-auto" :class="pageConfig.contained ? 'pt-9' : ''" />
+    <Confirm/>
   </div>
 </template>
 
@@ -313,21 +313,8 @@ export default {
     this.actualizarUrlPerfil()
     // emulamos comportamiento de beforeEnter de transición de página
     this.$store.commit('travelling', false)
-    const el = this.$refs['page'].$el
-    this.$store.dispatch('beforeEnter', el)
+    this.$store.dispatch('beforeEnter', this.$refs['page'].$el)
     this.$store.commit('updateBreadcrumb')
-    /*console.log('page', el)
-    console.log('First page config...', el)
-      const config = {}
-      const pageConfigKeywords = ['background', 'breadcrumb', 'contained', 'focused']
-      for(const key of pageConfigKeywords)
-      {
-        const value = el.getAttribute(key)
-        if(value!==null)
-          config[key] = value&&value.toLowerCase()!=="no"&&value!=="0"
-      }
-      console.log('config', config)
-      this.$store.commit('setPageConfig', config)*/
   },
   data() {
     return {

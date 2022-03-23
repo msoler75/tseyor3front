@@ -91,13 +91,12 @@ export default {
   async asyncData({ $strapi, route, $error }) {
     try {
       const id = route.params.id
-      const libros = await $strapi.find(
+      const [contenido] = await $strapi.find(
         'libros',
         id.match(/^\d+$/) ? { id } : { slug: id }
       )
-      if (!libros.length)
+      if (!contenido)
         return $error(404, 'Libro no encontrado')
-      const contenido = libros[0]
       contenido.likes = await $strapi.find('likes', {
         uid: `/libros/${contenido.id}`
       })
@@ -107,6 +106,7 @@ export default {
       const filtro = categoria ? { 'etiquetas.nombre': categoria } : {}
       return { filtro, contenido, libro: contenido }
     } catch (e) {
+      console.warn(e)
       $error(503)
     }
   },

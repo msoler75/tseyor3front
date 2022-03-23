@@ -26,7 +26,9 @@ export default {
     twitter: '@TSEYOR',
     defaultImage: '/imagenes/poster-tseyor.jpg',
     defaultUserImage: '/imagenes/usuario.jpg',
-    archivosRuta: '/archivos'
+    archivosRuta: '/archivos',
+    meilisearchUrl: process.env.MEILISEARCH_URL || 'http://localhost:7700',
+    meilisearchKey: process.env.MEILISEARCH_KEY,
   },
 
 
@@ -94,8 +96,10 @@ export default {
     '~plugins/axios',
     { src: '~plugins/vue-observe-visibility.js', mode: 'client' },
     { src: '~plugins/scrollto.js', mode: 'client' },
+    { src: '~plugins/meilisearch.js', mode: 'client' },
     // { src: '~plugins/nuxt-hammer.js', mode: 'client' },
     // { src: '~plugins/vue-touch.js', mode: 'client' },
+    { src: '~plugins/confirm.js', mode: 'client' },
   ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components

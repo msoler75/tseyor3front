@@ -1,3 +1,8 @@
+
+https://www.cunef.edu/estudio/grado-en-ingenieria-informatica/#:~:text=El%20Grado%20en%20Ingenier%C3%ADa%20Inform%C3%A1tica,alcanzar%20un%20equilibrio%20entre%20objetivos
+
+check https://codepen.io/TurkAysenur/pen/JjGKKrP
+
 -arreglar editar nombre de carpeta actual, dos veces, cambiando nombre y cancelar, aunque cancela el  nombre de la carpeta se ve cambiado, no debería ser
 
 
@@ -96,3 +101,9 @@ https://strapi.io/blog/automate-strapi-publication-workflow-with-n8n
 formulario de contacto y demás:
 https://github.com/excl-networks/strapi-plugin-ezforms
 
+
+
+
+configuracion de vuex state en nuxtServerInit
+
+https://github.com/MexsonFernandes/nuxtjs-strapi-graphql-apollo-ssr/blob/main/frontend/store/index.js

@@ -75,8 +75,8 @@
 
       <div v-if="carpetaActualId" class="p-5 surface flex flex-col">
         <h3>{{ carpetaActualNombre }}</h3>
-        <FilesFolder          
-          @loaded="carpetaActual=$event"
+        <FilesFolder
+          @loaded="carpetaActual = $event"
           v-model="carpetaActualId"
           :idRootFolder="equipo.carpeta.id"
           class="w-full max-w-full h-full overflow-y-auto max-h-[240px]"
@@ -88,10 +88,11 @@
           boxClass="w-8 mr-2"
         />
         <div class="flex justify-center mt-2">
-            <NLink class="ml-auto text-xs btn btn-gray btn-mini" :to="`${carpetaActual.ruta}`"><icon icon="search"/></NLink>
+          <NLink class="ml-auto text-xs btn btn-gray btn-mini" :to="`${carpetaActual.ruta}`">
+            <icon icon="search" />
+          </NLink>
         </div>
       </div>
-
     </GridFluid>
 
     <section class="mt-7 flex">
@@ -112,15 +113,15 @@ export default {
   async asyncData({ app, $strapi, route, $error }) {
     try {
       let contenido = { miembros: [], coordinadores: [] }
-        const id = route.params.id
-        let [equipo] = await $strapi.find(
-          'equipos',
-          id.match(/^\d+$/) ? { id } : { slug: id }
-        )
-        if (!equipo)
-          return $error(404, 'Equipo no encontrado')
-        contenido.textoHTML = app.$renderMarkdownServer(contenido.pizarra/*, contenido.imagenes*/)
-        return { contenido: equipo, equipo }
+      const id = route.params.id
+      let [equipo] = await $strapi.find(
+        'equipos',
+        id.match(/^\d+$/) ? { id } : { slug: id }
+      )
+      if (!equipo)
+        return $error(404, 'Equipo no encontrado')
+      contenido.textoHTML = app.$renderMarkdownServer(contenido.pizarra/*, contenido.imagenes*/)
+      return { contenido: equipo, equipo }
     }
     catch (e) {
       console.warn(e)
@@ -134,8 +135,7 @@ export default {
     }
   },
   mounted() {
-    if(this.equipo.carpeta)
-    {
+    if (this.equipo.carpeta) {
       this.$set(this, 'carpetaActual', this.equipo.carpeta)
       this.carpetaActualId = this.equipo.carpeta.id
     }
@@ -143,11 +143,11 @@ export default {
   computed: {
     ...mapGetters(["loggedInUser"]),
     soyCoordinador() {
-      return !!this.equipo.coordinadores.find(x=>parseInt(x.id)===this.$store.getters.loggedInUser.id)
+      return !!this.equipo.coordinadores.find(x => parseInt(x.id) === this.$store.getters.loggedInUser.id)
     },
     carpetaActualNombre() {
-      if(this.carpetaActual) return 'Archivos'
-      return this.carpetaActual.id===this.equipo.carpeta.id?'Archivos':this.carpetaActual.nombre
+      if (this.carpetaActual) return 'Archivos'
+      return this.carpetaActual.id === this.equipo.carpeta.id ? 'Archivos' : this.carpetaActual.nombre
     },
     miembros() {
       const m = this.equipo.coordinadores
@@ -175,20 +175,47 @@ export default {
   },
   methods: {
     async entrar() {
-      await this.$strapi.$http.$put('/api/equipos/' + this.equipo.id + '/join')
-      //await this.$auth.fetchUser()
-      // this.$router.app.refresh()  
-      this.refresh()
+      try {
+        await this.$strapi.$http.$put('/equipos/' + this.equipo.id + '/join')
+        //await this.$auth.fetchUser()
+        // this.$router.app.refresh()  
+        this.actualizarMiembros()
+      } catch(e) {
+
+      }
     },
     async salir() {
-      await this.$strapi.$http.$put('/api/equipos/' + this.equipo.id + '/leave')
+      this.$confirm.open({
+        message: 'Are you sure you want to do this?',
+        resolver: (async (result) => {
+          try {
+            const res = await result;
+            /* eslint-disable no-console */
+            console.log(res);
+          } catch (error) {
+            console.warn(error);
+          }
+        }),
+      })
+      return;
+      try {
+      await this.$strapi.$http.$put('/equipos/' + this.equipo.id + '/leave')
       // this.$router.app.refresh()  
-      this.refresh()
+      this.actualizarMiembros()
+      } catch(e) {
+
+      }
     },
-    async refresh() {
+    async actualizarMiembros() {
       // await this.$strapi.fetchUser() // actualizamos los datos del usuario actual y el equipo con sus miembros después de la operación
-      const equipos = await this.$strapi.find('equipos', { id: this.equipo.id })
-      this.$set(this.contenido, 'users', equipos[0].miembros)
+      const id = this.$route.params.id
+      const [equipo] = await this.$strapi.find(
+        'equipos',
+        id.match(/^\d+$/) ? { id } : { slug: id }
+      )
+      console.log('listado actualizado', equipo.miembros)
+      this.contenido = equipo
+      this.equipo = equipo
     }
     /*
     async getEquipos() {

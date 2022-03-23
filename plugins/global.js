@@ -175,6 +175,7 @@ export default ({ app, $config, $strapi, $md, $img, error }, inject) => {
     return html
   }
 
+
   inject('error', myError)
   inject('fetchUser', fetchUser)
   inject('ucFirst', ucFirst)
