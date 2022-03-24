@@ -239,6 +239,8 @@
     @apply pointer-events-none;
   }
 
+
+
 }
 
 @layer utilities {
@@ -588,3 +590,33 @@
     max-width: 1600px;
   }
 }
+
+
+
+.ais-InstantSearch ol.ais-Hits-list {
+  @apply list-none grid gap-4 grid-cols-fill-w-40 md:grid-cols-fill-w-48 text-center;
+  xgrid-template-columns: repeat(auto-fit, minmax( 20rem	 , 1fr))
+}
+.ais-InstantSearch  .ais-Hits-item>div {height: 100%}
+
+.ais-InstantSearch .ais-SearchBox-form {
+  @apply mb-4;
+}
+.ais-InstantSearch .ais-SearchBox-submit,
+.ais-InstantSearch .ais-SearchBox-reset {
+  @apply hidden;
+}
+
+.ais-RefinementList-list {
+  @apply list-none;
+}
+
+.ais-RefinementList-label {
+  @apply text-lg font-bold;
+}
+.ais-RefinementList-count {
+  @apply bg-gray-500 text-white text-xs px-2 py-0.5 inline-block rounded-full font-normal;
+}
+
+.ais-VoiceSearch svg { width: 24px; height: 24px}
+.ais-VoiceSearch {@apply flex space-x-4; }

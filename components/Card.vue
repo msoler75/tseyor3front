@@ -14,7 +14,7 @@
       <div class="px-6 py-4 flex flex-col h-full">
         <NLink :to="chref"
          @click.native.prevent="clicked=true">
-          <section class="font-bold text-xl" :class="noText?'':'mb-2'">{{ ctitle }}</section>
+          <section class="card-title font-bold text-xl" :class="noText?'':'mb-2'">{{ ctitle }}</section>
         </NLink>
         <v-clamp v-if="!noText && ctext" autoresize :max-lines="5"
         class="mt-auto text-gray-700 text-base">{{cteaser}}</v-clamp>

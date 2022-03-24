@@ -12,7 +12,7 @@
         <!-- <nuxt-img class="block xs:hidden max-w-8" :src="'/imagenes/portadas/' + data.imagen"/> -->
       </section>
       <section class="px-1 xs:px-6 text-center flex flex-col flex-grow" :class="landscape?'flex flex-col justify-center':''">
-        <NLink :to="chref" @click.native.prevent="clicked=true">
+        <NLink :to="chref" @click.native.prevent="clicked=true" class="card-title">
           <section class="font-bold text-xl" :class="noText?'':'mb-2'">{{ ctitle }}</section>
         </NLink>
         <v-clamp v-if="!noText && ctext" autoresize :max-lines="5"
