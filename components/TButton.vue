@@ -62,7 +62,9 @@ export default {
     getClass () {
       let color = 'bg-blue-500 hover:bg-blue-400 text-blue-500-contrast'
       switch (this.$colorMode.value === 'light' ? this.variant : this.variantDark) {
-        case 'danger' : color = 'bg-red-500 hover:bg-red-400  text-red-500-contrast'; break
+        case 'error':
+        case 'danger' : color = 'btn-error'; break
+        case 'success' : color = 'btn-success'; break
         case 'secondary' : color = 'bg-gray-500 hover:bg-gray-400  text-gray-500-contrast'; break
         case 'warning' : color = 'bg-yellow-600 hover:bg-yellow-500  text-yellow-600-contrast'; break
         case 'info' : color = 'bg-blue-400 hover:bg-blue-300  text-blue-400-contrast'; break

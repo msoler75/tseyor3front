@@ -180,31 +180,25 @@ export default {
         //await this.$auth.fetchUser()
         // this.$router.app.refresh()  
         this.actualizarMiembros()
-      } catch(e) {
+      } catch (e) {
 
       }
     },
     async salir() {
-      this.$confirm.open({
-        message: 'Are you sure you want to do this?',
-        resolver: (async (result) => {
+      this.$confirm({
+        message: '¿Quieres salir del equipo?',
+        yes: 'Sí',
+        no: 'Cancelar',
+        confirmed: async () => {
           try {
-            const res = await result;
-            /* eslint-disable no-console */
-            console.log(res);
-          } catch (error) {
-            console.warn(error);
-          }
-        }),
-      })
-      return;
-      try {
-      await this.$strapi.$http.$put('/equipos/' + this.equipo.id + '/leave')
-      // this.$router.app.refresh()  
-      this.actualizarMiembros()
-      } catch(e) {
+            await this.$strapi.$http.$put('/equipos/' + this.equipo.id + '/leave')
+            // this.$router.app.refresh()  
+            this.actualizarMiembros()
+          } catch (e) {
 
-      }
+          }
+        },
+      })
     },
     async actualizarMiembros() {
       // await this.$strapi.fetchUser() // actualizamos los datos del usuario actual y el equipo con sus miembros después de la operación
