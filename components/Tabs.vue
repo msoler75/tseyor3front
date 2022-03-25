@@ -56,7 +56,8 @@ export default {
   },
   watch: {
     currentTab(value) {
-      this.$emit("input", value);
+      this.$emit("input", value)
+      this.$emit("change", value)
     },
     value(value) {
       this.currentTab = value;
@@ -91,7 +92,7 @@ export default {
 <style scoped>
 
   .tab {
-    @apply flex justify-center items-center transition duration-200 text-center cursor-pointer p-1 sm:py-2 sm:px-4 border-b-4 font-semibold border-gray bg-gray-100 dark:bg-gray-dark-800 overflow-hidden shadow;
+    @apply flex justify-center items-center transition duration-200 text-center cursor-pointer p-1 sm:py-2 sm:px-4 border-b-4 font-semibold border-gray bg-white dark:bg-gray-dark-800 overflow-hidden shadow;
     min-width: fit-content;
   }
   .tab.auto-group {

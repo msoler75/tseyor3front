@@ -841,7 +841,7 @@ nav#submenu {
   background-image: linear-gradient(
     to bottom,
     #eff6ff 0%,
-    #d9eaff 65%,
+    #e8f0fa 65%,
     #c7e0ff 80.5%,
     #fff0ef 100%
   );

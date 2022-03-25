@@ -593,10 +593,7 @@
 
 
 
-.ais-InstantSearch ol.ais-Hits-list {
-  @apply list-none grid gap-4 grid-cols-fill-w-40 md:grid-cols-fill-w-48 text-center;
-  xgrid-template-columns: repeat(auto-fit, minmax( 20rem	 , 1fr))
-}
+
 .ais-InstantSearch  .ais-Hits-item>div {height: 100%}
 
 .ais-InstantSearch .ais-SearchBox-form {

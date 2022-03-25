@@ -1,11 +1,16 @@
 <template>
-  <SwipeX v-model="viendoCategoria" :values="categorias" breadcrumb="no" >
-
+  <SwipeX v-model="viendoCategoria" :values="categorias" breadcrumb="no">
     <h1 class="text-center">
       <icon icon="bolt" class="text-yellow-800 mr-3" />Novedades
     </h1>
 
-    <Tabs ref="tabs" v-model="viendoCategoria" :labels="categorias" class="mb-7 justify-center" />
+    <Tabs
+      ref="tabs"
+      v-model="viendoCategoria"
+      :labels="categorias"
+      class="mb-7 justify-center"
+      @change="cargarMas"
+    />
     <Grid class="grid-cols-fill-w-72 text-center">
       <template v-for="item of novedadesListado">
         <CardDynamic
@@ -18,11 +23,15 @@
     </Grid>
     <div
       v-show="hayMas && !cargando"
-      v-observe-visibility="cargarMas"
+      v-observe-visibility="{
+        callback: cargarMas,
+        intersection: {
+          threshold: 0,
+          rootMargin: '0px 0px -100px 0px'
+        }
+      }"
       class="mt-3 flex justify-center"
-    >
-      <!-- <button @click="cargarMas" class="btn">Cargar Más...</button> -->
-    </div>
+    ></div>
     <div v-show="cargando" class="mt-16 h-10 flex justify-center">
       <span class="text-xs">Cargando...</span>
     </div>
@@ -48,7 +57,7 @@ export default {
       cargando: false,
       mostrando: 8,
       viendoCategoria: "Todo",
-      categorias: ["Todo", "Noticias", "Comunicados", "Eventos", "Libros", "Otros"],
+      categorias: ["Todo", "Noticias", "Comunicados", "Eventos", "Libros", "Blogs" /*, "Otros" */],
       // SEO:
       title: 'Novedades',
       description: 'Noticias, Comunicados, Libros, Eventos, Artículos, Cursos... ',
@@ -70,7 +79,7 @@ export default {
 
       if (this.cargando) return
       this.cargando = true
-      const vc = this.viendoCategoria.toLowerCase()
+      const vc = this.viendoCategoria.toLowerCase().replace('blogs', 'entradas')
       let last = null
       // console.log('novedades', this.novedades)
       if (vc !== 'todo') {
@@ -93,12 +102,12 @@ export default {
   },
   computed: {
     novedadesFiltradas() {
-      const c = this.viendoCategoria.toLowerCase()
+      const c = this.viendoCategoria.toLowerCase().replace('blogs', 'entradas')
       if (!c || c === "todo") return this.novedades;
-      if (c === "otros")
+      /* if (c === "otros")
         return this.novedades.filter(
-          x => !["noticias", "comunicados", "eventos", "libros"].includes(x.tipo)
-        );
+          x => !["noticias", "comunicados", "eventos", "libros", "entradas"].includes(x.tipo)
+        ); */
       return this.novedades.filter(x => x.tipo === c);
     },
     novedadesListado() {
