@@ -2,18 +2,30 @@
   <div
     class="busqueda-global p-4 h-full sm:h-auto sm:xmax-h-[88vh] max-w-full w-full sm:w-[45em] overflow-hidden"
   >
-
     <ais-instant-search
       :search-client="searchClient"
       :search-function="searchFunction"
       index-name="contenidos"
       class="w-full h-full"
     >
-      <div class="search-bar flex justify-center items-center space-x-3 mb-4">
+      <!-- Barra superior de búsqueda -->
+      <div class="search-bar flex justify-center items-center mb-4 h-[51px]">
+        <!-- Ver/Ocultar panel de filtros -->
+        <TButton
+          class="sm:hidden h-full flex justify-center items-center w-12 flex-shrink-0 mr-3"
+          @click="showFilters = !showFilters"
+          :variant="showFilters ? 'gray' : 'primary'"
+          :disabled="!buscando"
+          v-show="buscando"
+        >
+          <icon :icon="showFilters?'chevron-left':'tasks'" class="dark:text-orange-800" />
+        </TButton>
+
+        <!-- Entrada de texto de búsqueda -->
         <SearchInput
           ref="searchInput"
           v-model="buscarPor"
-          class="w-full text-xl shrink-1"
+          class="w-full text-xl flex-shrink-1"
           placeholder="Buscar..."
           @keydown.esc="$emit('close')"
           tabindex="1"
@@ -21,10 +33,11 @@
 
         <ais-search-box ref="searchbox" placeholder="Buscar..." class="hidden" />
 
+        <!-- Botón de micrófono -->
         <ais-voice-search
           button-title="Buscar por voz"
           disabled-button-title="Búsqueda por voz deshabilitada"
-          class="text-xl"
+          class="text-xl h-full"
         >
           <template
             v-slot="{
@@ -34,12 +47,12 @@
               isBrowserSupported
             }"
           >
-            <div v-if="isBrowserSupported">
+            <div v-if="isBrowserSupported" class="h-full ml-3">
               <TButton
                 variant="success"
                 title="Buscar por voz"
                 @click="toggleListening"
-                class="cursor-pointer px-3"
+                class="cursor-pointer w-12 h-full flex justify-center items-center my-0 flex-shrink-0"
               >
                 <icon icon="microphone" />
               </TButton>
@@ -55,27 +68,18 @@
             </Modal>
           </template>
         </ais-voice-search>
-
-        <TButton
-          class="sm:hidden px-3 h-full"
-          @click="showFilters = !showFilters"
-          :variant="showFilters ? 'gray' : 'primary'"
-          :disabled="!buscando"
-        >
-          <icon icon="tasks" class="dark:text-orange-800" />
-        </TButton>
       </div>
 
+
+
+      <!-- Panel inferior de resultados + filtros -->
       <div
         v-show="buscando"
         class="w-full h-full flex sm:space-x-3 panel-busquedas"
         :class="showFilters ? 'show-filters' : ''"
       >
         <!-- filtros -->
-        <div
-          class="panel-left space-y-2 select-none h-full overflow-y-auto"
-          style="flex-shrink: 0"
-        >
+        <div class="panel-left space-y-2 select-none h-full overflow-y-auto flex-shrink-0">
           <h3 class="text-xs uppercase tracking-wide">Sección</h3>
           <ais-refinement-list attribute="coleccion" class="text-sm" ref="refCollection" />
           <h3 class="text-xs uppercase tracking-wide">Tipo</h3>
@@ -91,7 +95,11 @@
           <ais-current-refinements class="sm:hidden mb-1">
             <template v-slot="{ items, createURL }">
               <ul class="list-none flex flex-wrap items-center">
-                <li v-for="item in items" :key="item.attribute" class="flex items-center space-x-3 mr-4 mb-2">
+                <li
+                  v-for="item in items"
+                  :key="item.attribute"
+                  class="flex items-center space-x-3 mr-4 mb-2"
+                >
                   <span
                     class="uppercase tracking-wide font-bold text-xs"
                   >{{ item.label.replace('coleccion', 'sección') }}:</span>
@@ -190,8 +198,7 @@ export default {
         // es una búsqueda con filtros?
         that.filteringCollection = helper.state.disjunctiveFacetsRefinements.coleccion.length
         // es una búsqueda por teclado o por voz?
-        if(!that.entradaTeclado) 
-        {
+        if (!that.entradaTeclado) {
           // es por voz, actualizamos los input
           that.buscarPor = helper.state.query
           that.buscando = helper.state.query
@@ -205,7 +212,7 @@ export default {
         // reseatmos un timeout estabilizador
         setTimeoutReset()
       },
-      entradaTeclado:true,
+      entradaTeclado: true,
       buscarPor: '',
       buscando: '',
       buscarEspera: null,
