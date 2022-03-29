@@ -226,9 +226,7 @@
       :class="pageConfig.contained ? 'container xs:px-1 sm:px-3 md:px-6 mx-auto' : ''"
     >
       <div class="w-full">
-        <portal-target name="contenido">
-          pepito
-        </portal-target>
+        <portal-target name="portal0"></portal-target>
         <!-- Place your content here -->
         <nuxt
           id="__content"

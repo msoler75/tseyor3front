@@ -2,6 +2,7 @@
   <div
     class="busqueda-global p-4 h-full sm:h-auto sm:xmax-h-[88vh] max-w-full w-full sm:w-[45em] overflow-hidden"
   >
+
     <ais-instant-search
       :search-client="searchClient"
       :search-function="searchFunction"
@@ -44,11 +45,11 @@
               </TButton>
             </div>
 
-            <Modal value="true" v-show="isListening">
+            <Modal value="true" v-show="isListening" class="modal-voice">
               <div
-                class="p-5 text-xl surface w-[20em] min-h-40 max-w-full flex flex-col justify-center items-center space-y-6"
+                class="p-5 text-3xl surface w-[20em] min-h-40 max-w-full flex flex-col justify-center items-center space-y-6"
               >
-                <icon icon="microphone" class="text-4xl text-red" />
+                <icon icon="microphone" class="text-red" />
                 <p>{{ voiceListeningState.transcript }}</p>
               </div>
             </Modal>
@@ -154,13 +155,15 @@
 
 
 <script>
+// contorlaremos el nº de llamadas simultáneas de red
 var queryCalls = 0
+// con este timeout estabilizamos un desfase y reseteamos a 0 cada cierto tiempo de inactividad
 let timerReset = null
 const setTimeoutReset = () => {
   clearTimeout(timerReset)
   timerReset = setTimeout(() => {
     queryCalls = 0
-    console.log('QUERYCALLS=0')
+    // console.log('QUERYCALLS=0')
   }, 4000)
 }
 import { instantMeiliSearch } from '@meilisearch/instant-meilisearch';
@@ -183,16 +186,26 @@ export default {
         }
       ),
       searchFunction(helper) {
-        queryCalls++
-        console.log('SEARCH QUERY', this, queryCalls, helper, helper.state.query, helper.state)
-        // if (helper.state.query) {
-        helper.search();
-        // }
-        setTimeoutReset()
-        // that.filteringCollection = null
         const that = this.client.myVueComponent
+        // es una búsqueda con filtros?
         that.filteringCollection = helper.state.disjunctiveFacetsRefinements.coleccion.length
+        // es una búsqueda por teclado o por voz?
+        if(!that.entradaTeclado) 
+        {
+          // es por voz, actualizamos los input
+          that.buscarPor = helper.state.query
+          that.buscando = helper.state.query
+        }
+        that.entradaTeclado = null
+        // controlamos el nº de llamadas a red
+        queryCalls++
+        // console.log('SEARCH QUERY', this, queryCalls, helper, helper.state.query)
+        // ejecutamos la query
+        helper.search();
+        // reseatmos un timeout estabilizador
+        setTimeoutReset()
       },
+      entradaTeclado:true,
       buscarPor: '',
       buscando: '',
       buscarEspera: null,
@@ -222,7 +235,7 @@ export default {
       const that = this
       // usamos debounce 
       this.timerDebounce = setTimeout(() => {
-        console.log('REF IS', that.$refs.searchbox)
+        // console.log('REF IS', that.$refs.searchbox)
         if (queryCalls >= 1)
           that.buscarEspera = true
         else {
@@ -230,15 +243,12 @@ export default {
           that.setQuery()
         }
       }, newValue ? Math.min(500, Math.max(100, 700 - newValue.length * 100)) : 0)
-    },
-    isSearchStalled(newValue) {
-      console.log('isSearchStalled', newValue)
     }
   },
   methods: {
     receivedItems(items) {
       queryCalls -= 0.5
-      console.log('received ITEMS', queryCalls, items)
+      // console.log('received ITEMS', queryCalls, items)
       if (queryCalls < 1 && this.buscarEspera) {
         this.buscarEspera = false
         this.setQuery()
@@ -246,7 +256,8 @@ export default {
       return items
     },
     setQuery() {
-      console.log("SET QUERY", this.buscarPor)
+      // console.log("SET QUERY", this.buscarPor)
+      this.entradaTeclado = true
       const inp = this.$refs.searchbox.$el.querySelector("input[type='search']")
       inp.value = this.buscarPor
       this.buscando = this.buscarPor
@@ -256,7 +267,7 @@ export default {
       setTimeoutReset()
     },
     setCollection(collection) {
-      console.log('setCollection', collection)
+      // console.log('setCollection', collection)
       const inp = this.$refs.refCollection.$el.querySelector(`input[type=checkbox][value=${collection}]`)
       if (inp)
         inp.click()
@@ -278,10 +289,10 @@ export default {
 }
 
 .panel-left {
-  @apply w-0 transition-all duration-300;
+  @apply w-32 -ml-32 transition-all duration-300 opacity-0;
 }
 .show-filters .panel-left {
-  @apply w-32;
+  @apply ml-0 opacity-100;
 }
 
 .busqueda-global >>> .ais-Hits-list {
@@ -292,7 +303,10 @@ export default {
     width: 100%;
   }
   .panel-left {
-    @apply w-40;
+    @apply ml-0 w-40 opacity-100;
   }
+}
+.modal-voice >>> .card {
+  @apply h-full sm:h-40;
 }
 </style>

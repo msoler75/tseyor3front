@@ -1,5 +1,5 @@
 <template>
-    <div tabIndex="0" ref="backdrop" v-if="localValue" class="ease-in-out transition duration-300 fixed top-0 left-0 z-40 w-full h-screen flex justify-center items-center backdrop-brightness-50 backdrop-filter backdrop-blur-md"
+    <div tabIndex="0" ref="backdrop" v-if="localValue" class="!m-0 ease-in-out transition duration-300 fixed top-0 left-0 z-40 w-full h-screen flex justify-center items-center backdrop-brightness-50 backdrop-filter backdrop-blur-md"
     @mousedown.self="localValue=false"
     @keydown.esc="localValue=false">
         <Card class="dark:outline-white max-h-screen">
