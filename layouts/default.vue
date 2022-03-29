@@ -239,7 +239,7 @@
       </div>
     </div>
     <Sidebar v-show="!onlyContent" v-model="showSidebar" :items="rutasMenu" class="xl:hidden" />
-    <Modal v-model="showBuscarPanel" class="xs:p-3 sm:p-7 modal-busqueda">
+    <Modal v-model="showBuscarPanel" class="sm:p-7 modal-busqueda">
       <Buscar @close="showBuscarPanel=false"/>
     </Modal>
     <Footer v-show="!onlyContent" class="mt-auto" :class="pageConfig.contained ? 'pt-9' : ''" />
@@ -847,7 +847,7 @@ html.dark:not(.page-background) #__layout {
   @apply items-start;
 }
 
-.modal-busqueda >>> .card {
-  @apply h-full;
+.modal-busqueda .card {
+  @apply h-full w-full;
 }
 </style>

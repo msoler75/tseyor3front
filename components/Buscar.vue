@@ -1,6 +1,6 @@
 <template>
   <div
-    class="busqueda-global sm:p-4 max-h-[95vh] sm:max-h-[88vh] w-full sm:w-[45em] overflow-hidden"
+    class="busqueda-global p-4 h-full sm:h-auto sm:max-h-[88vh] max-w-full w-full sm:w-[45em] overflow-hidden"
   >
     <ais-instant-search
       :search-client="searchClient"
@@ -8,11 +8,11 @@
       index-name="contenidos"
       class="w-full h-full"
     >
-      <div class="flex justify-center items-center space-x-3 w-full mb-4">
+      <div class="search-bar flex justify-center items-center space-x-3 mb-4">
         <SearchInput
           ref="searchInput"
           v-model="buscarPor"
-          class="w-full text-xl"
+          class="w-full text-xl shrink-1"
           placeholder="Buscar..."
           @keydown.esc="$emit('close')"
           tabindex="1"
@@ -97,8 +97,10 @@ var queryCalls = 0
 let timerReset = null
 const setTimeoutReset = () => {
   clearTimeout(timerReset)
-  timerReset = setTimeout(() => {queryCalls = 0
-  console.log('QUERYCALLS=0')}, 4000)
+  timerReset = setTimeout(() => {
+    queryCalls = 0
+    console.log('QUERYCALLS=0')
+  }, 4000)
 }
 import { instantMeiliSearch } from '@meilisearch/instant-meilisearch';
 // import { AisInstantSearch, AisSearchBox, AisVoiceSearch, AisHits } from 'vue-instantsearch';
@@ -146,7 +148,7 @@ export default {
   watch: {
     buscarPor(newValue) {
       // ignoramos las pulsaciones de espacio
-      if(newValue.charAt(newValue.length-1)==' ') return
+      if (newValue.charAt(newValue.length - 1) == ' ') return
       // estamos usando un componente propio, del cual copiamos el valor y lo establecemos en el search box de instant search
       clearTimeout(this.timer)
       const that = this
@@ -190,9 +192,18 @@ export default {
 </script>
 
 <style scoped>
+.busqueda-global .panel-resultados {
+  height: calc(100vh - 60px);
+}
+.busqueda-global .search-bar {
+  width: calc(100% - 40px);
+}
 @screen sm {
   .busqueda-global .panel-resultados {
-    height: calc(88vh - 150px);
+    height: calc(88vh - 70px);
+  }
+  .busqueda-global .search-bar {
+    width: 100%;
   }
 }
 </style>
