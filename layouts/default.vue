@@ -1,6 +1,7 @@
 <template>
   <div
-    class="relative surface-0 w-full h-full flex flex-col font-sans"
+  id="__main-container"
+    class="surface-0 w-full font-sans"
     :class="(travelling ? 'travelling ' : 'in-page') + (pageConfig.background ? '' : 'no-background')"
   >
     <!-- Navigation starts -->
@@ -240,6 +241,7 @@
     <Modal v-model="showBuscarPanel" class="sm:p-7 modal-busqueda">
       <Buscar @close="showBuscarPanel=false"/>
     </Modal>
+    <div class="spacer"/>
     <Footer v-show="!onlyContent" class="mt-auto" :class="pageConfig.contained ? 'pt-9' : ''" />
     <Confirm/>
   </div>
@@ -749,16 +751,77 @@ nav#submenu {
 } */
 </style>
 
+
+
+
 <style>
+/* BASIC TEMPLATE LAYOUT */
+
+
+
+html {
+        background: blue;
+        height: 100%;
+    }
+
+    body {
+        height: 100%;
+        margin: 0;
+        background: cyan;
+
+    }
+
+    #__nuxt {
+        height: 100%;
+        background-image: linear-gradient(to bottom,
+                #eff6ff 0%,
+                #e883072a 100%,
+            );
+    }
+
+    #__layout {
+        height: 100%;
+        background: rgb(137, 10, 187);
+    }
+
+    #__main-container {
+        min-height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: stretch;
+        background: red;
+    }
+
+    #__content {
+        height: auto;
+        background: greenyellow
+    }
+
+    .spacer {
+        flex: 1;
+        background: pink;
+    }
+
+    .footer {
+        height: 150px;
+        background-color: green;
+    }
+
+    .container {
+        background: rgba(255, 0, 0, .33)
+    }
+
+
+
 #__layout {
   max-width: 100vw;
   /*display: flex;
   flex-direction: column;*/
-  position: relative;
-  z-index: 0;
+  /*position: relative;
+  z-index: 0;*/
 
   /* fondo */
-  @apply bg-center bg-no-repeat bg-cover bg-fixed;
+  /* @apply bg-center bg-no-repeat bg-cover bg-fixed; */
   /* background-image: linear-gradient(to top, #dff0ff 0%, white 100%); */
   /* background-image: radial-gradient( circle farthest-corner at 50% 20%,  #e0f0ff 0%, #d9eaff 65%, #c7e0ff 80.5%, #fff0ef 100%); */
   background-image: linear-gradient(
@@ -790,9 +853,7 @@ html.dark:not(.page-background) #__layout {
   opacity: 0;
   pointer-events: none;
 }
-</style>
 
-<style>
 /* Transitions using the page hook */
 .page-enter-active,
 .page-leave-active {
@@ -813,6 +874,8 @@ html.dark:not(.page-background) #__layout {
   content: "";
   z-index: -1;
 }
+
+
 
 @keyframes flash {
   0% {

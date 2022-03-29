@@ -15,12 +15,6 @@
     font-size: 14px;
   }
 
-  html,body {
-    height: 100%;
-  }
-
-  #__layout, #__nuxt {height: 100%}
-
   @screen xs {
     html {
       font-size: 16px;
