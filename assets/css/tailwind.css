@@ -19,6 +19,7 @@
     height: 100%;
   }
 
+  #__layout, #__nuxt {height: 100%}
 
   @screen xs {
     html {

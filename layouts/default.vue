@@ -1,6 +1,6 @@
 <template>
   <div
-    class="relative surface-0 w-full h-full flex flex-col flex-grow font-sans"
+    class="relative surface-0 w-full h-full flex flex-col font-sans"
     :class="(travelling ? 'travelling ' : 'in-page') + (pageConfig.background ? '' : 'no-background')"
   >
     <!-- Navigation starts -->
@@ -193,7 +193,7 @@
     <!-- Page title starts -->
     <!-- Navigation ends -->
     <div
-      class="mt-5 mb-3 lg:mt-6 lg:mb-5 container xs:px-1 sm:px-3 md:px-6 mx-auto flex flex-col lg:flex-row items-start lg:items-center justify-between pb-4 border-gray-300 relative"
+      class="mt-5 mb-3 lg:mt-6 lg:mb-5 container xs:px-1 sm:px-3 md:px-6 mx-auto lg:flex-row items-start lg:items-center justify-between pb-4 border-gray-300 relative"
       @click="clickOff"
     >
       <Breadcrumb
@@ -754,9 +754,8 @@ nav#submenu {
 <style>
 #__layout {
   max-width: 100vw;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
+  /*display: flex;
+  flex-direction: column;*/
   position: relative;
   z-index: 0;
 
