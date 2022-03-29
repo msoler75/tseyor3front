@@ -49,7 +49,8 @@ export default {
     title: { type: String, required: false, default: '' },
     alt: { type: String, required: false, default: '' },
     variant: { type: String, required: false, default: 'primary' },
-    variantDark: { type: String, required: false, default: 'warning' }
+    variantDark: { type: String, required: false, default: 'warning' },
+    disabled: {type: Boolean, required: false, default: false}
   },
   computed: {
     /*
@@ -65,10 +66,11 @@ export default {
         case 'error':
         case 'danger' : color = 'btn-error'; break
         case 'success' : color = 'btn-success'; break
-        case 'secondary' : color = 'bg-gray-500 hover:bg-gray-400  text-gray-500-contrast'; break
-        case 'warning' : color = 'bg-yellow-600 hover:bg-yellow-500  text-yellow-600-contrast'; break
+        case 'warning' : color = 'btn-warning'; break
+        case 'gray' : color = 'btn-gray'; break
         case 'info' : color = 'bg-blue-400 hover:bg-blue-300  text-blue-400-contrast'; break
       }
+      if(this.disabled) color = 'btn-gray opacity-60 pointer-events-none'
       const size = ''
       return 'btn transition duration-200 p-2 my-2 cursor-pointer rounded-md focus:outline-none focus:shadow-outline ' + color + ' ' + size
     }

@@ -847,6 +847,6 @@ html.dark:not(.page-background) #__layout {
 }
 
 .modal-busqueda .card {
-  @apply h-full w-full;
+  @apply h-full w-full sm:w-auto max-w-full;
 }
 </style>

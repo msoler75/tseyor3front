@@ -1,6 +1,6 @@
 <template>
   <div
-    class="busqueda-global p-4 h-full sm:h-auto sm:max-h-[88vh] max-w-full w-full sm:w-[45em] overflow-hidden"
+    class="busqueda-global p-4 h-full sm:h-auto sm:xmax-h-[88vh] max-w-full w-full sm:w-[45em] overflow-hidden"
   >
     <ais-instant-search
       :search-client="searchClient"
@@ -18,12 +18,12 @@
           tabindex="1"
         />
 
-        <ais-search-box ref="searchbox" placeholder="Buscar..." class="xhidden" />
+        <ais-search-box ref="searchbox" placeholder="Buscar..." class="hidden" />
 
         <ais-voice-search
           button-title="Buscar por voz"
           disabled-button-title="Búsqueda por voz deshabilitada"
-          class="mt-1 text-xl"
+          class="text-xl"
         >
           <template
             v-slot="{
@@ -33,15 +33,16 @@
               isBrowserSupported
             }"
           >
-            <TButton
-              variant="secondary"
-              v-if="isBrowserSupported"
-              title="Buscar por voz"
-              @click="toggleListening"
-              class="cursor-pointer px-3 h-full"
-            >
-              <icon icon="microphone" class="dark:text-orange-800" />
-            </TButton>
+            <div v-if="isBrowserSupported">
+              <TButton
+                variant="success"
+                title="Buscar por voz"
+                @click="toggleListening"
+                class="cursor-pointer px-3"
+              >
+                <icon icon="microphone" />
+              </TButton>
+            </div>
 
             <Modal value="true" v-show="isListening">
               <div
@@ -53,39 +54,99 @@
             </Modal>
           </template>
         </ais-voice-search>
+
+        <TButton
+          class="sm:hidden px-3 h-full"
+          @click="showFilters = !showFilters"
+          :variant="showFilters ? 'gray' : 'primary'"
+          :disabled="!buscando"
+        >
+          <icon icon="tasks" class="dark:text-orange-800" />
+        </TButton>
       </div>
 
-      <div v-show="buscando" class="w-full h-full sm:flex sm:space-x-3 panel-resultados">
-        <div class="sm:w-40 space-y-2 select-none h-full overflow-y-auto" style="flex-shrink: 0">
+      <div
+        v-show="buscando"
+        class="w-full h-full flex sm:space-x-3 panel-busquedas"
+        :class="showFilters ? 'show-filters' : ''"
+      >
+        <!-- filtros -->
+        <div
+          class="panel-left space-y-2 select-none h-full overflow-y-auto"
+          style="flex-shrink: 0"
+        >
           <h3 class="text-xs uppercase tracking-wide">Sección</h3>
-          <ais-refinement-list attribute="coleccion" class="text-sm" />
+          <ais-refinement-list attribute="coleccion" class="text-sm" ref="refCollection" />
           <h3 class="text-xs uppercase tracking-wide">Tipo</h3>
           <ais-refinement-list attribute="tipo" class="text-sm" />
           <h3 class="text-xs uppercase tracking-wide">Formato</h3>
           <ais-refinement-list attribute="formato" class="text-sm" />
         </div>
 
-        <ais-hits
-          :transform-items="receivedItems"
-          class="max-w-full w-full h-full overflow-y-auto surface rounded-lg"
-        >
-          <div
-            slot="item"
-            slot-scope="{ item }"
-            class="bg-gray-200 text-gray-800 py-1 px-3 rounded max-w-full whitespace-nowrap mb-2"
+        <!-- panel derecho con resultados -->
+        <div class="panel-right w-full flex flex-col overflow-auto max-h-full h-full">
+          <!-- filtro activo (vista mobil) -->
+
+          <ais-current-refinements class="sm:hidden mb-1">
+            <template v-slot="{ items, createURL }">
+              <ul class="list-none flex flex-wrap items-center">
+                <li v-for="item in items" :key="item.attribute" class="flex items-center space-x-3 mr-4 mb-2">
+                  <span
+                    class="uppercase tracking-wide font-bold text-xs"
+                  >{{ item.label.replace('coleccion', 'sección') }}:</span>
+                  <ul class="list-none flex items-center space-x-2">
+                    <li
+                      v-for="refinement in item.refinements"
+                      :key="[
+                        refinement.attribute,
+                        refinement.type,
+                        refinement.value,
+                        refinement.operator
+                      ].join(':')"
+                    >
+                      <a
+                        class="flex space-x-2 items-center filtro-etiqueta"
+                        :href="createURL(refinement)"
+                        @click.prevent="item.refine(refinement)"
+                      >
+                        <span>{{ refinement.label }}</span>
+                        <icon icon="times" />
+                      </a>
+                    </li>
+                  </ul>
+                </li>
+              </ul>
+            </template>
+          </ais-current-refinements>
+
+          <!-- resultados -->
+          <ais-hits
+            :transform-items="receivedItems"
+            class="max-w-full w-full h-full overflow-y-auto surface rounded-lg"
           >
-            <div class="flex space-x-2">
-              <a v-if="item.coleccion == 'media'" :href="item.extra">{{ item.titulo }}</a>
-              <NLink
-                v-else
-                @click.native="$emit('close')"
-                :to="`/${item.coleccion}/${item.slugref || item.idref}`"
-                class="font-bold inline-center overflow-hidden overflow-ellipsis max-w-full w-full inline-block"
-              >{{ item.titulo }}</NLink>
-              <span class="bg-blue-500 text-gray-50 text-xs rounded py-1 px-2">{{ item.coleccion }}</span>
+            <div
+              slot="item"
+              slot-scope="{ item }"
+              class="bg-gray-200 text-gray-800 py-1 px-3 rounded max-w-full whitespace-nowrap"
+            >
+              <div class="flex space-x-2">
+                <a v-if="item.coleccion == 'media'" :href="item.extra">{{ item.titulo }}</a>
+                <NLink
+                  v-else
+                  @click.native="$emit('close')"
+                  :to="`/${item.coleccion}/${item.slugref || item.idref}`"
+                  class="font-bold inline-center overflow-hidden overflow-ellipsis max-w-full w-full inline-block"
+                >{{ item.titulo }}</NLink>
+                <span
+                  :title="`Filtrar por ${item.coleccion}`"
+                  v-show="!filteringCollection"
+                  class="filtro-etiqueta cursor-pointer"
+                  @click="setCollection(item.coleccion)"
+                >{{ item.coleccion }}</span>
+              </div>
             </div>
-          </div>
-        </ais-hits>
+          </ais-hits>
+        </div>
       </div>
     </ais-instant-search>
   </div>
@@ -123,16 +184,21 @@ export default {
       ),
       searchFunction(helper) {
         queryCalls++
-        console.log('SEARCH QUERY', queryCalls, helper.state.query, helper.state)
+        console.log('SEARCH QUERY', this, queryCalls, helper, helper.state.query, helper.state)
         // if (helper.state.query) {
         helper.search();
         // }
         setTimeoutReset()
+        // that.filteringCollection = null
+        const that = this.client.myVueComponent
+        that.filteringCollection = helper.state.disjunctiveFacetsRefinements.coleccion.length
       },
       buscarPor: '',
       buscando: '',
       buscarEspera: null,
       timerDebounce: null,
+      filteringCollection: null,
+      showFilters: false,
       // SEO:
       title: 'Buscar en la web',
       description: 'Búsqueda global',
@@ -144,6 +210,8 @@ export default {
     if (process.client)
       // this.$nextTick(() => this.$refs.searchInput.$el.querySelector("input[type='search']").focus())
       this.$refs.searchInput.$el.querySelector("input[type='search']").focus()
+
+    this.searchClient.myVueComponent = this
   },
   watch: {
     buscarPor(newValue) {
@@ -186,24 +254,45 @@ export default {
       inp.dispatchEvent(new Event('input', { bubbles: true }));
       //timeamos el reset
       setTimeoutReset()
+    },
+    setCollection(collection) {
+      console.log('setCollection', collection)
+      const inp = this.$refs.refCollection.$el.querySelector(`input[type=checkbox][value=${collection}]`)
+      if (inp)
+        inp.click()
     }
+
   }
 }
 </script>
 
 <style scoped>
-.busqueda-global .panel-resultados {
-  height: calc(100vh - 60px);
+.filtro-etiqueta {
+  @apply bg-blue-500 hover:bg-blue-300 transition duration-200 text-gray-50 text-xs rounded py-1 px-2;
+}
+.busqueda-global .panel-busquedas {
+  height: calc(100% - 80px);
 }
 .busqueda-global .search-bar {
   width: calc(100% - 40px);
 }
+
+.panel-left {
+  @apply w-0 transition-all duration-300;
+}
+.show-filters .panel-left {
+  @apply w-32;
+}
+
+.busqueda-global >>> .ais-Hits-list {
+  @apply space-y-2;
+}
 @screen sm {
-  .busqueda-global .panel-resultados {
-    height: calc(88vh - 70px);
-  }
   .busqueda-global .search-bar {
     width: 100%;
+  }
+  .panel-left {
+    @apply w-40;
   }
 }
 </style>
