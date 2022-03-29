@@ -171,42 +171,7 @@
             </div>
           </div>
         </template>
-        <!-- submenu de búsqueda -->
-        <div v-show="currentTab == '/buscar'" class="w-full flex p-4 justify-center">
-          <div>
-            <div class="relative text-gray-600 focus-within:text-gray-400">
-              <SearchInput
-                class="w-full max-w-xl mx-auto"
-                v-model="buscarPor"
-                :placeholder="fraseBuscar"
-                autocomplete="off"
-              />
-            </div>
-
-            <div class="w-full mt-12 grid grid-flow-row grid-cols-3 auto-rows-min gap-2">
-              <div
-                v-for="item of searchitems"
-                :key="item.value"
-                class="flex items-center transition duration-200  pl-5 rounded"
-              >
-                <input
-                  :id="'s-' + item.value"
-                  type="radio"
-                  name="category"
-                  :checked="item.value == 'general'"
-                  :value="item.value"
-                  class="mr-5"
-                  style="font-size: 10rem; transform: scale(2)"
-                  @click="fraseBuscar = item.placeholder"
-                />
-                <label :for="'s-' + item.value">
-                  <p class="strong text-lg">{{ item.name }}</p>
-                  <p class="description text-gray">{{ item.description }}</p>
-                </label>
-              </div>
-            </div>
-          </div>
-        </div>
+  
       </nav>
     </nav>
 
@@ -274,6 +239,9 @@
       </div>
     </div>
     <Sidebar v-show="!onlyContent" v-model="showSidebar" :items="rutasMenu" class="xl:hidden" />
+    <Modal v-model="showBuscarPanel" class="xs:p-3 sm:p-7 modal-busqueda">
+      <Buscar @close="showBuscarPanel=false"/>
+    </Modal>
     <Footer v-show="!onlyContent" class="mt-auto" :class="pageConfig.contained ? 'pt-9' : ''" />
     <Confirm/>
   </div>
@@ -318,6 +286,7 @@ export default {
   },
   data() {
     return {
+      showBuscarPanel: false,
       softPath: '',
       mostrarMenuUsuario: false,
       userMenuItems: [
@@ -357,7 +326,6 @@ export default {
         },
         {
           left: true,
-          // name:  'Novedades',
           href: "/publicaciones",
           sidebarClass: 'order-3',
           items: [
@@ -473,58 +441,11 @@ export default {
           href: "/buscar",
           sidebarName: 'Buscar',
           sidebarClass: 'order-1',
-          items: [], // para que se active el submenu
+          callback: this.onBuscar
         },
       ],
       fraseBuscar: "Buscar...",
       // selección de tipo de búsqueda:
-      searchitems: [
-        {
-          // icon: 'fas fa-search',
-          // name:  'General',
-          description: 'Buscar en toda la web',
-          href: "/buscar",
-          value: "general",
-          placeholder: "Buscar...",
-        },
-        {
-          // icon: 'fas fa-file-alt',
-          // name:  'Comunicados',
-          description:
-            "Buscar un comunicado por número, título o palabras clave",
-          value: "comunicados",
-          placeholder: "Buscar por número o palabras clave...",
-        },
-        {
-          // icon: 'fas fa-book',
-          // name:  'Libros',
-          description: 'Buscar libros por número, título o palabras clave',
-          value: "libros",
-          placeholder: "Buscar por título o palabras clave...",
-        },
-        {
-          // icon: 'fas fa-comments',
-          // name:  'Reuniones',
-          description: 'Buscar en actas, órdenes del día, anexos',
-          value: "reuniones",
-          placeholder:
-            "Buscar por fecha (ejemplo: 21-enero) o palabras clave...",
-        },
-        {
-          // icon: 'fas fa-music',
-          // name:  'Audios',
-          description: 'Buscar audios de meditaciones, talleres, cuentos',
-          value: "audios",
-          placeholder: "Buscar por título o descripción del audio...",
-        },
-        {
-          // icon: 'fas fa-sitemap',
-          // name:  'Web',
-          description: 'Buscar en páginas o secciones del sitio web',
-          value: "web",
-          placeholder: "Buscar por título o palabras clave...",
-        },
-      ],
       xmlns: "http://www.w3.org/2000/svg",
       xlink: "http://www.w3.org/1999/xlink",
     };
@@ -654,7 +575,7 @@ export default {
       return this.$ucFirst(this.$route.name);
     },
     menuHover(item) {
-      if (item && item.href !== '/novedades')
+      if (item && item.items)
         this.menuClick(item)
       else {
         this.currentTab = "";
@@ -664,7 +585,9 @@ export default {
       this.mostrarMenuUsuario = false
       this.currentTab = "";
       if (!item) return
-      if (!item.items) {
+      if(item.callback)
+        item.callback()
+      else if (!item.items) {
         this.$router.push(item.href);
       } else {
         this.currentTab = this.currentTab === item.href ? "" : item.href;
@@ -708,6 +631,9 @@ export default {
       this.currentTab = ""
       this.mostrarMenuUsuario = false
     },
+    onBuscar() {
+      this.showBuscarPanel = true
+    }
   },
 };
 </script>
@@ -915,5 +841,13 @@ html.dark:not(.page-background) #__layout {
   @apply text-gray-50 dark:text-gray-900;
   /* color: red; */
   fill: currentColor;
+}
+
+.modal-busqueda {
+  @apply items-start;
+}
+
+.modal-busqueda >>> .card {
+  @apply h-full;
 }
 </style>

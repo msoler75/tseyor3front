@@ -127,10 +127,9 @@ export default {
     }
     try {
       const id = route.params.id;
-      const usuarios = await $strapi.find('users', { id })
-      if (!usuarios.length)
+      const [usuario] = await $strapi.find('users', { id })
+      if (!usuario)
         return $error(404, 'Usuario no encontrado')
-      const usuario = usuarios[0]
       const resultado = await $strapi.graphql({
         query: query_historial
           .replace('%start', 0)

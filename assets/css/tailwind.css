@@ -15,6 +15,10 @@
     font-size: 14px;
   }
 
+  html,body {
+    height: 100%;
+  }
+
 
   @screen xs {
     html {
@@ -168,7 +172,7 @@
 
   input[type='text'],
   input[type='number'],
-  input[type='search']:not(.search-input),
+  input[type='search'],
   input[type='password'],
   input[type='email'],
   input[type='tel'],
@@ -183,13 +187,17 @@
 
   input[type='text'],
   input[type='number'],
-  input[type='search']:not(.search-input),
+  input[type='search'],
   input[type='password'],
   input[type='email'],
   input[type='tel'],
   input[type='url'],
   textarea {
     @apply p-3 bg-white w-full;
+  }
+
+  input[type='search'].search-input {
+    @apply pl-11;
   }
 
   input[type='date'],
@@ -609,11 +617,22 @@
 }
 
 .ais-RefinementList-label {
-  @apply text-lg font-bold;
+  @apply font-bold text-blue-300;
 }
 .ais-RefinementList-count {
-  @apply bg-gray-500 text-white text-xs px-2 py-0.5 inline-block rounded-full font-normal;
+  @apply bg-gray-100 text-gray-500 text-xs px-1 inline-block rounded-full font-normal;
 }
 
 .ais-VoiceSearch svg { width: 24px; height: 24px}
 .ais-VoiceSearch {@apply flex space-x-4; }
+
+.ais-Hits-list {
+  @apply list-none;
+}
+
+.ais-RefinementList-labelText {
+  @apply text-sm;
+}
+.ais-RefinementList-count {
+  @apply text-xs;
+}

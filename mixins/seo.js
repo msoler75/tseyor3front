@@ -1,4 +1,5 @@
 // https://huleos.com/buenas-practicas-de-seo-para-optimizar-tu-web-con-nuxt/
+// https://masteringnuxt.com/blog/setting-up-nuxt-for-social-cards-and-meta-tags-to-improve-seo
 
 export default {
   head () {

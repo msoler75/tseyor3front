@@ -1,0 +1,19 @@
+Web Tseyor versión 3.0
+
+Tabla de contenidos:
+- Nuevo diseño
+    La web ahora sirve a dos propósitos claramente diferenciados:
+    - como punto de información, tanto para tseyorianos como para nuevos visitantes
+    - como herramienta de trabajo para tseyorianos
+
+- Menú superior
+- El menú se divide en dos partes:
+    menú izquierdo: el acceso a la información de los recursos de tseyor y sus herramientas
+    menú derecho: información sobre tseyor y forma de contacto
+
+
+Herramientas
+
+
+Nuevo diseño
+    

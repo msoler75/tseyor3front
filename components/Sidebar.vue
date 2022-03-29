@@ -67,7 +67,7 @@
                 >
                   <span class="relative items-center block py-1">
                     <NLink
-                      @click="clickElem(leaf)"
+                      @click.stop="clickElem(leaf)"
                       :to="leaf.href"
                       class="inline-block py-1 px-4"
                     >
@@ -118,16 +118,31 @@ export default {
         this.showSidebar = false
     },
     clickSideBar(item) {
+      console.log('clickSideBar', item)
       this.currentTab = item.href;
-      if (!item.items && item.href) {
+      if(item.callback)
+      {
+        item.callback()
+        this.showSidebar = false;
+        // Event.stopPropagation()
+      }
+      else if (!item.items && item.href) {
         this.$router.push(item.href);
         this.showSidebar = false;
       }
     },
     clickElem(item) {
+      console.warn('sidebar.clickElem', item)
       // this.currentTab = ""
       // this.$router.push(item.href);
       this.showSidebar = false;
+      if(item.callback)
+      {
+        item.callback()
+        // Event.stopPropagation()
+      }
+      else 
+      this.$router.push(item.href)
     }
   }
 };
