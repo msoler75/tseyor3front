@@ -72,7 +72,7 @@ export default {
       }
       if(this.disabled) color = 'btn-gray opacity-60 pointer-events-none'
       const size = ''
-      return 'btn transition duration-200 p-2 my-2 cursor-pointer rounded-md focus:outline-none focus:shadow-outline ' + color + ' ' + size
+      return 'btn transition duration-200 p-2 cursor-pointer rounded-md focus:outline-none focus:shadow-outline ' + color + ' ' + size
     }
     /* myclasstext () {
       return 'text-' + this.variant

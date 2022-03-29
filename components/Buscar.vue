@@ -289,7 +289,7 @@ export default {
   @apply bg-blue-500 hover:bg-blue-300 transition duration-200 text-gray-50 text-xs rounded py-1 px-2;
 }
 .busqueda-global .panel-busquedas {
-  height: calc(100% - 80px);
+  height: calc(100% - 65px);
 }
 .busqueda-global .search-bar {
   width: calc(100% - 40px);
