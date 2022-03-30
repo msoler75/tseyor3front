@@ -21,7 +21,8 @@
 
         <div class="w-full flex mb-5 items-center justify-start text-xs sm:text-sm">
           <span>
-            <icon icon="far fa-calendar-alt" />17-may
+            <icon icon="far fa-calendar-alt"  class="mr-1"/>
+            <span>{{$dayjs(contenido.publishedAt).format("DD-MMM-YYYY")}}</span>
           </span>
           <div class="ml-8 hidden sm:block">
             <span class="capitalize">

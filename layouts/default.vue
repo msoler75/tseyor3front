@@ -12,6 +12,8 @@
       :class="navHidden ? '-translate-y-20' : ''"
       :submenu="currentTab !== ''"
     >
+      
+      <icon v-show="currentTab" icon="times" class="text-3xl absolute right-4 top-16 mt-2 z-50 p-1" @click="currentTab=''"/>
       <div
         class="flex justify-between items-center xs:grid transition duration-200 uppercase w-full px-6 mx-auto border-gray-200 dark:border-gray-900"
         style="grid-template-columns: 1fr 110px 1fr"

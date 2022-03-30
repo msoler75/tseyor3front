@@ -1,7 +1,7 @@
 <template>
-  <section>
+  <section class="social-buttons">
     <!-- buttons -->
-    <Grid class="w-full px-3 sm:px-5 grid-cols-1" :class="likebutton?'sm:grid-cols-3':'sm:grid-cols-2'">
+    <Grid class="font-thin whitespace-nowrap w-full px-3 sm:px-5 grid-cols-1" :class="likebutton?'sm:grid-cols-3':'sm:grid-cols-2'">
       <template v-if="likebutton">
         <div
           v-if="likeit"
@@ -85,3 +85,9 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+.social-buttons {
+  font-family: "Arial Narrow", Arial, Tahoma, serif;
+}
+</style>

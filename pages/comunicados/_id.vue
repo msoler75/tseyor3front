@@ -21,9 +21,10 @@
         <h1 class>{{ ctitle }}</h1>
 
         <div class="w-full flex mb-5 items-center justify-start text-xs sm:text-sm">
-          <span>
-            <icon icon="far fa-calendar-alt" />17-may
-          </span>
+          <div>
+            <icon icon="far fa-calendar-alt"  class="mr-1"/>
+            <span>{{$dayjs(contenido.fechaComunicado).format("DD-MMM-YYYY")}}</span>
+          </div>
 
           <div class="4xl:hidden ml-auto">
             <SocialIcons :content="contenido" :horizontal="true" @share="viendoCompartir = true" />

@@ -19,12 +19,12 @@
         stencil-component="circle-stencil"
         textCrop="Recortar y Guardar"
         @change="subirImagen"
-        :value="usuario.imagen.url"
+        :value="cimage"
         :disabled="subiendoImagen"
       />
 
       <blockquote v-if="usuario.frase" class="mt-2">
-        <p>{{ usuario.frase }}</p>
+        <p>{{ nuevaFrase || usuario.frase }}</p>
       </blockquote>
 
       <button
@@ -215,10 +215,11 @@ export default {
     },
     async guardarFrase() {
       this.subiendoFrase = true
+      this.usuario.frase = this.nuevaFrase
       this.$strapi.update('users', this.usuario.id, { frase: this.nuevaFrase }).then(response => {
         this.subiendoFrase = false
         this.cambiandoFrase = false
-        this.fetchUser()
+        // this.fetchUser()
       })
     },
     async subirImagen(payload) {
