@@ -398,10 +398,11 @@ export default () => ({
       description: "Vídeos de ayuda para aprender a usar paltalk",
       parent: "/ayuda"
     },
-
     "/buscar": {
       name: "Buscar",
-      icon: "fas fa-search"
-    }
+      icon: "fas fa-search",
+      description: "Busca cualquier contenido en la web",
+      parent: "/ayuda"
+    },
   },
 });

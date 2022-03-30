@@ -82,15 +82,23 @@ export default {
           description: 'Consulta tu agenda de actividades y eventos',
           url: '/agenda'
         },
+        /*
         {
           icon: 'fas fa-headphones',
           color: 'text-light-blue',
           name: 'Audios para meditar',
           description: 'Escucha nuestros audios con meditaciones guiadas',
           url: '/audios'
+        }, */
+        {
+          icon: 'svg eyeClosed',
+          color: 'text-light-blue',
+          name: 'Meditar',
+          description: 'Practica las meditaciones de Tseyor',
+          url: '/meditar'
         },
         {
-          icon: 'fas fa-broadcast-tower',
+          icon: 'fas fa-headphones',
           color: 'text-pink-800 dark:text-pink-50',
           name: 'Radio Tseyor',
           description: 'Escucha la Radio Tseyor',

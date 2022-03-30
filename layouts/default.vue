@@ -1,6 +1,6 @@
 <template>
   <div
-  id="__main-container"
+    id="__main-container"
     class="surface-0 w-full font-sans"
     :class="(travelling ? 'travelling ' : 'in-page') + (pageConfig.background ? '' : 'no-background')"
   >
@@ -12,10 +12,14 @@
       :class="navHidden ? '-translate-y-20' : ''"
       :submenu="currentTab !== ''"
     >
-      
-      <icon v-show="currentTab" icon="times" class="text-3xl absolute right-4 top-16 mt-2 z-50 p-1" @click="currentTab=''"/>
+      <icon
+        v-show="currentTab"
+        icon="times"
+        class="text-3xl absolute right-4 top-16 mt-2 z-50 p-1"
+        @click="currentTab = ''"
+      />
       <div
-        class="flex justify-between items-center xs:grid transition duration-200 uppercase w-full px-6 mx-auto border-gray-200 dark:border-gray-900"
+        class="flex justify-between items-center xs:grid transition duration-200 w-full px-6 mx-auto border-gray-200 dark:border-gray-900"
         style="grid-template-columns: 1fr 110px 1fr"
       >
         <div class="flex items-center h-full justify-between">
@@ -106,7 +110,7 @@
       <!-- SUBMENU -->
       <nav
         id="submenu"
-        class="absolute w-full hidden xl:block shadow text-gray-800 bg-gray-50 dark:bg-gray-900 dark:text-gray-200 text-sm overflow-y-auto lg:overflow-visible"
+        class="absolute w-full hidden xl:block shadow text-gray-800 bg-gray-50 dark:bg-black dark:text-gray-100 text-sm overflow-y-auto lg:overflow-visible"
         style="max-height: calc(100vh - 72px); top:76px"
         @mouseleave="clickOff"
       >
@@ -121,64 +125,41 @@
             class="flex p-4 justify-center"
           >
             <div class="mx-auto grid grid-flow-row max-w-6xl grid-cols-3 auto-rows-min gap-2">
-              <template v-for="elem of $store.getters.buildRoutes(item.items)">
+              <template v-for="elem of $store.getters.buildRoutes(getAllDescendants(item.items))">
                 <NLink
                   :key="elem.href"
                   :to="elem.href"
-                  class="menu-subitem transition duration-200 place-items-center flex w-full h-full p-2 "
+                  class="group place-items-start flex w-full h-full p-2"
                   :class="elem.class"
                   @click.native="clickOff"
                 >
                   <div
-                    :class="
-                      'icon w-auto text-4xl flex justify-center transition-all duration-200 opacity-60 ' +
-                      elem.bgIcon
-                    "
-                    style="min-width: 6rem"
+                    class="icon w-11 flex-shrink-0 text-xl flex items-start justify-center transition duration-200 opacity-60 group-hover:opacity-100 text-blue-600 dark:text-blue-300"
+                    :class="elem.bgIcon"
                   >
                     <icon :icon="elem.icon" :class="elem.iconClass" />
                   </div>
-                  <div class="title-right transition-all duration-200">
-                    <div class="title transition duration-200 text-md">{{ elem.name }}</div>
-                    <p class="description">{{ elem.description }}</p>
+                  <div>
+                    <div
+                      class="transition duration-200 text-md text-gray-800 dark:text-gray-100 group-hover:text-blue-600 dark:group-hover:text-blue-300 font-medium mb-2"
+                    >{{ elem.name }}</div>
+                    <p
+                      class="transition duration-200 text-gray group-hover:text-gray-800 dark:group-hover:text-gray-100"
+                    >{{ elem.description }}</p>
                   </div>
                 </NLink>
-                <template v-if="elem.items">
-                  <template v-for="leaf of $store.getters.buildRoutes(elem.items)">
-                    <NLink
-                      :key="leaf.href"
-                      :to="leaf.href"
-                      :class="
-                        'menu-subitem transition duration-200 place-items-center flex w-full h-full p-2  ' +
-                        leaf.bg
-                      "
-                      @click.native="clickOff"
-                    >
-                      <div
-                        :class="
-                          'icon w-auto text-4xl flex justify-center transition-all duration-200 opacity-60 ' +
-                          leaf.bgIcon
-                        "
-                        style="min-width: 6rem"
-                      >
-                        <icon :icon="leaf.icon" />
-                      </div>
-                      <div class="title-right transition-all duration-200">
-                        <div class="title transition duration-200 text-xl">{{ leaf.name }}</div>
-                        <p class="description">{{ leaf.description }}</p>
-                      </div>
-                    </NLink>
-                  </template>
-                </template>
               </template>
             </div>
           </div>
         </template>
-  
       </nav>
     </nav>
 
-    <Card v-if="isAuthenticated" v-show="menuUsuario" class="py-3 px-5 w-52 fixed right-0 top-[48px] sm:top-[51px] md:top-[68px] lg:top-[72px] xl:top-[76px] z-40">
+    <Card
+      v-if="isAuthenticated"
+      v-show="menuUsuario"
+      class="py-3 px-5 w-52 fixed right-0 top-[48px] sm:top-[51px] md:top-[68px] lg:top-[72px] xl:top-[76px] z-40"
+    >
       <ul class="list-none">
         <li v-for="item of userMenuItems" :key="item.href">
           <NLink v-if="item.href" :to="item.href" class="block py-1">
@@ -241,11 +222,11 @@
     </div>
     <Sidebar v-show="!onlyContent" v-model="showSidebar" :items="rutasMenu" class="xl:hidden" />
     <Modal v-model="showBuscarPanel" class="sm:p-7 modal-busqueda">
-      <Buscar @close="showBuscarPanel=false"/>
+      <Buscar @close="showBuscarPanel = false" />
     </Modal>
-    <div class="spacer"/>
+    <div class="spacer" />
     <Footer v-show="!onlyContent" class="mt-auto" :class="pageConfig.contained ? 'pt-9' : ''" />
-    <Confirm/>
+    <Confirm />
   </div>
 </template>
 
@@ -294,7 +275,7 @@ export default {
       userMenuItems: [
         {
           icon: "fas fa-user",
-          name: "Ver Perfil",
+          name: "Mi Perfil",
           href: null
         },
         {
@@ -358,13 +339,16 @@ export default {
             "/biblioteca/comunicados",
             {
               href: "/videos",
-              bgIcon: "red-on-hover",
+              bgIcon: "!text-red-400",
             },
             "/cuadernos",
             "/radio",
             "/muul",
             "/redes",
-            "/archivos",
+            {
+              href: "/archivos",
+              bgIcon: "!text-orange-300"
+            },
             "/recopilaciones",
             "/reuniones",
             "/recursos/listados",
@@ -435,7 +419,7 @@ export default {
             "/pulsar",
             "/paltalk",
             "/donar",
-
+            "/buscar"
           ],
         },
         {
@@ -515,7 +499,7 @@ export default {
         const w = 380 // ancho de apertura
         const h1 = 30  // alto de apertura
         const h2 = 20  // alto hacia abajo
-        this.softPath = `M ${x0 - w} ${y+h2} L ${x0} ${y - h1} L ${x1} ${y - h1} L ${x1 + w} ${y+h2} Z`
+        this.softPath = `M ${x0 - w} ${y + h2} L ${x0} ${y - h1} L ${x1} ${y - h1} L ${x1 + w} ${y + h2} Z`
       }
     },
     actualizarUrlPerfil() {
@@ -576,6 +560,13 @@ export default {
       console.log("layout.getTitle returning", this.$ucFirst(this.$route.name));
       return this.$ucFirst(this.$route.name);
     },
+    getAllDescendants(items) {
+      if (!items) return []
+      let r = [...items]
+      for (const item of items)
+        r = r.concat(this.getAllDescendants(item.items))
+      return r
+    },
     menuHover(item) {
       if (item && item.items)
         this.menuClick(item)
@@ -587,7 +578,7 @@ export default {
       this.mostrarMenuUsuario = false
       this.currentTab = "";
       if (!item) return
-      if(item.callback)
+      if (item.callback)
         item.callback()
       else if (!item.items) {
         this.$router.push(item.href);
@@ -608,20 +599,11 @@ export default {
           return true;
         }
         if (item.items) {
-          for (const elem of this.$store.getters.buildRoutes(item.items)) {
+          for (const elem of this.$store.getters.buildRoutes(this.getAllDescendants(item.items))) {
             if (elem.noCurrent) continue
             if (path.startsWith(elem.href)) {
               // console.log('path startsWith elem.href=', elem.href)
               return true;
-            }
-            if (elem.items) {
-              for (const leaf of this.$store.getters.buildRoutes(elem.items)) {
-                if (leaf.noCurrent) continue
-                // console.log('path startsWith leaf.href=', leaf.href)
-                if (path.startsWith(leaf.href)) {
-                  return true;
-                }
-              }
             }
           }
         }
@@ -651,41 +633,6 @@ nav#main-menu li:not([current="true"]).menuitem {
   border-color: transparent;
   position: relative;
 }
-
-/*
-nav#main-menu li:before,
-nav#main-menu li:after {
-  content: "";
-  position: absolute;
-  top: 8px;
-  display: block;
-  @apply bg-gray-50 transition-all duration-200;
-  width: 200px;
-  height: 100%;
-  margin-bottom: -8px;
-  z-index: 1;
-  pointer-events: none;
-}
-
-nav#main-menu li:before {
-  left: -199px;
-  clip-path: path("M0,70 C111,70 190,70 200,70 L200,70 Z");
-}
-nav#main-menu li:after {
-  right: -199px;
-  clip-path: path("M200,70 C89,70 10,70 0,70 L0,70 Z");
-}
-
-nav#main-menu[submenu="true"] li[active="true"]:before {
-  clip-path: path("M0,70 C111,68 190,60 200,25 L200,70 Z");
-  pointer-events: auto;
-}
-nav#main-menu[submenu="true"] li[active="true"]:after {
-  clip-path: path("M200,70 C89,68 10,60 0,25 L0,70 Z");
-  pointer-events: auto;
-}
-*/
-
 nav#main-menu:not([submenu="true"]) {
   border-bottom: 1px solid #aaa;
 }
@@ -701,56 +648,15 @@ nav#main-menu[submenu="true"] li[active="true"].menuitem {
 .dark nav#main-menu[submenu="true"] li[active="true"].menuitem,
 .dark nav#main-menu[submenu="true"] li[active="true"]:before,
 .dark nav#main-menu[submenu="true"] li[active="true"]:after {
-  @apply bg-gray-900;
-}
-/* .menu-subitem:hover {
-  box-shadow: 0 0 10px 5px white;
-}*/
-.menu-subitem:hover .title-right {
-  transform: translateX(0.2em);
-}
-.menu-subitem .icon {
-  @apply text-blue-gray dark:text-blue-300;
-}
-.menu-subitem:hover .icon {
-  @apply text-blue-500 dark:text-blue-600;
-  transform: translateY(0em) scale(1.17);
-}
-.menu-subitem:hover .title {
-  @apply text-blue-900;
-}
-.menu-subitem .description {
-  @apply text-sm transition duration-200 text-gray;
-}
-.menu-subitem:hover .description {
-  @apply text-gray-dark-600;
+  @apply bg-black;
 }
 .dark nav#main-menu:not([submenu="true"]) {
   border-bottom: 1px solid #111;
 }
-/*.dark .menu-subitem:hover {
-  box-shadow: 0 0 10px 5px black;
-} */
-.dark .menu-subitem:hover .icon {
-  @apply text-blue-600;
-}
-.dark .menu-subitem:hover .title {
-  @apply text-blue-300;
-}
-.dark .menu-subitem:hover .description {
-  @apply text-gray-dark-300;
-}
-.menu-subitem:hover .red-on-hover {
-  @apply text-red-900 opacity-100;
-}
+
 nav#submenu {
   box-shadow: 0 0.35em 0.3em rgba(0, 0, 0, 0.3);
 }
-/* nav#submenu >>> svg {
-  width: 4rem;
-  fill: currentColor;
-  stroke: currentColor;
-} */
 </style>
 
 
@@ -759,61 +665,53 @@ nav#submenu {
 <style>
 /* BASIC TEMPLATE LAYOUT */
 
-
-
 html {
-        background: blue;
-        height: 100%;
-    }
+  background: blue;
+  height: 100%;
+}
 
-    body {
-        height: 100%;
-        margin: 0;
-        background: cyan;
+body {
+  height: 100%;
+  margin: 0;
+  background: cyan;
+}
 
-    }
+#__nuxt {
+  height: 100%;
+  background-image: linear-gradient(to bottom, #eff6ff 0%, #e883072a 100%);
+}
 
-    #__nuxt {
-        height: 100%;
-        background-image: linear-gradient(to bottom,
-                #eff6ff 0%,
-                #e883072a 100%,
-            );
-    }
+#__layout {
+  height: 100%;
+  background: rgb(137, 10, 187);
+}
 
-    #__layout {
-        height: 100%;
-        background: rgb(137, 10, 187);
-    }
+#__main-container {
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: stretch;
+  background: red;
+}
 
-    #__main-container {
-        min-height: 100%;
-        display: flex;
-        flex-direction: column;
-        justify-content: stretch;
-        background: red;
-    }
+#__content {
+  height: auto;
+  background: greenyellow;
+}
 
-    #__content {
-        height: auto;
-        background: greenyellow
-    }
+.spacer {
+  flex: 1;
+  background: pink;
+}
 
-    .spacer {
-        flex: 1;
-        background: pink;
-    }
+.footer {
+  height: 150px;
+  background-color: green;
+}
 
-    .footer {
-        height: 150px;
-        background-color: green;
-    }
-
-    .container {
-        background: rgba(255, 0, 0, .33)
-    }
-
-
+.container {
+  background: rgba(255, 0, 0, 0.33);
+}
 
 #__layout {
   max-width: 100vw;
@@ -877,8 +775,6 @@ html.dark:not(.page-background) #__layout {
   z-index: -1;
 }
 
-
-
 @keyframes flash {
   0% {
     transform: none;
@@ -900,7 +796,7 @@ html.dark:not(.page-background) #__layout {
 }
 #soft-active {
   pointer-events: all;
-  @apply text-gray-50 dark:text-gray-900;
+  @apply text-gray-50 dark:text-black;
   /* color: red; */
   fill: currentColor;
 }
