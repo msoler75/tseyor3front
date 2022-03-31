@@ -15,12 +15,12 @@
 
     <aside
       ref="aside"
-      class="md:text-xl select-none transform surface-0 bg-white dark:bg-gray-dark-800 shadow top-0 left-0 sm:flex w-[24rem] sm:w-[28rem] md:w-[36rem] lg:w-[64rem] max-w-full fixed h-full overflow-y-auto ease-in-out transition-all duration-300 z-50 py-4"
+      class="md:text-xl select-none transform surface-0 bg-white dark:bg-gray-dark-800 shadow top-0 left-0 max-w-full fixed h-full overflow-y-auto ease-in-out transition-all duration-300 z-50 py-4"
       :class="showSidebar ? 'translate-x-0' : '-translate-x-full'"
     >
       <div class="flex flex-col w-full m-0 p-0 sm:w-40 md:w-52">
         <div
-          v-for="item of items"
+          v-for="item of menuitems"
           v-show="!item.hideInSidebar"
           :key="item.href"
           class="transition duration-200 hover:text-black hover:bg-orange-200 dark:hover:text-white dark:hover:bg-orange-900 text-gray-dark-700 dark:text-gray-300 cursor-pointer items-center tracking-normal"
@@ -86,6 +86,7 @@
 </template>
 
 <script>
+import { mapGetters } from "vuex";
 export default {
   props: {
     value: {},
@@ -97,6 +98,15 @@ export default {
       currentTab: "",
       touchstartX: 0,
     };
+  },
+  computed: {
+  ...mapGetters(["isAuthenticated", "loggedInUser"]),
+  menuitems() {
+    const r = [...this.items]
+    if(!this.isAuthenticated)
+      r.unshift(this.$store.getters.getRouteData("/ingresar"))
+    return r
+  }
   },
   watch: {
     showSidebar(value) {
@@ -149,6 +159,10 @@ export default {
 </script>
 
 <style scoped>
+aside {
+  @apply w-[24rem] sm:w-[28rem] md:w-[36rem] lg:w-[64rem];
+}
+
 aside >>> .svg-container,
 aside >>> svg,
 aside i {

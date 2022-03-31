@@ -402,7 +402,11 @@ export default () => ({
       name: "Buscar",
       icon: "fas fa-search",
       description: "Busca cualquier contenido en la web",
-      parent: "/ayuda"
     },
+    "/ingresar": {
+      name: "Ingresar",
+      icon: "fas fa-sign-in-alt",
+      description: "Iniciar sesión con tu cuenta",
+    }
   },
 });

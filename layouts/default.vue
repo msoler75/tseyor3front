@@ -4,157 +4,10 @@
     class="surface-0 w-full font-sans"
     :class="(travelling ? 'travelling ' : 'in-page') + (pageConfig.background ? '' : 'no-background')"
   >
-    <!-- Navigation starts -->
-    <nav
-      id="main-menu"
-      v-show="!onlyContent"
-      class="flex transition duration-200 font-serif z-30 w-full mx-auto bg-white dark:bg-gray-900 text-gray-blue-800 dark:text-gray-200 dark:hover:text-gray-50 shadow select-none sticky top-0"
-      :class="navHidden ? '-translate-y-20' : ''"
-      :submenu="currentTab !== ''"
-    >
-      <icon
-        v-show="currentTab"
-        icon="times"
-        class="text-3xl absolute right-4 top-16 mt-2 z-50 p-1"
-        @click="currentTab = ''"
-      />
-      <div
-        class="flex justify-between items-center xs:grid transition duration-200 w-full px-6 mx-auto border-gray-200 dark:border-gray-900"
-        style="grid-template-columns: 1fr 110px 1fr"
-      >
-        <div class="flex items-center h-full justify-between">
-          <div class="xl:hidden flex items-center text-2xl" @click="showSideMenu">
-            <icon icon="bars" class="cursor-pointer" />
-          </div>
-          <ul class="h-full hidden xl:flex ml-auto">
-            <li
-              v-for="item of menuIzquierdo"
-              :key="item.href"
-              :current="inPath(item.href)"
-              :active="currentTab === item.href"
-              class="transition duration-200 menuitem hover:text-black dark:hover:text-white px-3 cursor-pointer h-full flex items-center text-sm tracking-normal border-b-4 border-blue-500"
-              @click="menuClick(item)"
-              @mouseover="menuHover(item)"
-              :href="item.href"
-            >
-              <icon v-if="!item.name" :icon="item.icon" :class="item.iconClass" />
-              {{ item.name }}
-            </li>
-          </ul>
-        </div>
-        <div
-          class="z-10 hidden xs:block w-10 h-10 md:w-14 md:h-14 transition duration-300 hover:transform-gpu translate-y-1 scale-125 hover:scale-150 cursor-pointer mx-auto items-center p-0.5 bg-white border-white rounded-full mt-2 shadow"
-          @click="menuClick({ href: '/' })"
-          @mouseover="menuHover(null)"
-          v-html="tseyorLogo"
-        ></div>
-        <div class="flex items-center h-full">
-          <ul class="h-full hidden xl:flex">
-            <li
-              v-for="item of menuDerecho"
-              v-show="!item.left"
-              :key="item.href"
-              :current="inPath(item.href)"
-              :active="currentTab === item.href"
-              class="transition duration-200 menuitem hover:text-black dark:hover:text-white px-3 cursor-pointer h-full flex items-center text-sm tracking-normal border-b-4 border-blue-500"
-              @click="menuClick(item)"
-              @mouseover="menuHover(item)"
-              :href="item.href"
-            >
-              <icon v-if="!item.name" :icon="item.icon" />
-              {{ item.name }}
-            </li>
-          </ul>
-          <div class="flex items-center ml-auto whitespace-nowrap">
-            <div
-              :title="
-                $colorMode.value === 'light'
-                  ? 'Cambiar a modo oscuro'
-                  : 'Cambiar a modo claro'
-              "
-              @click="changeColorMode"
-              class="w-8 md:w-12 p-0 md:p-1 transition duration-200 flex justify-center items-center rounded-full mr-3 xs:mr-6 hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer"
-            >
-              <div alt="theme-icon" v-html="iconMode" class="w-full" />
-            </div>
-            <template v-if="isAuthenticated">
-              <Avatar
-                :data="loggedInUser"
-                class="text-3xl w-8 h-8 cursor-pointer"
-                :to="false"
-                @click.native="mostrarMenuUsuario = !mostrarMenuUsuario"
-              />
-            </template>
-            <template v-else>
-              <div class="hidden md:flex items-center text-sm font-sans">
-                <PLink
-                  compact
-                  to="/login"
-                  class="btn bg-light-blue dark:bg-blue-dark py-0.5 md:py-1 xl:py-2"
-                  icon="fas fa-sign-in-alt"
-                >
-                  <span class="hidden md:inline">Miembros</span>
-                </PLink>
-              </div>
-              <NLink
-                compact
-                to="/login"
-                class="md:hidden btn bg-light-blue dark:bg-blue-dark w-8 h-8 flex justify-center items-center p-2 rounded-full"
-              >
-                <icon icon="sign-in-alt" />
-              </NLink>
-            </template>
-          </div>
-        </div>
-      </div>
-      <!-- SUBMENU -->
-      <nav
-        id="submenu"
-        class="absolute w-full hidden xl:block shadow text-gray-800 bg-gray-50 dark:bg-black dark:text-gray-100 text-sm overflow-y-auto lg:overflow-visible"
-        style="max-height: calc(100vh - 72px); top:76px"
-        @mouseleave="clickOff"
-      >
-        <svg id="soft-svg">
-          <path id="soft-active" :d="softPath" />
-        </svg>
-        <template v-for="item of rutasMenu">
-          <div
-            v-show="currentTab == item.href"
-            v-if="item.items"
-            :key="item.href"
-            class="flex p-4 justify-center"
-          >
-            <div class="mx-auto grid grid-flow-row max-w-6xl grid-cols-3 auto-rows-min gap-2">
-              <template v-for="elem of $store.getters.buildRoutes(getAllDescendants(item.items))">
-                <NLink
-                  :key="elem.href"
-                  :to="elem.href"
-                  class="group place-items-start flex w-full h-full p-2"
-                  :class="elem.class"
-                  @click.native="clickOff"
-                >
-                  <div
-                    class="icon w-11 flex-shrink-0 text-xl flex items-start justify-center transition duration-200 opacity-60 group-hover:opacity-100 text-blue-600 dark:text-blue-300"
-                    :class="elem.bgIcon"
-                  >
-                    <icon :icon="elem.icon" :class="elem.iconClass" />
-                  </div>
-                  <div>
-                    <div
-                      class="transition duration-200 text-md text-gray-800 dark:text-gray-100 group-hover:text-blue-600 dark:group-hover:text-blue-300 font-medium mb-2"
-                    >{{ elem.name }}</div>
-                    <p
-                      class="transition duration-200 text-gray group-hover:text-gray-800 dark:group-hover:text-gray-100"
-                    >{{ elem.description }}</p>
-                  </div>
-                </NLink>
-              </template>
-            </div>
-          </div>
-        </template>
-      </nav>
-    </nav>
+    <!-- Navigation starts-->
+    <NavTop v-model="currentTab" :rutasMenu="rutasMenu" ref="nav" @showSideMenu="showSideMenu"/>
 
+    <!-- User Menu -->
     <Card
       v-if="isAuthenticated"
       v-show="menuUsuario"
@@ -232,9 +85,6 @@
 
 <script>
 import { mapGetters } from "vuex";
-import tseyorLogo from "~/assets/svg/sello-tseyor.svg?raw";
-import iconMoon from "~/assets/svg/icons/moon.svg?raw";
-import iconSun from "~/assets/svg/icons/sun.svg?raw";
 // import seo from '@/mixins/seo.js'
 export default {
   // mixins: [seo],
@@ -256,9 +106,6 @@ export default {
     mostrarMenuUsuario(newValue) {
       this.$store.commit('setMenuUsuario', newValue)
     },
-    currentTab(newValue) {
-      this.updateSoftPath()
-    },
   },
   mounted() {
     this.actualizarUrlPerfil()
@@ -266,11 +113,11 @@ export default {
     this.$store.commit('travelling', false)
     this.$store.dispatch('beforeEnter', this.$refs['page'].$el)
     this.$store.commit('updateBreadcrumb')
+    window.addEventListener('keydown', this._keyListener);
   },
   data() {
     return {
       showBuscarPanel: false,
-      softPath: '',
       mostrarMenuUsuario: false,
       userMenuItems: [
         {
@@ -292,7 +139,6 @@ export default {
       buscarPor: '',
       showSidebar: false,
       currentTab: "",
-      tseyorLogo,
       menuitems: [
         /* { 
           left: true, 
@@ -303,6 +149,7 @@ export default {
           left: true,
           href: '/novedades',
           name: '',
+          navClass: 'ray',
           iconClass: '!text-yellow-800',
           sidebarName: 'Novedades',
           sidebarClass: 'order-2',
@@ -331,6 +178,7 @@ export default {
         {
           left: true,
           href: "/recursos",
+          navClass: 'hidden md:flex',
           sidebarClass: 'order-3',
           items: [
             "/biblioteca",
@@ -339,7 +187,7 @@ export default {
             "/biblioteca/comunicados",
             {
               href: "/videos",
-              bgIcon: "!text-red-400",
+              iconClass: "text-red-400",
             },
             "/cuadernos",
             "/radio",
@@ -347,7 +195,7 @@ export default {
             "/redes",
             {
               href: "/archivos",
-              bgIcon: "!text-orange-300"
+              iconClass: "text-orange-300"
             },
             "/recopilaciones",
             "/reuniones",
@@ -358,30 +206,11 @@ export default {
           ],
         },
         {
-          name: 'Quienes Somos',
-          href: "/presentacion",
-          sidebarClass: 'order-3',
-          items: [
-            "/presentacion/visita",
-            "/guias-estelares",
-            "/preguntas_frecuentes",
-            "/mapa",
-            {
-              href: "/cursos",
-              class: "text-yellow-900 shadow ring-2 ring-yellow-500 bg-yellow-200 hover:text-yellow-900 hover:bg-yellow-100 dark:text-orange-800 dark:hover:text-yellow-900",
-              iconClass: "text-red"
-            },
-            {
-              href: "/contactar",
-              noCurrent: true,
-            }
-          ]
-        },
-        {
           left: true,
           // name:  'Participa',
           // description: 'Ahora puedes participar en las actividades del grupo',
           href: "/actividades",
+          navClass: 'hidden lg:flex',
           sidebarClass: 'order-3',
           items: [
             "/agenda",
@@ -399,16 +228,30 @@ export default {
           ],
         },
         {
-          href: "/organizacion",
+          name: 'Quienes Somos',
+          href: "/presentacion",
+          navClass: 'hidden lg:flex flex-shrink-0',
           sidebarClass: 'order-3',
           items: [
+            "/presentacion/visita",
+            "/guias-estelares",
+            "/preguntas_frecuentes",
+            "/mapa",
+            {
+              href: "/cursos",
+              class: "text-yellow-900 shadow ring-2 ring-yellow-500 bg-yellow-200 hover:text-yellow-900 hover:bg-yellow-100 dark:text-orange-800 dark:hover:text-yellow-900",
+            },
+            {
+              href: "/contactar",
+              noCurrent: true,
+            },
             "/ong",
             "/asociacion",
             "/universidad",
             "/comision",
             "/agora",
             "/organizacion",
-          ],
+          ]
         },
         {
           name: 'Ayuda',
@@ -419,16 +262,18 @@ export default {
             "/pulsar",
             "/paltalk",
             "/donar",
-            "/buscar"
           ],
         },
         {
-          name: '',
+          name: 'Buscar',
           href: "/buscar",
+          showIcon: true,
+          navClass: 'ml-2 hover:text-black dark:hover:text-white',
+          htmlAfter: "<div class='hidden 2xl:flex space-x-1 items-stretch'><div class='border border-gray flex justify-center items-center w-5 h-5 rounded-sm' style='font-size: 8px'>CTRL</div><div class='border border-gray mr-1 text-base flex items-center justify-center w-5 h-5 rounded-sm'>K</div></div>",
           sidebarName: 'Buscar',
           sidebarClass: 'order-1',
           callback: this.onBuscar
-        },
+        }
       ],
       fraseBuscar: "Buscar...",
       // selección de tipo de búsqueda:
@@ -457,23 +302,14 @@ export default {
   },
   computed: {
     ...mapGetters(["isAuthenticated", "loggedInUser", "travelling", "pageConfig", "menuUsuario", "navHidden", "onlyContent"]),
-    iconMode() {
-      return this.$colorMode.value === "light" ? iconSun : iconMoon;
+    rutasMenu() {
+      return this.$store.getters.buildRoutes(this.menuitems)
     },
     title() {
       return (this.$ucFirst(this.$route.name) + " | TSEYOR").replace(
         /^Index.*/,
         "TSEYOR"
       );
-    },
-    rutasMenu() {
-      return this.$store.getters.buildRoutes(this.menuitems)
-    },
-    menuIzquierdo() {
-      return this.rutasMenu.filter(x => x.left)
-    },
-    menuDerecho() {
-      return this.rutasMenu.filter(x => !x.left)
     }
   },
   created() {
@@ -485,22 +321,15 @@ export default {
       window.removeEventListener('scroll', this.handleScroll);
   },
   methods: {
-    updateSoftPath() {
-      this.softPath = ''
-      const cur = this.currentTab
-      if (!process.client || !cur)
-        return
-      const tab = document.querySelector(`#main-menu ul li[href='${cur}']`)
-      if (tab) {
-        const r = tab.getBoundingClientRect()
-        const y = r.top + r.height - 38
-        const x0 = r.left
-        const x1 = r.left + r.width
-        const w = 380 // ancho de apertura
-        const h1 = 30  // alto de apertura
-        const h2 = 20  // alto hacia abajo
-        this.softPath = `M ${x0 - w} ${y + h2} L ${x0} ${y - h1} L ${x1} ${y - h1} L ${x1 + w} ${y + h2} Z`
+    _keyListener(e) {
+      console.warn(e)
+      if (e.key === 'k' && e.ctrlKey || e.metaKey) {
+        e.preventDefault(); //prevent the default action (save page in this case)
+        this.onBuscar()
       }
+    },
+    clickOff(){
+      this.$refs.nav.closeAllMenus()
     },
     actualizarUrlPerfil() {
       let url
@@ -540,16 +369,7 @@ export default {
       );
       this.$router.push("/")
     },
-    clickOff() {
-      this.menuClick(null)
-      // this.currentTab = ''
-      // this.mostrarMenuUsuario = false
-    },
-    changeColorMode() {
-      this.$colorMode.preference =
-        this.$colorMode.value === "light" ? "dark" : "light";
-    },
-    getIcon(path) {
+    /* getIcon(path) {
       return this.$store.getters.getIcon(path);
     },
     getTitle() {
@@ -559,57 +379,7 @@ export default {
       if (title) return title;
       console.log("layout.getTitle returning", this.$ucFirst(this.$route.name));
       return this.$ucFirst(this.$route.name);
-    },
-    getAllDescendants(items) {
-      if (!items) return []
-      let r = [...items]
-      for (const item of items)
-        r = r.concat(this.getAllDescendants(item.items))
-      return r
-    },
-    menuHover(item) {
-      if (item && item.items)
-        this.menuClick(item)
-      else {
-        this.currentTab = "";
-      }
-    },
-    menuClick(item) {
-      this.mostrarMenuUsuario = false
-      this.currentTab = "";
-      if (!item) return
-      if (item.callback)
-        item.callback()
-      else if (!item.items) {
-        this.$router.push(item.href);
-      } else {
-        this.currentTab = this.currentTab === item.href ? "" : item.href;
-      }
-    },
-    inPath(url) {
-      const path = this.$route.path;
-      // console.log('inPath de', url, 'estando en path=', path)
-      if (url === "/") return path === "/";
-      if (url === path) return true
-      for (const item of this.rutasMenu) {
-        if (item.href !== url) {
-          continue;
-        }
-        if (path.startsWith(item.href)) {
-          return true;
-        }
-        if (item.items) {
-          for (const elem of this.$store.getters.buildRoutes(this.getAllDescendants(item.items))) {
-            if (elem.noCurrent) continue
-            if (path.startsWith(elem.href)) {
-              // console.log('path startsWith elem.href=', elem.href)
-              return true;
-            }
-          }
-        }
-      }
-      return false;
-    },
+    }, */
     showSideMenu() {
       this.showSidebar = true;
       this.currentTab = ""
@@ -807,5 +577,26 @@ html.dark:not(.page-background) #__layout {
 
 .modal-busqueda .card {
   @apply h-full w-full sm:w-auto max-w-full;
+}
+
+@keyframes ray {
+  from {
+    transform: skew(-26deg, -35deg) translateY(-50%) scale(0);
+    opacity: 1;
+  }
+  50% {
+    transform: skew(0, 0) translateY(-50%) scale(2);
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 1;
+    transform: skew(0, 0) scale(1);
+  }
+}
+
+.ray:hover svg {
+  animation: 1s ray;
+  transform-origin: top right;
 }
 </style>
