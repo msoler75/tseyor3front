@@ -17,28 +17,41 @@
             style="grid-template-columns: 1fr 110px 1fr"
         >
             <div class="flex items-center h-full justify-between">
-                <div class="lg:hidden flex items-center text-2xl mr-8" @click="$emit('showSideMenu')">
+                <div
+                    class="md:hidden flex items-center text-2xl mr-8"
+                    @click="$emit('showSideMenu')"
+                >
                     <icon icon="bars" class="cursor-pointer" />
                 </div>
-                <ul class="h-full hidden sm:flex ml-auto">
+                <ul class="h-full hidden sm:flex ml-auto list-none">
                     <li
                         v-for="item of menuIzquierdo"
                         :key="item.href"
                         :current="inPath(item.href)"
                         :active="localValue === item.href"
-                        class="transition duration-200 menuitem hover:text-black dark:hover:text-white px-3 cursor-pointer h-full flex items-center text-sm tracking-normal border-b-4 border-blue-500 space-x-2"
+                        class="transition duration-200 menuitem hover:text-black dark:hover:text-white px-1 md:px-2 lg:px-3 cursor-pointer h-full border-b-4 border-blue-500"
                         :class="item.navClass"
                         @click="menuClick(item)"
                         @mouseover="menuHover(item)"
                         :href="item.href"
                     >
-                        <icon
-                            v-if="!item.name || item.showIcon"
-                            :icon="item.icon"
-                            :class="item.iconClass"
-                        />
-                        <span>{{ item.name }}</span>
-                        <div v-if="item.htmlAfter" v-html="item.htmlAfter" />
+                        <div class="hidden lg:flex items-center text-sm tracking-normal h-full space-x-2">
+                            <icon
+                                v-if="!item.name || item.showIcon"
+                                :icon="item.icon"
+                                :class="item.iconClass"
+                            />
+                            <span>{{ item.name }}</span>
+                            <div v-if="item.htmlAfter" v-html="item.htmlAfter" />
+                        </div>
+                        <div class="flex min-w-10 lg:hidden flex-col justify-center items-center text-sm tracking-normal h-full">
+                            <icon
+                                :icon="item.icon"
+                                class="text-2xl h-7"
+                                :class="item.iconClass"
+                            />
+                            <span class="hidden md:inline font-narrow font-thin text-xs tracking-tight uppercase">{{ item.narrowName || item.name }}</span>
+                        </div>
                     </li>
                 </ul>
             </div>
@@ -49,22 +62,31 @@
                 v-html="tseyorLogo"
             ></div>
             <div class="flex items-center h-full">
-                <ul class="h-full hidden sm:flex">
+                <ul class="h-full hidden sm:flex list-none">
                     <li
                         v-for="item of menuDerecho"
-                        v-show="!item.left"
                         :key="item.href"
                         :current="inPath(item.href)"
                         :active="localValue === item.href"
-                        class="transition duration-200 menuitem hover:text-black dark:hover:text-white px-3 cursor-pointer h-full flex items-center text-sm tracking-normal border-b-4 border-blue-500 space-x-2"
+                        class="transition duration-200 menuitem hover:text-black dark:hover:text-white px-1 md:px-2 lg:px-3 cursor-pointer h-full border-b-4 border-blue-500"
                         :class="item.navClass"
                         @click="menuClick(item)"
                         @mouseover="menuHover(item)"
                         :href="item.href"
                     >
-                        <icon v-if="!item.name || item.showIcon" :icon="item.icon" />
+                        <div class="hidden lg:flex items-center text-sm tracking-normal h-full space-x-2">
+                            <icon v-if="!item.name || item.showIcon" :icon="item.icon" />
                         <span>{{ item.name }}</span>
                         <div v-if="item.htmlAfter" v-html="item.htmlAfter" />
+                        </div>
+                        <div class="flex min-w-10 lg:hidden flex-col justify-center items-center text-sm tracking-normal h-full">
+                            <icon
+                                :icon="item.icon"
+                                class="text-2xl h-7"
+                                :class="item.iconClass"
+                            />
+                            <span class="hidden md:inline font-narrow font-thin text-xs tracking-tight uppercase">{{ item.narrowName || item.name }}</span>
+                        </div>
                     </li>
                 </ul>
                 <div class="flex items-center ml-auto whitespace-nowrap">
@@ -140,7 +162,7 @@
                                 @click.native="closeAllMenus"
                             >
                                 <div
-                                    class="icon w-11 flex-shrink-0 text-xl flex items-start justify-center transition duration-200 opacity-60 group-hover:opacity-100 text-blue-600 dark:text-blue-300"
+                                    class="icon w-11 flex-shrink-0 text-xl flex items-start justify-center transition duration-200 lg:opacity-60 group-hover:opacity-100 text-blue-600 dark:text-blue-300"
                                 >
                                     <icon :icon="elem.icon" :class="elem.iconClass" />
                                 </div>
@@ -149,7 +171,7 @@
                                         class="transition duration-200 text-md text-gray-800 dark:text-gray-100 group-hover:text-blue-600 dark:group-hover:text-blue-300 font-medium mb-2"
                                     >{{ elem.name }}</div>
                                     <p
-                                        class="transition duration-200 text-gray group-hover:text-gray-800 dark:group-hover:text-gray-100"
+                                        class="hidden md:block transition duration-200 text-gray group-hover:text-gray-800 dark:group-hover:text-gray-100"
                                     >{{ elem.description }}</p>
                                 </div>
                             </NLink>
@@ -175,7 +197,7 @@ export default {
     data() {
         return {
             tseyorLogo,
-                  softPath: '',
+            softPath: '',
         }
     },
     computed: {
@@ -275,3 +297,77 @@ export default {
     }
 }
 </script>
+
+<style scoped>
+nav#main-menu li[current="true"].menuitem {
+  border-top-color: transparent;
+  border-left-color: transparent;
+  border-right-color: transparent;
+}
+nav#main-menu[submenu="true"] li[current="true"][active="true"],
+nav#main-menu li:not([current="true"]).menuitem {
+  border-color: transparent;
+  position: relative;
+}
+nav#main-menu:not([submenu="true"]) {
+  border-bottom: 1px solid #aaa;
+}
+nav#main-menu[submenu="true"] {
+  @apply bg-gray-300;
+}
+nav#main-menu[submenu="true"] li[active="true"].menuitem {
+  @apply bg-gray-50;
+}
+.dark nav#main-menu[submenu="true"] {
+  background: #333;
+}
+.dark nav#main-menu[submenu="true"] li[active="true"].menuitem,
+.dark nav#main-menu[submenu="true"] li[active="true"]:before,
+.dark nav#main-menu[submenu="true"] li[active="true"]:after {
+  @apply bg-black;
+}
+.dark nav#main-menu:not([submenu="true"]) {
+  border-bottom: 1px solid #111;
+}
+
+nav#submenu {
+  box-shadow: 0 0.35em 0.3em rgba(0, 0, 0, 0.3);
+}
+
+/* menu bordes suaves */
+#soft-svg {
+  position: absolute;
+  top: -38px;
+  pointer-events: none;
+  width: 100%;
+  z-index: 900;
+}
+#soft-active {
+  pointer-events: all;
+  @apply text-gray-50 dark:text-black;
+  /* color: red; */
+  fill: currentColor;
+}
+
+
+@keyframes ray {
+  from {
+    transform: skew(-26deg, -35deg) translateY(-50%) scale(0);
+    opacity: 1;
+  }
+  50% {
+    transform: skew(0, 0) translateY(-50%) scale(2);
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 1;
+    transform: skew(0, 0) scale(1);
+  }
+}
+
+.ray:hover svg {
+  animation: 1s ray;
+  transform-origin: top right;
+}
+</style>

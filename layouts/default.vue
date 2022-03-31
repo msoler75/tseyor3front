@@ -149,6 +149,7 @@ export default {
           left: true,
           href: '/novedades',
           name: '',
+          narrowName: 'Nuevo',
           navClass: 'ray',
           iconClass: '!text-yellow-800',
           sidebarName: 'Novedades',
@@ -178,7 +179,7 @@ export default {
         {
           left: true,
           href: "/recursos",
-          navClass: 'hidden md:flex',
+          navClass: 'xhidden xmd:flex',
           sidebarClass: 'order-3',
           items: [
             "/biblioteca",
@@ -210,7 +211,7 @@ export default {
           // name:  'Participa',
           // description: 'Ahora puedes participar en las actividades del grupo',
           href: "/actividades",
-          navClass: 'hidden lg:flex',
+          navClass: 'xhidden xlg:flex',
           sidebarClass: 'order-3',
           items: [
             "/agenda",
@@ -229,8 +230,9 @@ export default {
         },
         {
           name: 'Quienes Somos',
+          narrowName: 'Nosotros',
           href: "/presentacion",
-          navClass: 'hidden lg:flex flex-shrink-0',
+          navClass: 'xhidden xlg:flex flex-shrink-0',
           sidebarClass: 'order-3',
           items: [
             "/presentacion/visita",
@@ -268,7 +270,7 @@ export default {
           name: 'Buscar',
           href: "/buscar",
           showIcon: true,
-          navClass: 'ml-2 hover:text-black dark:hover:text-white',
+          navClass: 'lg:ml-2 hover:text-black dark:hover:text-white',
           htmlAfter: "<div class='hidden 2xl:flex space-x-1 items-stretch'><div class='border border-gray flex justify-center items-center w-5 h-5 rounded-sm' style='font-size: 8px'>CTRL</div><div class='border border-gray mr-1 text-base flex items-center justify-center w-5 h-5 rounded-sm'>K</div></div>",
           sidebarName: 'Buscar',
           sidebarClass: 'order-1',
@@ -392,44 +394,19 @@ export default {
 };
 </script>
 
+
 <style scoped>
-nav#main-menu li[current="true"].menuitem {
-  border-top-color: transparent;
-  border-left-color: transparent;
-  border-right-color: transparent;
-}
-nav#main-menu[submenu="true"] li[current="true"][active="true"],
-nav#main-menu li:not([current="true"]).menuitem {
-  border-color: transparent;
-  position: relative;
-}
-nav#main-menu:not([submenu="true"]) {
-  border-bottom: 1px solid #aaa;
-}
-nav#main-menu[submenu="true"] {
-  @apply bg-gray-300;
-}
-nav#main-menu[submenu="true"] li[active="true"].menuitem {
-  @apply bg-gray-50;
-}
-.dark nav#main-menu[submenu="true"] {
-  background: #333;
-}
-.dark nav#main-menu[submenu="true"] li[active="true"].menuitem,
-.dark nav#main-menu[submenu="true"] li[active="true"]:before,
-.dark nav#main-menu[submenu="true"] li[active="true"]:after {
-  @apply bg-black;
-}
-.dark nav#main-menu:not([submenu="true"]) {
-  border-bottom: 1px solid #111;
+
+.modal-busqueda {
+  @apply items-start;
 }
 
-nav#submenu {
-  box-shadow: 0 0.35em 0.3em rgba(0, 0, 0, 0.3);
+.modal-busqueda .card {
+  @apply h-full w-full sm:w-auto max-w-full;
 }
 </style>
 
-
+<style>
 
 
 <style>
@@ -538,6 +515,7 @@ html.dark:not(.page-background) #__layout {
   transform-origin: 50% 50%;
 }
 
+/*
 .flash {
   position: fixed;
   animation: flash 0.5s forwards;
@@ -555,48 +533,5 @@ html.dark:not(.page-background) #__layout {
     opacity: 0;
   }
 }
-
-/* menu bordes suaves */
-#soft-svg {
-  position: absolute;
-  top: -38px;
-  pointer-events: none;
-  width: 100%;
-  z-index: 900;
-}
-#soft-active {
-  pointer-events: all;
-  @apply text-gray-50 dark:text-black;
-  /* color: red; */
-  fill: currentColor;
-}
-
-.modal-busqueda {
-  @apply items-start;
-}
-
-.modal-busqueda .card {
-  @apply h-full w-full sm:w-auto max-w-full;
-}
-
-@keyframes ray {
-  from {
-    transform: skew(-26deg, -35deg) translateY(-50%) scale(0);
-    opacity: 1;
-  }
-  50% {
-    transform: skew(0, 0) translateY(-50%) scale(2);
-    opacity: 1;
-  }
-
-  100% {
-    opacity: 1;
-    transform: skew(0, 0) scale(1);
-  }
-}
-
-.ray:hover svg {
-  animation: 1s ray;
-  transform-origin: top right;
-}
+*/
 </style>
