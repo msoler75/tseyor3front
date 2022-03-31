@@ -237,7 +237,7 @@ export default () => ({
 
     "/publicaciones": {
       name: "Publicaciones",
-      icon: "fas fa-newspaper",
+      icon: "fas fa-book",
       description: "Noticias, artículos y otros contenidos públicos",
     },
     "/noticias": {
@@ -274,7 +274,7 @@ export default () => ({
 
     "/presentacion": {
       name: "Quienes Somos",
-      icon: "fas fa-question",
+      icon: "fas fa-users",
       description: "Descubre Tseyor"
     },
     "/presentacion/visita": {

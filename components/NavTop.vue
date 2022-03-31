@@ -6,24 +6,18 @@
         :class="navHidden ? '-translate-y-20' : ''"
         :submenu="localValue !== ''"
     >
-        <icon
-            v-show="localValue"
-            icon="times"
-            class="text-3xl absolute right-4 top-16 mt-2 z-50 p-1"
-            @click="localValue = ''"
-        />
         <div
             class="flex justify-between items-center xs:grid transition duration-200 w-full px-6 mx-auto border-gray-200 dark:border-gray-900"
             style="grid-template-columns: 1fr 110px 1fr"
         >
             <div class="flex items-center h-full justify-between">
                 <div
-                    class="md:hidden flex items-center text-2xl mr-8"
+                    class="md:hidden flex items-center text-2xl w-9"
                     @click="$emit('showSideMenu')"
                 >
                     <icon icon="bars" class="cursor-pointer" />
                 </div>
-                <ul class="h-full hidden sm:flex ml-auto list-none">
+                <ul class="h-full hidden sm:flex justify-evenly md:justify-end flex-grow md:ml-auto list-none">
                     <li
                         v-for="item of menuIzquierdo"
                         :key="item.href"
@@ -35,7 +29,9 @@
                         @mouseover="menuHover(item)"
                         :href="item.href"
                     >
-                        <div class="hidden lg:flex items-center text-sm tracking-normal h-full space-x-2">
+                        <div
+                            class="hidden lg:flex items-center text-sm tracking-normal h-full space-x-2"
+                        >
                             <icon
                                 v-if="!item.name || item.showIcon"
                                 :icon="item.icon"
@@ -44,13 +40,13 @@
                             <span>{{ item.name }}</span>
                             <div v-if="item.htmlAfter" v-html="item.htmlAfter" />
                         </div>
-                        <div class="flex min-w-10 lg:hidden flex-col justify-center items-center text-sm tracking-normal h-full">
-                            <icon
-                                :icon="item.icon"
-                                class="text-2xl h-7"
-                                :class="item.iconClass"
-                            />
-                            <span class="hidden md:inline font-narrow font-thin text-xs tracking-tight uppercase">{{ item.narrowName || item.name }}</span>
+                        <div
+                            class="flex pt-1 min-w-10 lg:hidden flex-col justify-center items-center text-sm tracking-normal h-full"
+                        >
+                            <icon :icon="item.icon" class="text-2xl h-7 text-sello-centro dark:text-sello-fondo" :class="item.iconClass" />
+                            <span
+                                class="hidden md:inline font-narrow font-thin text-xs tracking-tight uppercase"
+                            >{{ item.narrowName || item.name }}</span>
                         </div>
                     </li>
                 </ul>
@@ -61,8 +57,8 @@
                 @mouseover="menuHover(null)"
                 v-html="tseyorLogo"
             ></div>
-            <div class="flex items-center h-full">
-                <ul class="h-full hidden sm:flex list-none">
+            <div class="flex items-center h-full justify-end sm:justify-between">
+                <ul class="h-full hidden sm:flex justify-evenly md:justify-start flex-grow list-none">
                     <li
                         v-for="item of menuDerecho"
                         :key="item.href"
@@ -74,22 +70,24 @@
                         @mouseover="menuHover(item)"
                         :href="item.href"
                     >
-                        <div class="hidden lg:flex items-center text-sm tracking-normal h-full space-x-2">
+                        <div
+                            class="hidden lg:flex items-center text-sm tracking-normal h-full space-x-2"
+                        >
                             <icon v-if="!item.name || item.showIcon" :icon="item.icon" />
-                        <span>{{ item.name }}</span>
-                        <div v-if="item.htmlAfter" v-html="item.htmlAfter" />
+                            <span>{{ item.name }}</span>
+                            <div v-if="item.htmlAfter" v-html="item.htmlAfter" />
                         </div>
-                        <div class="flex min-w-10 lg:hidden flex-col justify-center items-center text-sm tracking-normal h-full">
-                            <icon
-                                :icon="item.icon"
-                                class="text-2xl h-7"
-                                :class="item.iconClass"
-                            />
-                            <span class="hidden md:inline font-narrow font-thin text-xs tracking-tight uppercase">{{ item.narrowName || item.name }}</span>
+                        <div
+                            class="flex pt-1 min-w-10 lg:hidden flex-col justify-center items-center text-sm tracking-normal h-full"
+                        >
+                            <icon :icon="item.icon" class="text-2xl h-7 text-sello-centro dark:text-sello-fondo" :class="item.iconClass" />
+                            <span
+                                class="hidden md:inline font-narrow font-thin text-xs tracking-tight uppercase"
+                            >{{ item.narrowName || item.name }}</span>
                         </div>
                     </li>
                 </ul>
-                <div class="flex items-center ml-auto whitespace-nowrap">
+                <div class="flex items-center md:ml-auto whitespace-nowrap">
                     <div
                         :title="
                             $colorMode.value === 'light'
@@ -97,9 +95,10 @@
                                 : 'Cambiar a modo claro'
                         "
                         @click="changeColorMode"
-                        class="w-8 md:w-12 p-0 md:p-1 transition duration-200 flex justify-center items-center rounded-full mr-3 xs:mr-6 hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer"
+                        class="w-10 sm:w-12 p-0 md:p-1 transition duration-200 flex justify-center items-center rounded-full mr-3 md:mx-3 lg:mr-6 hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer"
+                        :class="colorModeClass"
                     >
-                        <div alt="theme-icon" v-html="iconMode" class="w-full" />
+                        <div alt="theme-icon" v-html="colorModeIcon" class="w-10"/>
                     </div>
                     <template v-if="isAuthenticated">
                         <Avatar
@@ -134,13 +133,18 @@
         <!-- SUBMENU -->
         <nav
             id="submenu"
-            class="absolute w-full hidden sm:block shadow text-gray-800 bg-gray-50 dark:bg-black dark:text-gray-100 text-sm overflow-y-auto lg:overflow-visible"
-            style="max-height: calc(100vh - 72px); top:76px"
+            class="absolute w-full hidden sm:block shadow text-gray-800 bg-gray-50 dark:bg-gray-dark-900 dark:text-gray-100 text-sm overflow-y-auto sm:overflow-visible"
             @mouseleave="closeAllMenus"
         >
             <svg id="soft-svg">
                 <path id="soft-active" :d="softPath" />
             </svg>
+            <icon
+                v-show="localValue"
+                icon="times"
+                class="text-3xl opacity-70 hover:opacity-100 absolute right-4 top-4 p-1 cursor-pointer"
+                @click.native="localValue = ''"
+            />
             <template v-for="item of rutasMenu">
                 <div
                     v-show="localValue == item.href"
@@ -200,6 +204,10 @@ export default {
             softPath: '',
         }
     },
+    mounted() {
+        if (process.client)
+            window.addEventListener("resize", this.resizeHandler)
+    },
     computed: {
         ...mapGetters(["isAuthenticated", "loggedInUser", "travelling", "pageConfig", "menuUsuario", "navHidden", "onlyContent"]),
         menuIzquierdo() {
@@ -208,8 +216,11 @@ export default {
         menuDerecho() {
             return this.rutasMenu.filter(x => !x.left && !x.hideInNav)
         },
-        iconMode() {
+        colorModeIcon() {
             return this.$colorMode.value === "light" ? iconSun : iconMoon;
+        },
+        colorModeClass() {
+            return this.$colorMode.value === "light" ? 'scale-90' : 'scale-75';
         }
     },
     watch: {
@@ -218,6 +229,9 @@ export default {
         },
     },
     methods: {
+        resizeHandler() {
+            this.updateSoftPath()
+        },
         getAllDescendants(items) {
             if (!items) return []
             let r = [...items]
@@ -288,7 +302,7 @@ export default {
                 const y = r.top + r.height - 38
                 const x0 = r.left
                 const x1 = r.left + r.width
-                const w = 380 // ancho de apertura
+                const w = Math.max(50, Math.min(380, screen.width / 5)) // 380 // ancho de apertura
                 const h1 = 30  // alto de apertura
                 const h2 = 20  // alto hacia abajo
                 this.softPath = `M ${x0 - w} ${y + h2} L ${x0} ${y - h1} L ${x1} ${y - h1} L ${x1 + w} ${y + h2} Z`
@@ -300,74 +314,105 @@ export default {
 
 <style scoped>
 nav#main-menu li[current="true"].menuitem {
-  border-top-color: transparent;
-  border-left-color: transparent;
-  border-right-color: transparent;
+    border-top-color: transparent;
+    border-left-color: transparent;
+    border-right-color: transparent;
 }
 nav#main-menu[submenu="true"] li[current="true"][active="true"],
 nav#main-menu li:not([current="true"]).menuitem {
-  border-color: transparent;
-  position: relative;
+    border-color: transparent;
+    position: relative;
 }
 nav#main-menu:not([submenu="true"]) {
-  border-bottom: 1px solid #aaa;
+    border-bottom: 1px solid #aaa;
 }
 nav#main-menu[submenu="true"] {
-  @apply bg-gray-300;
+    @apply bg-gray-300;
 }
 nav#main-menu[submenu="true"] li[active="true"].menuitem {
-  @apply bg-gray-50;
+    @apply bg-gray-50;
 }
 .dark nav#main-menu[submenu="true"] {
-  background: #333;
+    background: #333;
 }
 .dark nav#main-menu[submenu="true"] li[active="true"].menuitem,
 .dark nav#main-menu[submenu="true"] li[active="true"]:before,
 .dark nav#main-menu[submenu="true"] li[active="true"]:after {
-  @apply bg-black;
+    @apply bg-gray-dark-900;
 }
 .dark nav#main-menu:not([submenu="true"]) {
-  border-bottom: 1px solid #111;
+    border-bottom: 1px solid #111;
 }
 
 nav#submenu {
-  box-shadow: 0 0.35em 0.3em rgba(0, 0, 0, 0.3);
+    box-shadow: 0 0.35em 0.3em rgba(0, 0, 0, 0.3);
+    max-height: calc(100vh - 51px);
+    top: 51px;
 }
 
-/* menu bordes suaves */
 #soft-svg {
-  position: absolute;
-  top: -38px;
-  pointer-events: none;
-  width: 100%;
-  z-index: 900;
+    @apply hidden lg:block;
+    position: absolute;
+    top: -8px;
+    pointer-events: none;
+    width: 100%;
+    z-index: 900;
 }
 #soft-active {
-  pointer-events: all;
-  @apply text-gray-50 dark:text-black;
-  /* color: red; */
-  fill: currentColor;
+    pointer-events: all;
+    @apply text-gray-50 dark:text-gray-dark-900;
+    /* color: red; */
+    fill: currentColor;
 }
 
+@screen md {
+    nav#submenu {
+        max-height: calc(100vh - 68px);
+        top: 68px;
+    }
+    #soft-svg {
+        top: -28px;
+    }
+}
+
+@screen lg {
+    nav#submenu {
+        max-height: calc(100vh - 72px);
+        top: 72px;
+    }
+    #soft-svg {
+        top: -34px;
+    }
+}
+
+@screen xl {
+    nav#submenu {
+        max-height: calc(100vh - 76px);
+        top: 76px;
+    }
+    #soft-svg {
+        top: -38px;
+    }
+}
 
 @keyframes ray {
-  from {
-    transform: skew(-26deg, -35deg) translateY(-50%) scale(0);
-    opacity: 1;
-  }
-  50% {
-    transform: skew(0, 0) translateY(-50%) scale(2);
-    opacity: 1;
-  }
+    from {
+        transform: skew(-26deg, -35deg) translateY(-50%) scale(0);
+        opacity: 1;
+    }
+    50% {
+        transform: skew(0, 0) translateY(-50%) scale(2);
+        opacity: 1;
+    }
 
-  100% {
-    opacity: 1;
-    transform: skew(0, 0) scale(1);
-  }
+    100% {
+        opacity: 1;
+        transform: skew(0, 0) scale(1);
+    }
 }
 
 .ray:hover svg {
-  animation: 1s ray;
-  transform-origin: top right;
+    animation: 1s ray;
+    transform-origin: top right;
 }
 </style>
