@@ -36,20 +36,7 @@
         </div>
         <div class="md:max-w-md lg:col-span-2 mt-9 lg:mt-0">
           <span class="text-base font-medium tracking-wide dark:text-gray-300">{{invitacionSuscribirse}}</span>
-          <form class="flex flex-col mt-4 md:flex-row">
-            <input
-              placeholder="Correo electrónico"
-              required="true"
-              type="email"
-              class="flex-grow w-full h-12 px-4 mb-3 transition duration-200 bg-white border border-gray-300 shadow-sm appearance-none md:mr-2 md:mb-0 focus:border-deep-purple-accent-400 focus:outline-none focus:shadow-outline"
-            />
-            <button
-              type="submit"
-              class="btn inline-flex items-center justify-center h-12 px-6 font-medium tracking-wide text-white transition duration-200 shadow-md bg-deep-purple-accent-400 hover:bg-deep-purple-accent-700 focus:shadow-outline focus:outline-none"
-            >
-              Suscribirme
-            </button>
-          </form>
+          <Suscription collection="boletines" class="min-h-36"/>
           <p class="mt-4 text-sm text-gray-500">
             {{notasSuscribirme}}
           </p>

@@ -58,7 +58,7 @@
       id="suscription"
       title="Biblioteca Tseyor"
       description="Todos los libros emanados de las conversaciones interdimensionales mantenidas con nuestros Guías Estelares disponibles para descarga en formato PDF"
-      to="/novedades"
+      collection="libros"
       image="/imagenes/libros.jpg"
       class="bg-blue-gray-900 w-full"
     />

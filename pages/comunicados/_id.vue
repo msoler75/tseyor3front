@@ -52,7 +52,7 @@
       id="suscription"
       title="Comunicados TSEYOR"
       description="Comunicados telepáticos mantenidos con los Guías Estelares a través de Chac Mool Puente"
-      to="/comunicados"
+      collection="comunicados"
       image="./imagenes/espacio-color.jpg"
       class="bg-blue-dark-700 w-full"
     />

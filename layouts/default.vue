@@ -7,7 +7,6 @@
     <!-- Navigation starts-->
     <NavTop v-model="currentTab" :rutasMenu="rutasMenu" ref="nav" @showSideMenu="showSideMenu"/>
 
-menuUsuario: {{menuUsuario}}
     <!-- User Menu -->
     <Card
       v-if="isAuthenticated"
@@ -129,6 +128,11 @@ export default {
           icon: "fas fa-user",
           name: "Mi Perfil",
           href: null
+        },
+        {
+          icon: "fas fa-envelope",
+          name: "Suscripciones",
+          href: '/suscripciones'
         },
         {
           icon: "fas fa-sign-out-alt",

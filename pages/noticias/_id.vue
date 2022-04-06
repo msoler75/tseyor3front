@@ -54,7 +54,7 @@
       id="suscription"
       title="Noticias TSEYOR"
       description="Noticias de interés de la comunidad Tseyor"
-      to="/novedades"
+      collection="noticias"
       image="./imagenes/tierra.jpg"
       class="bg-teal-900 w-full"
     />

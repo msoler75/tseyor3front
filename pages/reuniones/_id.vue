@@ -70,9 +70,9 @@
       id="suscription"
       :title="reunion.equipo.nombre"
       :description="reunion.equipo.descripcion"
-      :to="'/equipo/' + reunion.equipo.id"
+      collection="equipos"
+      :content-id="reunion.equipo.id"
       :image="reunion.equipo.imagen"
-      label="Ver Equipo"
       class="bg-blue-gray-900 w-full"
     />
 
