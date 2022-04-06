@@ -216,7 +216,7 @@ export default () => ({
     },
     "/muul": {
       name: "Zona Muul",
-      icon: "fas fa-user-astronaut",
+      icon: "fas fa-feather-alt",
       description: "Zona para miembros Muul-Águila GTI de Tseyor",
       parent: "/actividades"
     },

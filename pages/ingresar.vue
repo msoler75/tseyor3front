@@ -1,5 +1,5 @@
 <template>
-  <div class="w-full mx-auto max-w-xs mb-4">
+  <div class="w-full mx-auto max-w-xs mb-4" breadcrumb="no">
     <Notification v-if="error" type="danger" :message="error" class="mb-5" />
 
     <Card>
@@ -64,6 +64,7 @@ export default {
   },
   methods: {
     async login() {
+      console.log('Logging...')
       this.error = null;
       try {
         /*await this.$auth.loginWith("local", {

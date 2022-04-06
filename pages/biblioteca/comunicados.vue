@@ -18,26 +18,12 @@
           <button @click="decPagina()" class="btn btn-gray" :disabled="pagina===1"><icon icon="caret-left" /></button>
           <input type="number" v-model="pagina" class="!px-0 xs:!px-1 !w-6 sm:!w-10 lg:!w-12 text-center appearance-none inline"/>
           <button @click="incPagina()"  class="btn btn-gray" :disabled="pagina===totalPaginas"><icon icon="caret-right" /></button>
-          <button @click="pagina=totalPaginas"  class="hidden xm:inline btn btn-gray" :disabled="pagina===totalPaginas"><icon icon="step-forward"/> </button>
+          <button @click="pagina=totalPaginas" class="hidden xm:inline btn btn-gray" :disabled="pagina===totalPaginas"><icon icon="step-forward"/> </button>
 
         </div>
         <div class="flex flex-col sm:flex-row space-y-1 sm:space-y-0 sm:space-x-2 justify-center items-center">
-          <div
-            class="relative inline-block w-10 align-middle select-none"
-          >
-            <input
-              type="checkbox"
-              name="toggle"
-              id="toggle"
-              v-model="ordenarPorRecientes"
-              class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer transition-all duration-200 ease-in right-1/2"
-            >
-            <label
-              for="toggle"
-              class="toggle-label block overflow-hidden h-6 rounded-full bg-gray-400 cursor-pointer transition-all duration-200 ease-in"
-            ></label>
-          </div>
-          <label for="toggle" class="text-xs sm:text-sm md:text-base text-gray-700"><span class="hidden md:inline">Ver </span>Recientes</label>
+          <InputSwitch v-model="ordenarPorRecientes"/>
+          <label @click="ordenarPorRecientes=!ordenarPorRecientes" class="text-xs sm:text-sm md:text-base text-gray-700"><span class="hidden md:inline">Ver </span>Recientes</label>
         </div>
         <div class="flex justify-end items-center">
           <SearchInput class="!w-32 xm:!w-full md:!w-60" placeholder="Buscar número, título, tipo..." v-model="filtrarPor"/>
@@ -282,21 +268,7 @@ td {
   @apply py-2 px-2;
 }
 
-input.toggle-checkbox:checked {
-  @apply: right-0 border-blue-400;
-  right:0;
-  border-color: #08f;
-}
-input.toggle-checkbox:checked + .toggle-label {
-  @apply: bg-blue-400;
-  background-color: #08f;
-}
-/* Chrome, Safari, Edge, Opera */
-input::-webkit-outer-spin-button,
-input::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
-}
+
 
 /* Firefox */
 input[type=number] {

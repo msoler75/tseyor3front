@@ -29,7 +29,7 @@
       <h3 class="text-center">Registro de la experiencia</h3>
 
       <form @submit.prevent="submit" class="regular-form bg-transparent space-y-9" autocomplete="on">
-        <div v-if="!isAuthenticated" class="text-center">¿Ya tienes cuenta? <NLink :to="`/login/?desde=${$route.path}}`">Inicia sesión</NLink></div>
+        <div v-if="!isAuthenticated" class="text-center">¿Ya tienes cuenta? <NLink :to="`/ingresar/?desde=${$route.path}}`">Inicia sesión</NLink></div>
         <div>
           <label v-if="!isAuthenticated" for="nombre">Tu nombre:</label>
           <br v-if="!isAuthenticated" />

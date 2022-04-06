@@ -41,14 +41,13 @@ export default {
     methods:
     {
         activate() {
-            console.warn('ACTIVATE timer', this.$route)
             const that = this
             this.$store.commit('setOnlyContent', false)
             clearTimeout(this.timer)
             this.timer = setTimeout(function () {
                 if (that.$route.path == that.startingPath)
                     that.$store.commit('setOnlyContent', true)
-            }, 2000)
+            }, 5000)
         }
     }
 }

@@ -30,8 +30,8 @@
               {{ entrada.blog.nombre }}
             </span>
             <a
-              href="#blog-info"
-              v-scroll-to="'#blog-info'"
+              href="#suscription"
+              v-scroll-to="'#suscription'"
               class="ml-2 rounded-full py-.5 px-2 text-xs bg-blue-400 text-blue-contrast"
             >Seguir</a>
           </div>
@@ -69,9 +69,10 @@
 
     <SuscriptionSection
       id="suscription"
-      title="Blogs TSEYOR"
-      description="Artículos de la comunidad Tseyor"
-      to="/blogs"
+      :title="entrada.blog.nombre"
+      :description="entrada.blog.descripcion"
+      collection="blogs"
+      :content-id="entrada.blog.id"
       image="./imagenes/grupo-1.jpg"
       class="bg-blue-gray-900 w-full"
     />

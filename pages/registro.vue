@@ -54,7 +54,7 @@
 
         <div class="text-center text-sm mt-9">
           <div>¿Ya dispones de cuenta? </div>
-          <NLink class="block mt-1 font-bold text-blue-500 hover:text-blue-800" to="/login">Entrar con mi cuenta</NLink>
+          <NLink class="block mt-1 font-bold text-blue-500 hover:text-blue-800" to="/ingresar">Entrar con mi cuenta</NLink>
         </div>
 
       </form>

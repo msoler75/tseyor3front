@@ -198,7 +198,7 @@
     <div v-else class="text-center">
       <NLink
         class="btn"
-        :to="'/login?desde=' + encodeURIComponent($route.fullPath)"
+        :to="'/ingresar?desde=' + encodeURIComponent($route.fullPath)"
       >Inicia sesión para comentar</NLink>
     </div>
   </div>

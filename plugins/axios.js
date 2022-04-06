@@ -19,7 +19,7 @@ export default function ({ $axios, redirect }) {
     const data = response.data
     switch (statusCode) {
       case 401:
-        redirect('/login')
+        redirect('/ingresar')
         break
       case 403:
         redirect('/403')

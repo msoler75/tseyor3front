@@ -7,6 +7,7 @@
     <!-- Navigation starts-->
     <NavTop v-model="currentTab" :rutasMenu="rutasMenu" ref="nav" @showSideMenu="showSideMenu"/>
 
+menuUsuario: {{menuUsuario}}
     <!-- User Menu -->
     <Card
       v-if="isAuthenticated"
@@ -103,22 +104,26 @@ export default {
     loggedInUser(newValue) {
       this.actualizarUrlPerfil()
     },
-    mostrarMenuUsuario(newValue) {
-      this.$store.commit('setMenuUsuario', newValue)
-    },
   },
+  // created()
   mounted() {
     this.actualizarUrlPerfil()
     // emulamos comportamiento de beforeEnter de transición de página
     this.$store.commit('travelling', false)
     this.$store.dispatch('beforeEnter', this.$refs['page'].$el)
     this.$store.commit('updateBreadcrumb')
-    window.addEventListener('keydown', this._keyListener);
+    if (process.client) {
+      window.addEventListener('scroll', this.handleScroll, { passive: true });
+      window.addEventListener('keydown', this.handleKey);
+    }
   },
+  /* destroyed() {
+    if (process.client)
+      window.removeEventListener('scroll', this.handleScroll);
+  }, */
   data() {
     return {
       showBuscarPanel: false,
-      mostrarMenuUsuario: false,
       userMenuItems: [
         {
           icon: "fas fa-user",
@@ -314,22 +319,7 @@ export default {
       );
     }
   },
-  created() {
-    if (process.client)
-      window.addEventListener('scroll', this.handleScroll, { passive: true });
-  },
-  destroyed() {
-    if (process.client)
-      window.removeEventListener('scroll', this.handleScroll);
-  },
   methods: {
-    _keyListener(e) {
-      console.warn(e)
-      if (e.key === 'k' && e.ctrlKey || e.metaKey) {
-        e.preventDefault(); //prevent the default action (save page in this case)
-        this.onBuscar()
-      }
-    },
     clickOff(){
       this.$refs.nav.closeAllMenus()
     },
@@ -362,6 +352,13 @@ export default {
       this.lastDy = dy
       this.lastY = y
     },
+    handleKey(e) {
+      console.warn(e)
+      if (e.key === 'k' && e.ctrlKey || e.metaKey) {
+        e.preventDefault(); //prevent the default action (save page in this case)
+        this.onBuscar()
+      }
+    },
     async logout() {
       // await this.$auth.logout()
       await this.$strapi.logout()
@@ -385,7 +382,8 @@ export default {
     showSideMenu() {
       this.showSidebar = true;
       this.currentTab = ""
-      this.mostrarMenuUsuario = false
+      // this.mostrarMenuUsuario = false
+      this.$store.commit('setMenuUsuario', false)
     },
     onBuscar() {
       this.showBuscarPanel = true
@@ -406,59 +404,87 @@ export default {
 }
 </style>
 
-<style>
-
 
 <style>
 /* BASIC TEMPLATE LAYOUT */
 
 html {
-  background: blue;
   height: 100%;
 }
 
 body {
   height: 100%;
   margin: 0;
-  background: cyan;
 }
 
 #__nuxt {
-  height: 100%;
-  background-image: linear-gradient(to bottom, #eff6ff 0%, #e883072a 100%);
+  min-height: 100%;
 }
 
 #__layout {
   height: 100%;
-  background: rgb(137, 10, 187);
 }
 
 #__main-container {
-  min-height: 100%;
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
   justify-content: stretch;
-  background: red;
 }
 
 #__content {
   height: auto;
-  background: greenyellow;
 }
 
 .spacer {
   flex: 1;
-  background: pink;
 }
 
 .footer {
   height: 150px;
+}
+
+
+
+/*
+html {
+  background: blue;
+}
+
+body {
+  background: cyan;
+}
+
+#__nuxt {
+  background-image: linear-gradient(to bottom, #eff6ff 0%, #e883072a 100%);
+}
+
+#__layout {
+  background: rgb(137, 10, 187);
+}
+
+#__main-container {
+  background: red;
+}
+
+#__content {
+  background: greenyellow;
+}
+
+.spacer {
+  background: pink;
+}
+
+.footer {
   background-color: green;
 }
 
 .container {
   background: rgba(255, 0, 0, 0.33);
 }
+*/
+
+
 
 #__layout {
   max-width: 100vw;
@@ -478,6 +504,8 @@ body {
     #c7e0ff 80.5%,
     #fff0ef 100%
   );
+  background-attachment: fixed;
+  background-size: cover;
 }
 
 html:not(.page-background) #__layout {

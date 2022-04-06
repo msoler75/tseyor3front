@@ -40,7 +40,7 @@
             <input
               placeholder="Correo electrónico"
               required="true"
-              type="text"
+              type="email"
               class="flex-grow w-full h-12 px-4 mb-3 transition duration-200 bg-white border border-gray-300 shadow-sm appearance-none md:mr-2 md:mb-0 focus:border-deep-purple-accent-400 focus:outline-none focus:shadow-outline"
             />
             <button

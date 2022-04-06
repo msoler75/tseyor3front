@@ -17,7 +17,9 @@
                 >
                     <icon icon="bars" class="cursor-pointer" />
                 </div>
-                <ul class="h-full hidden sm:flex justify-evenly md:justify-end flex-grow md:ml-auto list-none">
+                <ul
+                    class="h-full hidden sm:flex justify-evenly md:justify-end flex-grow md:ml-auto list-none"
+                >
                     <li
                         v-for="item of menuIzquierdo"
                         :key="item.href"
@@ -43,7 +45,11 @@
                         <div
                             class="flex pt-1 min-w-10 lg:hidden flex-col justify-center items-center text-sm tracking-normal h-full"
                         >
-                            <icon :icon="item.icon" class="text-2xl h-7 text-sello-centro dark:text-sello-fondo" :class="item.iconClass" />
+                            <icon
+                                :icon="item.icon"
+                                class="text-2xl h-7 text-sello-centro dark:text-sello-fondo"
+                                :class="item.iconClass"
+                            />
                             <span
                                 class="hidden md:inline font-narrow font-thin text-xs tracking-tight uppercase"
                             >{{ item.narrowName || item.name }}</span>
@@ -58,7 +64,9 @@
                 v-html="tseyorLogo"
             ></div>
             <div class="flex items-center h-full justify-end sm:justify-between">
-                <ul class="h-full hidden sm:flex justify-evenly md:justify-start flex-grow list-none">
+                <ul
+                    class="h-full hidden sm:flex justify-evenly md:justify-start flex-grow list-none"
+                >
                     <li
                         v-for="item of menuDerecho"
                         :key="item.href"
@@ -80,7 +88,11 @@
                         <div
                             class="flex pt-1 min-w-10 lg:hidden flex-col justify-center items-center text-sm tracking-normal h-full"
                         >
-                            <icon :icon="item.icon" class="text-2xl h-7 text-sello-centro dark:text-sello-fondo" :class="item.iconClass" />
+                            <icon
+                                :icon="item.icon"
+                                class="text-2xl h-7 text-sello-centro dark:text-sello-fondo"
+                                :class="item.iconClass"
+                            />
                             <span
                                 class="hidden md:inline font-narrow font-thin text-xs tracking-tight uppercase"
                             >{{ item.narrowName || item.name }}</span>
@@ -98,14 +110,14 @@
                         class="w-10 sm:w-12 p-0 md:p-1 transition duration-200 flex justify-center items-center rounded-full mr-3 md:mx-3 lg:mr-6 hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer"
                         :class="colorModeClass"
                     >
-                        <div alt="theme-icon" v-html="colorModeIcon" class="w-10"/>
+                        <div alt="theme-icon" v-html="colorModeIcon" class="w-10" />
                     </div>
                     <template v-if="isAuthenticated">
                         <Avatar
                             :data="loggedInUser"
                             class="text-3xl w-8 h-8 cursor-pointer"
                             :to="false"
-                            @click.native="mostrarMenuUsuario = !mostrarMenuUsuario"
+                            @click.native="toggleMostrarMenuUsuario"
                         />
                     </template>
                     <template v-else>
@@ -202,6 +214,7 @@ export default {
         return {
             tseyorLogo,
             softPath: '',
+            mostrarMenuUsuario: false,
         }
     },
     mounted() {
@@ -227,8 +240,15 @@ export default {
         localValue(newValue) {
             this.updateSoftPath()
         },
+        mostrarMenuUsuario(newValue) {
+            this.$store.commit('setMenuUsuario', newValue)
+        },
     },
     methods: {
+        toggleMostrarMenuUsuario() {
+            this.mostrarMenuUsuario = !this.mostrarMenuUsuario
+            console.log('mostrarMenuUsuario', this.mostrarMenuUsuario)
+        },
         resizeHandler() {
             this.updateSoftPath()
         },

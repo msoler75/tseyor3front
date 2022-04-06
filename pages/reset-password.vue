@@ -5,7 +5,7 @@
           <Notification v-if="success" type="success" :message="success" :close="false" class="mb-5"/>
 
           <div class="w-full flex justify-center my-5" v-if="success">
-              <NLink to="/login" class="btn">Proceder a Iniciar Sesión</NLink>
+              <NLink to="/ingresar" class="btn">Proceder a Iniciar Sesión</NLink>
           </div>
           
           <div class="mx-auto max-w-xs">

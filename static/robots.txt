@@ -1,5 +1,5 @@
 User-Agent: *
 Disallow: /perfil
-Disallow: /login
+Disallow: /ingresar
 Disallow: /registro
 Disallow: /recuperacion

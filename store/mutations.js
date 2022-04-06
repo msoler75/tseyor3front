@@ -63,6 +63,7 @@ export default {
   },
 
   setMenuUsuario(state, payload) {
+    console.log('setMenuUsuario', payload)
     state.menuUsuario = payload
   },
 

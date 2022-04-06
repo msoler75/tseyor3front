@@ -101,7 +101,7 @@
   }
 
   .btn {
-    @apply select-none transition duration-200 font-semibold py-2 px-4 border rounded-lg shadow;
+    @apply select-none transition duration-200 font-semibold py-2 px-4 border rounded-lg shadow inline-block;
     @apply bg-primary  border-blue-800 !text-blue-contrast;
     height: fit-content;
   }
