@@ -6,7 +6,7 @@
           <h1 class="text-center capitalize">{{ guia.nombre }}</h1>
           <p class="text-center italic bold mb-7">{{ guia.subtitulo }}</p>
 
-          <Tabs :labels="secciones" v-model="viendoSeccion" class="mb-5" />
+          <Tabs :items="secciones" v-model="viendoSeccion" class="mb-5" />
 
           <Card v-show="viendoSeccion === 'descripcion'" class="p-5" v-html="guia.descripcion" />
 

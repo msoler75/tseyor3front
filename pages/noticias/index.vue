@@ -11,14 +11,10 @@
         <SearchInput
           v-model="buscarPor"
           class="w-48"
-          placeholder="Título o palabras clave"
+          placeholder="Buscar..."
           required
           @search="buscar"
         />
-        <button :disabled="buscarPor.length <= 3" type="submit" class="ml-2 btn">
-          Buscar
-          <span class="hidden md:inline">en Noticias</span>
-        </button>
       </form>
     </section>
 

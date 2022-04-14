@@ -3,7 +3,7 @@
     <h1>Listado de Miembros de Tseyor</h1>
     <p class="mt-3 text-center">A continuación un listado completo de miembros del grupo Tseyor. Muchos de ellos han creado una cuenta de usuario en este sitio puede y puedes verlos en este <nuxt-link class="underline whitespace-nowrap" to="/usuarios">listado de usuarios</nuxt-link>.</p>
     <divider/>
-    <Tabs :labels='categorias' v-model="viendoCategoria" class="mb-6"/>
+    <Tabs :items='categorias' v-model="viendoCategoria" class="mb-6"/>
     <ul style="column-count: 3;">
         <li v-for="item of listaCategoria(viendoCategoria)" :key="item.id">
             {{item.nombre}}

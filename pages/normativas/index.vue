@@ -4,7 +4,7 @@
     <h1 class="text-center">Normativas</h1>
 
     <section class="flex flex-col items-center justify-center flex-wrap sm:flex-nowrap mb-5">
-      <Tabs ref="tabs" v-model="viendoCategoria" :labels="categorias" class="mb-7 justify-center" />
+      <Tabs ref="tabs" v-model="viendoCategoria" :items="categorias" class="mb-7 justify-center" />
 
       <form @submit.prevent="buscar" class="w-auto flex justify-end order-1">
         <SearchInput

@@ -238,7 +238,7 @@ export default {
       // ignoramos las pulsaciones de espacio
       if (newValue.charAt(newValue.length - 1) == ' ') return
       // estamos usando un componente propio, del cual copiamos el valor y lo establecemos en el search box de instant search
-      clearTimeout(this.timer)
+      clearTimeout(this.timerDebounce)
       const that = this
       // usamos debounce 
       this.timerDebounce = setTimeout(() => {
@@ -264,10 +264,10 @@ export default {
     },
     setQuery() {
       // console.log("SET QUERY", this.buscarPor)
+      this.buscando = this.buscarPor
       this.entradaTeclado = true
       const inp = this.$refs.searchbox.$el.querySelector("input[type='search']")
       inp.value = this.buscarPor
-      this.buscando = this.buscarPor
       // disparamos el evento para que el instant search reconozca el cambio de valor en el search box
       inp.dispatchEvent(new Event('input', { bubbles: true }));
       //timeamos el reset
@@ -288,13 +288,20 @@ export default {
 .filtro-etiqueta {
   @apply bg-blue-500 hover:bg-blue-300 transition duration-200 text-gray-50 text-xs rounded py-1 px-2;
 }
+
+.busqueda-global {
+  width: 100vw;
+}
 .busqueda-global .panel-busquedas {
-  height: calc(100% - 65px);
+  height: calc(100vh - 60px)
 }
 .busqueda-global .search-bar {
   width: calc(100% - 40px);
 }
 
+.panel-right{
+  height: calc(100% - 20px)
+}
 .panel-left {
   @apply w-32 -ml-32 transition-all duration-300 opacity-0;
 }
@@ -306,12 +313,22 @@ export default {
   @apply space-y-2;
 }
 @screen sm {
+  .busqueda-global {
+  @apply w-auto;
+}
   .busqueda-global .search-bar {
     width: 100%;
   }
+  .panel-right{
+  height: 100%
+}
   .panel-left {
     @apply ml-0 w-40 opacity-100;
   }
+
+  .busqueda-global .panel-busquedas {
+  height: calc(98vh - 160px)
+}
 }
 .modal-voice >>> .card {
   @apply h-full sm:h-40;

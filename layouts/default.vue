@@ -403,9 +403,7 @@ export default {
   @apply items-start;
 }
 
-.modal-busqueda .card {
-  @apply h-full w-full sm:w-auto max-w-full;
-}
+
 </style>
 
 

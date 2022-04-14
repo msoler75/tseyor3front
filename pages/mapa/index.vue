@@ -16,10 +16,10 @@
       </div>
     </div>
     <section class="mt-5 mb-2">
-      <Tabs v-model="viendoPais" :labels="paises" group />
+      <Tabs v-model="viendoPais" :items="paises" group />
       <section class="flex flex-wrap justify-between text-sm">
-        <Tabs compact group="fixed" v-model="viendoVista" :labels="modosVista" class="text-md"/>
-        <Tabs compact group="fixed" v-model="viendoClase" :labels="modosClase" class="text-xs" /> 
+        <Tabs compact group="fixed" v-model="viendoVista" :items="modosVista" class="text-md"/>
+        <Tabs compact group="fixed" v-model="viendoClase" :items="modosClase" class="text-xs" /> 
             <SearchInput
               v-model="buscarPor"
               class="w-64"

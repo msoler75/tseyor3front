@@ -4,7 +4,7 @@
     <section class="flex">
       <div></div>
       <div class="ml-auto">
-        <SearchInput v-model="buscarPor" class="w-40 xl:mb-0" placeholder="Buscar equipo..." />
+        <SearchInput v-model="buscarPor" class="w-44 xl:mb-0" placeholder="Buscar equipo..." />
       </div>
     </section>
     <div v-for="equipo of equiposFiltrados" :key="equipo.id" class="mt-4">
@@ -56,6 +56,7 @@
 </template>
 
 <script>
+import Fuse from "fuse.js";
 import seo from '@/mixins/seo.js'
 export default {
   mixins: [seo],
@@ -86,11 +87,19 @@ export default {
   computed: {
     equiposFiltrados() {
       if (!this.buscarPor) return this.equipos;
-      return this.equipos.filter(
-        (x) =>
-          (x.nombre + x.descripcion).search(new RegExp(this.buscarPor, "i")) >
-          -1
-      );
+      const fuse = new Fuse(this.equipos.map(x => ({
+        ...x, _search: (x.nombre + ' ' + x.descripcion).toLowerCase()
+          .replace(/á/, 'a')
+          .replace(/é/, 'e')
+          .replace(/í/, 'i')
+          .replace(/ó/, 'o')
+          .replace(/ú/, 'u')
+      })), {
+        keys: ["nombre", "descripcion", "_search"],
+        shouldSort: true,
+        threshold: 0.3
+      });
+      return fuse.search(this.buscarPor).map(({ item }) => item)
     },
   },
   methods: {

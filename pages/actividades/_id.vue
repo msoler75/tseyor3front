@@ -90,7 +90,7 @@
         <section v-else class="w-full">
           <Tabs
             v-model="tabReuniones"
-            :labels="reuniones"
+            :items="reuniones"
             compact
             :group="false"
             center

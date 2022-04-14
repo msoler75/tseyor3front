@@ -5,7 +5,7 @@
         compact
         group="fixed"
         v-model="viendoCategoria"
-        :labels="categorias"
+        :items="categorias"
         class="mx-auto mb-20 lg:mb-32"
       />
     </div>

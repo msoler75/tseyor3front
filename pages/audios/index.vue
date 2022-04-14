@@ -16,7 +16,7 @@
           <div class="block xl:flex w-full">
             <Tabs
               v-model="viendoCategoria"
-              :labels="categorias"
+              :items="categorias"
               :group="false"
               class="xl:flex-wrap"
             />

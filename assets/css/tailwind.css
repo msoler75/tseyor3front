@@ -621,7 +621,7 @@
 .ais-VoiceSearch svg { width: 24px; height: 24px}
 .ais-VoiceSearch {@apply flex space-x-4; }
 
-.ais-Hits-list {
+.ais-Hits-list, .ais-InfiniteHits-list {
   @apply list-none;
 }
 

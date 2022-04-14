@@ -7,7 +7,7 @@
     <Tabs
       ref="tabs"
       v-model="viendoCategoria"
-      :labels="categorias"
+      :items="categorias"
       class="mb-7 justify-center"
       @change="cargarMas"
     />
@@ -20,8 +20,7 @@
           :imageWidth="400"
         />
       </template>
-    </Grid>
-    <div
+       <div
       v-show="hayMas && !cargando"
       v-observe-visibility="{
         callback: cargarMas,
@@ -32,6 +31,8 @@
       }"
       class="mt-3 flex justify-center"
     ></div>
+    </Grid>
+   
     <div v-show="cargando" class="mt-16 h-10 flex justify-center">
       <span class="text-xs">Cargando...</span>
     </div>

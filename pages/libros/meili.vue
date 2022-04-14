@@ -72,7 +72,7 @@
     <!--
        <Tabs
         v-model="viendoCategoria"
-        :labels="categorias"
+        :items="categorias"
         class="overflow-x-auto md:flex-wrap mr-2 mb-4"
         :compact="true"
         :group="false"
