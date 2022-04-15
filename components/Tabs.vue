@@ -16,7 +16,8 @@
       :title="getDescription(item)"
     >
       <Icon v-if="item.icon" :icon="item.icon" class="mr-1" />
-      {{ $ucFirst(getLabel(item)) }}
+      <span>{{ $ucFirst(getLabel(item)) }}</span>
+      <span v-if="item.count" class="ml-2 text-xs bg-black bg-opacity-20 text-white dark:text-gray-500 px-1 rounded">{{item.count}}</span>
     </div>
   </div>
 </template>

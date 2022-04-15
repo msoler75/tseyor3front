@@ -1,63 +1,43 @@
 <template>
   <div>
     <h1 class="mb-5">Catálogo de Libros</h1>
-    vx: {{ viendoCategoria }}
     <div class="w-full block xl:flex justify-between">
-      <Tabs
-        v-model="viendoCategoria"
-        :items="categorias"
-        class="overflow-x-auto md:flex-wrap mr-2 mb-4"
-        :compact="true"
-        :group="false"
-      />
+      <Tabs v-model="viendoCategoria" :items="categorias" class="overflow-x-auto md:flex-wrap mr-2 mb-4" :compact="true"
+        :group="false" />
       <div class="ml-left">
         <SearchInput v-model="buscarPor" class="w-64 mb-3" placeholder="Buscar por título..." />
       </div>
     </div>
 
-    <ais-instant-search
-      :search-client="searchClient"
-      :search-function="searchFunction"
-      index-name="libros"
-      class="w-full h-full insta-search"
-    >
-      <ais-search-box ref="searchbox" class="xhidden" />
+    <ais-instant-search v-show="!vistaInicial" ref="instaSearch" :search-client="searchClient"
+      :search-function="searchFunction" index-name="libros" class="w-full h-full insta-search">
+      <ais-search-box ref="searchbox" class="hidden" />
 
-      <ais-sort-by
-        :items="[
-          { value: 'libros:published_at:desc', label: 'Nuevos' },
-          { value: 'libros', label: 'Featured' },
-        ]"
-      />
+      <ais-refinement-list attribute="categoria" ref="refCollection" class="hidden"
+        :transform-items="receivedCategories" />
 
-      <ais-refinement-list
-        attribute="categoria"
-        ref="refCollection"
-        class="xhidden"
-        :transform-items="receivedCategories"
-      />
+      <ais-infinite-hits>
+        <template v-slot="{ items, refineNext, isLastPage }">
+          <Grid class="grid-cols-fill-w-64 text-center">
+            <CardBook v-for="item of items" :key="item.id" book-size="book-sm" :data="item" :noText="true" />
+          </Grid>
+          <div class="flex justify-center mt-4" v-if="!isLastPage">
+            <TButton @click="refineNext">Más resultados</TButton>
+          </div>
+        </template>
+      </ais-infinite-hits>
 
-      <ais-state-results>
-        <template v-slot="{ results: { hits, query } }">
-          <ais-infinite-hits v-if="hits.length > 0">
-            <template v-slot:loadMore="{ isLastPage, refineNext }">
-              <div class="flex justify-center mt-4" v-if="!isLastPage">
-                <TButton @click="refineNext">Más resultados</TButton>
-              </div>
-            </template>
-            <CardBook
-              book-size="book-sm"
-              slot="item"
-              slot-scope="{ item }"
-              :data="item"
-              :noText="true"
-            />
-          </ais-infinite-hits>
-
-          <div v-else>No se encontraron resultados para {{ query }}.</div>
+      <ais-state-results v-if="false">
+        <template v-slot="{ state: { query }, results: { hits } }">
+          <div v-if="!hits.length">No se encontraron resultados para {{ query }}.</div>
         </template>
       </ais-state-results>
     </ais-instant-search>
+
+    <Grid v-if="vistaInicial" class="grid-cols-fill-w-64 text-center">
+      <CardBook v-for="libro of libros" :key="libro.id" book-size="book-sm" :data="libro" :noText="true" />
+    </Grid>
+
   </div>
 </template>
 
@@ -67,6 +47,19 @@ import { instantMeiliSearch } from '@meilisearch/instant-meilisearch';
 import seo from '@/mixins/seo.js'
 export default {
   mixins: [seo],
+  async asyncData({ $strapi, $error }) {
+    try {
+      const filters = {
+        _start: 0,
+        _limit: 12
+      }
+      const libros = await $strapi.find("libros", filters)
+      return { libros }
+    }
+    catch (e) {
+      $error(503)
+    }
+  },
   data() {
     return {
       searchClient: instantMeiliSearch(
@@ -76,35 +69,44 @@ export default {
           placeholderSearch: true,
           primaryKey: 'id',
           keepZeroFacets: true,
-          paginationTotalHits: 70,
-          // hitsPerPage: 100,
-          // paginationTotalHits: 70
+          paginationTotalHits: 400,
         }
       ),
       searchFunction(helper) {
         const that = this.client.myVueComponent
+        const query = helper.state.query
         // es una búsqueda con filtros?
-        that.filteringCategoria = helper.state.disjunctiveFacetsRefinements.categoria.length
+        // that.filteringCategoria = helper.state.disjunctiveFacetsRefinements.categoria.length
         console.warn('SEARCH HELPER', helper)
-        if (that.lastSearch != helper.state.query) {
-          that.viendoCategoria = 'Todos'
-          //that.lastSearch=helper.state.query
-          // that.setCategoria('Todos')
-          //return
+        if (that.lastSearch != query) {
+          that.nuevaBusqueda = true
+          that.categoriasBusqueda = []
+          if (query && !that.lastSearch) {
+            that.viendoCategoria = 'Todos'
+          }
+          else if (!query) {
+            that.vistaInicial = true
+            that.viendoCategoria = 'Nuevos'
+          }
+        } else {
+
         }
-        that.lastSearch = helper.state.query
+        that.lastSearch = query
         // that.categoriasBusqueda = helper.state.disjunctiveFacetsRefinements.categoria
         // ejecutamos la query
         helper.search();
       },
-      filteringCategoria: null,
-      showFilters: false,
+      // indexDefaultSortBy: 'libros:published_at:desc',
+      // filteringCategoria: null,
       timerDebounce: null,
+      nuevaBusqueda: true,
       categoriasBusqueda: [],
+      categoriasBase: [],
       lastSearch: '',
       //
+      vistaInicial: true,
       buscarPor: "",
-      buscando: '',
+      buscandoPor: '',
       viendoCategoria: 0,
       cargando: false,
       // SEO:
@@ -118,41 +120,58 @@ export default {
   },
   computed: {
     categorias() {
-      return this.buscando ? ['Todos', ...this.categoriasBusqueda] : ['Nuevos', ...this.categoriasBusqueda]
+      return this.vistaInicial ? ['Nuevos', ...this.categoriasBase] : this.categoriasBusqueda.length > 1 ? ['Todos', ...this.categoriasBusqueda] : this.categoriasBusqueda
     }
   },
   watch: {
     buscarPor(newValue) {
       if (!newValue) {
-        this.categoriasBusqueda = []
+        if (this.viendoCategoria == 'Todos' || this.viendoCategoria == 'Nuevos' || this.viendoCategoria == 0)
+          this.viendoCategoria = 'Nuevos'
       }
       // ignoramos las pulsaciones de espacio
       if (newValue.charAt(newValue.length - 1) == ' ') return
       // estamos usando un componente propio, del cual copiamos el valor y lo establecemos en el search box de instant search
-      clearTimeout(this.timerDebounce)
       const that = this
       // usamos debounce 
+      clearTimeout(this.timerDebounce)
       this.timerDebounce = setTimeout(() => {
         // console.log('REF IS', that.$refs.searchbox)
         that.setQuery()
       }, newValue ? Math.min(500, Math.max(100, 700 - newValue.length * 100)) : 0)
     },
+    buscandoPor(newValue) {
+      if (!newValue) {
+        //this.categoriasBusqueda = []
+        // this.nuevaBusqueda= true
+      }
+      else
+        this.vistaInicial = false
+    },
     viendoCategoria(cat) {
+      console.log('watch viendoCategoria', cat)
       this.setCategoria(cat)
+      this.vistaInicial = cat == 'Nuevos'
+    },
+    vistaInicial(newValue) {
+      console.log('watch vistaInicial', newValue)
+      if (newValue && this.viendoCategoria === 'Todos')
+        this.viendoCategoria = 'Nuevos'
     }
   },
   methods: {
     receivedCategories(items) {
       console.log('RECEIVED CATS', items)
-      /*if (this.categoriasBusqueda && this.buscando === this.lastSearch) {
-        // ha cambiado la categoría tan solo
-        //if (!this.buscando&&!this.categoriasBusqueda)
-          //this.setQuery()
+      console.log('lastSearch', this.lastSearch)
+      console.log('buscandoPor', this.buscandoPor)
+      if (this.nuevaBusqueda) {
+        this.categoriasBusqueda = items.filter(x => x.count)
+        //if (!this.categoriasBusqueda.length)
+        //this.vistaInicial = true
+        this.nuevaBusqueda = false
       }
-      else
-        this.categoriasBusqueda = items*/
-      if (!this.categoriasBusqueda.length)
-        this.categoriasBusqueda = items
+      if (!this.categoriasBase.length)
+        this.categoriasBase = items.filter(x => x.count)
       return items
     },
     setQuery() {
@@ -160,17 +179,17 @@ export default {
       // this.entradaTeclado = true
       if (this.$refs.searchbox && this.$refs.searchbox.$el && this.$refs.searchbox.$el.querySelector) {
         const inp = this.$refs.searchbox.$el.querySelector("input[type='search']")
-        inp.value = this.buscarPor
-        this.buscando = this.buscarPor
+        this.buscandoPor = this.buscarPor
+        inp.value = this.buscandoPor
         // disparamos el evento para que el instant search reconozca el cambio de valor en el search box
         inp.dispatchEvent(new Event('input', { bubbles: true }));
       }
     },
     setCategoria(cat) {
-      // console.log('setCollection', collection)
-      const checks = this.$refs.refCollection.$el
-      if (checks) {
-
+      console.log('setCategoria', cat)
+      const checks = this.$refs.refCollection ? this.$refs.refCollection.$el : null
+      console.log('checks', checks)
+      if (checks && checks.querySelectorAll) {
         const inputs = checks.querySelectorAll(`input[type=checkbox]:checked`)
         console.warn('INPUTS', inputs)
         // desactiva todos los inputs
@@ -183,7 +202,7 @@ export default {
           setTimeout(function () {
             inpCur = checks.querySelector(`input[type=checkbox][value='${cat}']`)
             if (inpCur) {
-              console.log('coing to click', inpCur)
+              console.log('going to click', inpCur)
               inpCur.click()
             }
           }, 1)
@@ -192,10 +211,3 @@ export default {
   }
 }
 </script>
-
-<style scoped>
-.ais-InstantSearch >>> .ais-Hits-list,
-.ais-InstantSearch >>> .ais-InfiniteHits-list {
-  @apply grid gap-4 grid-cols-fill-w-64 text-center;
-}
-</style>
