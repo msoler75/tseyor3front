@@ -4,38 +4,15 @@
       <icon icon="bolt" class="text-yellow-800 mr-3" />Novedades
     </h1>
 
-    <Tabs
-      ref="tabs"
-      v-model="viendoCategoria"
-      :items="categorias"
-      class="mb-7 justify-center"
-      @change="cargarMas"
-    />
+    <Tabs ref="tabs" v-model="viendoCategoria" :items="categorias" class="mb-7 justify-center" @change="cargarMas" />
     <Grid class="grid-cols-fill-w-72 text-center">
       <template v-for="item of novedadesListado">
-        <CardDynamic
-          :key="item.tipo + '-' + item.id"
-          :data="item"
-          :collection="item.tipo"
-          :imageWidth="400"
-        />
+        <CardDynamic :key="item.tipo + '-' + item.id" :data="item" :collection="item.tipo" :imageWidth="400" />
       </template>
-       <div
-      v-show="hayMas && !cargando"
-      v-observe-visibility="{
-        callback: cargarMas,
-        intersection: {
-          threshold: 0,
-          rootMargin: '0px 0px -100px 0px'
-        }
-      }"
-      class="mt-3 flex justify-center"
-    ></div>
     </Grid>
-   
-    <div v-show="cargando" class="mt-16 h-10 flex justify-center">
-      <span class="text-xs">Cargando...</span>
-    </div>
+
+    <LoadMore v-if="hayMas" v-model="cargando" @click="cargarMas" class="mt-8"/>
+    <!-- v-observe-visibility="cargarMas" -->
   </SwipeX>
 </template>
 
@@ -124,7 +101,7 @@ export default {
 </script>
 
 <style scoped>
-.hooper-wrap >>> .hooper {
+.hooper-wrap>>>.hooper {
   height: auto;
 }
 </style>

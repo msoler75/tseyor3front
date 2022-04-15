@@ -1,8 +1,8 @@
 <template>
   <div>
     <h1 class="mb-5">Catálogo de Libros</h1>
-    <div class="w-full block xl:flex justify-between">
-      <Tabs v-model="viendoCategoria" :items="categorias" class="overflow-x-auto md:flex-wrap mr-2 mb-4" :compact="true"
+    <div class="w-full block xl:flex justify-between mb-1">
+      <Tabs v-model="viendoCategoria" :items="categorias" class="overflow-x-auto md:flex-wrap mr-2" :compact="true"
         :group="false" />
       <div class="ml-left">
         <SearchInput v-model="buscarPor" class="w-64 mb-3" placeholder="Buscar por título..." />
@@ -16,10 +16,10 @@
       <ais-refinement-list attribute="categoria" ref="refCollection" class="hidden"
         :transform-items="receivedCategories" />
 
-      <ais-infinite-hits>
+      <ais-infinite-hits v-show="!cambiandoVista" ref="hits">
         <template v-slot="{ items, refineNext, isLastPage }">
           <Grid class="grid-cols-fill-w-64 text-center">
-            <CardBook v-for="item of items" :key="item.id" book-size="book-sm" :data="item" :noText="true" />
+            <CardBook v-for="item of items" :key="item.id" book-size="book-sm" :data="item" :noText="true" :noDate="true"/>
           </Grid>
           <div class="flex justify-center mt-4" v-if="!isLastPage">
             <TButton @click="refineNext">Más resultados</TButton>
@@ -27,15 +27,17 @@
         </template>
       </ais-infinite-hits>
 
-      <ais-state-results v-if="false">
+      <div :style="{ minHeight: `${cambiandoVista}px` }" />
+
+      <ais-state-results>
         <template v-slot="{ state: { query }, results: { hits } }">
-          <div v-if="!hits.length">No se encontraron resultados para {{ query }}.</div>
+          <div v-show="!hits.length">No se encontraron resultados para {{ query }}.</div>
         </template>
       </ais-state-results>
     </ais-instant-search>
 
     <Grid v-if="vistaInicial" class="grid-cols-fill-w-64 text-center">
-      <CardBook v-for="libro of libros" :key="libro.id" book-size="book-sm" :data="libro" :noText="true" />
+      <CardBook v-for="libro of libros" :key="libro.id" book-size="book-sm" :data="libro" :noText="true" :noDate="true"/>
     </Grid>
 
   </div>
@@ -43,6 +45,7 @@
 
 
 <script>
+// https://www.sitepoint.com/premium/library/
 import { instantMeiliSearch } from '@meilisearch/instant-meilisearch';
 import seo from '@/mixins/seo.js'
 export default {
@@ -105,6 +108,7 @@ export default {
       lastSearch: '',
       //
       vistaInicial: true,
+      cambiandoVista: 0,
       buscarPor: "",
       buscandoPor: '',
       viendoCategoria: 0,
@@ -129,6 +133,8 @@ export default {
         if (this.viendoCategoria == 'Todos' || this.viendoCategoria == 'Nuevos' || this.viendoCategoria == 0)
           this.viendoCategoria = 'Nuevos'
       }
+      else
+        this.viendoCategoria = this.vistaInicial?'Nuevos':'Todos'
       // ignoramos las pulsaciones de espacio
       if (newValue.charAt(newValue.length - 1) == ' ') return
       // estamos usando un componente propio, del cual copiamos el valor y lo establecemos en el search box de instant search
@@ -198,14 +204,21 @@ export default {
           if (inp !== inpCur && inp.checked) inp.click()
         }
         // activa el input de la categoría seleccionada
-        if (!inpCur || !inpCur.checked)
+        if (!inpCur || !inpCur.checked) {
+          const that = this
+          const rect = this.$refs.hits.$el.getBoundingClientRect()
+          this.cambiandoVista = rect.height
           setTimeout(function () {
+            that.cambiandoVista = 0
             inpCur = checks.querySelector(`input[type=checkbox][value='${cat}']`)
             if (inpCur) {
               console.log('going to click', inpCur)
               inpCur.click()
             }
           }, 1)
+        }
+        else if (inpCur && !inpCur.checked)
+          inpCur.click()
       }
     }
   }

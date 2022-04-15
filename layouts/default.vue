@@ -1,18 +1,12 @@
 <template>
-  <div
-    id="__main-container"
-    class="surface-0 w-full font-sans"
-    :class="(travelling ? 'travelling ' : 'in-page') + (pageConfig.background ? '' : 'no-background')"
-  >
+  <div id="__main-container" class="surface-0 w-full font-sans"
+    :class="(travelling ? 'travelling ' : 'in-page') + (pageConfig.background ? '' : 'no-background')">
     <!-- Navigation starts-->
-    <NavTop v-model="currentTab" :rutasMenu="rutasMenu" ref="nav" @showSideMenu="showSideMenu"/>
+    <NavTop v-model="currentTab" :rutasMenu="rutasMenu" ref="nav" @showSideMenu="showSideMenu" />
 
     <!-- User Menu -->
-    <Card
-      v-if="isAuthenticated"
-      v-show="menuUsuario"
-      class="py-3 px-5 w-52 fixed right-0 top-[48px] sm:top-[51px] md:top-[68px] lg:top-[72px] xl:top-[76px] z-40"
-    >
+    <Card v-if="isAuthenticated" v-show="menuUsuario"
+      class="py-3 px-5 w-52 fixed right-0 top-[48px] sm:top-[51px] md:top-[68px] lg:top-[72px] xl:top-[76px] z-40">
       <ul class="list-none">
         <li v-for="item of userMenuItems" :key="item.href">
           <NLink v-if="item.href" :to="item.href" class="block py-1">
@@ -31,12 +25,8 @@
     <!-- Navigation ends -->
     <div
       class="mt-5 mb-3 lg:mt-6 lg:mb-5 container xs:px-1 sm:px-3 md:px-6 mx-auto lg:flex-row items-start lg:items-center justify-between pb-4 border-gray-300 relative"
-      @click="clickOff"
-    >
-      <Breadcrumb
-        :present="pageConfig.breadcrumb && !travelling"
-        class="absolute text-xs xl:text-sm"
-      />
+      @click="clickOff">
+      <Breadcrumb :present="pageConfig.breadcrumb && !travelling" class="absolute text-xs xl:text-sm" />
 
       <h4 class="mt-2 text-2xl font-bold leading-tight text-gray-800 dark:text-gray-200">
         <div v-if="false">{{ title }}</div>
@@ -58,19 +48,11 @@
       -->
     </div>
     <!-- Page title ends -->
-    <div
-      @click="clickOff"
-      :class="pageConfig.contained ? 'container xs:px-1 sm:px-3 md:px-6 mx-auto' : ''"
-    >
+    <div @click="clickOff" :class="pageConfig.contained ? 'container xs:px-1 sm:px-3 md:px-6 mx-auto' : ''">
       <div class="w-full">
         <portal-target name="portal0"></portal-target>
         <!-- Place your content here -->
-        <nuxt
-          id="__content"
-          class="mx-auto"
-          :class="pageConfig.contained ? 'mb-5' : ''"
-          ref="page"
-        />
+        <nuxt id="__content" class="mx-auto" :class="pageConfig.contained ? 'mb-5' : ''" ref="page" />
       </div>
     </div>
     <Sidebar v-show="!onlyContent" v-model="showSidebar" :items="rutasMenu" class="xl:hidden" />
@@ -324,7 +306,7 @@ export default {
     }
   },
   methods: {
-    clickOff(){
+    clickOff() {
       this.$refs.nav.closeAllMenus()
     },
     actualizarUrlPerfil() {
@@ -398,12 +380,9 @@ export default {
 
 
 <style scoped>
-
 .modal-busqueda {
   @apply items-start;
 }
-
-
 </style>
 
 
@@ -499,13 +478,11 @@ body {
   /* @apply bg-center bg-no-repeat bg-cover bg-fixed; */
   /* background-image: linear-gradient(to top, #dff0ff 0%, white 100%); */
   /* background-image: radial-gradient( circle farthest-corner at 50% 20%,  #e0f0ff 0%, #d9eaff 65%, #c7e0ff 80.5%, #fff0ef 100%); */
-  background-image: linear-gradient(
-    to bottom,
-    #eff6ff 0%,
-    #e8f0fa 65%,
-    #c7e0ff 80.5%,
-    #fff0ef 100%
-  );
+  background-image: linear-gradient(to bottom,
+      #eff6ff 0%,
+      #e8f0fa 65%,
+      #c7e0ff 80.5%,
+      #fff0ef 100%);
   background-attachment: fixed;
   background-size: cover;
 }
@@ -525,6 +502,7 @@ html.dark:not(.page-background) #__layout {
 .breadcrumb {
   transition: 0.6s opacity linear;
 }
+
 .breadcrumb:not([present]) {
   /* filter: blur(10px); */
   opacity: 0;
@@ -536,9 +514,11 @@ html.dark:not(.page-background) #__layout {
 .page-leave-active {
   transition: all 0.5s ease-out;
 }
+
 .page-leave {
   opacity: 0;
 }
+
 .page-enter,
 .page-leave-active {
   opacity: 0;

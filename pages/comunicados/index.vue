@@ -1,7 +1,6 @@
 <template>
   <div>
-    
-        <h1>Comunicados Recientes</h1>
+    <h1>Comunicados Recientes</h1>
     <section class="flex flex-wrap sm:flex-nowrap justify-between items-baseline mb-5">
       <div class="mt-5 flex-grow order-2 sm:order-1">
       </div>
@@ -17,7 +16,7 @@
       <ais-state-results>
         <template v-slot="{ results: { hits, query } }">
           <ais-infinite-hits v-if="hits.length > 0">
-            <Card v-for="noticia of hits" :key="noticia.id" :data="noticia" collection="comunicados" />
+            <Card v-for="item of hits" :key="item.id" :data="item" collection="comunicados" />
             <template v-slot:loadMore="{ isLastPage, refineNext }">
               <div class="flex justify-center mt-4" v-if="!isLastPage">
                 <TButton @click="refineNext">Más resultados</TButton>
@@ -30,12 +29,10 @@
     </ais-instant-search>
 
     <Grid v-if="vistaInicial">
-      <Card v-for="noticia of comunicadosListados" :key="noticia.id" :data="noticia" collection="comunicados" />
+      <Card v-for="item of comunicadosListados" :key="item.id" :data="item" collection="comunicados" />
     </Grid>
-    <div v-if="vistaInicial" v-show="hayMas && !cargando" v-observe-visibility="cargarMas"
-      class="mt-3 flex justify-center">
-      <!-- <button @click="cargarMas" class="btn">Cargar Más...</button> -->
-    </div>
+    <LoadMore v-if="hayMas" v-model="cargando" @click="cargarMas"/>
+    <!-- v-observe-visibility="cargarMas" -->
   </div>
 </template>
 
@@ -199,7 +196,7 @@ export default {
 </script>
 
 <style scoped>
-.card >>> .card-img {
+.card>>>.card-img {
   @apply h-72;
 }
 

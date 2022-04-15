@@ -9,14 +9,7 @@
         collection="boletines"          
       />
     </Grid>
-    <div v-show="hayMas && !cargando" v-observe-visibility="cargarMas" class="mt-3 flex justify-center">
-      <!-- <button @click="cargarMas" class="btn">Cargar Más...</button> -->
-    </div>
-    <div v-show="cargando" class="mt-16 h-10 flex justify-center">
-      <span class="text-xs">
-        Cargando...
-      </span>
-    </div>
+    <LoadMore v-if="hayMas" v-model="cargando" @click="cargarMas" class="mt-8"/>
   </div>
 </template>
 

@@ -1,28 +1,46 @@
 <template>
-  <div>
-    <h1 class="text-center">Blogs de Tseyor</h1>
-    <divider />
-    <Grid class="text-center">
-      <Card v-for="entrada of entradas" :data="entrada" :key="entrada.id" collection="entradas" />
-    </Grid>
-    <div
-      v-show="hayMas && !cargando"
-      v-observe-visibility="cargarMas"
-      class="mt-3 flex justify-center"
-    >
-      <!-- <button @click="cargarMas" class="btn">Cargar Más...</button> -->
+  <div contained="no">
+    <section class="bg-blue-gray-900 py-12 w-full text-center">
+      <div class="container mx-auto px-2 xm:px-5 sm:px-12">
+        <Grid>
+          <Card v-for="blog of blogs" :data="blog" :key="blog.id" collection="blogs" :noDate="true" />
+        </Grid>
+      </div>
+    </section>
+
+
+    <div class="w-full mx-auto container py-12 px-2 xm:px-5 sm:px-12">
+      <h2>Recientes</h2>
+      <CardEntry v-for="entrada of entradas" :key="entrada.id" :data="entrada" collection="entradas" class="mb-8 p-7"
+        :category-function="getBlog" />
+      <LoadMore v-if="hayMas" v-model="cargando" @click="cargarMas"/>
     </div>
-    <div v-show="cargando" class="mt-16 h-10 flex justify-center">
-      <span class="text-xs">Cargando...</span>
-    </div>
+
+
+
   </div>
 </template>
 
 <script>
+const query_blogs = `query {
+        blogs(sort: "nombre:asc")  {
+          id
+          slug
+          published_at
+          nombre
+          descripcion
+          imagen {
+            url
+            width
+            height
+          }
+        }
+      }`
+
 import seo from '@/mixins/seo.js'
 export default {
   mixins: [seo],
-  async asyncData({ $strapi, $error }) {
+  async asyncData({ $strapi, app, $error }) {
     try {
       const filters = {
         _start: 0,
@@ -36,10 +54,16 @@ export default {
       //categorias.push(e)
 
       const entradas = await $strapi.find('entradas', filters)
-
+      const resultado = await $strapi.graphql({
+        query: query_blogs
+      })
+      entradas.forEach(entrada => {
+        entrada.texto = app.$renderMarkdownServer(entrada.texto).replace(/<[^>]+>/g, '')
+      })
       var hayMas = entradas.length === filters._limit
-      return { filters, entradas, hayMas }
+      return { filters, blogs: resultado.blogs, entradas, hayMas }
     } catch (e) {
+      console.error(e)
       $error(503)
     }
   },
@@ -61,17 +85,19 @@ export default {
       const entradas = await this.$strapi.find('entradas', filtro)
       this.hayMas = entradas.length === this.filters._limit
       for (const entrada of entradas) {
-        if (!this.entradas.find(x => x.id === entrada.id))
+        if (!this.entradas.find(x => x.id === entrada.id)) {
+          entrada.texto = this.$renderMarkdownServer(entrada.texto).replace(/<[^>]+>/g, '')
           this.entradas.push(entrada)
+        }
       }
       this.cargando = false
+    },
+    getBlog(entrada) {
+      return { label: entrada.blog.nombre, url: `/blogs/${entrada.blog.slug}` }
     }
   }
 }
 </script>
 
 <style scoped>
-.card >>> .card-img {
-  @apply h-72;
-}
 </style>

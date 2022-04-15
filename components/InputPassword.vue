@@ -24,6 +24,6 @@ export default {
         return {
             viewing: false
         }
-    },
+    }
 }
 </script>

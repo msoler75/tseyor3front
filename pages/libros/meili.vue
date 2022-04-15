@@ -68,42 +68,6 @@
         </ais-hits>
       </div>
     </ais-instant-search>
-
-    <!--
-       <Tabs
-        v-model="viendoCategoria"
-        :items="categorias"
-        class="overflow-x-auto md:flex-wrap mr-2 mb-4"
-        :compact="true"
-        :group="false"
-      />
-      <div class="ml-left">
-        <SearchInput
-          v-model="buscarPor"
-          class="w-64 mb-3"
-          placeholder="Buscar por título o descripción..."
-        />
-      </div>
-    </div>
-    <Grid class="grid-cols-fill-w-64 text-center">
-      <CardBook
-        book-size="book-sm"
-        v-for="libro of librosFiltrados"
-        :key="libro.id"
-        :data="libro"
-        :noText="true"
-      />
-    </Grid>
-    <div
-      v-show="hayMas && !cargando"
-      v-observe-visibility="cargarMas"
-      class="mt-3 flex justify-center"
-    >
-    </div>
-    <div v-show="cargando" class="mt-16 h-10 flex justify-center">
-      <span class="text-xs">Cargando...</span>
-    </div>
-    -->
   </div>
 </template>
 
