@@ -20,7 +20,7 @@
             <Card v-for="noticia of hits" :key="noticia.id" :data="noticia" collection="noticias" />
             <template v-slot:loadMore="{ isLastPage, refineNext }">
               <div class="flex justify-center mt-4" v-if="!isLastPage">
-                <TButton @click="refineNext">Más resultados</TButton>
+                <LoadMore @click="refineNext"/>
               </div>
             </template>
           </ais-infinite-hits>

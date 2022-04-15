@@ -2,21 +2,30 @@
   <div contained="no">
     <section class="bg-blue-gray-900 py-12 w-full text-center">
       <div class="container mx-auto px-2 xm:px-5 sm:px-12">
-        <Grid>
+        <Grid class="xm:grid-cols-fill-w-64 sm:grid-cols-fit-w-48">
           <Card v-for="blog of blogs" :data="blog" :key="blog.id" collection="blogs" :noDate="true" />
         </Grid>
       </div>
     </section>
 
-
-    <div class="w-full mx-auto container py-12 px-2 xm:px-5 sm:px-12">
+    <div class="w-full mx-auto container container-lg max-w-lg py-12 px-2 xm:px-5 sm:px-12">
       <h2>Recientes</h2>
       <CardEntry v-for="entrada of entradas" :key="entrada.id" :data="entrada" collection="entradas" class="mb-8 p-7"
-        :category-function="getBlog" />
-      <LoadMore v-if="hayMas" v-model="cargando" @click="cargarMas"/>
+        :category-function="getBlogAndDate">
+        <div class="flex text-xs space-x-3">
+          <div v-if="entrada && entrada.blog">
+            <icon icon="circle" class="text-sello-fuerte transform scale-75" />
+            <NLink class="font-bold font-sans tracking-widest text-diminished opacity-80 hover:opacity-100 uppercase"
+              :to="`/blogs/${entrada.blog.slug}`">{{ entrada.blog.nombre }}</NLink>
+          </div>
+          <div>
+            <icon icon="circle" class="text-gray transform scale-75" />
+            <span class="text-gray text-xs">{{ $dayjs(entrada.published_at).format('d-MMM-YYYY') }}</span>
+          </div>
+        </div>
+      </CardEntry>
+      <LoadMore v-if="hayMas" v-model="cargando" @click="cargarMas" />
     </div>
-
-
 
   </div>
 </template>
@@ -91,9 +100,6 @@ export default {
         }
       }
       this.cargando = false
-    },
-    getBlog(entrada) {
-      return { label: entrada.blog.nombre, url: `/blogs/${entrada.blog.slug}` }
     }
   }
 }

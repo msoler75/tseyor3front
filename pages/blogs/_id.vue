@@ -1,13 +1,19 @@
 <template>
   <div contained="no">
     <h1 class="text-center">{{ blog.nombre }}</h1>
-    <div class="w-full mx-auto container py-5">
+    <div class="w-full mx-auto container container-lg py-5">
 
       <div class="w-full mx-auto container py-12 px-2 xm:px-5 sm:px-12">
-        <CardEntry v-for="entrada of entradas" :key="entrada.id" :data="entrada" collection="entradas" class="mb-8 p-7"/>
+        <CardEntry v-for="entrada of entradas" :key="entrada.id" :data="entrada" collection="entradas" class="mb-8 p-7">
+          <div class="flex text-xs space-x-3">
+            <div>
+              <span class="text-gray text-xs">{{ $dayjs(entrada.published_at).format('d-MMM-YYYY') }}</span>
+            </div>
+          </div>
+        </CardEntry>
       </div>
 
-     <LoadMore v-if="hayMas" v-model="cargando" @click="cargarMas"/>
+      <LoadMore v-if="hayMas" v-model="cargando" @click="cargarMas" />
     </div>
 
 
@@ -51,6 +57,10 @@ export default {
       )
       if (!blog)
         return $error(404, 'Blog no encontrado')
+
+      blog.likes = await $strapi.find('likes', {
+        uid: `/blogs/${blog.id}`
+      })
 
       const filters = {
         _start: 0,

@@ -73,6 +73,11 @@ export default {
       default () {
         return {};
       }
+    },
+    categoryFunction: {
+      type: Function,
+      required: false,
+      default: null
     }
   },
   data() {
@@ -95,6 +100,11 @@ export default {
     },
     ccollection() {
       return this.collection || this.data.collection || this.data.colleccion;
+    },
+    ccategory() {
+      if (this.categoryFunction)
+        return this.categoryFunction(this.data)
+      return null
     },
     chref() {
       const r =
@@ -134,6 +144,7 @@ export default {
       let src = this.image || this.data.image || this.data.imagen;
       if (src && Array.isArray(src)) src = src[0]
       if (src && typeof src === "object") src = src.url;
+      if(!src) return this.$config.defaultImage
       return src
     },
     imageBg() {

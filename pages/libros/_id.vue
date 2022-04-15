@@ -100,11 +100,7 @@ export default {
       contenido.likes = await $strapi.find('likes', {
         uid: `/libros/${contenido.id}`
       })
-      const categoria = contenido.etiquetas.length
-        ? contenido.etiquetas[0].nombre
-        : null
-      const filtro = categoria ? { 'etiquetas.nombre': categoria } : {}
-      return { filtro, contenido, libro: contenido }
+      return { contenido, libro: contenido }
     } catch (e) {
       console.warn(e)
       $error(503)

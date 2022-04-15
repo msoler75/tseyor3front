@@ -22,7 +22,7 @@
             <CardBook v-for="item of items" :key="item.id" book-size="book-sm" :data="item" :noText="true" :noDate="true"/>
           </Grid>
           <div class="flex justify-center mt-4" v-if="!isLastPage">
-            <TButton @click="refineNext">Más resultados</TButton>
+            <LoadMore @click="refineNext"/>
           </div>
         </template>
       </ais-infinite-hits>
