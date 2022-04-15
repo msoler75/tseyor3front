@@ -18,7 +18,7 @@
       class="md:text-xl select-none transform surface-0 bg-white dark:bg-gray-dark-800 shadow top-0 left-0 max-w-full fixed h-full overflow-y-auto ease-in-out transition-all duration-300 z-50 py-4"
       :class="showSidebar ? 'translate-x-0' : '-translate-x-full'"
     >
-      <div class="flex flex-col w-full m-0 p-0 sm:w-40 md:w-52">
+      <div class="flex flex-col w-full m-0 p-0 xm:w-40 md:w-52">
         <div
           v-for="item of menuitems"
           v-show="!item.hideInSidebar"
@@ -36,7 +36,7 @@
           <div
             v-if="item.items"
             v-show="currentTab === item.href"
-            class="sm:py-4 bg-gray-200 dark:bg-black sm:fixed sm:top-0 sm:bottom-0 sm:z-50 sm:flex sm:flex-col sm:justify-start sm:w-[28rem] lg:w-[50rem] sm:left-40 md:left-52 lg:p-7 lg:grid grid-gap-3 lg:grid-cols-2 lg:justify-start lg:items-center"
+            class="xm:py-4 bg-gray-200 dark:bg-black xm:fixed xm:top-0 xm:bottom-0 xm:z-50 xm:flex xm:flex-col xm:justify-start xm:w-[28rem] lg:w-[50rem] xm:left-40 md:left-52 lg:p-7 lg:grid grid-gap-3 lg:grid-cols-2 lg:justify-start lg:items-center"
             style="grid-template-rows: repeat(auto-fill, minmax(70px, 1fr))"
           >
             <div
@@ -160,7 +160,7 @@ export default {
 
 <style scoped>
 aside {
-  @apply w-[24rem] sm:w-[28rem] md:w-[36rem] lg:w-[64rem];
+  @apply w-[24rem] xm:w-[28rem] md:w-[36rem] lg:w-[64rem];
 }
 
 aside >>> .svg-container,

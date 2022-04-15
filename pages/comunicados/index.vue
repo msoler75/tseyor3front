@@ -1,73 +1,40 @@
 <template>
-  <div class="container max-w-4xl mx-auto">
-    <div class="px-1 xs:px-3 sm:px-7">
-      <div class="mb-7">
+  <div>
+    
         <h1>Comunicados Recientes</h1>
-        <p>
-          Aquí se publican los últimos comunicados, que progresivamente se van archivando en nuestro
-          <NLink
-            to="/biblioteca/comunicados"
-            class="btn btn-gray py-1 px-2 inline-block whitespace-nowrap font-light"
-          >archivo de comunicados</NLink>
-        </p>
-      </div>
-    </div>
-
     <section class="flex flex-wrap sm:flex-nowrap justify-between items-baseline mb-5">
       <div class="mt-5 flex-grow order-2 sm:order-1">
-        <p v-if="buscandoPor" class="text-center font-bold">Viendo resultados de: {{ buscandoPor }}</p>
-        <p v-else>&nbsp;</p>
       </div>
       <form @submit.prevent="buscar" class="w-full sm:w-auto flex justify-end order-1">
-        <SearchInput
-          v-model="buscarPor"
-          class="w-48"
-          placeholder="Título o palabras clave"
-          required
-          @search="buscar"
-        />
-        <button :disabled="buscarPor.length <= 3" type="submit" class="ml-2 btn">
-          Buscar
-          <span class="hidden md:inline">en Comunicados</span>
-        </button>
+        <SearchInput v-model="buscarPor" class="w-48" placeholder="Buscar..." required @search="buscar" />
       </form>
     </section>
 
-    <div class="w-full flex flex-wrap">
-      <div class="lg:w-2/3 flex-shrink lg:pr-12">
-        <div v-if="comunicadosListados.length">
-          <Card
-            v-for="comunicado of comunicadosListados"
-            :data="comunicado"
-            :key="comunicado.id"
-            collection="comunicados"
-            class="mb-7 max-w-lg mx-auto"
-          />
-        </div>
-        <div
-          v-show="hayMas && !cargando"
-          v-observe-visibility="cargarMas"
-          class="mt-3 flex justify-center"
-        >
-          <!-- <button @click="cargarMas" class="btn">Cargar Más...</button> -->
-        </div>
-        <div v-show="cargando" class="mt-16 h-10 flex justify-center">
-          <span class="text-xs">Cargando...</span>
-        </div>
-        <p v-if="!hayMas" class="text-center">No hay más comunicados con esos criterios.</p>
-      </div>
+    <ais-instant-search v-show="!vistaInicial" ref="instaSearch" :search-client="searchClient" index-name="comunicados"
+      class="w-full h-full insta-search">
+      <ais-search-box ref="searchbox" class="hidden" />
 
-      <Glass class="p-2 py-9 h-auto lg:w-1/3 flex-shrink self-start text-justify">
-        <h2 class="text-center">Recientes</h2>
-        <ul class="list-disc ml-5">
-          <li v-for="comunicado of comunicadosRecientes" :key="comunicado.id">
-            <NLink :to="'/comunicados/' + comunicado.slug">{{ comunicado.titulo }}</NLink>
-          </li>
-        </ul>
-        <div class="m-7 flex justify-center">
-          <NLink to="/comunicados/listado" class="btn btn-primar">Listado Completo</NLink>
-        </div>
-      </Glass>
+      <ais-state-results>
+        <template v-slot="{ results: { hits, query } }">
+          <ais-infinite-hits v-if="hits.length > 0">
+            <Card v-for="noticia of hits" :key="noticia.id" :data="noticia" collection="comunicados" />
+            <template v-slot:loadMore="{ isLastPage, refineNext }">
+              <div class="flex justify-center mt-4" v-if="!isLastPage">
+                <TButton @click="refineNext">Más resultados</TButton>
+              </div>
+            </template>
+          </ais-infinite-hits>
+          <div v-else>No se encontraron resultados para {{ query }}.</div>
+        </template>
+      </ais-state-results>
+    </ais-instant-search>
+
+    <Grid v-if="vistaInicial">
+      <Card v-for="noticia of comunicadosListados" :key="noticia.id" :data="noticia" collection="comunicados" />
+    </Grid>
+    <div v-if="vistaInicial" v-show="hayMas && !cargando" v-observe-visibility="cargarMas"
+      class="mt-3 flex justify-center">
+      <!-- <button @click="cargarMas" class="btn">Cargar Más...</button> -->
     </div>
   </div>
 </template>
@@ -90,6 +57,7 @@ const query_comunicados = `comunicados(start: %start, limit: %limit, sort: "fech
 
 const query_where = `, where: { _or: [{ titulo_contains: "%search" }, { texto_contains: "%search" }] }`
 
+import { instantMeiliSearch } from '@meilisearch/instant-meilisearch';
 import seo from '@/mixins/seo.js'
 export default {
   mixins: [seo],
@@ -139,6 +107,19 @@ export default {
   },
   data() {
     return {
+      searchClient: instantMeiliSearch(
+        // https://github.com/meilisearch/instant-meilisearch
+        this.$config.meilisearchUrl, this.$config.meilisearchKey,
+        {
+          placeholderSearch: false,
+          primaryKey: 'id',
+          keepZeroFacets: true,
+          paginationTotalHits: 400,
+        }
+      ),
+      timerDebounce: null,
+      vistaInicial: true,
+      //
       hayMas: true,
       buscarPor: '',
       buscandoPor: '',
@@ -148,6 +129,23 @@ export default {
       description: 'Comunicados telepáticos mantenidos con los Guías Estelares a través de Chac Mool Puente',
       image: 'imagen_a_definir'
     }
+  },
+  watch: {
+    buscarPor(newValue) {
+      // ignoramos las pulsaciones de espacio
+      if (newValue.charAt(newValue.length - 1) == ' ') return
+      // estamos usando un componente propio, del cual copiamos el valor y lo establecemos en el search box de instant search
+      const that = this
+      // usamos debounce 
+      clearTimeout(this.timerDebounce)
+      this.timerDebounce = setTimeout(() => {
+        // console.log('REF IS', that.$refs.searchbox)
+        that.setQuery()
+      }, newValue ? Math.min(500, Math.max(100, 700 - newValue.length * 100)) : 0)
+    },
+    buscandoPor(newValue) {
+      this.vistaInicial = !newValue
+    },
   },
   methods: {
     buscar() {
@@ -185,6 +183,17 @@ export default {
       }
       this.cargando = false
     },
+    setQuery() {
+      console.log("SET QUERY", this.buscarPor)
+      // this.entradaTeclado = true
+      if (this.$refs.searchbox && this.$refs.searchbox.$el && this.$refs.searchbox.$el.querySelector) {
+        const inp = this.$refs.searchbox.$el.querySelector("input[type='search']")
+        this.buscandoPor = this.buscarPor
+        inp.value = this.buscandoPor
+        // disparamos el evento para que el instant search reconozca el cambio de valor en el search box
+        inp.dispatchEvent(new Event('input', { bubbles: true }));
+      }
+    }
   }
 };
 </script>
@@ -192,5 +201,10 @@ export default {
 <style scoped>
 .card >>> .card-img {
   @apply h-72;
+}
+
+.ais-InstantSearch>>>.ais-Hits-list,
+.ais-InstantSearch>>>.ais-InfiniteHits {
+  @apply grid gap-4 grid-cols-fill-w-64 text-center;
 }
 </style>
