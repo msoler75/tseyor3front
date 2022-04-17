@@ -2,13 +2,11 @@
   <section contained="no" focused>
 
     <NLink v-if="contenido.autor && isAuthenticated && loggedInUser.id === contenido.autor.id"
-      class="btn absolute top-24 right-4 w-12 h-12 flex justify-center items-center rounded-full sm:w-auto sm:h-auto sm:rounded-inherit"
+      class="btn absolute -top-12 right-4 w-12 h-12 flex justify-center items-center rounded-full sm:w-auto sm:h-auto sm:rounded-inherit"
       :to="`/eventos/editar/${contenido.id}`">
       <icon icon="edit" />
       <span class="ml-2 hidden sm:inline">Editar</span>
     </NLink>
-
-    <section class="fixed left-0 top-0 w-screen h-[40vh] xl:h-[45vh]" :style="imageBg" />
 
     <Card v-if="$dayjs().isAfter($dayjs(evento.fechaFinal))"
       class="absolute right-1 mt-1 font-bold text-xs p-1 sm:p-4 sm:text-base bg-orange text-orange-contrast">Evento
@@ -26,7 +24,7 @@
         <h1 class="text-center">{{ ctitle }}</h1>
         <Article class="text-justify" v-html="evento.textoHTML || evento.descripcion" />
         <div class="mt-5 space-y-3 mb-7">
-          <nuxt-img v-for="img of contenido.imagenes" :key="img.url" :src="img.url" class="mx-auto" />
+          <nuxt-img v-for="img of contenido.imagenes" :key="img.url" :src="img.url" class="mx-auto imagenes" />
         </div>
       </Card>
       <div class="order-5 md:order-3 xl:order-4 flex flex-col space-y-6 justify-start items-center">
@@ -120,6 +118,10 @@ export default {
       $error(503)
     }
   },
+  mounted() {
+    if(this.contenido.imagen)
+    this.$store.commit('setBackgroundImageUrl', this.contenido.imagen.url)
+  },
   data() {
     return {
       actualizando: false
@@ -148,16 +150,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(["isAuthenticated", "loggedInUser"]),
-    imageBg() {
-      const imgUrl = this.$img(this.cimage, { width: '100%', format: 'webp', quality: 70 })
-      return {
-        backgroundImage: `url('${imgUrl}')`,
-        backgroundPosition: 'center',
-        backgroundSize: 'cover',
-        zIndex: -1
-      }
-    },
+    ...mapGetters(["isAuthenticated", "loggedInUser"])
   }
 };
 </script>
@@ -202,4 +195,6 @@ export default {
       transparent 0,
       transparent 50%);
 }
+
+.imagenes {max-height: 80vh}
 </style>

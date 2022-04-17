@@ -62,19 +62,28 @@ export default {
     },
     cimage() {
       let src = this.image || this.imagen || this.contenido.image || this.contenido.imagen;
+      if(Array.isArray(src)) src= src[0]
       if(src && typeof src === 'object')
         src = src.url 
       // if (src && src.search("/") > -1) return src;
       // return "./imagenes/" + src;
       return src
     },
+    imageBg() {
+      const imgUrl = this.$img(this.cimage, { width: '100%', format: 'webp', quality: 70 })
+      return {
+        backgroundImage: `url('${imgUrl}')`,
+        backgroundPosition: 'center',
+        backgroundSize: 'cover',
+        zIndex: -1
+      }
+    },
     collection () {
       if (this.ccollection) 
         return this.ccollection
       const parts = this.$route.path.split('/')
       return parts[parts.length-2]
-    },
-    
+    }    
   },
   methods: {
     renderMarkdown(md) {

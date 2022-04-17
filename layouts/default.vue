@@ -1,6 +1,7 @@
 <template>
-  <div id="__main-container" class="surface-0 w-full font-sans"
+  <div id="__main-container" class="surface-0 w-full font-sans relative"
     :class="(travelling ? 'travelling ' : 'in-page') + (pageConfig.background ? '' : 'no-background')">
+    <div class="absolute w-screen h-screen z-0" :style="imagenFondo"></div>
     <!-- Navigation starts-->
     <NavTop v-model="currentTab" :rutasMenu="rutasMenu" ref="nav" @showSideMenu="showSideMenu" />
 
@@ -48,7 +49,7 @@
       -->
     </div>
     <!-- Page title ends -->
-    <div @click="clickOff" :class="pageConfig.contained ? 'container xs:px-1 sm:px-3 md:px-6 mx-auto' : ''">
+    <div @click="clickOff" class="relative z-10" :class="pageConfig.contained ? 'container xs:px-1 sm:px-3 md:px-6 mx-auto' : ''">
       <div class="w-full">
         <portal-target name="portal0"></portal-target>
         <!-- Place your content here -->
@@ -294,7 +295,7 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(["isAuthenticated", "loggedInUser", "travelling", "pageConfig", "menuUsuario", "navHidden", "onlyContent"]),
+    ...mapGetters(["isAuthenticated", "loggedInUser", "travelling", "pageConfig", "menuUsuario", "navHidden", "onlyContent", "backgroundImageUrl"]),
     rutasMenu() {
       return this.$store.getters.buildRoutes(this.menuitems)
     },
@@ -303,6 +304,15 @@ export default {
         /^Index.*/,
         "TSEYOR"
       );
+    },
+    imagenFondo() {
+      if(!this.backgroundImageUrl) return {}
+      const imgUrl = this.$img(this.backgroundImageUrl, { width: screen.width, height: screen.height, format: 'webp', quality: 70 })
+      return {
+        backgroundImage: `url('${imgUrl}')`,
+        backgroundPosition: 'center',
+        backgroundSize: 'cover'
+      }
     }
   },
   methods: {

@@ -3,6 +3,7 @@
     class="breadcrumb list-none flex flex-wrap"
     vocab="http://schema.org/"
     typeof="BreadcrumbList"
+    :class="backgroundImageUrl?'text-gray mix-blend-difference':'text-diminished dark:text-gray-100'"
   >
     <li
       v-for="(crumb, index) of crumbs"
@@ -16,14 +17,14 @@
         :to="crumb.href"
         event
         @click.native="navigate($event, crumb)"
-        class="transition duration-200 text-diminished hover:text-black dark:hover:text-white flex items-center"
+        class="transition duration-200 opacity-70 hover:opacity-100 flex items-center"
       >
         <div v-if="crumb.icon" class="icon inline-flex opacity-70 justify-center items-center">
           <icon :icon="crumb.icon" />
         </div>
         <span property="name" class>{{ crumb.name }}</span>
       </NLink>
-      <div v-else class="text-diminished flex items-center">
+      <div v-else class="flex items-center">
         <div v-if="crumb.icon" class="icon inline-flex opacity-70 justify-center items-center">
           <icon :icon="crumb.icon" />
         </div>
@@ -32,13 +33,14 @@
       <icon
         v-if="index < crumbs.length - 1"
         icon="caret-right"
-        class="mx-1 opacity-30 text-diminished"
+        class="mx-1 opacity-30"
       />
     </li>
   </ul>
 </template>
 
 <script>
+import { mapGetters } from "vuex";
 export default {
   data() {
     return {
@@ -91,6 +93,7 @@ export default {
     }
   },
   computed: {
+    ...mapGetters(["backgroundImageUrl"]),  
     crumbs() {
       if (process.client) {
         const pathShowing = this.$store.getters.getPathBreadcrumb || this.$route.fullPath

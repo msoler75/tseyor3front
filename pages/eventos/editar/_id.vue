@@ -30,6 +30,7 @@
                     <label for="imagen">Imagen de fondo:</label>
                     <p>
                         <i>Importante: Esta imagen no debe tener texto</i>
+                        <!-- https://blog.logrocket.com/how-to-extract-text-from-an-image-using-javascript-8fe282fb0e71/ -->
                     </p>
                     <img v-if="cimage" :src="cimage" class="mb-3" />
                     <InputImage

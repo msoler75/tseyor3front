@@ -70,6 +70,10 @@ export default {
   setOnlyContent(state, payload) {
     state.onlyContent = payload
   },
+
+  setBackgroundImageUrl(state, url) {
+    state.backgroundImageUrl = url
+  },
   /**
    * Reproduce el audio
    * @param {*} payload que contiene { title, artist, src, pic }

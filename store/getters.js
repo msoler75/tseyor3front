@@ -1,9 +1,9 @@
 export default {
   // nuxt/auth
-  isAuthenticated (state) {
+  isAuthenticated(state) {
     return !!state.user
   },
-  loggedInUser (state) {
+  loggedInUser(state) {
     return state.user
   },
 
@@ -12,52 +12,58 @@ export default {
   },
 
   getIconRoute: state => (path) => {
-    if(!path) {
+    if (!path) {
       return ''
     }
     const r = state.breadcrumbs[path]
     return r.icon
   },
   getRouteData: state => (path) => {
-    if(!path) {
-      return {href: path, name: '', icon: ''}
+    if (!path) {
+      return {
+        href: path,
+        name: '',
+        icon: ''
+      }
     }
     var r = state.breadcrumbs[path]
-    if(!r) {
+    if (!r) {
       const regularPath = path.replace(/\/\d+$/, '/*')
-      const parts = regularPath.split('/').filter(x => x.length !== 0 && x!=='*')
-      const pp = '/'+parts[parts.length-1]
-      if(pp!==path) {
+      const parts = regularPath.split('/').filter(x => x.length !== 0 && x !== '*')
+      const pp = '/' + parts[parts.length - 1]
+      if (pp !== path) {
         r = state.breadcrumbs[pp]
-        if(!r && parts.length>1) 
-        {
-          const pp2 = '/'+parts[parts.length-2] + pp
-          if(pp2!==path) {
+        if (!r && parts.length > 1) {
+          const pp2 = '/' + parts[parts.length - 2] + pp
+          if (pp2 !== path) {
             r = state.breadcrumbs[pp2]
           }
         }
       }
     }
     if (!r) {
-      return {href: path, name: '', icon: ''}
+      return {
+        href: path,
+        name: '',
+        icon: ''
+      }
     }
-    r= JSON.parse(JSON.stringify(r))
-    if(!r.parent && path.indexOf('/')>=0)
-    {
-      const parts = path.split('/').filter(x=>x.length)
-      if(parts.length)
-      if('/' + parts[0] !== path)
-        r.parent = '/' + parts[0]     
+    r = JSON.parse(JSON.stringify(r))
+    if (!r.parent && path.indexOf('/') >= 0) {
+      const parts = path.split('/').filter(x => x.length)
+      if (parts.length)
+        if ('/' + parts[0] !== path)
+          r.parent = '/' + parts[0]
     }
     r.href = path
     return r
   },
   buildRoutes: (state, getters) => (items) => {
     const r = []
-    for(const item of items) {
+    for (const item of items) {
       const data = getters.getRouteData(typeof item === 'string' ? item : item.href)
-      if(typeof item === 'object')
-        for(const i in item)
+      if (typeof item === 'object')
+        for (const i in item)
           data[i] = item[i]
       r.push(data)
     }
@@ -75,29 +81,33 @@ export default {
   type (state) {
     return state.SEO.type
   }, */
-  
-  audioPlaying (state) {
+
+  audioPlaying(state) {
     return state.audioPlaying
   },
 
-  pageConfig (state) {
+  pageConfig(state) {
     return state.pageConfig
   },
 
-  travelling (state) {
+  travelling(state) {
     return state.travelling
   },
 
-  navHidden (state) {
+  navHidden(state) {
     return state.navHidden
   },
 
-  menuUsuario (state) {
+  menuUsuario(state) {
     return state.menuUsuario
   },
 
-  onlyContent (state) {
+  onlyContent(state) {
     return state.onlyContent
+  },
+
+  backgroundImageUrl(state) {
+    return state.backgroundImageUrl
   }
-  
+
 }

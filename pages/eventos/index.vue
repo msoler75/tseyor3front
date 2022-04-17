@@ -2,7 +2,7 @@
   <SwipeX v-model="viendoCategoria" :values="categorias">
 
     <NLink v-if="soyMuul"
-      class="btn absolute top-24 right-4 w-12 h-12 flex justify-center items-center rounded-full sm:w-auto sm:h-auto sm:rounded-inherit"
+      class="btn absolute -top-12 right-4 w-12 h-12 flex justify-center items-center rounded-full sm:w-auto sm:h-auto sm:rounded-inherit"
       to="/eventos/editar/nuevo">
       <icon icon="edit" />
       <span class="ml-2 hidden sm:inline">Nuevo</span>

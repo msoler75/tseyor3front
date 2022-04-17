@@ -11,6 +11,7 @@ export default function ({ res, route, store }) {
    store.commit('setMenuUsuario', false)
     store.commit('setNextPathBreadcrumb', route.path)
     store.commit('travelling', true)
+    store.commit('setBackgroundImageUrl', null)
     
     // res.timing.end('midd')
 }

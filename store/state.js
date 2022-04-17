@@ -20,6 +20,8 @@ export default () => ({
   navHidden: false,
   // ver solo el contenido (oculta menus y footer)
   onlyContent: false,
+  // imagen de fondo (para eventos)
+  backgroundImageUrl: null,
   // ver menú de usuario
   menuUsuario: false,
   // estamos viajando entre páginas
