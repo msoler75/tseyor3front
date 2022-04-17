@@ -9,7 +9,7 @@
         </li>
       </ul>
 
-      <LoadMore v-if="hayMas" v-model="cargando" @click="cargarMas"
+      <LoadMore v-if="hayMas" v-model="cargando" @click="cargarMas" class="my-7"
         v-observe-visibility="cargarMas"
       />
     </Card>

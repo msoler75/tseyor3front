@@ -7,11 +7,11 @@
     <Tabs ref="tabs" v-model="viendoCategoria" :items="categorias" class="mb-7 justify-center" @change="cargarMas" />
     <Grid class="grid-cols-fill-w-72 text-center">
       <template v-for="item of novedadesListado">
-        <CardDynamic :key="item.tipo + '-' + item.id" :data="item" :collection="item.tipo" :imageWidth="400" />
+        <CardDynamic :key="item.tipo + '-' + item.id" :data="item" :collection="item.tipo" :imageWidth="400" :noText="true" />
       </template>
     </Grid>
 
-    <LoadMore v-if="hayMas" v-model="cargando" @click="cargarMas" class="mt-8"/>
+    <LoadMore v-if="hayMas" v-model="cargando" @click="cargarMas" class="my-7"/>
     <!-- v-observe-visibility="cargarMas" -->
   </SwipeX>
 </template>

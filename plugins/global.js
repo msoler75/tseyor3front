@@ -34,6 +34,10 @@ export default ({ app, $config, $strapi, $md, $img, error }, inject) => {
           description
           type
         }
+        grupos {
+          id
+          nombre
+        }
       }
     }`
 
@@ -175,6 +179,20 @@ export default ({ app, $config, $strapi, $md, $img, error }, inject) => {
     return html
   }
 
+  const normalizarTitulo = (texto) => {
+    const words = texto.toLowerCase().split(/\s+/g)
+    const r = []
+    const palabras = 'un una el la los las a ante bajo cabe con contra de desde durante en entre hacia hasta mediante para por según sin so sobre tras versus vía'.split(' ')
+    let firstWord = true
+    for (let w of words) {
+        if (firstWord || !(palabras.includes(w)))
+            // capitalize
+            w = w.charAt(0).toUpperCase() + w.substr(1)
+        r.push(w)
+        firstWord = w.indexOf('.') > -1
+    }
+    return r.join(' ').replace('la pm', 'La Pm')
+}
 
   inject('error', myError)
   inject('fetchUser', fetchUser)
@@ -183,4 +201,5 @@ export default ({ app, $config, $strapi, $md, $img, error }, inject) => {
   // inject("lorem", lorem);
   inject('slugify', slugify)
   inject('renderMarkdownServer', renderMarkdownServer)
+  inject('normalizarTitulo', normalizarTitulo)
 }

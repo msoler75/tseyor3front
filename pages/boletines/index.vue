@@ -9,7 +9,7 @@
         collection="boletines"          
       />
     </Grid>
-    <LoadMore v-if="hayMas" v-model="cargando" @click="cargarMas" class="mt-8"/>
+    <LoadMore v-if="hayMas" v-model="cargando" @click="cargarMas" class="my-7"/>
   </div>
 </template>
 

@@ -15,8 +15,8 @@
           class="sm:hidden h-full flex justify-center items-center w-12 flex-shrink-0 mr-3"
           @click="showFilters = !showFilters"
           :variant="showFilters ? 'gray' : 'primary'"
-          :disabled="!buscando"
-          v-show="buscando"
+          :disabled="!buscandoPor"
+          v-show="buscandoPor"
         >
           <icon :icon="showFilters?'chevron-left':'tasks'" class="dark:text-orange-800" />
         </TButton>
@@ -74,7 +74,7 @@
 
       <!-- Panel inferior de resultados + filtros -->
       <div
-        v-show="buscando"
+        v-show="buscandoPor"
         class="w-full h-full flex sm:space-x-3 panel-busquedas"
         :class="showFilters ? 'show-filters' : ''"
       >
@@ -201,7 +201,7 @@ export default {
         if (!that.entradaTeclado) {
           // es por voz, actualizamos los input
           that.buscarPor = helper.state.query
-          that.buscando = helper.state.query
+          that.buscandoPor = helper.state.query
         }
         that.entradaTeclado = null
         // controlamos el nº de llamadas a red
@@ -214,7 +214,7 @@ export default {
       },
       entradaTeclado: true,
       buscarPor: '',
-      buscando: '',
+      buscandoPor: '',
       buscarEspera: null,
       timerDebounce: null,
       filteringCollection: null,
@@ -264,7 +264,7 @@ export default {
     },
     setQuery() {
       // console.log("SET QUERY", this.buscarPor)
-      this.buscando = this.buscarPor
+      this.buscandoPor = this.buscarPor
       this.entradaTeclado = true
       const inp = this.$refs.searchbox.$el.querySelector("input[type='search']")
       inp.value = this.buscarPor

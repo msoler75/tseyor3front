@@ -1,5 +1,13 @@
 <template>
   <SwipeX v-model="viendoCategoria" :values="categorias">
+
+    <NLink v-if="soyMuul"
+      class="btn absolute top-24 right-4 w-12 h-12 flex justify-center items-center rounded-full sm:w-auto sm:h-auto sm:rounded-inherit"
+      to="/eventos/editar/nuevo">
+      <icon icon="edit" />
+      <span class="ml-2 hidden sm:inline">Nuevo</span>
+    </NLink>
+
     <div class="flex">
       <tabs
         compact
@@ -111,6 +119,7 @@ const query_eventos = `eventos(start: %start, limit: %limit, sort: "fechaComienz
 
 const query_where = `, where: { _or: [{ titulo_contains: "%search" }, { descripcion_contains: "%search" }, { texto_contains: "%search" }] }`
 
+import { mapGetters } from "vuex";
 import seo from '@/mixins/seo.js'
 export default {
   mixins: [seo],
@@ -154,6 +163,12 @@ export default {
     onItemChanged(event, currentItem, lastActiveItem) { }
   },
   computed: {
+    ...mapGetters(["isAuthenticated", "loggedInUser"]),
+    soyMuul(){
+      if(!this.isAuthenticated) return false
+      console.warn('soyMuul?', this.loggedInUser)
+      return !!this.loggedInUser.grupos.find(x=>x.nombre.toLowerCase()==='muul')
+    },
     eventosFiltrados() {
       const vc = this.viendoCategoria.toLowerCase().replace(/[eo]s$/, '')
       return this.eventos.filter(x => { return vc === 'tod' || (x.tipoEvento || vc).search(vc) > -1 })

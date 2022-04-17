@@ -5,7 +5,7 @@
     <Grid class="text-center">
       <Card v-for="entrada of entradas" :data="entrada" :key="entrada.id" collection="entradas" />
     </Grid>
-    <LoadMore v-if="hayMas" v-model="cargando" @click="cargarMas"/>
+    <LoadMore v-if="hayMas" v-model="cargando" @click="cargarMas" class="my-7"/>
     <!-- v-observe-visibility="cargarMas" -->
   </div>
 </template>

@@ -3,9 +3,10 @@
     <h1>Comunicados Recientes</h1>
     <section class="flex flex-wrap sm:flex-nowrap justify-between items-baseline mb-5">
       <div class="mt-5 flex-grow order-2 sm:order-1">
+        <span v-if="buscandoPor" class="font-bold text-xl">Viendo resultados de “{{buscandoPor}}”:</span>
       </div>
       <form @submit.prevent="buscar" class="w-full sm:w-auto flex justify-end order-1">
-        <SearchInput v-model="buscarPor" class="w-48" placeholder="Buscar..." required @search="buscar" />
+        <SearchInput v-model="buscarPor" class="w-56" placeholder="Buscar comunicado..." required @search="buscar" />
       </form>
     </section>
 
@@ -13,13 +14,13 @@
       class="w-full h-full insta-search">
       <ais-search-box ref="searchbox" class="hidden" />
 
-      <ais-state-results>
+      <ais-state-results class="container container-lg mx-auto">
         <template v-slot="{ results: { hits, query } }">
           <ais-infinite-hits v-if="hits.length > 0">
-            <Card v-for="item of hits" :key="item.id" :data="item" collection="comunicados" />
+            <CardEntry v-for="item of hits" :key="item.id" :data="item" collection="comunicados" class="mb-4 p-7" />
             <template v-slot:loadMore="{ isLastPage, refineNext }">
               <div class="flex justify-center mt-4" v-if="!isLastPage">
-                <LoadMore @click="refineNext"/>
+                <LoadMore @click="refineNext" class="my-7"/>
               </div>
             </template>
           </ais-infinite-hits>
@@ -31,7 +32,7 @@
     <Grid v-if="vistaInicial">
       <Card v-for="item of comunicadosListados" :key="item.id" :data="item" collection="comunicados" />
     </Grid>
-    <LoadMore v-if="hayMas" v-model="cargando" @click="cargarMas"/>
+    <LoadMore v-if="vistaInicial && hayMas" v-model="cargando" @click="cargarMas" class="my-7"/>
     <!-- v-observe-visibility="cargarMas" -->
   </div>
 </template>
@@ -52,6 +53,12 @@ const query_comunicados = `comunicados(start: %start, limit: %limit, sort: "fech
           }
         }`
 
+const query_recientes = false?`recientes:comunicados(limit: 10, sort: "fechaComunicado:desc") {
+            id 
+            slug
+            titulo
+          }`:''
+
 const query_where = `, where: { _or: [{ titulo_contains: "%search" }, { texto_contains: "%search" }] }`
 
 import { instantMeiliSearch } from '@meilisearch/instant-meilisearch';
@@ -62,7 +69,7 @@ export default {
     try {
       const filters = {
         _start: 0,
-        _limit: 5,
+        _limit: 12,
         _sort: 'fechaComunicado:DESC'
       }
 
@@ -71,18 +78,14 @@ export default {
         query:
           `query {
           ${query_comunicados}
-          recientes:comunicados(limit: 10, sort: "fechaComunicado:desc") {
-            id 
-            slug
-            titulo
-          }
+          ${query_recientes}
         }`
             .replace('%start', filters._start)
             .replace('%limit', filters._limit)
             .replace('%where', '')
       })
 
-      return { comunicados: resultado.comunicados, recientes: resultado.recientes, filters }
+      return { comunicados: resultado.comunicados, /*recientes: resultado.recientes, */filters }
     }
     catch (e) {
       $error(503)
@@ -111,7 +114,7 @@ export default {
           placeholderSearch: false,
           primaryKey: 'id',
           keepZeroFacets: true,
-          paginationTotalHits: 400,
+          paginationTotalHits: 30,
         }
       ),
       timerDebounce: null,
@@ -200,8 +203,4 @@ export default {
   @apply h-72;
 }
 
-.ais-InstantSearch>>>.ais-Hits-list,
-.ais-InstantSearch>>>.ais-InfiniteHits {
-  @apply grid gap-4 grid-cols-fill-w-64 text-center;
-}
 </style>

@@ -20,7 +20,7 @@
         <SearchInput
           v-model="buscarPor"
           class="w-64 mb-5"
-          placeholder="Buscar..."
+          placeholder="Buscar centro..."
         />
       </section>
       

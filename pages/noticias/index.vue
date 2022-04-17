@@ -3,10 +3,11 @@
     <h1>Noticias</h1>
 
     <section class="flex flex-wrap sm:flex-nowrap justify-between items-baseline mb-5">
-      <div class="mt-5 flex-grow order-2 sm:order-1">
+      <div class="flex-grow order-2 sm:order-1">
+        <span v-if="buscandoPor" class="font-bold text-xl">Viendo resultados de “{{buscandoPor}}”:</span>
       </div>
       <form @submit.prevent="buscar" class="w-full sm:w-auto flex justify-end order-1">
-        <SearchInput v-model="buscarPor" class="w-48" placeholder="Buscar..." required @search="buscar" />
+        <SearchInput v-model="buscarPor" class="w-48" placeholder="Buscar noticias..." required @search="buscar" />
       </form>
     </section>
 
@@ -20,7 +21,7 @@
             <Card v-for="noticia of hits" :key="noticia.id" :data="noticia" collection="noticias" />
             <template v-slot:loadMore="{ isLastPage, refineNext }">
               <div class="flex justify-center mt-4" v-if="!isLastPage">
-                <LoadMore @click="refineNext"/>
+                <LoadMore @click="refineNext" class="my-7"/>
               </div>
             </template>
           </ais-infinite-hits>
