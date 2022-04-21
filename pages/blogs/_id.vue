@@ -13,7 +13,7 @@
         </CardEntry>
       </div>
 
-      <LoadMore v-if="hayMas" v-model="cargando" @click="cargarMas"  class="my-7"/>
+      <LoadMore v-if="hayMas" v-model="cargando" @click="cargarMas" class="my-7" />
     </div>
 
 
@@ -48,35 +48,52 @@ import vercontenidomixin from "@/mixins/vercontenido.js";
 import seo from '@/mixins/seo.js'
 export default {
   mixins: [vercontenidomixin, seo],
-  async asyncData({ $strapi, app, route, $error }) {
+  async asyncData({ $strapi, $renderMarkdownServer, route, $error }) {
     try {
-      const id = route.params.id;
-      const [blog] = await $strapi.find(
-        "blogs",
-        id.match(/^\d+$/) ? { id } : { slug: id }
-      )
+      const id = route.params.id
+      const paramsBlog = {
+        filter: id.match(/^\d+$/) ? { id } : { slug: id },
+        populate: {
+          imagen: {
+            fields: ['url', 'width', 'height']
+          }
+        }
+      }
+      const { data: [blog] } = await $strapi.find("blogs", paramsBlog)
       if (!blog)
         return $error(404, 'Blog no encontrado')
 
-      blog.likes = await $strapi.find('likes', {
+      /* blog.likes = await $strapi.find('likes', {
         uid: `/blogs/${blog.id}`
-      })
+      }) */
 
-      const filters = {
-        _start: 0,
-        _limit: 12,
-        _sort: 'updated_at:DESC',
-        blog: blog.id
+      const paramsEntradas = {
+        fields: ['id', 'titulo', 'texto', 'publishedAt', 'updatedAt'],
+        filters: {
+          blog: {
+            id: {
+              $eq: blog.id
+            }
+          }
+        },
+        populate: {
+          blog: {
+            fields: ['id', 'nombre', 'slug']
+          },
+          imagen: {
+            fields: ['url', 'width', 'height']
+          }
+        },
+        sort: ['publishedAt:desc']
       }
 
-      const entradas = await $strapi.find('entradas', filters)
+      const { data: entradas, meta } = await $strapi.find('entradas', paramsEntradas)
       entradas.forEach(entrada => {
-        entrada.texto = app.$renderMarkdownServer(entrada.texto).replace(/<[^>]+>/g, '')
+        entrada.texto = $renderMarkdownServer(entrada.texto).replace(/<[^>]+>/g, '')
       })
-      var hayMas = entradas.length === filters._limit
-
-      return { filters, contenido: blog, blog, entradas, hayMas }
+      return { contenido: blog, blog, entradas, meta }
     } catch (e) {
+      console.error(e)
       $error(503)
     }
   },
@@ -88,6 +105,13 @@ export default {
       description: 'Blogs de la comunidad Tseyor',
       image: 'imagen_a_definir'
     }
+  },
+  computed: {
+    hayMas() {
+      if (!this.meta) return false
+      const p = this.meta.pagination
+      return p.page < p.pageCount
+    },
   },
   methods: {
     async cargarMas() {

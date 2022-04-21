@@ -107,14 +107,14 @@ import vercontenidomixin from '@/mixins/vercontenido.js'
 import seo from '@/mixins/seo.js'
 export default {
   mixins: [vercontenidomixin, seo],
-  async asyncData({ app, $strapi, route, $error }) {
+  async asyncData({ $strapi, $renderMarkdownServer, route, $error }) {
     try {
       const id = route.params.id
       const actas = await $strapi.find('actas', { id })
       if (!actas.length)
         return $error(404, 'Acta no encontrada')
       const contenido = actas[0]
-      contenido.textoHTML = app.$renderMarkdownServer(contenido.texto)
+      contenido.textoHTML = $renderMarkdownServer(contenido.texto)
       //contenido.equipo = await $strapi.find('equipos', {id: contenido.equipo.id})
       const equipos = await $strapi.find('equipos', { id: contenido.equipo.id })
       // console.log('equipo:', contenido.equipo)

@@ -88,7 +88,7 @@ export default {
   async asyncData({ app, $strapi, route, $error }) {
     try {
       const id = route.params.id;
-      const noticias = await $strapi.find(
+      const {data: noticias} = await $strapi.find(
         "noticias",
         id.match(/^\d+$/) ? { id } : { slug: id }
       );
@@ -99,9 +99,9 @@ export default {
         contenido.texto,
         contenido.imagenes
       );
-      contenido.likes = await $strapi.find("likes", {
+      /*contenido.likes = await $strapi.find("likes", {
         uid: `/noticias/${contenido.id}`
-      });
+      });*/
       return { contenido, noticia: contenido }
     } catch (e) {
       $error(503)

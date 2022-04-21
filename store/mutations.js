@@ -1,5 +1,3 @@
-import state from "./state"
-
 export default {
   SET_USER(state, user) {
     console.log('SET_USER', user)

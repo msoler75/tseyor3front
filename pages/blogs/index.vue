@@ -2,9 +2,9 @@
   <div contained="no">
     <section class="bg-blue-gray-900 py-12 w-full text-center">
       <div class="container mx-auto px-2 xm:px-5 sm:px-12">
-        <Grid class="xm:grid-cols-fill-w-64 sm:grid-cols-fit-w-48">
-          <Card v-for="blog of blogs" :data="blog" :key="blog.id" collection="blogs" :noDate="true" />
-        </Grid>
+        <div class="flex justify-center">
+          <Card v-for="blog of blogs" :data="blog" :key="blog.id" collection="blogs" :noDate="true" class="w-1/2 sm:w-1/3" />
+        </div>
       </div>
     </section>
 
@@ -31,47 +31,45 @@
 </template>
 
 <script>
-const query_blogs = `query {
-        blogs(sort: "nombre:asc")  {
-          id
-          slug
-          published_at
-          nombre
-          descripcion
-          imagen {
-            url
-            width
-            height
-          }
-        }
-      }`
-
 import seo from '@/mixins/seo.js'
 export default {
   mixins: [seo],
-  async asyncData({ $strapi, app, $error }) {
+  async asyncData({ $strapi, $renderMarkdownServer, $error }) {
     try {
-      const filters = {
-        _start: 0,
-        _limit: 12,
-        _sort: 'updated_at:DESC'
+
+      const paramsBlogs = {
+        fields: ['id', 'slug', 'nombre', 'descripcion', 'publishedAt', 'updatedAt'],
+        populate: {
+          imagen: {
+            fields: ['url', 'width', 'height']
+          }
+        },
+        sort: ['nombre']
       }
 
-      // const etiquetas = await $strapi.find('etiquetas', {taxonomia: 'libros'})
-      // const categorias = ['Nuevos']
-      //for(const e of etiquetas)
-      //categorias.push(e)
+      const paramsEntradas = {
+        fields: ['id', 'titulo', 'texto', 'publishedAt', 'updatedAt'],
+        populate: {
+          blog: {
+            fields: ['id', 'nombre', 'slug']
+          },
+          imagen: {
+            fields: ['url', 'width', 'height']
+          }
+        },
+        sort: ['publishedAt:desc']
+      }
 
-      const entradas = await $strapi.find('entradas', filters)
-      const resultado = await $strapi.graphql({
-        query: query_blogs
-      })
+      const { data: blogs } = await $strapi.find('blogs', paramsBlogs)
+      const { data: entradas, meta } = await $strapi.find('entradas', paramsEntradas)
+
       entradas.forEach(entrada => {
-        entrada.texto = app.$renderMarkdownServer(entrada.texto).replace(/<[^>]+>/g, '')
+        entrada.texto = $renderMarkdownServer(entrada.texto).replace(/<[^>]+>/g, '')
       })
-      var hayMas = entradas.length === filters._limit
-      return { filters, blogs: resultado.blogs, entradas, hayMas }
-    } catch (e) {
+
+      return { blogs, entradas, meta }
+    }
+    catch (e) {
       console.error(e)
       $error(503)
     }
@@ -84,6 +82,13 @@ export default {
       description: 'Blogs de la comunidad Tseyor',
       image: 'imagen_a_definir'
     }
+  },
+  computed: {
+    hayMas() {
+      if (!this.meta) return false
+      const p = this.meta.pagination
+      return p.page < p.pageCount
+    },
   },
   methods: {
     async cargarMas() {

@@ -1,14 +1,10 @@
 <template>
   <div class="flex flex-col items-center" contained="no" breadcrumb="true">
 
-    <div
-      class="px-3 sm:px-5 md:px-7 relative w-full shrink-0 flex-grow-1 max-w-3xl flex flex-col items-start"
-    >
+    <div class="px-3 sm:px-5 md:px-7 relative w-full shrink-0 flex-grow-1 max-w-3xl flex flex-col items-start">
       <div class="hidden 4xl:block absolute right-0 translate-x-3 5xl:translate-x-10 h-full"></div>
 
-      <Card
-        class="shadow-none xs:shadow py-4 px-2 xm:p-5 md:p-8 lg:p-12 w-full max-w-2xl mx-auto mb-14"
-      >
+      <Card class="shadow-none xs:shadow py-4 px-2 xm:p-5 md:p-8 lg:p-12 w-full max-w-2xl mx-auto mb-14">
         <section class="block xs:flex items-start">
           <div class="book-container my-4 mr-5 xs:my-0 xs:mr-7 lg:mr-20 flex-shrink-0 flex-grow-0">
             <div class="book">
@@ -39,14 +35,8 @@
       <!-- share modal -->
       <Comparte v-model="viendoCompartir" />
 
-      <SocialButtons
-        id="social"
-        :data="contenido"
-        @like="like(contenido.id)"
-        @dislike="dislike(contenido.id)"
-        @share="viendoCompartir = true"
-        class="mx-auto max-w-xl my-5 lg:my-16"
-      />
+      <SocialButtons id="social" :data="contenido" @like="like(contenido.id)" @dislike="dislike(contenido.id)"
+        @share="viendoCompartir = true" class="mx-auto max-w-xl my-5 lg:my-16" />
     </section>
 
     <section class="container xs:px-1 sm:px-3 md:px-6 mx-auto my-12" v-observe-visibility="cargarRelacionados">
@@ -54,17 +44,13 @@
       <HCarousel center :items="relacionados" :noText="true" collection="libros" />
     </section>
 
-    <SuscriptionSection
-      id="suscription"
-      title="Biblioteca Tseyor"
+    <SuscriptionSection id="suscription" title="Biblioteca Tseyor"
       description="Todos los libros emanados de las conversaciones interdimensionales mantenidas con nuestros Guías Estelares disponibles para descarga en formato PDF"
-      collection="libros"
-      image="/imagenes/libros.jpg"
-      class="bg-blue-gray-900 w-full"
-    />
+      collection="libros" image="/imagenes/libros.jpg" class="bg-blue-gray-900 w-full" />
 
     <!-- comentarios -->
-    <div id="comentarios" class="container mx-auto my-9 max-w-3xl" v-observe-visibility="(isVisible)=>{mostrarComentarios=mostrarComentarios||isVisible}">
+    <div id="comentarios" class="container mx-auto my-9 max-w-3xl"
+      v-observe-visibility="(isVisible) => { mostrarComentarios = mostrarComentarios || isVisible }">
       <h3 v-if="contenido.comentarios" class="text-center">
         {{
           contenido.comentarios +
@@ -73,12 +59,13 @@
         }}
       </h3>
       <h3 v-else class="text-center">Coméntalo</h3>
-      <LazyComments :uid="uid" :content-title="ctitle" @count="$set(contenido, 'comentarios', $event)" class="px-1 xs:px-2" />
+      <LazyComments :uid="uid" :content-title="ctitle" @count="$set(contenido, 'comentarios', $event)"
+        class="px-1 xs:px-2" />
     </div>
 
     <portal to="contenido">
-    <p>This slot content will be rendered wherever the portal-target with name 'destination'
-      is  located.</p>
+      <p>This slot content will be rendered wherever the portal-target with name 'destination'
+        is located.</p>
     </portal>
   </div>
 </template>
@@ -88,38 +75,42 @@ import vercontenidomixin from '@/mixins/vercontenido.js'
 import seo from '@/mixins/seo.js'
 export default {
   mixins: [vercontenidomixin, seo],
-  async asyncData({ $strapi, route, $error }) {
+  async asyncData({ $strapi, $renderMarkdownServer, route, $error }) {
     try {
       const id = route.params.id
-      const [contenido] = await $strapi.find(
-        'libros',
-        id.match(/^\d+$/) ? { id } : { slug: id }
+      const populate =  { populate: '*'}
+      const { data: libros } = await $strapi.find(
+        "libros",
+        id.match(/^\d+$/) ? { ...populate, id } : {...populate, slug: id }
+      );
+      if (!libros.length)
+        return $error(404, 'Noticia no encontrada')
+      const contenido = libros[0];
+      contenido.textoHTML = $renderMarkdownServer(
+        contenido.texto,
+        contenido.imagenes
       )
-      if (!contenido)
-        return $error(404, 'Libro no encontrado')
-      contenido.likes = await $strapi.find('likes', {
-        uid: `/libros/${contenido.id}`
-      })
+      /*contenido.likes = await $strapi.find("likes", {
+        uid: `/noticias/${contenido.id}`
+      });*/
       return { contenido, libro: contenido }
     } catch (e) {
-      console.warn(e)
       $error(503)
     }
-  },
-  data() {
+  }, data() {
     return {
       relacionados: []
     }
   },
   methods: {
-     async cargarRelacionados(isVisible) {
-      if(!this.relacionados.length&&isVisible) {
+    async cargarRelacionados(isVisible) {
+      if (!this.relacionados.length && isVisible) {
         this.relacionados = await this.$strapi.find('libros', { ...this.filtro, _limit: 10, id_ne: this.contenido.id })
       }
     }
   },
 
-  jsonld () {
+  jsonld() {
     return {
       '@context': 'http://schema.org',
       '@type': 'Book',
@@ -142,7 +133,7 @@ export default {
         "@type": "Organization",
         name: "Universidad TSEYOR de Granada",
         url: this.$config.baseUrl,
-        logo: this.$config.baseUrl + this.$config.imageLogoPath 
+        logo: this.$config.baseUrl + this.$config.imageLogoPath
       },
     }
   },
@@ -178,12 +169,13 @@ export default {
     0% {
       transform: rotateY(0deg);
     }
+
     100% {
       transform: rotateY(-30deg);
     }
   }
 
-  .book > :first-child {
+  .book> :first-child {
     position: absolute;
     background: #0d47a1aa;
     width: 200px;
@@ -200,8 +192,7 @@ export default {
     width: 50px;
     top: 3px;
     position: absolute;
-    transform: translateZ(-3px) translateX(calc(200px - 50px / 2 - 3px))
-      rotateY(90deg) translateX(calc(50px / 2));
+    transform: translateZ(-3px) translateX(calc(200px - 50px / 2 - 3px)) rotateY(90deg) translateX(calc(50px / 2));
   }
 
   .book::after {
@@ -217,8 +208,5 @@ export default {
     box-shadow: -10px 0 50px 10px #666;
   }
 }
-
-
-
 </style>
 

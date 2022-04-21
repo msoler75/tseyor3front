@@ -94,18 +94,18 @@ import vercontenidomixin from '@/mixins/vercontenido.js'
 import seo from '@/mixins/seo.js'
 export default {
   mixins: [vercontenidomixin, seo],
-  async asyncData({ app, $strapi, route, $error }) {
+  async asyncData({ $strapi, $renderMarkdownServer, route, $error }) {
     try {
       const id = route.params.id
-      const comunicados = await $strapi.find(
+      const {data:comunicados} = await $strapi.find(
         'comunicados', 
         id.match(/^\d+$/) ? { id } : { slug: id }
       )
       if (!comunicados.length)
         return $error(404, 'Comunicado no encontrado')
       const contenido = comunicados[0]
-      contenido.likes = await $strapi.find('likes', { uid: `/comunicados/${contenido.id}` })
-      contenido.textoHTML = app.$renderMarkdownServer(contenido.texto, contenido.imagenes)
+      // contenido.likes = await $strapi.find('likes', { uid: `/comunicados/${contenido.id}` })
+      contenido.textoHTML = $renderMarkdownServer(contenido.texto, contenido.imagenes)
       return { contenido, comunicado: contenido }
     }
     catch (e) {
@@ -119,6 +119,8 @@ export default {
   },
   methods: {
     async cargarRelacionados(isVisible) {
+      return []
+      /*
       if(!this.relacionados.length&&isVisible) {
         const resultado = await this.$strapi.graphql({
           query: query_relacionados
@@ -129,6 +131,7 @@ export default {
         })      
         this.relacionados = resultado.comunicados
         }
+        */
     },
   } 
   /*

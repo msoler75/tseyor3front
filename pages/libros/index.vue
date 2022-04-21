@@ -52,14 +52,25 @@ export default {
   mixins: [seo],
   async asyncData({ $strapi, $error }) {
     try {
-      const filters = {
-        _start: 0,
-        _limit: 12
+       const params = {
+        fields: ['id', 'titulo', 'descripcion', 'categoria', 'publishedAt', 'updatedAt'],
+        populate: {
+          imagen: {
+            fields:['url', 'width', 'height']
+          }
+        },
+        sort: ['publishedAt:desc']
       }
-      const libros = await $strapi.find("libros", filters)
-      return { libros }
+
+      const r = await $strapi.find('libros', params)
+      console.log('RESULT', r)
+      const { data: libros, meta } = r
+      console.warn('BOOKS', libros)
+
+      return { libros, meta }
     }
     catch (e) {
+      console.error(e)
       $error(503)
     }
   },
@@ -123,6 +134,11 @@ export default {
     this.searchClient.myVueComponent = this
   },
   computed: {
+    hayMas() {
+      if (!this.meta) return false
+      const p = this.meta.pagination
+      return p.page < p.pageCount
+    },
     categorias() {
       return this.vistaInicial ? ['Nuevos', ...this.categoriasBase] : this.categoriasBusqueda.length > 1 ? ['Todos', ...this.categoriasBusqueda] : this.categoriasBusqueda
     }

@@ -2,22 +2,37 @@
 import httpErrorMessage from '~/assets/js/httpErrorMessage'
 // import sizeOf from "image-size";
 // import { LoremIpsum } from "lorem-ipsum";
+const qs = require('qs');
 
-export default ({ app, $config, $strapi, $md, $img, error }, inject) => {
+
+export default ({
+  app,
+  $config,
+  $axios,
+  /*$strapi,*/
+  $md,
+  $img,
+  error
+}, inject) => {
 
   const myError = (obj, msg) => {
-    let code = typeof obj ==='number'?obj:obj&&obj.statusCode?obj.statusCode:500
-    let message = msg&&typeof msg==='string'?msg:obj&&obj.message?obj.message:null
-    if(code&&!message)
+    let code = typeof obj === 'number' ? obj : obj && obj.statusCode ? obj.statusCode : 500
+    let message = msg && typeof msg === 'string' ? msg : obj && obj.message ? obj.message : null
+    if (code && !message)
       message = httpErrorMessage(code)
-    return error({ statusCode: code, message })
+    return error({
+      statusCode: code,
+      message
+    })
   }
 
   const fetchUser = async () => {
-    const u = await $strapi.fetchUser()
+    //const u = await $strapi.fetchUser()
+    const u = await strapiv4.fetchUser()
     if (!u) return null
+    return u
 
-    const query_user = `query {
+    /*const query_user = `query {
       users(where:{id: ${u.id}})  {
         id
         username
@@ -44,7 +59,7 @@ export default ({ app, $config, $strapi, $md, $img, error }, inject) => {
     const res = await $strapi.graphql({ query: query_user })
     if(res.users.length)
       res.users[0].id = parseInt(res.users[0].id)
-    return res.users[0]
+    return res.users[0]*/
   }
 
   const ucFirst = texto => {
@@ -185,14 +200,57 @@ export default ({ app, $config, $strapi, $md, $img, error }, inject) => {
     const palabras = 'un una el la los las a ante bajo cabe con contra de desde durante en entre hacia hasta mediante para por según sin so sobre tras versus vía'.split(' ')
     let firstWord = true
     for (let w of words) {
-        if (firstWord || !(palabras.includes(w)))
-            // capitalize
-            w = w.charAt(0).toUpperCase() + w.substr(1)
-        r.push(w)
-        firstWord = w.indexOf('.') > -1
+      if (firstWord || !(palabras.includes(w)))
+        // capitalize
+        w = w.charAt(0).toUpperCase() + w.substr(1)
+      r.push(w)
+      firstWord = w.indexOf('.') > -1
     }
     return r.join(' ').replace('la pm', 'La Pm')
-}
+  }
+
+
+  const strapiv4 = {
+    token: '',
+    config: {},
+    url: `${$config.strapiUrl}`,
+    find: async (collection, params) => {
+      const query = !params ? null : typeof params === 'string' ? params : '?' + qs.stringify(params, {
+        encodeValuesOnly: true,
+      })
+      console.log('QUERY', `${strapiv4.url}/${collection}${query}`)
+      return $axios.get(`${strapiv4.url}/${collection}${query}`, strapiv4.config)
+        .then(r => r.data)
+        .catch(err => {
+          console.error(err)
+          return {
+            data: []
+          }
+        })
+    },
+    login: async (params) => {
+      console.log('QUERY', `${strapiv4.url}/auth/local}`, params)
+      return $axios.post(`${strapiv4.url}/auth/local`, params)
+        .then(r => {
+          console.log('LOGGED', r.data)
+          strapiv4.saveToken(r.data.jwt)
+          return true
+        })
+    },
+    saveToken: (token) => {
+      strapiv4.token = token
+      strapiv4.config = {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      }
+    },
+    fetchUser: async () => {
+      return $axios.get(`${strapiv4.url}/users/me`, strapiv4.config)
+        .then(r => r.data)
+        .catch(err => null)
+    }
+  }
 
   inject('error', myError)
   inject('fetchUser', fetchUser)
@@ -202,4 +260,5 @@ export default ({ app, $config, $strapi, $md, $img, error }, inject) => {
   inject('slugify', slugify)
   inject('renderMarkdownServer', renderMarkdownServer)
   inject('normalizarTitulo', normalizarTitulo)
+  inject('strapi', strapiv4)
 }

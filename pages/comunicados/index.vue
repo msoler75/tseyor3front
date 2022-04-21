@@ -3,7 +3,7 @@
     <h1>Comunicados Recientes</h1>
     <section class="flex flex-wrap sm:flex-nowrap justify-between items-baseline mb-5">
       <div class="mt-5 flex-grow order-2 sm:order-1">
-        <span v-if="buscandoPor" class="font-bold text-xl">Viendo resultados de “{{buscandoPor}}”:</span>
+        <span v-if="buscandoPor" class="font-bold text-xl">Viendo resultados de “{{ buscandoPor }}”:</span>
       </div>
       <form @submit.prevent="buscar" class="w-full sm:w-auto flex justify-end order-1">
         <SearchInput v-model="buscarPor" class="w-56" placeholder="Buscar comunicado..." required @search="buscar" />
@@ -20,7 +20,7 @@
             <CardEntry v-for="item of hits" :key="item.id" :data="item" collection="comunicados" class="mb-4 p-7" />
             <template v-slot:loadMore="{ isLastPage, refineNext }">
               <div class="flex justify-center mt-4" v-if="!isLastPage">
-                <LoadMore @click="refineNext" class="my-7"/>
+                <LoadMore @click="refineNext" class="my-7" />
               </div>
             </template>
           </ais-infinite-hits>
@@ -32,68 +32,45 @@
     <Grid v-if="vistaInicial">
       <Card v-for="item of comunicadosListados" :key="item.id" :data="item" collection="comunicados" />
     </Grid>
-    <LoadMore v-if="vistaInicial && hayMas" v-model="cargando" @click="cargarMas" class="my-7"/>
+    <LoadMore v-if="vistaInicial && hayMas" v-model="cargando" @click="cargarMas" class="my-7" />
     <!-- v-observe-visibility="cargarMas" -->
   </div>
 </template>
 
 
 <script>
-const minLengthBuscar = 2
-const query_comunicados = `comunicados(start: %start, limit: %limit, sort: "fechaComunicado:desc" %where)  {
-          id
-          slug
-          fechaComunicado
-          titulo
-          descripcion
-          imagen {
-            url
-            width
-            height
-          }
-        }`
-
-const query_recientes = false?`recientes:comunicados(limit: 10, sort: "fechaComunicado:desc") {
-            id 
-            slug
-            titulo
-          }`:''
-
-const query_where = `, where: { _or: [{ titulo_contains: "%search" }, { texto_contains: "%search" }] }`
-
 import { instantMeiliSearch } from '@meilisearch/instant-meilisearch';
 import seo from '@/mixins/seo.js'
 export default {
   mixins: [seo],
   async asyncData({ $strapi, $error }) {
     try {
-      const filters = {
-        _start: 0,
-        _limit: 12,
-        _sort: 'fechaComunicado:DESC'
+      const params = {
+        fields: ['id', 'titulo', 'descripcion', 'publishedAt', 'updatedAt'],
+        populate: {
+          imagen: {
+            fields: ['url', 'width', 'height']
+          }
+        },
+        sort: ['publishedAt:desc']
       }
+      const { data: comunicados, meta } = await $strapi.find('comunicados', params)
 
-      // TO-DO: https://strapi.io/documentation/developer-docs/latest/development/plugins/graphql.html#customize-the-graphql-schema
-      const resultado = await $strapi.graphql({
-        query:
-          `query {
-          ${query_comunicados}
-          ${query_recientes}
-        }`
-            .replace('%start', filters._start)
-            .replace('%limit', filters._limit)
-            .replace('%where', '')
-      })
-
-      return { comunicados: resultado.comunicados, /*recientes: resultado.recientes, */filters }
+      return { comunicados, meta }
     }
     catch (e) {
+      console.error(e)
       $error(503)
     }
     // const comunicados = await $strapi.find('comunicados', filters)
     // return { comunicados, filters }
   },
   computed: {
+    hayMas() {
+      if (!this.meta) return false
+      const p = this.meta.pagination
+      return p.page < p.pageCount
+    },
     comunicadosListados() {
       return this.comunicados
         .map(x => { if (!x.timestamp) x.timestamp = this.$dayjs(x.fechaComunicado).unix(); return x })
@@ -120,7 +97,6 @@ export default {
       timerDebounce: null,
       vistaInicial: true,
       //
-      hayMas: true,
       buscarPor: '',
       buscandoPor: '',
       cargando: false,
@@ -202,5 +178,4 @@ export default {
 .card>>>.card-img {
   @apply h-72;
 }
-
 </style>

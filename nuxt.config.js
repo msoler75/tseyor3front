@@ -29,6 +29,7 @@ export default {
     archivosRuta: '/archivos',
     meilisearchUrl: process.env.MEILISEARCH_URL || 'http://localhost:7700',
     meilisearchKey: process.env.MEILISEARCH_KEY,
+    strapiUrl: 'http://localhost:3000/api',
   },
 
 
@@ -88,7 +89,8 @@ export default {
   },
 
   // Global CSS: https://go.nuxtjs.dev/config-css
-  css: [],
+  css: [
+  ],
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
   plugins: [
@@ -134,9 +136,9 @@ export default {
     // https://go.nuxtjs.dev/axios
     '@nuxtjs/axios',
     // https://go.nuxtjs.dev/pwa
-    '@nuxtjs/pwa',
-    '@nuxtjs/apollo',
-    '@nuxtjs/strapi',
+    // '@nuxtjs/pwa',
+    // '@nuxtjs/apollo',
+    //'@nuxtjs/strapi',
     '@nuxtjs/proxy',
     // Doc: https://github.com/nuxt-community/dotenv-module
     // '@nuxtjs/dotenv',
@@ -149,16 +151,16 @@ export default {
     ['nuxt-gmaps', {key: process.env.MAPS_API_KEY,
       //you can use libraries: ['places']
     }],
-    'nuxt-compress',
+    // 'nuxt-compress',
     // https://github.com/nuxt-community/robots-module
-    '@nuxtjs/robots',
+    // '@nuxtjs/robots',
     // https://www.npmjs.com/package/vue-social-sharing
     'vue-social-sharing/nuxt',
     // https://github.com/nuxt-community/markdownit-module
     '@nuxtjs/markdownit',
     // ['nuxt-tailvue', {modal: true, toast: true}],
     // https://github.com/Maronato/vue-toastification
-    "vue-toastification/nuxt",
+    // "vue-toastification/nuxt",
     ['vue-scrollto/nuxt', {
       // default options
       container: "body",
@@ -172,7 +174,7 @@ export default {
 
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
   axios: {
-    baseURL: '/api' 
+    // baseURL: '/api' 
   },
 
   apollo: {
@@ -235,9 +237,9 @@ export default {
   proxy: {
     '/api': {
       target: process.env.STRAPI_URL || 'http://localhost:1337',
-      pathRewrite: {
+      /* pathRewrite: {
         '^/api': '/'
-      }
+      } */
     },
     '/tseyor': {
       target: 'https://tseyor.org',
