@@ -72,14 +72,16 @@ export default {
   },
   computed: {
     likeslist() {
-      if (!this.data.likes) return []
-      return this.data.likes.slice(0, 16).map(x => x.user)
+      //if (!this.data.likes) return []
+      //return this.data.likes.slice(0, 16).map(x => x.user)
+      return []
     },
     // LIKE
     likeit() {
       // console.log('likeit?', this.contenido.likes)
       if(typeof this.data.likes === 'undefined')
-        return console.error('Falta poner campo likes en contenido')
+        return // console.error('Falta poner campo likes en contenido')
+      if(this.$store.getters.$strapi.user)
       return this.$strapi.user && this.data.likes.find(x => x.user && x.user.id === this.$strapi.user.id)
     }
   }

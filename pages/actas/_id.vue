@@ -145,7 +145,7 @@ export default {
   },
   computed: {
     soyCoordinador() {
-      return !!this.equipo.coordinadores.find(x => x.id === this.$store.getters.loggedInUser.id)
+      return !!this.equipo.coordinadores.find(x => x.id === this.$store.getters.$strapi.user.id)
     },
   }
 }

@@ -87,27 +87,27 @@ export default {
         try {
             const {correo, codigo} = route.query
             console.warn('query', route.query)
-            const loggedInUser = !correo ? store.state.user : null
-            console.warn('user', loggedInUser, 'correo', correo)
+            const _user = !correo ? store.state.user : null
+            console.warn('user', _user, 'correo', correo)
             let suscripcion = null
             try {
                 suscripcion = await $strapi.$http.$post(
                     '/suscripciones/my',
-                loggedInUser ? { usuario: loggedInUser.id } : { correo, codigo }
+                _user ? { usuario: _user.id } : { correo, codigo }
             )
             } catch (e) {
                 if(e.response&&!e.response.size)
                 suscripcion = null
             }
             if (!suscripcion) {
-                if (loggedInUser) suscripcion = await $strapi.create(
+                if (_user) suscripcion = await $strapi.create(
                     'suscripciones',
-                    { usuario: loggedInUser.id }
+                    { usuario: _user.id }
                 )
                 if (!suscripcion)
                     return $error(404, 'Suscripción no encontrada')
             }
-            return { usuario: loggedInUser, loggedInUser, isAuthenticated: !!loggedInUser, correo, suscripcion };
+            return { usuario: _user, _user, _user: !!_user, correo, suscripcion };
         }
         catch (e) {
             $error(503)
@@ -132,10 +132,10 @@ export default {
     },
     computed: {
         permitido() {
-            return this.loggedInUser || this.$route.query.correo
+            return this._user || this.$route.query.correo
         },
         especificosFiltered() {
-            return this.especificos.filter(x => this.isAuthenticated || !this.soloParaRegistrados.includes(x))
+            return this.especificos.filter(x => this._user || !this.soloParaRegistrados.includes(x))
         }
     },
     methods: {

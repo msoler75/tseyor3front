@@ -1,9 +1,6 @@
 export default {
   // nuxt/auth
-  isAuthenticated(state) {
-    return !!state.user
-  },
-  loggedInUser(state) {
+  user(state) {
     return state.user
   },
 

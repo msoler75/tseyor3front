@@ -1,5 +1,5 @@
-export default function ({redirect, route, store}) {
-    if (!store.getters.isAuthenticated) {
+export default function ({redirect, route, $strapi}) {
+    if (!$strapi.user) {
       return redirect('/ingresar?desde='+route.path)
     }
   }

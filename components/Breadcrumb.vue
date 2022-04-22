@@ -40,7 +40,6 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex";
 export default {
   data() {
     return {
@@ -93,7 +92,9 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(["backgroundImageUrl"]),  
+    backgroundImageUrl() {
+      return this.$store.getters.backgroundImageUrl
+    },
     crumbs() {
       if (process.client) {
         const pathShowing = this.$store.getters.getPathBreadcrumb || this.$route.fullPath

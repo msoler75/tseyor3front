@@ -233,8 +233,8 @@ export default {
     },
     resetNuevaCarpeta() {
       this.nuevaCarpeta = {nombre:'', autor: {id:null}, permisos:{}}
-      if(this.isAuthenticated)
-        this.nuevaCarpeta.autor.id = this.loggedInUser.id
+      if(this.$strapi.user)
+        this.nuevaCarpeta.autor.id = this.$strapi.user.id
       this.nuevaCarpeta.padre = this.carpetaActualId  
     },
     crearCarpeta() {

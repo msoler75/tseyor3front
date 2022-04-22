@@ -83,7 +83,6 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex";
 export default {
   async asyncData({ $strapi, route, $error }) {
     try {
@@ -139,10 +138,9 @@ export default {
     }
   },*/
   computed: {
-    ...mapGetters(["isAuthenticated", "loggedInUser"]),
     soyYo() {
-      if (!this.isAuthenticated) return false
-      return this.loggedInUser.id === this.usuario.id
+      if (!this.$strapi.user) return false
+      return this.$strapi.user.id === this.usuario.id
     },
     usuarioFrase() {
       console.log('usuarioFrase', this.usuario ? this.usuario.frase : '')
@@ -205,7 +203,7 @@ export default {
     async fetchUser() {
       await this.$store.commit(
         "SET_USER",
-        await this.$fetchUser()
+        await this.strapi.fetchUser()
       )
       const usuarios = await this.$strapi.find('users', { id: this.id })
       if (usuarios.length)

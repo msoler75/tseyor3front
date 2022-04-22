@@ -1,9 +1,4 @@
-import { mapGetters } from 'vuex'
-
 export default {
-  computed: {
-    ...mapGetters(['isAuthenticated', 'loggedInUser'])
-  },
   methods: {
     // comprueba si el usuario tiene acceso segun los permisos indicados
     tengoPermiso (contenido, modo) {
@@ -16,7 +11,7 @@ export default {
       if (!p) return false
       // console.log('permisos son', p)
       if (p.rol === 'Publico') return true
-      const user = this.isAuthenticated ? this.loggedInUser : null
+      const user = this.$strapi.user ? this.$strapi.user : null
       console.log('user', user)
       if (user && user.id) {
         // console.log('miramos permisos de usuario', user)
@@ -46,7 +41,7 @@ export default {
       return false
     },
     soyAutor (contenido) {
-      const user = this.isAuthenticated ? this.loggedInUser : null
+      const user = this.$strapi.user ? this.$strapi.user : null
       if (!user || !user.id || !('autor' in contenido) || !contenido.autor)
         return false
       const aid = contenido.autor.id ? contenido.autor.id : contenido.autor

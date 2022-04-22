@@ -89,13 +89,13 @@ export default {
   },
 
   // Global CSS: https://go.nuxtjs.dev/config-css
-  css: [
-  ],
+  css: [],
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
   plugins: [
-    '~plugins/global.js',
     '~plugins/axios',
+    '~plugins/strapi.js',
+    '~plugins/global.js',
     { src: '~plugins/vue-observe-visibility.js', mode: 'client' },
     { src: '~plugins/scrollto.js', mode: 'client' },
     { src: '~plugins/meilisearch.js', mode: 'client' },

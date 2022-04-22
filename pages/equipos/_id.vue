@@ -104,7 +104,6 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex";
 import vercontenidomixin from "@/mixins/vercontenido.js";
 import seo from '@/mixins/seo.js'
 export default {
@@ -141,9 +140,8 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(["loggedInUser"]),
     soyCoordinador() {
-      return !!this.equipo.coordinadores.find(x => parseInt(x.id) === this.$store.getters.loggedInUser.id)
+      return !!this.equipo.coordinadores.find(x => parseInt(x.id) === this.$store.getters.$strapi.user.id)
     },
     carpetaActualNombre() {
       if (this.carpetaActual) return 'Archivos'
@@ -213,13 +211,13 @@ export default {
     }
     /*
     async getEquipos() {
-      const response = await this.$axios.get('/api/users/'+this.loggedInUser.id)
+      const response = await this.$axios.get('/api/users/'+this.$strapi.user.id)
       const user = response.data
       return user&&user.equipos?user.equipos.map(x=>x.id):[]
     },
     async updateEquipos(equipos) {
       console.log('update_equipos', equipos)
-      const r = await this.$axios.put('/api/users/'+this.loggedInUser.id, {equipos})
+      const r = await this.$axios.put('/api/users/'+this.$strapi.user.id, {equipos})
       this.$router.app.refresh()     
     },
     async entrar2() {

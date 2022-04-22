@@ -112,9 +112,9 @@
                     >
                         <div alt="theme-icon" v-html="colorModeIcon" class="w-10" />
                     </div>
-                    <template v-if="isAuthenticated">
+                    <template v-if="$strapi.user">
                         <Avatar
-                            :data="loggedInUser"
+                            :data="$strapi.user"
                             class="text-3xl w-8 h-8 cursor-pointer"
                             :to="false"
                             @click.native="toggleMostrarMenuUsuario"
@@ -222,7 +222,7 @@ export default {
             window.addEventListener("resize", this.resizeHandler)
     },
     computed: {
-        ...mapGetters(["isAuthenticated", "loggedInUser", "travelling", "pageConfig", "menuUsuario", "navHidden", "onlyContent"]),
+        ...mapGetters(["travelling", "pageConfig", "menuUsuario", "navHidden", "onlyContent"]),
         menuIzquierdo() {
             return this.rutasMenu.filter(x => x.left && !x.hideInNav)
         },

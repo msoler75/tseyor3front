@@ -1,6 +1,6 @@
 <template>
     <div class="flex flex-col space-y-4 justify-center sm:mx-auto">
-        <template v-if="isAuthenticated">
+        <template v-if="$strapi.user">
             <div class="text-diminished text-xs">
                 <span v-if="suscrito">Pulsa en la campanita para dejar de recibir notificaciones.</span>
                 <span v-else>Pulsa en la campanita para recibir las novedades en tu correo.</span>
@@ -33,7 +33,6 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex";
 export default {
     props: {
         collection: {},
@@ -50,10 +49,10 @@ export default {
         }
     },
     async fetch() {
-        if (this.isAuthenticated) {
-            let [suscripcion] = await this.$strapi.find('suscripciones', { usuario: this.loggedInUser.id })
+        if (this.$strapi.user) {
+            let [suscripcion] = await this.$strapi.find('suscripciones', { usuario: this.$strapi.user.id })
             if (!suscripcion)
-                suscripcion = await this.$strapi.create('suscripciones', { usuario: this.loggedInUser.id })
+                suscripcion = await this.$strapi.create('suscripciones', { usuario: this.$strapi.user.id })
             if (suscripcion) {
                 this.suscripcion = suscripcion
             }
@@ -61,7 +60,6 @@ export default {
     },
 
     computed: {
-        ...mapGetters(["isAuthenticated", "loggedInUser"]),
         suscrito() {
             if (!this.suscripcion) return false
             console.warn('suscrito?', this.collection, this.suscripcion)
@@ -96,7 +94,7 @@ export default {
             this.suscripcion = await this.$strapi.update('suscripciones', this.suscripcion.id, this.suscripcion)
         },
         onclick() {
-            if (this.isAuthenticated) {
+            if (this.$strapi.user) {
                 if (this.esgeneral) {
                     this.suscripcion[this.collection] = !this.suscripcion[this.collection]
                 }

@@ -6,7 +6,7 @@
     <NavTop v-model="currentTab" :rutasMenu="rutasMenu" ref="nav" @showSideMenu="showSideMenu" />
 
     <!-- User Menu -->
-    <Card v-if="isAuthenticated" v-show="menuUsuario"
+    <Card v-if="$strapi.user" v-show="menuUsuario"
       class="py-3 px-5 w-52 fixed right-0 top-[48px] sm:top-[51px] md:top-[68px] lg:top-[72px] xl:top-[76px] z-40">
       <ul class="list-none">
         <li v-for="item of userMenuItems" :key="item.href">
@@ -49,7 +49,8 @@
       -->
     </div>
     <!-- Page title ends -->
-    <div @click="clickOff" class="relative z-10" :class="pageConfig.contained ? 'container xs:px-1 sm:px-3 md:px-6 mx-auto' : ''">
+    <div @click="clickOff" class="relative z-10"
+      :class="pageConfig.contained ? 'container xs:px-1 sm:px-3 md:px-6 mx-auto' : ''">
       <div class="w-full">
         <portal-target name="portal0"></portal-target>
         <!-- Place your content here -->
@@ -83,12 +84,12 @@ export default {
     }
   }, */
   watch: {
-    loggedInUser(newValue) {
+    user(newValue) {
       this.actualizarUrlPerfil()
     },
   },
   // created()
-  mounted() {
+  async mounted() {
     this.actualizarUrlPerfil()
     // emulamos comportamiento de beforeEnter de transición de página
     this.$store.commit('travelling', false)
@@ -97,6 +98,14 @@ export default {
     if (process.client) {
       window.addEventListener('scroll', this.handleScroll, { passive: true });
       window.addEventListener('keydown', this.handleKey);
+    }
+    const token = localStorage.getItem('jwt')
+    if (token) {
+      this.$strapi.setToken(token)
+      this.$store.commit(
+        "SET_USER",
+        await this.$strapi.fetchUser()
+      )
     }
   },
   /* destroyed() {
@@ -295,7 +304,7 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(["isAuthenticated", "loggedInUser", "travelling", "pageConfig", "menuUsuario", "navHidden", "onlyContent", "backgroundImageUrl"]),
+    ...mapGetters(["user", "travelling", "pageConfig", "menuUsuario", "navHidden", "onlyContent", "backgroundImageUrl"]),
     rutasMenu() {
       return this.$store.getters.buildRoutes(this.menuitems)
     },
@@ -306,7 +315,7 @@ export default {
       );
     },
     imagenFondo() {
-      if(!this.backgroundImageUrl) return {}
+      if (!this.backgroundImageUrl) return {}
       const imgUrl = this.$img(this.backgroundImageUrl, { width: screen.width, height: screen.height, format: 'webp', quality: 70 })
       return {
         backgroundImage: `url('${imgUrl}')`,
@@ -321,8 +330,8 @@ export default {
     },
     actualizarUrlPerfil() {
       let url
-      if (!this.isAuthenticated) url = '/'
-      else url = `/usuarios/${this.loggedInUser.id}`
+      if (!this.$strapi.user) url = '/'
+      else url = `/usuarios/${this.$strapi.user.id}`
       const menu = this.userMenuItems.find(x => x.icon === "fas fa-user")
       if (menu)
         menu.href = url
@@ -362,6 +371,7 @@ export default {
         "SET_USER",
         null
       );
+      localStorage.removeItem('jwt')
       this.$router.push("/")
     },
     /* getIcon(path) {

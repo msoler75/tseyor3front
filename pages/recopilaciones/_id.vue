@@ -4,7 +4,7 @@
   <div class="flex flex-col items-center" focused contained="no">
 
     <NLink
-      v-if="isAuthenticated && contenido && loggedInUser.id === contenido.autor.id"
+      v-if="$strapi.user && contenido && $strapi.user.id === contenido.autor.id"
       class="btn absolute top-24 right-4 w-12 h-12 flex justify-center items-center rounded-full sm:w-auto sm:h-auto sm:rounded-inherit"
       :to="`/recopilaciones/editar/${contenido.id}`"
     >
@@ -29,17 +29,17 @@
       <h3 class="text-center">Registro de la experiencia</h3>
 
       <form @submit.prevent="submit" class="regular-form bg-transparent space-y-9" autocomplete="on">
-        <div v-if="!isAuthenticated" class="text-center">¿Ya tienes cuenta? <NLink :to="`/ingresar/?desde=${$route.path}}`">Inicia sesión</NLink></div>
+        <div v-if="!$strapi.user" class="text-center">¿Ya tienes cuenta? <NLink :to="`/ingresar/?desde=${$route.path}}`">Inicia sesión</NLink></div>
         <div>
-          <label v-if="!isAuthenticated" for="nombre">Tu nombre:</label>
-          <br v-if="!isAuthenticated" />
-          <input type="text" id="nombre" v-model="nombre" :disabled="isAuthenticated" />
+          <label v-if="!$strapi.user" for="nombre">Tu nombre:</label>
+          <br v-if="!$strapi.user" />
+          <input type="text" id="nombre" v-model="nombre" :disabled="$strapi.user" />
           <p class="error">{{ errors.nombre }}</p>
         </div>
-        <div v-if="!isAuthenticated">
+        <div v-if="!$strapi.user">
           <label for="nombre">Tu correo electrónico:</label>
           <br />
-          <input type="email" id="nombre" v-model="correo" required :disabled="isAuthenticated" autocomplete="email"/>
+          <input type="email" id="nombre" v-model="correo" required :disabled="$strapi.user" autocomplete="email"/>
           <p class="error">{{ errors.correo }}</p>
         </div>
         <div>
@@ -129,7 +129,6 @@
 <script>
 import vercontenidomixin from "@/mixins/vercontenido.js";
 import seo from "@/mixins/seo.js";
-import { mapGetters } from "vuex";
 import validation from "@/mixins/validation"
 export default {
   mixins: [vercontenidomixin, seo, validation],
@@ -143,7 +142,7 @@ export default {
         uid: `/recopilaciones/${contenido.id}`
       })
       let escribio = false
-      const user = store.getters.loggedInUser
+      const user = store.getters.$strapi.user
       let experiencias = []
       if (user && user.id) {
         // escribió ya algun comentario este usuario?
@@ -166,10 +165,9 @@ export default {
     }
   },
   mounted() {
-    this.nombre = this.isAuthenticated ? this.loggedInUser.nombreSimbolico : ''
+    this.nombre = this.$strapi.user ? this.$strapi.user.nombreSimbolico : ''
   },
   computed: {
-    ...mapGetters(["isAuthenticated", "loggedInUser"]),
     dias() {
       return this.$dayjs().diff(this.contenido.created_at, 'day') 
     },
@@ -182,7 +180,7 @@ export default {
       return 'Hace unas horas'
     },
     esAutor() {
-      return this.isAuthenticated && this.contenido.autor.id === this.loggedInUser.id
+      return this.$strapi.user && this.contenido.autor.id === this.$strapi.user.id
     }
   },
   methods: {
@@ -191,7 +189,7 @@ export default {
             await this.$strapi.find('comentarios', 
             { 
               uid: `/recopilaciones/${this.contenido.id}`, 
-              'autor.id': this.loggedInUser.id 
+              'autor.id': this.$strapi.user.id 
             }))
     },
     async submit() {
@@ -203,7 +201,7 @@ export default {
         texto: this.experiencia
       })
          .then(async comentario => {
-          if(this.loggedInUser)
+          if(this.$strapi.user)
             this.recargarExperiencias()
 
             this.recargar++

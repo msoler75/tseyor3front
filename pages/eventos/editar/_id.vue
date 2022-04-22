@@ -260,7 +260,6 @@
 
 <script>
 const relaciones11 = ['sala', 'organiza', 'autor']
-import { mapGetters } from "vuex";
 import vSelect from "vue-select";
 import Fuse from "fuse.js";
 import validation from "@/mixins/validation"
@@ -321,7 +320,6 @@ export default {
         }
     },
     computed: {
-        ...mapGetters(["isAuthenticated", "loggedInUser"]),
         cimage() {
             // la imagen que queremos subir o la del contenido 
             return this.imagenSubir ? this.imagenSubir.src : this.contenido.imagen ? this.contenido.imagen.url : null

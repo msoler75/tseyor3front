@@ -77,10 +77,8 @@ export default {
         // console.log('login', this.email, this.password)
         this.entrando = true
         await this.$strapi.login({ identifier: this.email, password: this.password })
-        this.$store.commit(
-          "SET_USER",
-          await this.$fetchUser()
-        );
+        this.$strapi.fetchUser()
+        localStorage.setItem('jwt', this.$strapi.token)
         this.$router.push(this.$route.query.desde || "/")
       } catch (e) {
         console.error('login error:', e)

@@ -86,7 +86,6 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex";
 export default {
   props: {
     value: {},
@@ -100,10 +99,9 @@ export default {
     };
   },
   computed: {
-  ...mapGetters(["isAuthenticated", "loggedInUser"]),
   menuitems() {
     const r = [...this.items]
-    if(!this.isAuthenticated)
+    if(!this.$strapi.user)
       r.unshift(this.$store.getters.getRouteData("/ingresar"))
     return r
   }

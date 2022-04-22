@@ -85,6 +85,11 @@ export default {
       return parts[parts.length-2]
     }    
   },
+  async mounted() {
+    this.contenido.likes = await this.$strapi.find("likes", {
+      uid: `/${this.collection}/${this.contenido.id}`
+    })
+  },
   methods: {
     renderMarkdown(md) {
       let html = this.$md.render(md)

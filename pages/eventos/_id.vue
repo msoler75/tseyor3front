@@ -1,7 +1,7 @@
 <template>
   <section contained="no" focused>
 
-    <NLink v-if="contenido.autor && isAuthenticated && loggedInUser.id === contenido.autor.id"
+    <NLink v-if="contenido.autor && $strapi.user && $strapi.user.id === contenido.autor.id"
       class="btn absolute -top-12 right-4 w-12 h-12 flex justify-center items-center rounded-full sm:w-auto sm:h-auto sm:rounded-inherit"
       :to="`/eventos/editar/${contenido.id}`">
       <icon icon="edit" />
@@ -92,7 +92,6 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex";
 import vercontenidomixin from "@/mixins/vercontenido.js";
 import seo from '@/mixins/seo.js'
 export default {
@@ -129,14 +128,14 @@ export default {
   },
   watch: {
     quieroAsistir(asistire) {
-      if (!this.isAuthenticated) return
+      if (!this.$strapi.user) return
       this.actualizando = true
       this.$strapi.$http.$put(`/eventos/${this.contenido.id}/${asistire ? 'join' : 'leave'}`)
         .then(evento => {
           console.log('res as', evento)
           this.actualizando = false
           this.$set(this.contenido, 'asistentes', evento.asistentes)
-          const asiste = this.isAuthenticated && !!this.contenido.asistentes.find(x => x.id === this.loggedInUser.id)
+          const asiste = this.$strapi.user && !!this.contenido.asistentes.find(x => x.id === this.$strapi.user.id)
           if (asiste)
             this.$strapi.create('historials', {
               accion: 'evento_asiste',
@@ -148,9 +147,6 @@ export default {
           this.actualizando = false
         })
     }
-  },
-  computed: {
-    ...mapGetters(["isAuthenticated", "loggedInUser"])
   }
 };
 </script>

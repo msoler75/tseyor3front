@@ -295,7 +295,7 @@ export default {
       }
     },
     soyCoordinador() {
-      return !!this.actividad.equipo.coordinadores.find(x=>parseInt(x.id)===this.$store.getters.loggedInUser.id)
+      return !!this.actividad.equipo.coordinadores.find(x=>parseInt(x.id)===this.$store.getters.$strapi.user.id)
     },
     citas() {
       let seccion = null;
