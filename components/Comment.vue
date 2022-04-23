@@ -22,13 +22,14 @@
                 </div>
             </Card>
 
-            <div class="mt-2 flex justify-start items-center text-xs px-2">
-                <a v-if="!likeing" class="mr-5 cursor-pointer" @click="like">
+            <div class="mt-2 flex justify-start items-center text-xs px-2 select-none">
+                <a v-if="likeing" class="mr-5 cursor-pointer" @click="dislike">
                     <icon icon="fas fa-heart" class="text-red" />
                     {{ likesCount }}
                 </a>
-                <a v-else class="mr-5 cursor-pointer" @click="dislike">
+                <a v-else class="mr-5 cursor-pointer" @click="like">
                     <icon icon="far fa-heart" />
+                    {{ likesCount }}
                 </a>
 
                 <span v-if="!likeing"
@@ -54,7 +55,7 @@ export default {
     },
     computed: {
         uid() {
-            return `/comentarios/${data.id}`
+            return `/comentarios/${this.data.id}`
         },
         ccollection() {
             return 'comentarios'

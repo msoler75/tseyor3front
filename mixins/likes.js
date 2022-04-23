@@ -2,18 +2,11 @@
  * Para que funcione este mixin, debes declarar estas propiedades en el componente:
  * 
  *    uid
- *    ccollection (opcional)
  * 
  * */
 
 export default {
   computed: {
-    likecollection() {
-      if (this.ccollection)
-        return this.ccollection
-      const parts = this.$route.path.split('/')
-      return parts[parts.length - 2]
-    },
     likecontent() {
       return this.contenido ? this.contenido : this.data ? this.data : {}
     },
@@ -21,23 +14,29 @@ export default {
       return this.likecontent.likes && Array.isArray(this.likecontent.likes) ? this.likecontent.likes : []
     },
     likeing() {
-      // console.log('likeit?', this.contenido.likes)
       if (!this.$strapi.user) return false
-      return this.likesList.find(x => x.usuario && x.usuario.id === this.$strapi.user.id)
+      return !!this.likesList.find(x => x.usuario && x.usuario.id === this.$strapi.user.id)
     },
     likesCount() {
       return this.likesList.length
+    },
+    cuid() {
+      return this.uid
     }
   },
   // CARGA LISTADO DE LIKES AL CONTENIDO O DATA
   async mounted() {
     this.refreshLikes()
   },
+  watch: {
+    cuid(newValue) {
+      this.$nextTick(()=>this.refreshLikes)
+    }
+  },
   methods: {
     async refreshLikes() {
-      if (this.contenido || this.data) {
-        this.$set(this.contenido ? this.contenido : this.data, 'likes', await this.getLikes())
-      }
+      if(this.cuid&&this.likecontent&&!this.likecontent.likes)
+        this.$set(this.likecontent, 'likes', await this.getLikes())
     },
     // obtiene la lista de likes de este contenido
     async getLikes() {
@@ -45,7 +44,7 @@ export default {
         data: likes
       } = await this.$strapi.find("likes", {
         filters: {
-          uid: this.uid
+          uid: this.cuid
         },
         fields: ['id'],
         populate: {
@@ -68,6 +67,7 @@ export default {
     async like() {
       if (!this.$strapi.user) return
       this.likecontent.likes.push({
+        uid: this.uid,
         usuario: this.$strapi.user
       })
       this.$strapi.create('likes', {

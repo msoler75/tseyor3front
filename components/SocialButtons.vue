@@ -1,7 +1,5 @@
 <template>
   <section class="social-buttons">
-
-
     <!-- buttons -->
     <Grid class="font-thin whitespace-nowrap w-full px-3 sm:px-5 grid-cols-1" :class="likeButton?'sm:grid-cols-3':'sm:grid-cols-2'">
       <template v-if="likeButton">
@@ -37,8 +35,8 @@
       >
         <icon class="mr-2 xs:mr-4" icon="far fa-comment" />
         <span
-          v-if="data.comentarios"
-        >{{ data.comentarios + ' ' + (data.comentarios !== 1 ? commentLabels[2] : commentLabels[1]) }}</span>
+          v-if="nComments"
+        >{{ nComments + ' ' + (nComments !== 1 ? commentLabels[2] : commentLabels[1]) }}</span>
         <span v-else>{{commentLabels[0]}}</span>
       </a>
     </Grid>
@@ -57,9 +55,13 @@ import likes from "@/mixins/likes.js"
 export default {
   mixins: [likes],
   props: {
+    uid: {
+      type: String,
+      required: true
+    },
     data: {
       type: Object,
-      required: true
+      required: true,
     },
     likeButton: {
       type: Boolean, 
@@ -75,6 +77,11 @@ export default {
       type: Boolean,
       required: false,
       default: true
+    }
+  },
+  computed: {
+    nComments() {
+      return ('comentarios' in this.data)?this.data.comentarios:0
     }
   }
 }

@@ -3,12 +3,12 @@
   <!-- No tiene imagen de fondo -->
   <div class="flex flex-col items-center" contained="no" background="no" focused>
 
-<div v-if="contenido.likes">
-likes: {{contenido.likes}}
-</div>
+    <div v-if="contenido.likes">
+      likes: {{ contenido.likes }}
+    </div>
 
     <!-- article container -->
-    <div v-if="false&&false" class="px-3 sm:px-5 md:px-7 relative w-full shrink-0 flex-grow-1 max-w-3xl flex flex-col items-start">
+    <div class="px-3 sm:px-5 md:px-7 relative w-full shrink-0 flex-grow-1 max-w-3xl flex flex-col items-start">
       <div class="hidden 4xl:block absolute right-0 translate-x-3 5xl:translate-x-10 h-full">
         <SocialIcons class="sticky top-32 mb-6 text-xs 5xl:text-sm" :content="contenido"
           @share="viendoCompartir = true" />
@@ -38,17 +38,17 @@ likes: {{contenido.likes}}
     </div>
 
     <!-- share modal -->
-    <Comparte v-if="false&&false" v-model="viendoCompartir" />
+    <Comparte v-model="viendoCompartir" />
 
-    <SocialButtons id="social" :data="contenido" @like="like" @dislike="dislike"
-      @share="viendoCompartir = true" class="mx-auto max-w-xl my-7 lg:my-16" />
+    <SocialButtons id="social" :uid="uid" :data="contenido" @like="like" @dislike="dislike" @share="viendoCompartir = true"
+      class="mx-auto max-w-xl my-7 lg:my-16" />
 
-    <SuscriptionSection v-if="false&&false" id="suscription" title="Noticias TSEYOR"
+    <SuscriptionSection id="suscription" title="Noticias TSEYOR"
       description="Noticias de interés de la comunidad Tseyor" collection="noticias" image="./imagenes/tierra.jpg"
       class="bg-teal-900 w-full" />
 
     <!-- contenido relacionado -->
-    <div v-if="false&&false" class="container mx-auto my-9" v-observe-visibility="cargarRelacionados">
+    <div class="container mx-auto my-9" v-observe-visibility="cargarRelacionados">
       <h3 class="text-center">Y también...</h3>
       <HCarousel center :items="relacionados" collection="noticias" :no-text="true" />
     </div>
@@ -79,7 +79,10 @@ export default {
   async asyncData({ app, $strapi, route, $error }) {
     try {
       const id = route.params.id;
-      const { data: [contenido] } = await $strapi.find("noticias", id.match(/^\d+$/) ? { id } : { slug: id })
+      const params = {
+        filters: id.match(/^\d+$/) ? { id } : { slug: id }
+      }
+      const { data: [contenido] } = await $strapi.find("noticias", params)
       if (!contenido)
         return $error(404, 'Noticia no encontrada')
       contenido.textoHTML = app.$renderMarkdownServer(
@@ -95,15 +98,24 @@ export default {
   methods: {
     async cargarRelacionados(isVisible) {
       if (!this.relacionados.length && isVisible) {
-        const filtro = {
-          id_ne: this.contenido.id,
-          id_lt: this.contenido.id + 10,
-          id_gt: this.contenido.id - 10
-        };
-        this.relacionados = await this.$strapi.find("noticias", {
-          ...filtro,
-          _limit: 7
+        const { data: relacionados } = await this.$strapi.find("noticias", {
+          filters: {
+            id: {
+              $ne: this.contenido.id,
+              $gt: this.contenido.id - 10,
+              $lt: this.contenido.id + 10,
+            }
+          },
+          populate: {
+            imagen: {
+              fields: ['url', 'width', 'height']
+            }
+          },
+          pagination: {
+            limit: 7
+          }
         })
+        this.relacionados = relacionados
       }
     }
   },

@@ -169,7 +169,14 @@ methods: {
       this.comentarios = comentarios
       console.warn(comentarios)
       // this.$set(this, 'comentarios', comentarios /* .map(x=>({...x, IlikeIt: this.IlikeIt(x)})) */)
-      // this.$emit('count', comentarios.length)
+      let num = 0
+      for(const comentario of comentarios)
+      {
+        num++
+        for(const respuesta of comentario.respuestas)
+        num++
+      }
+      this.$emit('count',num)
     },
     async subirImagenes() {
       if (!this.imagenesSubir.length) return []
