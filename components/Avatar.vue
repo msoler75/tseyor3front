@@ -115,7 +115,7 @@ export default {
         }
       }
       // máximo 2 iniciales
-      return inicialex.substr(0, 2).toUpperCase();
+      return inicialex.substring(0, 2).toUpperCase();
     },
   },
 };

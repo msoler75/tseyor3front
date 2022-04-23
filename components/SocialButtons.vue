@@ -1,16 +1,18 @@
 <template>
   <section class="social-buttons">
+
+
     <!-- buttons -->
-    <Grid class="font-thin whitespace-nowrap w-full px-3 sm:px-5 grid-cols-1" :class="likebutton?'sm:grid-cols-3':'sm:grid-cols-2'">
-      <template v-if="likebutton">
+    <Grid class="font-thin whitespace-nowrap w-full px-3 sm:px-5 grid-cols-1" :class="likeButton?'sm:grid-cols-3':'sm:grid-cols-2'">
+      <template v-if="likeButton">
         <div
-          v-if="likeit"
+          v-if="likeing"
           class="max-w-xs mx-auto min-w-40 btn flex items-center justify-center"
           @click="$emit('dislike')"
           title="Pulsa aquí si ya no te gusta"
         >
           <icon class="text-red mr-2 xs:mr-4" icon="fas fa-heart" />
-          {{ data.likes.length }}
+          {{ likesCount }}
         </div>
         <div
           v-else
@@ -41,20 +43,25 @@
       </a>
     </Grid>
 
-    <template v-if="likeslist.length&&showWhoLiked">
+    <template v-if="showLikes&&likesCount">
       <p class="mt-14 mb-2 font-bold text-center">Nos gusta este contenido:</p>
       <div class="flex flex-wrap justify-center">
-        <Avatar v-for="user of likeslist" :key="user.id" :data="user" class="w-12 h-12 m-1" />
+        <Avatar v-for="like of likesList" :key="like.usuario.id" :data="like.usuario" class="w-12 h-12 m-1" />
       </div>
     </template>
   </section>
 </template>
 
 <script>
+import likes from "@/mixins/likes.js"
 export default {
+  mixins: [likes],
   props: {
-    data: {},
-    likebutton: {
+    data: {
+      type: Object,
+      required: true
+    },
+    likeButton: {
       type: Boolean, 
       required: false,
       default: true
@@ -64,25 +71,10 @@ export default {
       required: false,
       default() { return ['Coméntalo','Comentario','Comentarios'] }
     },
-    showWhoLiked: {
+    showLikes: {
       type: Boolean,
       required: false,
       default: true
-    }
-  },
-  computed: {
-    likeslist() {
-      //if (!this.data.likes) return []
-      //return this.data.likes.slice(0, 16).map(x => x.user)
-      return []
-    },
-    // LIKE
-    likeit() {
-      // console.log('likeit?', this.contenido.likes)
-      if(typeof this.data.likes === 'undefined')
-        return // console.error('Falta poner campo likes en contenido')
-      if(this.$store.getters.$strapi.user)
-      return this.$strapi.user && this.data.likes.find(x => x.user && x.user.id === this.$strapi.user.id)
     }
   }
 }

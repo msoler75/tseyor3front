@@ -5,6 +5,8 @@
     <!-- Navigation starts-->
     <NavTop v-model="currentTab" :rutasMenu="rutasMenu" ref="nav" @showSideMenu="showSideMenu" />
 
+{{$strapi.user}}
+
     <!-- User Menu -->
     <Card v-if="$strapi.user" v-show="menuUsuario"
       class="py-3 px-5 w-52 fixed right-0 top-[48px] sm:top-[51px] md:top-[68px] lg:top-[72px] xl:top-[76px] z-40">

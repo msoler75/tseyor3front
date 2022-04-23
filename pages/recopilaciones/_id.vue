@@ -79,6 +79,7 @@
 
       <SocialButtons
         id="social"
+        :likeButton="false"
         :data="contenido"
         @like="like(contenido.id)"
         @dislike="dislike(contenido.id)"
@@ -138,9 +139,6 @@ export default {
       const contenido = await $strapi.findOne("recopilaciones", id)
       if (!contenido)
         return $error(404, 'Recopilación no encontrada')
-      contenido.likes = await $strapi.find("likes", {
-        uid: `/recopilaciones/${contenido.id}`
-      })
       let escribio = false
       const user = store.getters.$strapi.user
       let experiencias = []

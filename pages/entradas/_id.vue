@@ -96,9 +96,6 @@ export default {
         return $error(404, 'Entrada de Blog no encontrada')
       const contenido = entradas[0];
       contenido.textoHTML = $renderMarkdownServer(contenido.texto, contenido.imagenes);
-      contenido.likes = await $strapi.find("likes", {
-        uid: `/entradas/${contenido.id}`
-      });
       return { contenido, entrada: contenido, relacionados: [] }
     } catch (e) {
       $error(503)

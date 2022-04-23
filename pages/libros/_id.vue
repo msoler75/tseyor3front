@@ -90,9 +90,6 @@ export default {
         contenido.texto,
         contenido.imagenes
       )
-      /*contenido.likes = await $strapi.find("likes", {
-        uid: `/noticias/${contenido.id}`
-      });*/
       return { contenido, libro: contenido }
     } catch (e) {
       $error(503)

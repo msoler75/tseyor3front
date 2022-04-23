@@ -1,157 +1,60 @@
 <template>
   <div class="max-w-xl mx-auto" :class="$device.isMobileOrTablet ? 'touch' : 'mouse'">
-    <div
-      v-for="comentario of comentariosPrimerNivel"
-      :key="comentario.id"
-      :id="`comentario-${comentario.id}`"
-      class="comment flex flex-col mb-5"
-    >
-      <div class="flex w-full">
-        <Avatar
-          :data="comentario.autor"
-          :name="comentario.nombre"
-          class="text-3xl w-8 h-8 sm:w-16 sm:h-16 mr-2 sm:mr-3 lg:mr-5"
-        />
-        <section class="group select-none">
-          <Comment :data="comentario"/>
-          
 
-          
 
-          <!-- respuestas -->
-          <div v-if="comentario.respuestas&&comentario.respuestas.length" class="w-full mt-5">
-            <div
-              v-for="respuesta of getRespuestas(comentario.respuestas)"
-              :key="respuesta.id"
-              :id="`comentario-${respuesta.id}`"
-              class="comment flex flex-col mb-5"
-            >
-              <div class="flex w-full">
-                <Avatar
-                  :data="respuesta.autor"
-                  :name="respuesta.nombre"
-                  class="text-3xl w-8 h-8 mr-2 sm:mr-3 lg:mr-5"
-                />
-                <section>
-                  <Card class="w-full p-1 xs:p-2 sm:p-4">
-                    <div
-                      class="flex justify-start items-baseline text-xs lg:text-sm text-blue-gray"
-                    >
-                      <NLink
-                        v-if="respuesta.autor.id"
-                        :to="'/usuarios/' + respuesta.autor.id"
-                        class="font-bold mb-1"
-                      >{{ mostrarNombre(respuesta.autor) }}</NLink>
-                      <span v-else class="font-bold">
-                        {{
-                          mostrarNombre(respuesta.autor)
-                        }}
-                      </span>
-                      <span class="mx-2 opacity-50">•</span>
-                      <span class="text-xs">
-                        {{
-                          $dayjs(respuesta.updated_at).fromNow()
-                        }}
-                      </span>
-                    </div>
-                    <div
-                      class="text-justify text-sm lg:text-base"
-                      v-html="$renderMarkdownServer(respuesta.texto)"
-                    />
-                  </Card>
-                  <div
-                    v-if="$strapi.user"
-                    class="mt-2 flex justify-start items-center text-xs px-2"
-                  >
-                    <a
-                      v-if="respuesta.likes&&respuesta.likes.length"
-                      class="mr-5 cursor-pointer"
-                      @click="IlikeIt(respuesta) ? dislike(respuesta.id) : {}"
-                    >
-                      <icon icon="fas fa-heart" class="text-red" />
-                      {{ respuesta.likes.length }}
-                    </a>
-                    <a
-                      v-else
-                      class="mr-5 cursor-pointer"
-                      @click="IlikeIt(respuesta) ? {} : like(respuesta.id)"
-                    >
-                      <icon icon="far fa-heart" />
-                    </a>
+    <div v-for="comentario of comentarios" :key="comentario.id">
+      <Comment :id="`comentario-${comentario.id}`" :data="comentario" @responder="onResponder($event)" />
 
-                    <span
-                      v-if="!IlikeIt(respuesta)"
-                      class="mr-5 opacity-0 transition transition-duration-200 group-hover:opacity-100 link cursor-pointer"
-                      @click="like(respuesta.id)"
-                    >Me gusta</span>
-                    <span
-                      class="opacity-0 transition transition-duration-200 group-hover:opacity-100 link cursor-pointer"
-                      @click="onResponder(comentario.id)"
-                    >Responder</span>
-                  </div>
-                </section>
-              </div>
-            </div>
-          </div>
+      <Card v-if="responderA === comentario.id" :id="'respuesta-a-' + comentario.id" class="p-5">
+        <form @submit.prevent="responder(comentario.id)">
+          <input type="text" v-model="respuestaTexto" placeholder="Respuesta..." />
+          <button type="submit" class="btn mt-3">Responder</button>
+        </form>
+      </Card>
 
-          <Card
-            v-if="$strapi.user"
-            :id="'respuesta-a-' + comentario.id"
-            class="p-5"
-            v-show="responderA === comentario.id"
-          >
+
+      <!-- respuestas -->
+      <div class="w-full mt-5 pl-12">
+        <div v-for="respuesta of comentario.respuestas" :key="respuesta.id" :id="`comentario-${respuesta.id}`"
+          class="comment flex flex-col mb-5">
+
+          <Comment :id="`comentario-${respuesta.id}`" :data="respuesta" @responder="onResponder($event)" />
+
+          <Card v-if="responderA === respuesta.id" :id="'respuesta-a-' + respuesta.id" class="p-5">
             <form @submit.prevent="responder(comentario.id)">
-              <input type="text" v-model="respuesta" placeholder="Respuesta..." />
+              <input type="text" v-model="respuestaTexto" placeholder="Respuesta..." />
               <button type="submit" class="btn mt-3">Responder</button>
             </form>
           </Card>
-        </section>
+
+        </div>
       </div>
+
+
     </div>
 
     <Card v-if="$strapi.user" class="p-5">
       <form @submit.prevent="comentar">
-        <textarea
-          rows="4"
-          type="text"
-          v-model="nuevoComentario"
-          :placeholder="placeholder"
-          minlength="4"
-        />
+        <textarea rows="4" type="text" v-model="nuevoComentario" :placeholder="placeholder" minlength="4" />
         <div>
           <div v-for="item, index of imagenesSubir" :key="index" class="group relative my-2">
             <nuxt-img :src="item.src" class="w-full" sizes="xs:100vw" />
             <div
               class="btn btn-error absolute right-2 top-2 text-xl p-0 w-7 h-7 flex justify-center items-center rounded-full transition duration-200 opacity-0 group-hover:opacity-100"
-              @click="eliminarDeImagenes(index)"
-              title="Eliminar imagen"
-            >&times;</div>
+              @click="eliminarDeImagenes(index)" title="Eliminar imagen">&times;</div>
           </div>
         </div>
         <div class="mt-2 flex justify-between items-center">
-          <button
-            type="submit"
-            class="btn"
-            :disabled="enviando || !nuevoComentario"
-          >{{ buttonLabel }}</button>
-          <InputImage
-            v-if="$strapi.user"
-            multiple
-            id="imagen"
-            :value="imagenesSubir"
-            @change="onImagenes"
-            class="my-3"
-            textButton
-            iconButton
-          />
+          <button type="submit" class="btn" :disabled="enviando || !nuevoComentario">{{ buttonLabel }}</button>
+          <InputImage v-if="$strapi.user" multiple id="imagen" :value="imagenesSubir" @change="onImagenes" class="my-3"
+            textButton iconButton />
         </div>
       </form>
     </Card>
+
     <div v-else class="text-center">
-      <NLink
-        class="btn"
-        :to="'/ingresar?desde=' + encodeURIComponent($route.fullPath)"
-      >Inicia sesión para comentar</NLink>
+      <NLink class="btn" :to="'/ingresar?desde=' + encodeURIComponent($route.fullPath)">Inicia sesión para comentar
+      </NLink>
     </div>
   </div>
 </template>
@@ -213,7 +116,7 @@ methods: {
     return {
       meta: {},
       comentarios: [],
-      respuesta: '',
+      respuestaTexto: '',
       responderA: null,
       nuevoComentario: '',
       enviando: false,
@@ -235,14 +138,6 @@ methods: {
   async fetch() {
     await this.cargarComentarios()
   },
-  computed: {
-    comentariosPrimerNivel() {
-      return this.comentarios.filter(x => !x.respondiendo)
-    },
-    comentariosSegundoNivel() {
-      return this.comentarios.filter(x => x.respondiendo)
-    },
-  },
   methods: {
     onImagenes(payload) {
       for (const i in payload.images)
@@ -251,19 +146,24 @@ methods: {
     eliminarDeImagenes(index) {
       this.imagenesSubir.splice(index, 1)
     },
-
-    getRespuestas(respuestas) {
-      const r = []
-      for (const respuesta of respuestas) {
-        r.push(this.comentariosSegundoNivel.find(x => x.id === respuesta.id))
-      }
-      return r
-    },
     async cargarComentarios() {
       // console.log('fetch uid=', this.uid)
-      const {data:comentarios, meta} = await this.$strapi.find('comentarios', {
-        uid: this.uid,
-        sort: 'updatedAt:desc'
+      const { data: comentarios, meta } = await this.$strapi.find('comentarios', {
+        filters: {
+          uid: { $eq: this.uid },
+          respondiendo: {
+            id: {
+              $null: true
+            }
+          }
+        },
+        populate: {
+          respuestas: '*'
+        },
+        sort: 'updatedAt:desc',
+        pagination: {
+          pageSize: 999
+        }
       })
       this.meta = meta
       this.comentarios = comentarios
@@ -289,38 +189,38 @@ methods: {
       this.enviando = true;
       const imagenes = await this.subirImagenes() || []
       console.log('imagenes subidas', imagenes)
-       /*this.$strapi.$http.$post('/comentarios', {
+      /*this.$strapi.$http.$post('/comentarios', {
+       uid: this.uid,
+       texto: this.nuevoComentario
+     })*/
+      this.$strapi.create('comentarios', {
         uid: this.uid,
-        texto: this.nuevoComentario
-      })*/
-        this.$strapi.create('comentarios', {
-          uid: this.uid,
-          texto: this.nuevoComentario,
-          adjuntos: imagenes.map(x => x.id)
-        })
-          .then(comentario => {
-            console.log('respuesta', comentario)
-            // registro de actividad
-            console.log('this', this)
-            /*this.$strapi.create('historials', {
-              accion: 'comentario',
-              titulo: this.contentTitle,
-              url: this.uid
-            })*/
+        texto: this.nuevoComentario,
+        adjuntos: imagenes.map(x => x.id)
+      })
+        .then(comentario => {
+          console.log('respuesta', comentario)
+          // registro de actividad
+          console.log('this', this)
+          /*this.$strapi.create('historials', {
+            accion: 'comentario',
+            titulo: this.contentTitle,
+            url: this.uid
+          })*/
 
-            this.enviando = false
-            this.imagenesSubir = []
-            this.nuevoComentario = ''
-            this.cargarComentarios()
-            this.$emit('commented')
-          })
+          this.enviando = false
+          this.imagenesSubir = []
+          this.nuevoComentario = ''
+          this.cargarComentarios()
+          this.$emit('commented')
+        })
 
     },
     async responder(respondiendo) {
       await this.$strapi.create('comentarios', {
         uid: this.uid,
         respondiendo,
-        texto: this.respuesta
+        texto: this.respuestaTexto
       })
         .then(comentario => {
           console.log('respuesta', comentario)
@@ -332,11 +232,13 @@ methods: {
           })
         })
       this.responderA = null
-      this.respuesta = ''
+      this.respuestaTexto = ''
       await this.cargarComentarios()
       this.$emit('commented')
     },
     onResponder(id) {
+      if (!this.$strapi.user) return
+      this.respuestaTexto = ''
       this.responderA = id
       this.$nextTick(() => {
         this.$scrollTo('#respuesta-a-' + id, 500, { offset: -250 })
@@ -345,86 +247,7 @@ methods: {
         )
         if (el) el.focus()
       })
-    },
-
-    // ---- LIKES ----
-    IlikeIt(comentario) {
-
-      return false //
-
-      if (!this.$strapi.user) return false
-      if('IlikeIt' in comentario) return comentario.IlikeIt
-      console.log('IlikeIt', comentario)
-      console.log('mi user id', this.$strapi.user.id)
-      return !!comentario.likes.find(x => x.id === this.$strapi.user.id)
-    },
-    async refreshItem(id) {
-      console.log('refreshItem', id)
-      const likes = await this.$strapi.find('likes', {
-        uid: 'comentarios-' + id
-      })
-      this.saveRefreshedItem(
-        id,
-        likes.map(x => x.autor)
-      )
-    },
-    async like(id) {
-      if (!this.$strapi.user) return
-      console.log('like comment', id)
-      this.likedItem(id)
-      await this.$strapi.$http.$put(`/comentarios/${id}/like`)
-      await this.$strapi.create('likes', {
-        uid: 'comentarios-' + id
-      })
-        .then(like => {
-          this.$strapi.create('historials', {
-            accion: 'like_comentario',
-            titulo: this.contentTitle,
-            url: this.uid + '#comentario-' + id
-          })
-        })
-      // este paso es opcional:
-      // this.refreshItem(id);
-    },
-    async dislike(id) {
-      if (!this.$strapi.user) return
-      console.log('dislike comment', id)
-      this.dislikedItem(id)
-      await this.$strapi.$http.$put(`/comentarios/${id}/dislike`)
-      const results = await this.$strapi.find('likes', {
-        uid: 'comentarios-' + id,
-        user: this.$strapi.user.id
-      })
-      if (results.length) {
-        await this.$strapi.$http.$delete(`/likes/${results[0].id}`)
-        // este paso es opcional:
-        // this.refreshItem(id);
-      }
-    },
-    likedItem(id) {
-      const comentario = this.comentarios.find(x => x.id === id)
-      if (comentario) {
-        console.log('comentario', comentario)
-        comentario.likes.push({ id: this.$strapi.user.id })
-        comentario.IlikeIt = true
-      }
-    },
-    dislikedItem(id) {
-      const comentario = this.comentarios.find(x => x.id === id)
-      if (comentario) {
-        console.log('comentario', comentario)
-        const idx = comentario.likes.findIndex(x => x.id === this.$strapi.user.id)
-        if (idx > -1) comentario.likes.splice(idx, 1)
-        comentario.IlikeIt = false
-      }
-    },
-    saveRefreshedItem(id, likes) {
-      console.log('saveRefreshedItem', id, likes)
-      const comentario = this.comentarios.find(x => x.id === id)
-      console.log('found', comentario)
-      if (comentario) this.$set(comentario, 'likes', likes)
     }
-    // ---- end LIKES ----
   }
 }
 </script>

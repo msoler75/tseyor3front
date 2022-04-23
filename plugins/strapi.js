@@ -31,6 +31,19 @@ export default ({
         })
     }
 
+    // parece que params no hace nada
+    async findOne(collection, id, params) {
+        const query = !params ? null : typeof params === 'string' ? params : '?' + qs.stringify(params, {
+          encodeValuesOnly: true,
+        })
+        console.log('QUERY', `/${collection}/${id}${query}`)
+        return $axios.get(`/${collection}/${id}${query}`)
+          .then(r => r.data)
+          .catch(err => {
+            console.error(err)
+          })
+      }
+
     async create(collection, data) {
       return $axios.post(`/${collection}`, {
           data
@@ -44,6 +57,17 @@ export default ({
           return {
             data: []
           }
+        })
+    }
+
+    async delete(collection, id) {
+      return $axios.delete(`/${collection}/${id}`)
+        .then(r => {
+          console.log('RESULT DELETE', r)
+          return r
+        })
+        .catch(err => {
+          console.error(err)
         })
     }
 
@@ -71,11 +95,29 @@ export default ({
         Authorization: null
       }
     }
+
+
     async fetchUser() {
-      return $axios.get(`/users/me`)
+      $axios.get(`/users/me`)
         .then(r => {
           console.warn('USER FETCHED', r.data)
           this.user = r.data
+          /*this.find('users', {
+              filters: {
+                  id: {
+                      $eq: this.user.id
+                  }
+              },
+              populate: {
+                imagen: {
+                  fields: ['url', 'width', 'height']
+                }
+              }
+            })
+            .then(r2 => {
+              console.warn('USER FETCHED 2', r2.data)
+              this.user = r2.data[0]
+            })*/
           return r.data
         })
         .catch(err => null)

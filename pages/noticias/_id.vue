@@ -3,8 +3,12 @@
   <!-- No tiene imagen de fondo -->
   <div class="flex flex-col items-center" contained="no" background="no" focused>
 
+<div v-if="contenido.likes">
+likes: {{contenido.likes}}
+</div>
+
     <!-- article container -->
-    <div class="px-3 sm:px-5 md:px-7 relative w-full shrink-0 flex-grow-1 max-w-3xl flex flex-col items-start">
+    <div v-if="false&&false" class="px-3 sm:px-5 md:px-7 relative w-full shrink-0 flex-grow-1 max-w-3xl flex flex-col items-start">
       <div class="hidden 4xl:block absolute right-0 translate-x-3 5xl:translate-x-10 h-full">
         <SocialIcons class="sticky top-32 mb-6 text-xs 5xl:text-sm" :content="contenido"
           @share="viendoCompartir = true" />
@@ -34,17 +38,17 @@
     </div>
 
     <!-- share modal -->
-    <Comparte v-model="viendoCompartir" />
+    <Comparte v-if="false&&false" v-model="viendoCompartir" />
 
-    <SocialButtons id="social" :data="contenido" @like="like(contenido.id)" @dislike="dislike(contenido.id)"
+    <SocialButtons id="social" :data="contenido" @like="like" @dislike="dislike"
       @share="viendoCompartir = true" class="mx-auto max-w-xl my-7 lg:my-16" />
 
-    <SuscriptionSection id="suscription" title="Noticias TSEYOR"
+    <SuscriptionSection v-if="false&&false" id="suscription" title="Noticias TSEYOR"
       description="Noticias de interés de la comunidad Tseyor" collection="noticias" image="./imagenes/tierra.jpg"
       class="bg-teal-900 w-full" />
 
     <!-- contenido relacionado -->
-    <div class="container mx-auto my-9" v-observe-visibility="cargarRelacionados">
+    <div v-if="false&&false" class="container mx-auto my-9" v-observe-visibility="cargarRelacionados">
       <h3 class="text-center">Y también...</h3>
       <HCarousel center :items="relacionados" collection="noticias" :no-text="true" />
     </div>
@@ -67,10 +71,11 @@
 </template>
 
 <script>
-import vercontenidomixin from "@/mixins/vercontenido.js";
-import seo from "@/mixins/seo.js";
+import vercontenidomixin from "@/mixins/vercontenido.js"
+import likes from "@/mixins/likes.js"
+import seo from "@/mixins/seo.js"
 export default {
-  mixins: [vercontenidomixin, seo],
+  mixins: [vercontenidomixin, likes, seo],
   async asyncData({ app, $strapi, route, $error }) {
     try {
       const id = route.params.id;

@@ -105,9 +105,6 @@ export default {
       if (!usuarios.length)
         return $error(404, 'Usuario no encontrado')
       const contenido = noticias[0];
-      /*contenido.likes = await $strapi.find("likes", {
-        uid: `/noticias/${contenido.id}`
-      });*/
         return { contenido, usuario: contenido, historial:[] }
     } catch (e) {
       console.error(e)
