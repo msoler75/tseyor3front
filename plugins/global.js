@@ -4,8 +4,8 @@ import httpErrorMessage from '~/assets/js/httpErrorMessage'
 // import { LoremIpsum } from "lorem-ipsum";
 
 export default ({
-  /*$strapi,*/
-  store,
+  /*route, $strapi,*/
+  // store,
   $md,
   $img,
   error
@@ -79,7 +79,7 @@ export default ({
     return str
   }
 
-  const renderMarkdownServer = (md, images, keepTitle) => {
+  const mdToHtml = (md, images, keepTitle) => {
     if (!md) return ''
     if (!keepTitle) {
       const pos = md.search('----')
@@ -171,10 +171,11 @@ export default ({
     return r.join(' ').replace('la pm', 'La Pm')
   }
 
+
   inject('error', myError)
   inject('ucFirst', ucFirst)
   inject('teaser', teaser)
   inject('slugify', slugify)
-  inject('renderMarkdownServer', renderMarkdownServer)
+  inject('mdToHtml', mdToHtml)
   inject('normalizarTitulo', normalizarTitulo)
 }

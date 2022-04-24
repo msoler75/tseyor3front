@@ -2,50 +2,29 @@
   <section>
     <h1 class="text-center">Audios de Tseyor</h1>
     <client-only>
-      <AudioPlayer
-        v-if="currentAudio && currentAudio.src"
-        autoplay
-        :music="currentAudio"
-        @canplay="canplay"
-        class="max-w-md mx-auto"
-      />
+      <AudioPlayer v-if="currentAudio && currentAudio.src" autoplay :music="currentAudio" @canplay="canplay"
+        class="max-w-md mx-auto" />
     </client-only>
     <SwipeX v-model="viendoCategoria" :values="categorias" class="flex mt-6">
       <div class="w-full md:w-2/3">
         <div class="w-full flex mb-3">
           <div class="block xl:flex w-full">
-            <Tabs
-              v-model="viendoCategoria"
-              :items="categorias"
-              :group="false"
-              class="xl:flex-wrap"
-            />
+            <Tabs v-model="viendoCategoria" :items="categorias" :group="false" class="xl:flex-wrap" />
             <div class="xl:ml-auto">
               <SearchInput v-model="buscarPor" class="w-64 xl:mb-0" placeholder="Buscar audio..." />
             </div>
           </div>
         </div>
         <div>
-          <Card
-            v-for="audio of audiosFiltrados"
-            :key="audio.src"
-            @click.native="play(audio)"
-            class="p-2 mt-2 cursor-pointer"
-          >
+          <Card v-for="audio of audiosFiltrados" :key="audio.src" @click.native="play(audio)"
+            class="p-2 mt-2 cursor-pointer">
             <div>
               <icon icon="music" class="text-gray mr-2" />
               {{ audio.titulo }}
-              <span
-                v-if="audio.descripcion"
-                class="text-diminished"
-              >— {{ audio.descripcion }}</span>
+              <span v-if="audio.descripcion" class="text-diminished">— {{ audio.descripcion }}</span>
             </div>
           </Card>
-          <div
-            v-show="hayMas && !cargando"
-            v-observe-visibility="cargarMas"
-            class="mt-3 flex justify-center"
-          >
+          <div v-show="hayMas && !cargando" v-observe-visibility="cargarMas" class="mt-3 flex justify-center">
             <!-- <button @click="cargarMas" class="btn">Cargar Más...</button> -->
           </div>
         </div>
@@ -61,25 +40,19 @@
 import seo from '@/mixins/seo.js'
 export default {
   mixins: [seo],
-  async asyncData({ $strapi, $error }) {
+  async asyncData({ route, $strapi, $error }) {
     try {
-      const filters = {
-        _start: 0,
-        _limit: 20
-      }
-
-      const audios = await $strapi.find('audios', filters)
-
-      return { audios, filters }
+      const { data: audios, meta } = await $strapi.find('audios', { populate:'*', sort: 'publishedAt:desc' })
+      return { audios, meta }
     }
     catch (e) {
+      console.error(e)
       $error(503)
     }
   },
   data() {
     return {
       buscarPor: "",
-      hayMas: true,
       cargando: false,
       viendoCategoria: "todos",
       categorias: [
@@ -98,6 +71,11 @@ export default {
     };
   },
   computed: {
+    hayMas() {
+      if (!this.meta) return false
+      const p = this.meta.pagination
+      return p.page < p.pageCount
+    },
     currentAudio() {
       return this.$store.state.audioPlaying;
     },
@@ -119,6 +97,7 @@ export default {
   methods: {
     async cargarMas() {
       if (!this.hayMas) return
+      return
       this.filters._start = this.audios.length
       const filtro = this.buscarPor && this.buscarPor.length >= minLengthBuscar ? { ...this.filters, '_q': this.buscarPor } : this.filters
       this.cargando = true

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h1 class="mb-5">Catálogo de Libros</h1>
+    <h1 class="mb-5">Libros Tseyor</h1>
     <div class="w-full block xl:flex justify-between mb-1">
       <Tabs v-model="viendoCategoria" :items="categorias" class="overflow-x-auto md:flex-wrap mr-2" :compact="true"
         :group="false" />
@@ -50,23 +50,11 @@ import { instantMeiliSearch } from '@meilisearch/instant-meilisearch';
 import seo from '@/mixins/seo.js'
 export default {
   mixins: [seo],
-  async asyncData({ $strapi, $error }) {
+  async asyncData({ route, $strapi, $error }) {
     try {
-       const params = {
-        fields: ['id', 'titulo', 'descripcion', 'categoria', 'publishedAt', 'updatedAt'],
-        populate: {
-          imagen: {
-            fields:['url', 'width', 'height']
-          }
-        },
-        sort: ['publishedAt:desc']
-      }
-
-      const r = await $strapi.find('libros', params)
-      console.log('RESULT', r)
-      const { data: libros, meta } = r
-      console.warn('BOOKS', libros)
-
+      const { data: libros, meta } = await $strapi.findList(route, {
+        fields: ['id', 'titulo', 'descripcion', 'categoria', 'publishedAt', 'updatedAt']
+      })
       return { libros, meta }
     }
     catch (e) {

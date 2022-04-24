@@ -158,7 +158,8 @@ methods: {
           }
         },
         populate: {
-          respuestas: '*'
+          respuestas: '*',
+          likes: true // para que strapi rellene los likes
         },
         sort: 'updatedAt:desc',
         pagination: {

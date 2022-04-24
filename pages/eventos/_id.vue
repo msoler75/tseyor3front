@@ -16,7 +16,7 @@
       style="margin-top: calc(40vh - 170px)">
       <div class="order-1 bg-red text-center flex justify-center items-center h-20 md:col-span-2 xl:col-span-1">
         <div class="p-5 font-bold text-white text-3xl lg:text-4xl">{{
-          $dayjs(evento.fechaComienzo).format('D MMM YYYY')
+            $dayjs(evento.fechaComienzo).format('D MMM YYYY')
         }}</div>
       </div>
       <div class="order-2 bg-red h-20 hidden xl:block xl:order-3" />
@@ -71,14 +71,14 @@
       <!-- share modal -->
       <Comparte v-model="viendoCompartir" />
 
-      <SocialButtons id="social" :data="contenido" @like="like(contenido.id)" @dislike="dislike(contenido.id)"
-        @share="viendoCompartir = true" class="mx-auto max-w-xl lg:my-3 py-9" />
+      <SocialButtons id="social" :uid="uid" :data="contenido" @like="like" @dislike="dislike"
+        @share="viendoCompartir = true" class="mx-auto max-w-xl my-7 lg:my-16" />
 
       <!-- comentarios -->
       <div id="comentarios" class="mx-auto bg-opacity-90 bg-gray-200 py-9">
         <h3 v-if="contenido.comentarios" class="text-center">
           {{
-            contenido.comentarios +
+              contenido.comentarios +
               " Comentario" +
               (contenido.comentarios !== 1 ? "s" : "")
           }}
@@ -92,34 +92,28 @@
 </template>
 
 <script>
-import vercontenidomixin from "@/mixins/vercontenido.js";
-import seo from '@/mixins/seo.js'
+import vercontenido from "@/mixins/vercontenido.js"
+import likes from "@/mixins/likes.js"
+import seo from "@/mixins/seo.js"
 export default {
-  mixins: [vercontenidomixin, seo],
-  async asyncData({ app, $strapi, route, $error }) {
+  mixins: [vercontenido, likes, seo],
+  async asyncData({ route, $strapi, $mdToHtml, $error }) {
     try {
-      const id = route.params.id
-      const [evento] = await $strapi.find(
-        'eventos',
-        id.match(/^\d+$/) ? { id } : { slug: id }
-      )
-      if (!evento)
+      const { data: [contenido] } = await $strapi.findThis(route, { populate: '*' })
+      if (!contenido)
         return $error(404, 'Evento no disponible')
-      evento.likes = await $strapi.find("likes", {
-        uid: `/eventos/${evento.id}`
-      })
-      evento.textoHTML = app.$renderMarkdownServer(evento.texto, evento.imagenes)
+      contenido.textoHTML = $mdToHtml(contenido.texto, contenido.imagenes)
       let quieroAsistir = $strapi.user && !!evento.asistentes.find(x => x.id === $strapi.user.id)
-      return { quieroAsistir, contenido: evento, evento };
+      return { contenido, evento: contenido, quieroAsistir };
     }
-    catch (e) {
-      console.error(e)
+    catch (err) {
+      console.warn(JSON.stringify(err))
       $error(503)
     }
   },
   mounted() {
-    if(this.contenido.imagen)
-    this.$store.commit('setBackgroundImageUrl', this.contenido.imagen.url)
+    if (this.contenido.imagen)
+      this.$store.commit('setBackgroundImageUrl', this.contenido.imagen.url)
   },
   data() {
     return {
@@ -192,5 +186,7 @@ export default {
       transparent 50%);
 }
 
-.imagenes {max-height: 80vh}
+.imagenes {
+  max-height: 80vh
+}
 </style>

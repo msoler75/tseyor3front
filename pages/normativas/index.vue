@@ -43,7 +43,7 @@ import Fuse from "fuse.js";
 import seo from '@/mixins/seo.js'
 export default {
   mixins: [seo],
-  async asyncData({ $strapi, $error }) {
+  async asyncData({ route, $strapi, $error }) {
     try {
       const normativas = await $strapi.find('normativas')
       return { normativas }

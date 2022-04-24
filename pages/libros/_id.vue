@@ -15,10 +15,10 @@
             <h1 class="break-all sm:break-normal">{{ ctitle }}</h1>
             <div class="hidden lg:block mt-4 text-justify" v-html="ctext" />
             <section class="mt-3 text-diminished text-xs">
-              <span>{{ libro.edicionNumero }}ª edición</span>
-              <span v-if="libro.edicionFecha">, {{ libro.edicionFecha }}</span>
-              &nbsp;—&nbsp;
-              <span>{{ libro.paginas }} páginas</span>
+              <span v-if="libro.edicionNumero">{{ libro.edicionNumero }}ª edición</span>
+              <span v-if="libro.edicionNumero && libro.edicionFecha">, </span>
+              <span v-if="libro.edicionFecha">{{ $dayjs(libro.edicionFecha).format("MMM YYYY") }}</span>
+              <span v-if="libro.paginas"> &nbsp;—&nbsp; {{ libro.paginas }} páginas</span>
             </section>
             <section class="flex mt-7 justify-end !animate-none !opacity-100">
               <a download :href="libro.documento.url" class="btn btn-error motion-safe:animate-fadeInPulse !delay-1000">
@@ -35,8 +35,9 @@
       <!-- share modal -->
       <Comparte v-model="viendoCompartir" />
 
-      <SocialButtons id="social" :data="contenido" @like="like(contenido.id)" @dislike="dislike(contenido.id)"
-        @share="viendoCompartir = true" class="mx-auto max-w-xl my-5 lg:my-16" />
+      <SocialButtons id="social" :uid="uid" :data="contenido" @like="like" @dislike="dislike"
+        @share="viendoCompartir = true" class="mx-auto max-w-xl my-7 lg:my-16" />
+
     </section>
 
     <section class="container xs:px-1 sm:px-3 md:px-6 mx-auto my-12" v-observe-visibility="cargarRelacionados">
@@ -53,7 +54,7 @@
       v-observe-visibility="(isVisible) => { mostrarComentarios = mostrarComentarios || isVisible }">
       <h3 v-if="contenido.comentarios" class="text-center">
         {{
-          contenido.comentarios +
+            contenido.comentarios +
             ' Comentario' +
             (contenido.comentarios !== 1 ? 's' : '')
         }}
@@ -71,22 +72,22 @@
 </template>
 
 <script>
-import vercontenidomixin from '@/mixins/vercontenido.js'
-import seo from '@/mixins/seo.js'
+import vercontenido from "@/mixins/vercontenido.js"
+import likes from "@/mixins/likes.js"
+import seo from "@/mixins/seo.js"
 export default {
-  mixins: [vercontenidomixin, seo],
-  async asyncData({ $strapi, $renderMarkdownServer, route, $error }) {
+  mixins: [vercontenido, likes, seo],
+  async asyncData({ route, $strapi, $mdToHtml, $error }) {
     try {
-      const id = route.params.id
-      const populate =  { populate: '*'}
-      const { data: libros } = await $strapi.find(
-        "libros",
-        id.match(/^\d+$/) ? { ...populate, id } : {...populate, slug: id }
-      );
-      if (!libros.length)
-        return $error(404, 'Noticia no encontrada')
-      const contenido = libros[0];
-      contenido.textoHTML = $renderMarkdownServer(
+      const { data: [contenido] } = await $strapi.findThis(route, {
+        populate: {
+          documento: '*'
+        }
+      })
+      console.warn('LIBRO', contenido)
+      if (!contenido)
+        return $error(404, 'Libro no encontrado')
+      contenido.textoHTML = $mdToHtml(
         contenido.texto,
         contenido.imagenes
       )

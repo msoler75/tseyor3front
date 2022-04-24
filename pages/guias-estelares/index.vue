@@ -32,7 +32,7 @@ const query_guias = `guias(sort: "nombre:asc")  {
 import seo from '@/mixins/seo.js'
 export default {
   mixins: [seo],
-  async asyncData({ $strapi, $error }) {
+  async asyncData({ route, $strapi, $error }) {
     try {
       const resultado = await $strapi.graphql({
         query:

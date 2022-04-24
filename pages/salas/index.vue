@@ -8,13 +8,7 @@
         <p v-else>&nbsp;</p>
       </div>
       <form @submit.prevent="buscar" class="w-full sm:w-auto flex justify-end order-1">
-        <SearchInput
-          v-model="buscarPor"
-          class="w-48"
-          placeholder="Título o palabras clave"
-          required
-          @search="buscar"
-        />
+        <SearchInput v-model="buscarPor" class="w-48" placeholder="Título o palabras clave" required @search="buscar" />
         <button :disabled="buscarPor.length <= 3" type="submit" class="ml-2 btn">
           Buscar
           <span class="hidden md:inline">en salas</span>
@@ -23,63 +17,34 @@
     </section>
 
     <Grid>
-      <Card v-for="sala of salasListados" :key="sala.id" :data="sala" collection="salas" />
+      <CardEntry v-for="sala of salasListados" :key="sala.id" :data="sala" collection="salas" />
     </Grid>
-    <div
-      v-show="hayMas && !cargando"
-      v-observe-visibility="cargarMas"
-      class="mt-3 flex justify-center"
-    >
+    <div v-show="hayMas && !cargando" v-observe-visibility="cargarMas" class="mt-3 flex justify-center">
       <!-- <button @click="cargarMas" class="btn">Cargar Más...</button> -->
     </div>
   </div>
 </template>
 
 <script>
-const minLengthBuscar = 2
-// https://alexclark.co.nz/blog/using-apollo-and-graphql-with-nuxt-js/
-const query_salas = `salas(start: %start, limit: %limit, sort: "published_at:desc" %where)  {
-          id
-          slug
-          nombre
-          descripcion
-          imagen {
-            url
-            width
-            height
-          }
-        }`
-
-const query_where = `, where: { _or: [{ nombre_contains: "%search" }, { descripcion_contains: "%search" }] }`
-
-
-// import { salasQuery } from '@/graphql/query'
 import seo from '@/mixins/seo.js'
 export default {
   mixins: [seo],
-  async asyncData({ $strapi, $error }) {
+  async asyncData({ route, $strapi, $error }) {
     try {
-      const filters = {
-        _start: 0,
-        _limit: 5,
-      }
-      // TO-DO: https://strapi.io/documentation/developer-docs/latest/development/plugins/graphql.html#customize-the-graphql-schema
-      const resultado = await $strapi.graphql({
-        query:
-          `query {
-          ${query_salas}
-        }`
-            .replace('%start', filters._start)
-            .replace('%limit', filters._limit)
-            .replace('%where', '')
-      })
-      return { salas: resultado.salas, filters }
+      const { data: salas, meta } = await $strapi.findList(route)
+      return { salas, meta }
     }
     catch (e) {
+      console.error(e)
       $error(503)
     }
   },
   computed: {
+    hayMas() {
+      if (!this.meta) return false
+      const p = this.meta.pagination
+      return p.page < p.pageCount
+    },
     salasListados() {
       return this.salas
         .map(x => { if (!x.timestamp) x.timestamp = this.$dayjs(x.published_at).unix(); return x })
@@ -90,7 +55,6 @@ export default {
   },
   data() {
     return {
-      hayMas: true,
       buscarPor: '',
       buscandoPor: '',
       cargando: false,
@@ -107,11 +71,11 @@ export default {
 
       this.salas.splice(0, this.salas.length)
 
-      this.hayMas = true
       this.buscandoPor = this.buscarPor.replace(/[\[\]\(\)]/g, '')
       // this.cargarMas()
     },
     async cargarMas() {
+      return
       if (!this.hayMas) return
       this.filters._start = this.salasListados.length
       const filtro = this.buscandoPor && this.buscandoPor.length >= minLengthBuscar ? { ...this.filters, '_q': this.buscandoPor } : this.filters
@@ -140,7 +104,7 @@ export default {
 </script>
 
 <style scoped>
-.card >>> .card-img {
+.card>>>.card-img {
   @apply h-80;
 }
 </style>

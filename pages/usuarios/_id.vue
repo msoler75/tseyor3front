@@ -1,5 +1,6 @@
 <template>
   <section class="flex justify-center">
+    {{ usuario }}
     <Card class="w-full max-w-lg p-2 sm:py-5 sm:px-7 text-center">
       <h1 class="!mt-5">{{ usuario.nombreSimbolico || usuario.username }}</h1>
 
@@ -84,36 +85,24 @@
 
 <script>
 export default {
-  async asyncData({ $strapi, route, $error }) {
+  async asyncData({ route, $strapi, $error }) {
     try {
-      const id = route.params.id;
-      const paramsUsuarios = {
-        filter: id.match(/^\d+$/) ? { id } : { slug: id },
+      const [contenido] = await $strapi.findThis(route, {
         populate: {
-          blog: {
-            fields: ['id', 'user', 'email', 'nombreSimbolico', 'frase'],
-            populate: {
-              comentarios:'*',
-              imagen: {
-                fields: ['url', 'width', 'height']
-              }
-            }
-          }
+          imagen: '*',
+          comentarios: '*',
         }
-      }
-      const { data: usuarios } = await $strapi.find("users", paramsUsuarios)
-      if (!usuarios.length)
+      })
+      if (!contenido)
         return $error(404, 'Usuario no encontrado')
-      const contenido = noticias[0];
-        return { contenido, usuario: contenido, historial:[] }
+      return { contenido, usuario: contenido, historial: [] }
     } catch (e) {
       console.error(e)
       $error(503)
     }
   },
 
-
-  /*async asyncData({ route, $strapi, $error }) {
+  /*async asyncData({ route, route, $strapi, $error }) {
     const filters = {
       _limit: 10
     }
@@ -170,6 +159,7 @@ export default {
   },
   methods: {
     cargarMasHistorial() {
+      return
       this.cargandoHistorial = true
       this.$strapi.graphql({
         query: query_historial
@@ -185,6 +175,7 @@ export default {
         })
     },
     cargarMasComentarios() {
+      return
       this.cargandoComentarios = true
       this.$strapi.find('comentarios', { _start: this.usuario.comentarios.length, _limit: this.filters._limit })
         .then((comentarios) => {

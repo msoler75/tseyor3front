@@ -110,7 +110,7 @@ import seo from '@/mixins/seo.js'
 import citas from '@/mixins/citas.js'
 export default {
   mixins: [seo, citas],
-  async asyncData({ $dayjs, $strapi, $error }) {
+  async asyncData({ $dayjs, route, $strapi, $error }) {
     try {
       const query_eventos = qs.stringify({
         _where: {

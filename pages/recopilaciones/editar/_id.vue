@@ -90,7 +90,7 @@ import validation from "@/mixins/validation"
 export default {
     mixins: [validation],
     middleware: 'logged',
-    async asyncData({ $strapi, route, $error }) {
+    async asyncData({ route, $strapi, $error }) {
         try {
             let id = route.params.id
             let contenido = {

@@ -19,7 +19,7 @@
 <script>
 export default {
     middleware: 'suscribed',
-    async asyncData({ $strapi, store, route, $error }) {
+    async asyncData({ route, $strapi, $error }) {
         try {
             let suscripcion = null;
             let mensajeValidacion = ''

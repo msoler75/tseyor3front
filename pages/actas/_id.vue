@@ -61,13 +61,8 @@
       <!-- modal -->
       <Comparte v-model="viendoCompartir" />
 
-      <SocialButtons
-        id="social"
-        :data="contenido"
-        :likebutton="false"
-        @share="viendoCompartir = true"
-        class="mx-auto max-w-xl my-7 lg:my-16"
-      />
+       <SocialButtons id="social" :uid="uid" :data="contenido" @like="like" @dislike="dislike" @share="viendoCompartir = true"
+      class="mx-auto max-w-xl my-7 lg:my-16" :likeButton="false"/>
     </section>
 
     <SuscriptionSection
@@ -103,18 +98,19 @@
 </template>
 
 <script>
-import vercontenidomixin from '@/mixins/vercontenido.js'
-import seo from '@/mixins/seo.js'
+import vercontenido from "@/mixins/vercontenido.js"
+import likes from "@/mixins/likes.js"
+import seo from "@/mixins/seo.js"
 export default {
-  mixins: [vercontenidomixin, seo],
-  async asyncData({ $strapi, $renderMarkdownServer, route, $error }) {
+  mixins: [vercontenido, likes, seo],
+  async asyncData({ route, $strapi, $mdToHtml, $error }) {
     try {
       const id = route.params.id
       const actas = await $strapi.find('actas', { id })
       if (!actas.length)
         return $error(404, 'Acta no encontrada')
       const contenido = actas[0]
-      contenido.textoHTML = $renderMarkdownServer(contenido.texto)
+      contenido.textoHTML = $mdToHtml(contenido.texto)
       //contenido.equipo = await $strapi.find('equipos', {id: contenido.equipo.id})
       const equipos = await $strapi.find('equipos', { id: contenido.equipo.id })
       // console.log('equipo:', contenido.equipo)

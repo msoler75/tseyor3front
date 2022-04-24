@@ -77,17 +77,9 @@
       <!-- share modal -->
       <Comparte v-model="viendoCompartir" />
 
-      <SocialButtons
-        id="social"
-        :likeButton="false"
-        :data="contenido"
-        @like="like(contenido.id)"
-        @dislike="dislike(contenido.id)"
-        @share="viendoCompartir = true"
-        class="mx-auto max-w-xl my-7 lg:my-16"
-        :commentLabels="['Escribe', ' Experiencia', ' Experiencias']"
-        :showWhoLiked="dias>=2"
-      />
+     
+      <SocialButtons id="social" :uid="uid" :data="contenido" @like="like" @dislike="dislike" @share="viendoCompartir = true"
+      class="mx-auto max-w-xl my-7 lg:my-16" :likeButton="false"/>
 
   </section>
 
@@ -128,12 +120,13 @@
 </template>
 
 <script>
-import vercontenidomixin from "@/mixins/vercontenido.js";
-import seo from "@/mixins/seo.js";
+import vercontenido from "@/mixins/vercontenido.js"
+import likes from "@/mixins/likes.js"
+import seo from "@/mixins/seo.js"
 import validation from "@/mixins/validation"
 export default {
-  mixins: [vercontenidomixin, seo, validation],
-  async asyncData({ $strapi, store, route, $error }) {
+  mixins: [vercontenido, likes, seo, validation],
+  async asyncData({ route, $strapi, store, $error }) {
     try {
       const id = route.params.id;
       const contenido = await $strapi.findOne("recopilaciones", id)
@@ -235,7 +228,7 @@ export default {
             })
       for(const comentario of comentarios) {
         const autor = comentario.autor&&comentario.autor.id?comentario.autor.nombreSimbolico||comentario.autor.username:comentario.nombre
-        html += '<div>' + autor + ': ' + this.$renderMarkdownServer(comentario.texto) + '</div><br/><br/>\n\n'
+        html += '<div>' + autor + ': ' + this.$mdToHtml(comentario.texto) + '</div><br/><br/>\n\n'
       }
 
       this.download(html)

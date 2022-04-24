@@ -57,13 +57,9 @@
       <!-- modal -->
       <Comparte v-model="viendoCompartir" />
 
-      <SocialButtons
-        id="social"
-        :data="contenido"
-        :likebutton="false"
-        @share="viendoCompartir = true"
-        class="mx-auto max-w-xl my-7 lg:my-16"
-      />
+      
+    <SocialButtons id="social" :uid="uid" :data="contenido" @like="like" @dislike="dislike" @share="viendoCompartir = true"
+      class="mx-auto max-w-xl my-7 lg:my-16" :likeButton="false"/>
     </section>
 
     <SuscriptionSection
@@ -89,18 +85,19 @@
 </template>
 
 <script>
-import vercontenidomixin from '@/mixins/vercontenido.js'
-import seo from '@/mixins/seo.js'
+import vercontenido from "@/mixins/vercontenido.js"
+import likes from "@/mixins/likes.js"
+import seo from "@/mixins/seo.js"
 export default {
-  mixins: [vercontenidomixin, seo],
-  async asyncData({ app, $strapi, route, $error }) {
+  mixins: [vercontenido, likes, seo],
+  async asyncData({ app, route, $strapi, $error }) {
     try {
       const id = route.params.id
       const reuniones = await $strapi.find('reuniones', { id })
       if(!reuniones.length)
         return $error(404, 'Reunión no encontrada')
       const contenido = reuniones[0]
-      contenido.textoHTML = app.$renderMarkdownServer(contenido.texto)
+      contenido.textoHTML = app.$mdToHtml(contenido.texto)
        const equipos = await $strapi.find('equipos', {id: contenido.equipo.id})
       console.log('equipo:', contenido.equipo)
       return { equipo: equipos[0], contenido, reunion: contenido }

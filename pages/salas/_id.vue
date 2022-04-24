@@ -16,36 +16,27 @@
 
     <h1 class="mt-12">Eventos y Actividades</h1>
     <Grid class="justify-center grid-cols-fill-w-64 text-center">
-      <CardEvent
-        v-for="evento of sala.eventos"
-        :key="'related-' + evento.id"
-        :id="'evento-' + evento.id"
-        :data="evento"
-        :noText="true"
-        collection="eventos"
-      />
+      <CardEvent v-for="evento of sala.eventos" :key="'related-' + evento.id" :id="'evento-' + evento.id" :data="evento"
+        :noText="true" collection="eventos" />
     </Grid>
   </div>
 </template>
 
 
 <script>
-import vercontenidomixin from '@/mixins/vercontenido.js'
-import seo from '@/mixins/seo.js'
+import vercontenido from "@/mixins/vercontenido.js"
+import likes from "@/mixins/likes.js"
+import seo from "@/mixins/seo.js"
 export default {
-  mixins: [vercontenidomixin, seo],
-  async asyncData({ $strapi, route, $error }) {
+  mixins: [vercontenido, likes, seo],
+  async asyncData({ route, $strapi, $error }) {
     try {
-      const id = route.params.id
-      const salas = await $strapi.find(
-        'salas', 
-        id.match(/^\d+$/) ? { id } : { slug: id }
-      )
-      if(!salas.length)
+      const { data: [contenido] } = await $strapi.findThis(route)
+      if (!salas.length)
         return $error(404, 'Sala no encontrada')
-      const contenido = salas[0]
       return { contenido, sala: contenido }
     } catch (e) {
+      console.error(e)
       $error(503)
     }
   }

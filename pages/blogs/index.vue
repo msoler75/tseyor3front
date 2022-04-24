@@ -34,21 +34,16 @@
 import seo from '@/mixins/seo.js'
 export default {
   mixins: [seo],
-  async asyncData({ $strapi, $renderMarkdownServer, $error }) {
+  async asyncData({ route, $strapi, $mdToHtml, $error }) {
     try {
 
       const paramsBlogs = {
         fields: ['id', 'slug', 'nombre', 'descripcion', 'publishedAt', 'updatedAt'],
-        populate: {
-          imagen: {
-            fields: ['url', 'width', 'height']
-          }
-        },
         sort: ['nombre']
       }
 
       const paramsEntradas = {
-        fields: ['id', 'titulo', 'texto', 'publishedAt', 'updatedAt'],
+        fields: ['id', 'slug', 'titulo', 'texto', 'publishedAt', 'updatedAt'],
         populate: {
           blog: {
             fields: ['id', 'nombre', 'slug']
@@ -60,11 +55,11 @@ export default {
         sort: ['publishedAt:desc']
       }
 
-      const { data: blogs } = await $strapi.find('blogs', paramsBlogs)
+      const { data: blogs } = await $strapi.find('blogs', $strapi.filterByList(paramsBlogs))
       const { data: entradas, meta } = await $strapi.find('entradas', paramsEntradas)
 
       entradas.forEach(entrada => {
-        entrada.texto = $renderMarkdownServer(entrada.texto).replace(/<[^>]+>/g, '')
+        entrada.texto = $mdToHtml(entrada.texto).replace(/<[^>]+>/g, '')
       })
 
       return { blogs, entradas, meta }
@@ -100,7 +95,7 @@ export default {
       this.hayMas = entradas.length === this.filters._limit
       for (const entrada of entradas) {
         if (!this.entradas.find(x => x.id === entrada.id)) {
-          entrada.texto = this.$renderMarkdownServer(entrada.texto).replace(/<[^>]+>/g, '')
+          entrada.texto = this.$mdToHtml(entrada.texto).replace(/<[^>]+>/g, '')
           this.entradas.push(entrada)
         }
       }

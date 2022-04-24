@@ -1,5 +1,6 @@
 <template>
   <section class="social-buttons">
+
     <!-- buttons -->
     <Grid class="font-thin whitespace-nowrap w-full px-3 sm:px-5 grid-cols-1" :class="likeButton?'sm:grid-cols-3':'sm:grid-cols-2'">
       <template v-if="likeButton">

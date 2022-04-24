@@ -1,7 +1,6 @@
 <template>
   <div>
     <h1>Usuarios</h1>
-    {{usuariosListados}}
     <section class="flex flex-wrap sm:flex-nowrap justify-between items-baseline mb-5">
       <div class="mt-5 flex-grow order-2 sm:order-1">
         <p v-if="buscandoPor" class="text-center font-bold">Viendo resultados de: {{ buscandoPor }}</p>
@@ -19,11 +18,7 @@
       <CardUser v-for="usuario of usuariosListados" :key="usuario.id" :data="usuario" />
     </Grid>
 
-    <div
-      v-show="hayMas && !cargando"
-      v-observe-visibility="cargarMas"
-      class="mt-3 flex justify-center"
-    >
+    <div v-show="hayMas && !cargando" v-observe-visibility="cargarMas" class="mt-3 flex justify-center">
       <!-- <button @click="cargarMas" class="btn">Cargar Más...</button> -->
     </div>
   </div>
@@ -31,48 +26,19 @@
 
 <script>
 import seo from '@/mixins/seo.js'
-
-const minLengthBuscar = 2
-const query_usuarios = `users(start: %start, limit: %limit, sort: "updated_at:desc" %where)  {
-          id
-          username
-          created_at
-          nombreSimbolico
-          imagen {
-            url
-            width
-            height
-          }
-        }`
-
-const query_where = `, where: { _or: [{ username_contains: "%search" }, { email_contains: "%search" }, {nombreSimbolico_contains: "%search"}] }`
-
 export default {
   mixins: [seo],
-  async asyncData({ $strapi }) {
+  async asyncData({ route, $strapi, $error }) {
     try {
-      const filters = {
-        _start: 0,
-        _limit: 20,
-      }
-
-      const resultado = await $strapi.graphql({
-        query:
-          `query {
-          ${query_usuarios}
-        }`
-            .replace('%start', filters._start)
-            .replace('%limit', filters._limit)
-            .replace('%where', '')
-      })
-      return { usuarios: resultado.users, filters }
+      const { data: usuarios, meta } = await $strapi.find('users')
+      return { usuarios, meta }
     } catch (e) {
+      console.error(e)
       $error(503)
     }
   },
   data() {
     return {
-      hayMas: true,
       buscarPor: '',
       buscandoPor: '',
       cargando: false,
@@ -83,6 +49,11 @@ export default {
     }
   },
   computed: {
+    hayMas() {
+      if (!this.meta) return false
+      const p = this.meta.pagination
+      return p.page < p.pageCount
+    },
     usuariosFiltrados() {
       const bp = this.buscarPor
       if (!bp)
@@ -95,7 +66,7 @@ export default {
         .sort((a, b) => {
           return b.timestamp - a.timestamp
         })
-    },
+    }
   },
   methods: {
     buscar() {
@@ -104,7 +75,6 @@ export default {
 
       this.usuarios.splice(0, this.usuarios.length)
 
-      this.hayMas = true
       this.buscandoPor = this.buscarPor.replace(/[\[\]\(\)]/g, '')
       // this.cargarMas()
     },
@@ -125,7 +95,6 @@ export default {
             .replace(/%search/g, filtro._q)
       })
       // console.log('result', result)
-      this.hayMas = result.users.length === this.filters._limit
       for (const usuario of result.users) {
         if (!this.usuarios.find(x => x.id === usuario.id))
           this.usuarios.push(usuario)

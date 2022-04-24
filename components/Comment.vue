@@ -16,7 +16,7 @@
                         {{ $dayjs(data.updatedAt).fromNow() }}
                     </span>
                 </div>
-                <div class="text-justify text-sm lg:text-base" v-html="$renderMarkdownServer(data.texto)" />
+                <div class="text-justify text-sm lg:text-base" v-html="$mdToHtml(data.texto)" />
                 <div v-for="img, index of data.adjuntos" :key="index" class="my-2">
                     <nuxt-img :src="img.url" class="w-full" sizes="sm:100vw" />
                 </div>
@@ -25,18 +25,19 @@
             <div class="mt-2 flex justify-start items-center text-xs px-2 select-none">
                 <a v-if="likeing" class="mr-5 cursor-pointer" @click="dislike">
                     <icon icon="fas fa-heart" class="text-red" />
-                    {{ likesCount }}
+                    <span>{{ likesCount }}</span>
                 </a>
                 <a v-else class="mr-5 cursor-pointer" @click="like">
                     <icon icon="far fa-heart" />
-                    {{ likesCount }}
+                    <span v-if="likesCount">{{ likesCount }}</span>
                 </a>
+
 
                 <span v-if="!likeing"
                     class="mr-5 opacity-0 transition transition-duration-200 group-hover:opacity-100 link cursor-pointer"
                     @click="like">Me gusta</span>
 
-                <span class="opacity-0 transition transition-duration-200 group-hover:opacity-100 link cursor-pointer"
+                <span class="ml-auto opacity-0 transition transition-duration-200 group-hover:opacity-100 link cursor-pointer"
                     @click="$emit('responder', data.id)">Responder</span>
             </div>
         </div>

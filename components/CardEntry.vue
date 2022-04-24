@@ -1,12 +1,13 @@
 <template>
     <Card class="flex-row">
         <NLink :style="imageBg" class="w-40 h-32 flex-shrink-0 mr-4" :to="chref" />
-        <div class="space-y-1 flex-grow">
+        <div class="space-y-1 flex-grow py-2">
             <NLink :to="chref" class="font-serif leading-tight sm:text-base md:text-lg lg:text-xl font-bold">{{
-                data.titulo
+                    ctitle
             }}
             </NLink>
-            <slot/>
+            <div>{{data.tipo}}</div>
+            <slot />
             <v-clamp autoresize :max-lines="3" class="text-base text-diminished">{{ cteaser }}</v-clamp>
         </div>
     </Card>

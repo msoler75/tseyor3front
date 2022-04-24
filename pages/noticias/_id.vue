@@ -3,10 +3,6 @@
   <!-- No tiene imagen de fondo -->
   <div class="flex flex-col items-center" contained="no" background="no" focused>
 
-    <div v-if="contenido.likes">
-      likes: {{ contenido.likes }}
-    </div>
-
     <!-- article container -->
     <div class="px-3 sm:px-5 md:px-7 relative w-full shrink-0 flex-grow-1 max-w-3xl flex flex-col items-start">
       <div class="hidden 4xl:block absolute right-0 translate-x-3 5xl:translate-x-10 h-full">
@@ -71,21 +67,17 @@
 </template>
 
 <script>
-import vercontenidomixin from "@/mixins/vercontenido.js"
+import vercontenido from "@/mixins/vercontenido.js"
 import likes from "@/mixins/likes.js"
 import seo from "@/mixins/seo.js"
 export default {
-  mixins: [vercontenidomixin, likes, seo],
-  async asyncData({ app, $strapi, route, $error }) {
+  mixins: [vercontenido, likes, seo],
+  async asyncData({ route, $strapi, $mdToHtml, $error }) {
     try {
-      const id = route.params.id;
-      const params = {
-        filters: id.match(/^\d+$/) ? { id } : { slug: id }
-      }
-      const { data: [contenido] } = await $strapi.find("noticias", params)
+      const { data: [contenido] } = await $strapi.findThis(route)
       if (!contenido)
         return $error(404, 'Noticia no encontrada')
-      contenido.textoHTML = app.$renderMarkdownServer(
+      contenido.textoHTML = $mdToHtml(
         contenido.texto,
         contenido.imagenes
       )
@@ -94,35 +86,6 @@ export default {
       console.error(e)
       $error(503)
     }
-  },
-  methods: {
-    async cargarRelacionados(isVisible) {
-      if (!this.relacionados.length && isVisible) {
-        const { data: relacionados } = await this.$strapi.find("noticias", {
-          filters: {
-            id: {
-              $ne: this.contenido.id,
-              $gt: this.contenido.id - 10,
-              $lt: this.contenido.id + 10,
-            }
-          },
-          populate: {
-            imagen: {
-              fields: ['url', 'width', 'height']
-            }
-          },
-          pagination: {
-            limit: 7
-          }
-        })
-        this.relacionados = relacionados
-      }
-    }
-  },
-  data() {
-    return {
-      relacionados: []
-    };
   }
 };
 </script>

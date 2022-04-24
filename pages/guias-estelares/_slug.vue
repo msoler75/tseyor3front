@@ -34,17 +34,8 @@
             <div v-html="guia.bibliografiaHTML" />
           </Card>
 
-          <Grid
-            v-show="viendoSeccion === 'bibliografia'"
-            class="grid-cols-fill-w-56 text-center mt-3"
-          >
-            <CardBook
-              v-for="libro of guia.libros"
-              :key="libro.id"
-              :data="libro"
-              :noText="true"
-              book-size="book-sm"
-            />
+          <Grid v-show="viendoSeccion === 'bibliografia'" class="grid-cols-fill-w-56 text-center mt-3">
+            <CardBook v-for="libro of guia.libros" :key="libro.id" :data="libro" :noText="true" book-size="book-sm" />
           </Grid>
         </div>
 
@@ -59,30 +50,32 @@
 </template>
 
 <script>
-import vercontenidomixin from "@/mixins/vercontenido.js";
-import seo from '@/mixins/seo.js'
+import vercontenido from "@/mixins/vercontenido.js"
+import likes from "@/mixins/likes.js"
+import seo from "@/mixins/seo.js"
 export default {
-  mixins: [vercontenidomixin, seo],
-  async asyncData({ app, $strapi, route, $error }) {
+  mixins: [vercontenido, likes, seo],
+  async asyncData({ route, $strapi, $error }) {
     try {
-      const slug = route.params.slug;
-      const guias = await $strapi.find("guias", { slug });
-      if(!guias.length)
+      const { data: contenido } = await $strapi.findThis(route, {
+        populate: '*'
+      })
+      if (!contenido)
         return $error(404, 'Guía Estelar no encontrado')
-      const contenido = guias[0];
-      contenido.presentacionHTML = app.$renderMarkdownServer(
+      contenido.presentacionHTML = app.$mdToHtml(
         contenido.presentacion
       );
-      contenido.comunicadoHTML = app.$renderMarkdownServer(contenido.comunicado);
-      contenido.experienciaHTML = app.$renderMarkdownServer(
+      contenido.comunicadoHTML = app.$mdToHtml(contenido.comunicado);
+      contenido.experienciaHTML = app.$mdToHtml(
         contenido.experiencia
       );
-      contenido.bibliografiaHTML = app.$renderMarkdownServer(
+      contenido.bibliografiaHTML = app.$mdToHtml(
         contenido.bibliografia
       );
       return { contenido, guia: contenido }
     }
     catch (e) {
+      console.error(e)
       $error(503)
     }
   },

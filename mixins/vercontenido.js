@@ -2,7 +2,8 @@ export default {
   data() {
     return {
       mostrarComentarios: false,
-      viendoCompartir: false
+      viendoCompartir: false,
+      relacionados: []
     };
   },
   computed: {
@@ -35,7 +36,7 @@ export default {
         return '/' + (
           this.cclase +
           "/" +
-          this.contenido.id
+          (this.contenido.slug || this.contenido.id)
         );
       }
       return r;
@@ -87,6 +88,16 @@ export default {
       return `/${this.ccollection}/${this.contenido.id}`
     }
   },
+  async mounted(){
+    // CARGA Nº de COMENTARIOS
+    this.$set(this.contenido, 'comentarios', await this.$strapi.count('comentarios', {
+      filters: {
+        uid: {
+          $eq: this.uid
+        }
+      }
+    }))
+  },
   methods: {
     renderMarkdown(md) {
       let html = this.$md.render(md)
@@ -116,53 +127,29 @@ export default {
         })
       return html
     },
-    // ---- LIKES ----
-    /*async like(id) {
-      if (!this.$strapi.user) return
-      // console.log('like', id)
-      this.likedItem(id)
-      //this.$strapi.$http.setToken(this.$auth.getToken('local'))
-      //this.$strapi.
-      // await this.$strapi.$http.$put(`/${this.collection}/${id}/like`)
-
-      await this.$strapi.create("likes", {
-          uid: this.uid
+    async cargarRelacionados() {
+      if (!this.relacionados.length) {
+        const { data: relacionados } = await this.$strapi.find(this.ccoleccion, {
+          filters: {
+            id: {
+              $ne: this.contenido.id,
+              $gt: this.contenido.id - 10,
+              $lt: this.contenido.id + 10,
+            }
+          },
+          populate: {
+            imagen: {
+              fields: ['url', 'width', 'height']
+            }
+          },
+          pagination: {
+            limit: 7
+          }
         })
-        .then(like => {
-          this.$strapi.create('historials', {
-            accion: 'like_contenido',
-            titulo: this.ctitle,
-            url: this.uid
-          })
-        })
-      // este paso es opcional:
-      // this.refreshItem(id);
-    },
-    async dislike(id) {
-      if (!this.$strapi.user) return
-      // console.log('dislike', id)
-      this.dislikedItem(id)
-      //this.$strapi.$http.setToken(this.$auth.getToken('local'))
-      // await this.$strapi.$http.$put(`/${this.collection}/${id}/dislike`)
-      const results = await this.$strapi.find('likes', {
-        uid: this.uid,
-        user: this.$strapi.user.id
-      })
-      if (results.length) {
-        await this.$strapi.$http.$delete(`/likes/${results[0].id}`)
-        // este paso es opcional:
-        // this.refreshItem(id);
+        this.relacionados = relacionados
       }
     },
-    async refreshItem(id) {
-      const likes = await this.$strapi.find('likes', {
-        uid: this.uid
-      })
-      this.saveRefreshedItem(id, likes)
-    },
-    
-    // ---- end LIKES ----
-    */
+
 
     likedItem(id) {
       if(!this.$strapi.user) return

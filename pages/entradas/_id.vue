@@ -44,7 +44,8 @@
     <!-- share modal -->
     <Comparte v-model="viendoCompartir" />
 
-    <SocialButtons id="social" :data="contenido" @like="like(contenido.id)" @dislike="dislike(contenido.id)"
+
+    <SocialButtons id="social" :uid="uid" :data="contenido" @like="like" @dislike="dislike"
       @share="viendoCompartir = true" class="mx-auto max-w-xl my-7 lg:my-16" />
 
     <!-- contenido relacionado -->
@@ -60,7 +61,7 @@
     <div id="comentarios" class="container mx-auto my-9"
       v-observe-visibility="(isVisible) => { mostrarComentarios = mostrarComentarios || isVisible }">
       <h3 v-if="contenido.comentarios" class="text-center">{{
-        contenido.comentarios + ' Comentario' +
+          contenido.comentarios + ' Comentario' +
           (contenido.comentarios !== 1 ? 's' : '')
       }}</h3>
       <h3 v-else class="text-center">Coméntalo</h3>
@@ -71,15 +72,14 @@
 </template>
 
 <script>
-import vercontenidomixin from "@/mixins/vercontenido.js";
-import seo from '@/mixins/seo.js'
+import vercontenido from "@/mixins/vercontenido.js"
+import likes from "@/mixins/likes.js"
+import seo from "@/mixins/seo.js"
 export default {
-  mixins: [vercontenidomixin, seo],
-  async asyncData({ $strapi, $renderMarkdownServer, route, $error }) {
+  mixins: [vercontenido, likes, seo],
+  async asyncData({ route, $strapi, $mdToHtml, $error }) {
     try {
-      const id = route.params.id
-      const params = {
-        filter: id.match(/^\d+$/) ? { id } : { slug: id },
+      const { data: [contenido] } = await $strapi.findThis(route, {
         populate: {
           blog: {
             fields: ['nombre', 'id', 'slug', 'descripcion'],
@@ -90,12 +90,10 @@ export default {
             }
           }
         }
-      }
-      const { data: entradas } = await $strapi.find("entradas", params);
-      if (!entradas.length)
+      })
+      if (!contenido)
         return $error(404, 'Entrada de Blog no encontrada')
-      const contenido = entradas[0];
-      contenido.textoHTML = $renderMarkdownServer(contenido.texto, contenido.imagenes);
+      contenido.textoHTML = $mdToHtml(contenido.texto, contenido.imagenes);
       return { contenido, entrada: contenido, relacionados: [] }
     } catch (e) {
       $error(503)

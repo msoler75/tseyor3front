@@ -144,7 +144,7 @@ import validation from "@/mixins/validation"
 export default {
     components: { vSelect },
     mixins: [validation],
-    async asyncData({ $strapi, query, route, $error }) {
+    async asyncData({ route, $strapi, query, $error }) {
         try {
             let id = route.params.id
             let contenido = {

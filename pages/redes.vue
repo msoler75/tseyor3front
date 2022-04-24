@@ -24,7 +24,7 @@
 
 <script>
 export default {
-  async asyncData({$strapi, $error}) {
+  async asyncData({route, $strapi, $error}) {
     try {
       const paginas = await $strapi.find('redes')
       return { paginas }

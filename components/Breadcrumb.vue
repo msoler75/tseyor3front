@@ -1,6 +1,6 @@
 <template>
   <ul
-    class="breadcrumb list-none flex flex-wrap"
+    class="breadcrumb list-none flex flex-wrap select-none"
     vocab="http://schema.org/"
     typeof="BreadcrumbList"
     :class="backgroundImageUrl?'text-gray mix-blend-difference':'text-diminished dark:text-gray-100'"

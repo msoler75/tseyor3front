@@ -21,10 +21,11 @@
 </template>
 
 <script>
-import vercontenidomixin from "@/mixins/vercontenido.js";
-import seo from '@/mixins/seo.js'
+import vercontenido from "@/mixins/vercontenido.js"
+import likes from "@/mixins/likes.js"
+import seo from "@/mixins/seo.js"
 export default {
-  mixins: [vercontenidomixin, seo],
+  mixins: [vercontenido, likes, seo],
   asyncData({ app, route }) {
     const id = parseInt(route.params.id);
     const str = id % 4 === 0 ? "Muulasterio " : "Casa ";

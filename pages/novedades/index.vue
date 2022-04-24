@@ -7,11 +7,12 @@
     <Tabs ref="tabs" v-model="viendoCategoria" :items="categorias" class="mb-7 justify-center" @change="cargarMas" />
     <Grid class="grid-cols-fill-w-72 text-center">
       <template v-for="item of novedadesListado">
-        <CardDynamic :key="item.tipo + '-' + item.id" :data="item" :collection="item.tipo" :imageWidth="400" :noText="true" />
+        <CardDynamic :key="item.tipo + '-' + item.id" :data="item" :collection="item.tipo" :imageWidth="400"
+          :noText="true" />
       </template>
     </Grid>
 
-    <LoadMore v-if="hayMas" v-model="cargando" @click="cargarMas" class="my-7"/>
+    <LoadMore v-if="hayMas" v-model="cargando" @click="cargarMas" class="my-7" />
     <!-- v-observe-visibility="cargarMas" -->
   </SwipeX>
 </template>
@@ -21,17 +22,24 @@ import seo from '@/mixins/seo.js'
 export default {
   mixins: [seo],
   // components: { Hooper, Slide },
-  async asyncData({ $strapi, $error }) {
+  async asyncData({ route, $strapi, $error }) {
     try {
-      const novedades = await $strapi.find('novedades')
-      return { novedades }
+      const { data: novedades, meta } = await $strapi.find('contenidos', { populate: '*' })
+      return { novedades, meta }
     } catch (e) {
+      console.error(e)
       $error(503)
     }
   },
+  computed: {
+    hayMas() {
+      if (!this.meta) return false
+      const p = this.meta.pagination
+      return p.page < p.pageCount
+    },
+  },
   data() {
     return {
-      hayMas: true,
       cargando: false,
       mostrando: 8,
       viendoCategoria: "Todo",
@@ -44,12 +52,12 @@ export default {
   },
   watch: {
     viendoCategoria(newValue) {
-      this.hayMas = true
       this.mostrando = 8
     }
   },
   methods: {
     async cargarMas() {
+      return
       if (this.novedadesFiltradas.length > this.novedadesListado.length) {
         this.mostrando += 8
         return
@@ -70,7 +78,6 @@ export default {
         filtro._upd = last.updated_at
       // console.log('filtro', filtro)
       const novedades = await this.$strapi.find('novedades', filtro)
-      this.hayMas = novedades.length && novedades.length === filtro._limit
       for (const n of novedades) {
         if (!this.novedades.find(x => x.id === n.id && x.tipo === n.tipo))
           this.novedades.push(n)
@@ -86,7 +93,7 @@ export default {
         return this.novedades.filter(
           x => !["noticias", "comunicados", "eventos", "libros", "entradas"].includes(x.tipo)
         ); */
-      return this.novedades.filter(x => x.tipo === c);
+      return this.novedades.filter(x => x.coleccion === c);
     },
     novedadesListado() {
       // .sort((b,a)=>this.$dayjs(a.updated_at).unix() - this.$dayjs(b.updated_at).unix())

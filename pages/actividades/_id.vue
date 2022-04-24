@@ -236,12 +236,13 @@ query {
 `
 
 
-import vercontenidomixin from '@/mixins/vercontenido.js'
-import seo from '@/mixins/seo.js'
+import vercontenido from "@/mixins/vercontenido.js"
+import likes from "@/mixins/likes.js"
+import seo from "@/mixins/seo.js"
 import citas from '@/mixins/citas.js'
 export default {
-  mixins: [vercontenidomixin, seo, citas],
-  async asyncData({ $strapi, route, $error }) {
+  mixins: [vercontenido, likes, seo, citas],
+  async asyncData({ route, $strapi, $error }) {
     try {
       const id = route.params.id
       const { actividades, actas } = await $strapi.graphql({ query: query_actividad.replace(/%id/g, id) })

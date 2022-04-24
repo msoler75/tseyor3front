@@ -43,19 +43,11 @@ import { instantMeiliSearch } from '@meilisearch/instant-meilisearch';
 import seo from '@/mixins/seo.js'
 export default {
   mixins: [seo],
-  async asyncData({ $strapi, $error }) {
+  async asyncData({ route, $strapi, $error }) {
     try {
-      const params = {
-        fields: ['id', 'titulo', 'descripcion', 'publishedAt', 'updatedAt'],
-        populate: {
-          imagen: {
-            fields: ['url', 'width', 'height']
-          }
-        },
-        sort: ['publishedAt:desc']
-      }
-      const { data: comunicados, meta } = await $strapi.find('comunicados', params)
-
+      const { data: comunicados, meta } = await $strapi.findList(route, {
+        fields: ['id', 'slug', 'titulo', 'descripcion', 'publishedAt', 'updatedAt']
+      })
       return { comunicados, meta }
     }
     catch (e) {

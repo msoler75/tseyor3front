@@ -19,23 +19,15 @@ export default {
     },
     likesCount() {
       return this.likesList.length
-    },
-    cuid() {
-      return this.uid
     }
   },
   // CARGA LISTADO DE LIKES AL CONTENIDO O DATA
   async mounted() {
     this.refreshLikes()
   },
-  watch: {
-    cuid(newValue) {
-      this.$nextTick(()=>this.refreshLikes)
-    }
-  },
   methods: {
     async refreshLikes() {
-      if(this.cuid&&this.likecontent&&!this.likecontent.likes)
+      if(this.uid&&this.likecontent&&!this.likecontent.likes)
         this.$set(this.likecontent, 'likes', await this.getLikes())
     },
     // obtiene la lista de likes de este contenido
@@ -44,7 +36,7 @@ export default {
         data: likes
       } = await this.$strapi.find("likes", {
         filters: {
-          uid: this.cuid
+          uid: this.uid
         },
         fields: ['id'],
         populate: {

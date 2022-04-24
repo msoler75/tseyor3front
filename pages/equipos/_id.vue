@@ -28,13 +28,7 @@
       <div class="surface p-5 overflow-auto" :class="miembros.length > 8 ? 'cols-2' : ''">
         <h3>Miembros</h3>
         <div class="flex flex-wrap" v-if="miembros.length">
-          <Avatar
-            v-for="user of miembros"
-            :key="user.id"
-            :data="user"
-            :class="avatarClass"
-            class="m-1"
-          />
+          <Avatar v-for="user of miembros" :key="user.id" :data="user" :class="avatarClass" class="m-1" />
         </div>
         <div v-else class="flex flex-col flex-grow justify-center">
           <p class="text-center">No hay miembros</p>
@@ -42,13 +36,7 @@
         <template v-if="equipo.coordinadores.length">
           <h3>Coordinadores</h3>
           <div class="flex flex-wrap">
-            <Avatar
-              v-for="user of equipo.coordinadores"
-              :key="user.id"
-              :data="user"
-              :class="avatarClass"
-              class="m-1"
-            />
+            <Avatar v-for="user of equipo.coordinadores" :key="user.id" :data="user" :class="avatarClass" class="m-1" />
           </div>
         </template>
       </div>
@@ -58,35 +46,19 @@
           <Icon icon="hiking" class="mr-3" />Actividades
         </h3>
         <div class="flex flex-col space-y-4">
-          <NLink
-            v-for="actividad of equipo.actividades"
-            :key="actividad.id"
-            class="p-3 btn btn-gray"
-            :to="'/actividades/' + actividad.id"
-          >
+          <NLink v-for="actividad of equipo.actividades" :key="actividad.id" class="p-3 btn btn-gray"
+            :to="'/actividades/' + actividad.id">
             {{ actividad.titulo }}
-            <span
-              v-if="actividad.descripcion"
-              class="text-diminished"
-            >— {{ actividad.descripcion }}</span>
+            <span v-if="actividad.descripcion" class="text-diminished">— {{ actividad.descripcion }}</span>
           </NLink>
         </div>
       </div>
 
       <div v-if="carpetaActualId" class="p-5 surface flex flex-col">
         <h3>{{ carpetaActualNombre }}</h3>
-        <FilesFolder
-          @loaded="carpetaActual = $event"
-          v-model="carpetaActualId"
-          :idRootFolder="equipo.carpeta.id"
-          class="w-full max-w-full h-full overflow-y-auto max-h-[240px]"
-          :droppable="soyCoordinador"
-          navigationMode="Embed"
-          iconClass="text-xl"
-          textClass="text-sm"
-          subtextClass="text-xs"
-          boxClass="w-8 mr-2"
-        />
+        <FilesFolder @loaded="carpetaActual = $event" v-model="carpetaActualId" :idRootFolder="equipo.carpeta.id"
+          class="w-full max-w-full h-full overflow-y-auto max-h-[240px]" :droppable="soyCoordinador"
+          navigationMode="Embed" iconClass="text-xl" textClass="text-sm" subtextClass="text-xs" boxClass="w-8 mr-2" />
         <div class="flex justify-center mt-2">
           <NLink class="ml-auto text-xs btn btn-gray btn-mini" :to="`${carpetaActual.ruta}`">
             <icon icon="search" />
@@ -104,23 +76,20 @@
 </template>
 
 <script>
-import vercontenidomixin from "@/mixins/vercontenido.js";
-import seo from '@/mixins/seo.js'
+import vercontenido from "@/mixins/vercontenido.js"
+import likes from "@/mixins/likes.js"
+import seo from "@/mixins/seo.js"
 export default {
-  mixins: [vercontenidomixin, seo],
+  mixins: [vercontenido, likes, seo],
   middleware: 'logged',
-  async asyncData({ app, $strapi, route, $error }) {
+  async asyncData({ route, $strapi, $mdToHtml, $error }) {
     try {
-      let contenido = { miembros: [], coordinadores: [] }
-      const id = route.params.id
-      let [equipo] = await $strapi.find(
-        'equipos',
-        id.match(/^\d+$/) ? { id } : { slug: id }
-      )
-      if (!equipo)
+      // let contenido = { miembros: [], coordinadores: [] }
+      const { data: [contenido] } = await $strapi.findThis(route)
+      if (!contenido)
         return $error(404, 'Equipo no encontrado')
-      contenido.textoHTML = app.$renderMarkdownServer(contenido.pizarra/*, contenido.imagenes*/)
-      return { contenido: equipo, equipo }
+      contenido.textoHTML = $mdToHtml(contenido.pizarra/*, contenido.imagenes*/)
+      return { contenido, equipo: contenido }
     }
     catch (e) {
       console.warn(e)
@@ -201,10 +170,7 @@ export default {
     async actualizarMiembros() {
       // await this.$strapi.fetchUser() // actualizamos los datos del usuario actual y el equipo con sus miembros después de la operación
       const id = this.$route.params.id
-      const [equipo] = await this.$strapi.find(
-        'equipos',
-        id.match(/^\d+$/) ? { id } : { slug: id }
-      )
+      const { data: [equipo] } = await this.$strapi.findThis(route)
       console.log('listado actualizado', equipo.miembros)
       this.contenido = equipo
       this.equipo = equipo

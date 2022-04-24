@@ -20,7 +20,7 @@
     <!-- share modal -->
     <Comparte v-model="viendoCompartir" />
 
-    <SocialButtons id="social" :data="contenido" @like="like(contenido.id)" @dislike="dislike(contenido.id)"
+    <SocialButtons id="social" :uid="uid" :data="contenido" @like="like" @dislike="dislike"
       @share="viendoCompartir = true" class="mx-auto max-w-xl my-7 lg:my-16" />
 
     <SuscriptionSection id="suscription" :title="blog.nombre" :description="blog.descripcion" collection="blogs"
@@ -31,7 +31,7 @@
     <div id="comentarios" class="container mx-auto my-9"
       v-observe-visibility="(isVisible) => { mostrarComentarios = mostrarComentarios || isVisible }">
       <h3 v-if="contenido.comentarios" class="text-center">{{
-        contenido.comentarios + ' Comentario' +
+          contenido.comentarios + ' Comentario' +
           (contenido.comentarios !== 1 ? 's' : '')
       }}</h3>
       <h3 v-else class="text-center">Coméntalo</h3>
@@ -44,52 +44,46 @@
 </template>
 
 <script>
-import vercontenidomixin from "@/mixins/vercontenido.js";
-import seo from '@/mixins/seo.js'
+import vercontenido from "@/mixins/vercontenido.js"
+import likes from "@/mixins/likes.js"
+import seo from "@/mixins/seo.js"
 export default {
-  mixins: [vercontenidomixin, seo],
-  async asyncData({ $strapi, $renderMarkdownServer, route, $error }) {
+  mixins: [vercontenido, likes, seo],
+  async asyncData({ route, $strapi, $mdToHtml, $error }) {
     try {
-      const id = route.params.id
-      const paramsBlog = {
-        filter: id.match(/^\d+$/) ? { id } : { slug: id },
+      const { data: [blog] } = await $strapi.findThis(route, {
         populate: {
           imagen: {
             fields: ['url', 'width', 'height']
           }
         }
-      }
-      const { data: [blog] } = await $strapi.find("blogs", paramsBlog)
+      })
       if (!blog)
         return $error(404, 'Blog no encontrado')
 
-      /* blog.likes = await $strapi.find('likes', {
-        uid: `/blogs/${blog.id}`
-      }) */
-
-      const paramsEntradas = {
-        fields: ['id', 'titulo', 'texto', 'publishedAt', 'updatedAt'],
-        filters: {
-          blog: {
-            id: {
-              $eq: blog.id
+      const { data: entradas, meta } = await $strapi.find('entradas',
+        {
+          fields: ['id', 'slug', 'titulo', 'texto', 'publishedAt', 'updatedAt'],
+          filters: {
+            blog: {
+              id: {
+                $eq: blog.id
+              }
             }
-          }
-        },
-        populate: {
-          blog: {
-            fields: ['id', 'nombre', 'slug']
           },
-          imagen: {
-            fields: ['url', 'width', 'height']
-          }
-        },
-        sort: ['publishedAt:desc']
-      }
-
-      const { data: entradas, meta } = await $strapi.find('entradas', paramsEntradas)
+          populate: {
+            blog: {
+              fields: ['id', 'nombre', 'slug']
+            },
+            imagen: {
+              fields: ['url', 'width', 'height']
+            }
+          },
+          sort: ['publishedAt:desc']
+        }
+      )
       entradas.forEach(entrada => {
-        entrada.texto = $renderMarkdownServer(entrada.texto).replace(/<[^>]+>/g, '')
+        entrada.texto = $mdToHtml(entrada.texto).replace(/<[^>]+>/g, '')
       })
       return { contenido: blog, blog, entradas, meta }
     } catch (e) {
@@ -123,7 +117,7 @@ export default {
       this.hayMas = entradas.length === this.filters._limit
       for (const entrada of entradas) {
         if (!this.entradas.find(x => x.id === entrada.id)) {
-          entrada.texto = this.$renderMarkdownServer(entrada.texto).replace(/<[^>]+>/g, '')
+          entrada.texto = this.$mdToHtml(entrada.texto).replace(/<[^>]+>/g, '')
           this.entradas.push(entrada)
         }
       }

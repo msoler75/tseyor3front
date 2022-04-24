@@ -30,7 +30,7 @@ const query_comunicados =
 import seo from '@/mixins/seo.js'
 export default {
   mixins: [seo],
-  async asyncData({ $strapi, $error }) {
+  async asyncData({ route, $strapi, $error }) {
     try {
       const result = await $strapi.graphql({
         query:

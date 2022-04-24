@@ -3,24 +3,21 @@
 </template>
 
 <script>
-import vercontenidomixin from "@/mixins/vercontenido.js";
-import seo from '@/mixins/seo.js'
+import vercontenido from "@/mixins/vercontenido.js"
+import likes from "@/mixins/likes.js"
+import seo from "@/mixins/seo.js"
 export default {
-  mixins: [vercontenidomixin, seo],
-  async asyncData({ app, $strapi, route, $error }) {
+  mixins: [vercontenido, likes, seo],
+  async asyncData({ route, $strapi, $mdToHtml, $error }) {
     try {
-      const id = route.params.id
-      const normativas = await $strapi.find(
-        'normativas', 
-        id.match(/^\d+$/) ? { id } : { slug: id }
-      )
-      if (!normativas.length)
+      const { data: [contenido] } = await $strapi.findThis(route)
+      if (!contenido)
         return $error(404, 'Normativa no encontrada')
-      const contenido = normativas[0]
-      contenido.textoHTML = app.$renderMarkdownServer(contenido.texto)
+      contenido.textoHTML = $mdToHtml(contenido.texto)
       return { contenido, normativa: contenido };
     }
     catch (e) {
+      console.error(e)
       $error(503)
     }
   },

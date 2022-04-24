@@ -83,7 +83,7 @@
 <script>
 export default {
     middleware: 'suscribed',
-    async asyncData({ $strapi, store, route, $error }) {
+    async asyncData({ route, $strapi, store, $error }) {
         try {
             const {correo, codigo} = route.query
             console.warn('query', route.query)

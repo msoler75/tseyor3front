@@ -46,19 +46,11 @@ import seo from '@/mixins/seo.js'
 // import { noticiasQuery } from '@/graphql/query'
 export default {
   mixins: [seo],
-  async asyncData({ $strapi, $error }) {
+  async asyncData({ route, $strapi, $error }) {
     try {
-      const params = {
-        fields: ['id', 'titular', 'descripcion', 'publishedAt', 'updatedAt'],
-        populate: {
-          imagen: {
-            fields:['url', 'width', 'height']
-          }
-        },
-        sort: ['publishedAt:desc']
-      }
-
-      const { data: noticias, meta } = await $strapi.find('noticias', params)
+      const { data: noticias, meta } = await $strapi.findList(route, {
+        fields: ['id', 'slug', 'titular', 'descripcion', 'publishedAt', 'updatedAt']
+      })
       console.warn('NEWS', noticias)
 
       return { noticias, meta }
