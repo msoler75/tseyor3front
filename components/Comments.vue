@@ -168,7 +168,6 @@ methods: {
       })
       this.meta = meta
       this.comentarios = comentarios
-      console.warn(comentarios)
       // this.$set(this, 'comentarios', comentarios /* .map(x=>({...x, IlikeIt: this.IlikeIt(x)})) */)
       let num = 0
       for(const comentario of comentarios)

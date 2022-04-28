@@ -32,12 +32,12 @@ export default {
         this.$refs.sdiv.addEventListener('touch', this.activate)
         this.activate()
     },
-    /* beforeUnmount() {
+    destroy() {
         this.$refs.sdiv.removeEventListener('mousemove', this.activate)
         this.$refs.sdiv.removeEventListener('touch', this.activate)
         console.warn('removemos timer')
         clearTimeout(this.timer)
-    }, */
+    }, 
     methods:
     {
         activate() {

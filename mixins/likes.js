@@ -53,7 +53,6 @@ export default {
           pageSize: 9999999,
         }
       })
-      console.log('LIKESRECEIBED', likes)
       return likes
     },
     async like() {

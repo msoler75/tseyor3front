@@ -91,12 +91,6 @@ export default {
       // console.warn('register!!')
       this.error = null;
       try {
-        /*this.$axios.setToken(false);
-        await this.$axios.post("auth/local/register", {
-          username: this.username,
-          email: this.email,
-          password: this.password,
-        });*/
         await this.$strapi.register({
           username: this.username,
           email: this.email,

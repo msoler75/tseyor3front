@@ -51,7 +51,7 @@ export default {
   mixins: [vercontenido, likes, seo],
   async asyncData({ route, $strapi, $mdToHtml, $error }) {
     try {
-      const { data: [blog] } = await $strapi.findThis(route, {
+      const blog = await $strapi.getContent(route, {
         populate: {
           imagen: {
             fields: ['url', 'width', 'height']

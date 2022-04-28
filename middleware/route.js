@@ -2,7 +2,7 @@ export default function ({ res, route, store }) {
     // https://nuxtjs.org/docs/2.x/configuration-glossary/configuration-server#timing
     // res.timing.start('midd', 'Middleware timing description')
     
-    console.log('*route',route.path)
+    // console.log('*route',route.path)
     /* store.commit('setContained', true)
     store.commit('setBackground', true)
     store.commit('setBreadcrumb', true)

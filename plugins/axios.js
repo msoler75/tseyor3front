@@ -14,12 +14,15 @@ export default function ({ $axios, redirect }) {
     config.httpsAgent = agent
   })
 
+  /*
   $axios.onError(({ response }) => {
     // console.error(response)
     if(!response) return
     const statusCode = response.status
     const data = response.data
     switch (statusCode) {
+      case 400:
+        return response
       case 401:
         // redirect('/ingresar')
         break
@@ -35,4 +38,5 @@ export default function ({ $axios, redirect }) {
         return false
     }
   })
+  */
 }

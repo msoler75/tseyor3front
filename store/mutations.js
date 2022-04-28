@@ -1,17 +1,22 @@
 export default {
   SET_USER(state, user) {
-    console.log('SET_USER', user)
+    // console.log('SET_USER', user)
     state.user = user
   },
 
+  SET_DEFAULT_IMAGES(state, obj) {
+    // console.warn('SET_DEFAULT_IMAGES', obj)
+    state.defaultImages = obj
+  },
+
   setPageConfig(state, payload) {
-    console.log('setPageConfig', payload)
-    state.pageConfig = 
-    { 
-      contained : true,
-      background : true,
+    // console.log('setPageConfig', payload)
+    state.pageConfig = {
+      contained: true,
+      background: true,
       breadcrumb: true,
       focused: false,
+      footer: true,
       ...payload
     }
 
@@ -24,35 +29,36 @@ export default {
         'background',
         'breadcrumb',
         'contained',
-        'focused'
+        'focused',
+        'footer'
       ]
       for (const key of pageConfigKeywords) {
-      if(d && de && state.pageConfig[key])
-        de.classList.add('page-'+key)
-      else
-        de.classList.remove('page-'+key)
+        if (d && de && state.pageConfig[key])
+          de.classList.add('page-' + key)
+        else
+          de.classList.remove('page-' + key)
       }
 
     }
-    
+
     // cuando cambiamos de página, además mostramos el menu top navigation
     state.navHidden = false
     console.log(state.pageConfig)
   },
 
-  setNextPathBreadcrumb(state, payload){
-    console.log('setNextPathBreadcrumb', payload )
+  setNextPathBreadcrumb(state, payload) {
+    // console.log('setNextPathBreadcrumb', payload)
     state.nextPathBreadcrumb = payload
-  }, 
+  },
 
   updateBreadcrumb(state, payload) {
-    console.log('store.updateBreadcrumb()')
-    state.pathBreadcrumb = payload?payload:state.nextPathBreadcrumb
+    // console.log('store.updateBreadcrumb()')
+    state.pathBreadcrumb = payload ? payload : state.nextPathBreadcrumb
     state.nextPathBreadcrumb = state.pathBreadcrumb
   },
 
   travelling(state, payload) {
-    console.log('travelling=', payload)
+    // console.log('travelling=', payload)
     state.travelling = payload
   },
 
@@ -61,7 +67,7 @@ export default {
   },
 
   setMenuUsuario(state, payload) {
-    console.log('setMenuUsuario', payload)
+    // console.log('setMenuUsuario', payload)
     state.menuUsuario = payload
   },
 
@@ -77,6 +83,12 @@ export default {
    * @param {*} payload que contiene { title, artist, src, pic }
    */
   setAudioPlay(state, payload) {
-    state.audioPlaying = { ...state.audioPlaying, title: payload.title, artist: payload.artist, src: payload.src, pic: payload.pic }
+    state.audioPlaying = {
+      ...state.audioPlaying,
+      title: payload.title,
+      artist: payload.artist,
+      src: payload.src,
+      pic: payload.pic
+    }
   }
 }

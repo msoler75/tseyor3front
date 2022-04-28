@@ -79,7 +79,7 @@ export default {
   mixins: [vercontenido, likes, seo],
   async asyncData({ route, $strapi, $mdToHtml, $error }) {
     try {
-      const { data: [contenido] } = await $strapi.findThis(route, {
+      const contenido = await $strapi.getContent(route, {
         populate: {
           blog: {
             fields: ['nombre', 'id', 'slug', 'descripcion'],

@@ -10,7 +10,7 @@ export default {
   mixins: [vercontenido, likes, seo],
   async asyncData({ route, $strapi, $mdToHtml, $error }) {
     try {
-      const { data: [contenido] } = await $strapi.findThis(route)
+      const contenido = await $strapi.getContent(route)
       if (!contenido)
         return $error(404, 'Normativa no encontrada')
       contenido.textoHTML = $mdToHtml(contenido.texto)

@@ -1,7 +1,16 @@
+import state from "./state"
+
 export default {
   // nuxt/auth
   user(state) {
     return state.user
+  },
+
+  getImageFor: state => (collection) => {
+    console.warn('getImageFor', collection)
+    if(!(collection in state.defaultImages) || !state.defaultImages[collection]) 
+      return state.defaultImages.generica
+    return state.defaultImages[collection]
   },
 
   getPathBreadcrumb(state) {

@@ -42,6 +42,12 @@ export default {
     };
   },
   methods: {
+    setCookie(cname, cvalue, exdays) {
+      const d = new Date();
+      d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
+      let expires = "expires=" + d.toUTCString();
+      document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+    },
     async login() {
       console.log('Logging...')
       this.error = null;
@@ -67,6 +73,7 @@ export default {
       if (await this.$strapi.login({ identifier: this.email, password: this.password })) {
         this.$strapi.fetchUser()
         localStorage.setItem('jwt', this.$strapi.token)
+        this.setCookie("jwt", this.$strapi.token, 7)
         this.$router.push(this.$route.query.desde || "/")
       }
       else {

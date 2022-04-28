@@ -98,7 +98,7 @@ export default {
     crumbs() {
       if (process.client) {
         const pathShowing = this.$store.getters.getPathBreadcrumb || this.$route.fullPath
-        console.log('typeof', typeof pathShowing, pathShowing)
+        // console.log('typeof', typeof pathShowing, pathShowing)
         if (typeof pathShowing === 'object') return pathShowing
         const path = pathShowing.replace(/\/\d+$/, '')
         let r = this.crumbsRecursive(path)

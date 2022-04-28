@@ -9,7 +9,7 @@
             <div :style="imageBg" class="w-full h-full block shadow" />
           </nuxt-link>
         </div>
-        <h2 class="text-gray-100 text-2xl text-center">{{ title }}</h2>
+        <h2 class="text-2xl text-center mb-3">{{ title }}</h2>
         <div class="mt-2 text-center text-gray-300 xs:px-5 mb-7 text-diminished" v-html="description" />
       </div>
       <div class="sm:w-1/2">
@@ -65,7 +65,8 @@ export default {
       return this.label
     },
     imageBg() {
-      console.log('cimage', this.cimage)
+      console.log('cimage', this.cimage, typeof this.cimage)
+      if(!this.cimage) return {}
       const imgUrl = this.$img(this.cimage, { width: 300, format: 'webp', quality: 70 })
       console.log('imgUrl', imgUrl)
       return {

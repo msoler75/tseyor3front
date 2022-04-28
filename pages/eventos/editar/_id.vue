@@ -1,46 +1,101 @@
 <template>
-    <div class="max-w-full w-lg mx-auto" focused>
-        <Card class="py-5 px-2 xs:px-4 max-w-md mx-auto bg-blue-gray-50 dark:bg-blue-gray-900">
+    <div class="max-w-full w-lg mx-auto pb-16" focused footer="no">
+
+        <div class="fixed bottom-0 left-0 right-0 z-30">
+            <form @submit.prevent="onSubmit"
+                class="flex surface overflow-x-auto justify-center space-x-3 sm:space-x-6 text-sm py-3 shadow !border-0">
+
+                <button v-if="contenido.id" class="btn w-auto text-center whitespace-nowrap" @click.prevent="onPublicar"
+                    :class="publicado ? 'btn-success' : 'btn-gray'"
+                    :disabled="eliminando || guardando || publicando || !!modificado">
+                    <div class="flex justify-center items-center w-20">
+                        &nbsp;
+                        <icon v-if="publicando" icon='sync spin' />
+                        <span v-else class="inline-block w-28">
+                            <icon v-if="publicado" icon='check' class="mr-2" />
+                            <span>{{ verboPublicar }}</span>
+                        </span>
+                    </div>
+                </button>
+
+                <button class="btn w-auto text-center" :class="modificado ? '' : 'btn-gray'" type="submit"
+                    :disabled="eliminando || guardando || publicando || !modificado">
+                    <div class="flex justify-center items-center w-14">
+                        &nbsp;
+                        <icon v-if="guardando" icon='sync spin' />
+                        <span v-else class="inline-block">{{ verboGuardar }}</span>
+                    </div>
+                </button>
+
+                <NLink v-if="contenido.id" :to="`/eventos/${contenido.id}`" class="btn btn-gray w-auto text-center"
+                    title="Ver Evento" :disabled="eliminando || guardando || publicando">
+                    <div class="flex justify-center items-center">
+                        <icon class="!w-3" icon="eye" />&nbsp;
+                    </div>
+                </NLink>
+
+                <div v-if="contenido.id" @click="borrarEvento" class="btn btn-error w-auto text-center"
+                    :disabled="eliminando || guardando || publicando" title="Borrar Evento">
+                    <div class="flex justify-center items-center">
+                        <icon class="!w-3" icon="trash" />&nbsp;
+                    </div>
+                </div>
+
+            </form>
+
+            <Card v-show="errors.message">
+                <p class="error font-bold">
+                    <icon icon="exclamation-triangle" class="mr-2 transform scale-75" /><span>{{ errors.message
+                    }}</span>
+                </p>
+            </Card>
+
+        </div>
+
+        <Card class="order-1 py-5 px-2 xs:px-4 max-w-md mx-auto bg-blue-gray-50 dark:bg-blue-gray-900">
             <h1>{{ accion }} evento</h1>
-            <form @submit.prevent="submit" class="regular-form bg-transparent space-y-9">
+            <div class="space-y-9">
                 <div>
                     <label for="titulo">Título:</label>
                     <br />
-                    <input
-                        type="text"
-                        id="titulo"
-                        v-model="contenido.titulo"
-                        required
-                        :class="fieldValidate('titulo')"
-                    />
+                    <input type="text" id="titulo" v-model="contenido.titulo" required
+                        :class="fieldValidate('titulo')" />
                     <p class="error">{{ errors.titulo }}</p>
                 </div>
                 <div>
-                    <label for="descripcion">Descripción corta:</label>
-                    <br />
-                    <textarea
-                        id="descripcion"
-                        v-model="contenido.descripcion"
-                        required
-                        :class="fieldValidate('descripcion')"
-                    />
+                    <div class="flex justify-between items-baseline">
+                        <label for="descripcion">Descripción corta:</label>
+                        <span class="text-xs">
+                            <span v-if="descriptionLength > 20" class="text-right">quedan
+                                {{ maxLengthDescription - descriptionLength }}</span>
+                            <span v-else>&nbsp;</span>
+                        </span>
+                    </div>
+                    <textarea ref="descripcion" id="descripcion" rows="3" v-model="contenido.descripcion" required
+                        :maxlength="maxLengthDescription" :class="fieldValidate('descripcion')" />
                     <p class="error">{{ errors.descripcion }}</p>
                 </div>
                 <div>
                     <label for="imagen">Imagen de fondo:</label>
-                    <p>
-                        <i>Importante: Esta imagen no debe tener texto</i>
-                        <!-- https://blog.logrocket.com/how-to-extract-text-from-an-image-using-javascript-8fe282fb0e71/ -->
-                    </p>
-                    <img v-if="cimage" :src="cimage" class="mb-3" />
-                    <InputImage
-                        id="imagen"
-                        :value="imagenSubir"
-                        @change="onImagen"
-                        class="mt-3"
-                        :class="fieldValidate('imagen')"
-                        :required="!cimage"
-                    />
+                    <nuxt-img v-if="cimage" :src="cimage" fit="cover" width="450" height="250" />
+                    <div v-else class="h-[250px] bg-gray" />
+                    <div class="relative mt-2">
+                        <span v-show="!isInLeft" class="absolute shadow text-xs rounded-xs left-0 top-4 bg-white p-1"
+                            @click="scrollToLeft">
+                            <icon icon="chevron-left" />
+                        </span>
+                        <span class="absolute shadow text-xs rounded-xs right-0 top-4 bg-white p-1"
+                            @click="scrollToRight">
+                            <icon icon="chevron-right" />
+                        </span>
+                        <div class="flex space-x-2 overflow-x-auto scroll-smooth" ref="imagenesFondo">
+                            <nuxt-img v-for="imagen of imagenesFondo" :key="imagen.url" fit="cover" width="70"
+                                height="70" class="cursor-pointer border border-gray" :src="imagen.url"
+                                @click.native="imagenSubir = imagen" />
+                        </div>
+                    </div>
+                    <input class="opacity-0 h-0 p-0 transform -translate-y-4" type="text" id="imagen" name="imagen"
+                        v-model="imagenSubir" required>
                     <p class="error">{{ errors.imagen }}</p>
                 </div>
                 <div>
@@ -49,104 +104,62 @@
                         <i>Estas imágenes pueden tener texto</i>
                     </p>
                     <client-only>
-                        <draggable
-                            tag="ul"
-                            :list="imagenesAdicionales"
-                            group="main"
-                            class="relative"
-                            :animation="200"
-                            @change="dragged"
-                        >
-                            <div
-                                v-for="item of imagenesAdicionales"
-                                :key="item.url"
-                                class="group relative mb-3"
-                            >
+                        <draggable tag="ul" :list="imagenesAdicionales" group="main" class="relative" :animation="200"
+                            @change="dragged">
+                            <div v-for="item of imagenesAdicionales" :key="item.url" class="group relative mb-3">
                                 <img :src="item.url" class="w-full" />
-                                <div
-                                    class="btn btn-error absolute right-2 top-2 text-xl p-0 w-7 h-7 flex justify-center items-center rounded-full transition duration-200 opacity-0 group-hover:opacity-100"
-                                    @click="eliminarDeImagenes(item.url)"
-                                    title="Eliminar imagen"
-                                >&times;</div>
+                                <div class="btn btn-error absolute right-2 top-2 text-xl p-0 w-7 h-7 flex justify-center items-center rounded-full transition duration-200 opacity-0 group-hover:opacity-100"
+                                    @click="eliminarDeImagenes(item.url)" title="Eliminar imagen">&times;</div>
                             </div>
                         </draggable>
                     </client-only>
-                    <InputImage
-                        id="imagenes"
-                        :value="imagenesSubir"
-                        :multiple="true"
-                        @change="onImagenes"
-                        class="mt-3"
-                        :class="fieldValidate('imagenes')"
-                        textButton="Añadir"
-                    />
+                    <InputImage id="imagenes" :value="imagenesSubir" :multiple="true" @change="onImagenes" class="mt-3"
+                        :class="fieldValidate('imagenes')" textButton="Añadir" />
                     <p class="error">{{ errors.imagenes }}</p>
                 </div>
                 <div>
-                    <label for="texto">Descripción detallada:</label>
+                    <label for="texto">Explicación detallada (opcional):</label>
                     <br />
-                    <textarea
-                        id="texto"
-                        v-model="contenido.texto"
-                        rows="7"
-                        :class="fieldValidate('texto')"
-                    />
+                    <textarea id="texto" v-model="contenido.texto" rows="5" :class="fieldValidate('texto')" />
                     <p class="error">{{ errors.texto }}</p>
                 </div>
                 <div>
-                    <label for="tipoEvento">Tipo de Evento:</label>
+                    <label for="tipo">Tipo de Evento:</label>
                     <br />
-                    <select
-                        id="tipoEvento"
-                        v-model="contenido.tipoEvento"
-                        :class="fieldValidate('tipoEvento')"
-                    >
-                        <option value="encuentro">Encuentro</option>
-                        <option value="curso">Curso</option>
-                        <option value="otros">Otros</option>
+                    <select id="tipo" v-model="contenido.tipo" :class="fieldValidate('tipo')" required>
+                        <option value="Encuentro">Encuentro</option>
+                        <option value="Curso">Curso</option>
+                        <option value="Presentación">Presentación</option>
+                        <option value="Otros">Otros</option>
                     </select>
-                    <p class="error">{{ errors.tipoEvento }}</p>
+                    <p class="error">{{ errors.tipo }}</p>
                 </div>
                 <div>
                     <label>Fecha y hora de comienzo:</label>
-                    <InputDateTime
-                        id="fechaComienzo"
-                        v-model="contenido.fechaComienzo"
-                        required
-                        :class="fieldValidate('fechaComienzo')"
-                    />
+                    <InputDateTime id="fechaComienzo" v-model="contenido.fechaComienzo" required
+                        :class="fieldValidate('fechaComienzo')" />
                     <p class="error">{{ errors.fechaComienzo }}</p>
                 </div>
 
                 <div v-if="!tieneFinal">
-                    <div
-                        class="btn btn-gray text-xs mt-1 w-48"
-                        @click.prevent="tieneFinal = true"
-                    >Definir fecha final</div>
+                    <div class="btn btn-gray text-xs mt-1 w-48" @click.prevent="tieneFinal = true">Definir fecha
+                        final
+                    </div>
                 </div>
                 <div v-else>
                     <label>Fecha y hora de final:</label>
-                    <InputDateTime
-                        id="fechaFinal"
-                        v-model="contenido.fechaFinal"
-                        :class="fieldValidate('fechaFinal')"
-                    />
+                    <InputDateTime id="fechaFinal" v-model="contenido.fechaFinal"
+                        :class="fieldValidate('fechaFinal')" />
                     <p class="error">{{ errors.fechaFinal }}</p>
-                    <div
-                        class="btn btn-gray text-xs mt-1 w-48"
-                        @click.prevent="contenido.fechaFinal = null; tieneFinal = false"
-                    >
+                    <div class="btn btn-gray text-xs mt-1 w-48"
+                        @click.prevent="contenido.fechaFinal = null; tieneFinal = false">
                         <span class="scale-150 mr-2">&times;</span> Remover fecha final
                     </div>
                 </div>
                 <div>
                     <label for="zonahoraria">Zona Horaria:</label>
                     <br />
-                    <select
-                        id="zonahoraria"
-                        v-model="contenido.zonahoraria"
-                        :class="fieldValidate('zonahoraria')"
-                    >
+                    <select id="zonahoraria" v-model="contenido.zonahoraria" :class="fieldValidate('zonahoraria')">
                         <option value="Espana">España</option>
                         <option value="Chile">Chile</option>
                         <option value="Mexico">México</option>
@@ -155,111 +168,50 @@
                 </div>
 
                 <div v-if="!tieneSala">
-                    <div
-                        class="btn btn-gray text-xs mt-1 w-48"
-                        @click.prevent="tieneSala = true"
-                    >Definir Sala virtual</div>
+                    <div class="btn btn-gray text-xs mt-1 w-48" @click.prevent="tieneSala = true">Definir Sala
+                        virtual
+                    </div>
                 </div>
                 <div v-else>
                     <label for="sala">Sala virtual:</label>
-                    <v-select
-                        id="sala"
-                        :options="salas"
-                        v-model="contenido.sala"
-                        placeholder="Elige sala virtual..."
-                        :filter="fuseSalas"
-                        autocomplete="on"
-                        :getOptionLabel="sala => sala.nombre"
-                        :reduce="sala => sala.id"
-                        label="Sala"
-                    >
+                    <v-select id="sala" :options="salas" v-model="contenido.sala" placeholder="Elige sala virtual..."
+                        :filter="fuseSalas" autocomplete="on" :getOptionLabel="sala => sala.nombre"
+                        :reduce="sala => sala.id" label="Sala">
                         <div slot="no-options">Ningún resultado</div>
                     </v-select>
-                    <div
-                        class="btn btn-gray text-xs mt-1 w-48"
-                        @click.prevent="contenido.sala = null; tieneSala = false"
-                    >
+                    <div class="btn btn-gray text-xs mt-1 w-48"
+                        @click.prevent="contenido.sala = null; tieneSala = false">
                         <span class="scale-150 mr-2">&times;</span> Remover sala
                     </div>
                 </div>
 
                 <div v-if="!tieneCentro">
-                    <div
-                        class="btn btn-gray text-xs mt-1 w-48"
-                        @click.prevent="tieneCentro = true"
-                    >Definir Centro organizador</div>
+                    <div class="btn btn-gray text-xs mt-1 w-48" @click.prevent="tieneCentro = true">Definir Centro
+                        organizador</div>
                 </div>
                 <div v-else>
                     <label for="sala">Organiza:</label>
-                    <v-select
-                        :options="centros"
-                        v-model="contenido.centro"
-                        placeholder="Elige centro..."
-                        :filter="fuseCentros"
-                        autocomplete="on"
-                        :getOptionLabel="centro => centro.nombre"
-                        :reduce="centro => centro.id"
-                        label="Sala"
-                    >
+                    <v-select :options="centros" v-model="contenido.centro" placeholder="Elige centro..."
+                        :filter="fuseCentros" autocomplete="on" :getOptionLabel="centro => centro.nombre"
+                        :reduce="centro => centro.id" label="Sala">
                         <div slot="no-options">Ningún resultado</div>
                     </v-select>
-                    <div
-                        class="btn btn-gray text-xs mt-1 w-48"
-                        @click.prevent="contenido.centro = null; tieneCentro = false"
-                    >
+                    <div class="btn btn-gray text-xs mt-1 w-48"
+                        @click.prevent="contenido.centro = null; tieneCentro = false">
                         <span class="scale-150 mr-2">&times;</span> Remover centro
                     </div>
                 </div>
-                <div class="flex justify-center">
-                    <button
-                        class="btn w-full text-center"
-                        :class="modificado || guardando || creando ? 'btn-warning' : 'btn-success'"
-                        type="submit"
-                        :disabled="eliminando || guardando || !modificado"
-                    >
-                        <div class="flex justify-center items-center">
-                            <icon
-                                class="!w-6"
-                                :icon="guardando ? 'sync spin' : creando ? 'plus-square' : modificado ? 'cloud-upload-alt' : 'check'"
-                            />
-                            <span class="inline-block w-28">{{ verbo }}</span>
-                        </div>
-                    </button>
-                </div>
-            </form>
+
+            </div>
         </Card>
 
-        <div
-            v-if="contenido.id"
-            class="w-[400px] max-w-full mx-auto mt-7 flex justify-center space-x-6"
-        >
-            <div
-                @click="borrarEvento"
-                class="btn btn-error w-full text-center"
-                :disabled="eliminando || guardando"
-            >
-                <div class="flex justify-center items-center">
-                    <icon class="!w-6" icon="trash" />
-                    <span class="inline-block w-28">Borrar Evento</span>
-                </div>
-            </div>
+        </form>
 
-            <NLink
-                :to="`/eventos/${contenido.id}`"
-                class="btn w-full text-center"
-                :disabled="eliminando || guardando"
-            >
-                <div class="flex justify-center items-center">
-                    <icon class="!w-6" icon="eye" />
-                    <span class="inline-block w-28">Ver Evento</span>
-                </div>
-            </NLink>
-        </div>
     </div>
 </template>
 
 <script>
-const relaciones11 = ['sala', 'organiza', 'autor']
+const relaciones11 = ['sala', 'organiza']
 import vSelect from "vue-select";
 import Fuse from "fuse.js";
 import validation from "@/mixins/validation"
@@ -267,8 +219,8 @@ import draggable from "vuedraggable";
 export default {
     components: { vSelect, draggable },
     mixins: [validation],
-    middleware: 'logged',
-    async asyncData({ route, $strapi, $error }) {
+    // middleware: 'logged',
+    async asyncData({ route, $strapi, $dayjs, $error }) {
         try {
             let id = route.params.id
             let contenido = {
@@ -276,36 +228,41 @@ export default {
                 texto: '',
                 descripcion: '',
                 zonahoraria: 'Espana',
-                fechaComienzo: null,
+                fechaComienzo: $dayjs().format('YYYY-MM-DDTHH:mm:ssZ[Z]'),
                 fechaFinal: null,
                 imagen: null,
-                tipoEvento: 'encuentro',
+                tipo: 'encuentro',
                 sala: null,
                 organiza: null,
                 autor: null,
-                imagenes:[]
+                imagenes: []
             }
             if (id && id !== 'nuevo') {
-                const resultado = await $strapi.find(
-                    'eventos',
-                    id.match(/^\d+$/) ? { id } : { slug: id }
-                )
-                if (!resultado.length)
+                const evento = await $strapi.getContent(route, {
+                    populate: { organiza: '*', imagenes: '*', sala: '*' }
+                })
+                if (!evento)
                     return $error(404, 'Evento no encontrado')
-                contenido = resultado[0]
+                contenido = evento
                 for (const campo of relaciones11)
                     contenido[campo] = contenido[campo] && contenido[campo].id ? contenido[campo].id : null
             }
-            const salas = await $strapi.find('salas')
-            const centros = await $strapi.find('centros')
+            const {data:salas} = await $strapi.find('salas')
+            const {data:centros} = await $strapi.find('centros')
+            console.log('ASYNC LOADED EVENT', contenido)
             return { contenido, evento: contenido, salas, centros }
         }
         catch (e) {
+            console.error(e)
             $error(503)
         }
     },
     data() {
         return {
+            isInLeft: true,
+            scrollingTo: 0,
+            descriptionLength: 0,
+            maxLengthDescription: 120,
             imagenSubir: null,
             imagenesSubir: [],
             dragData: {},
@@ -315,20 +272,30 @@ export default {
             tieneSala: this.contenido && this.contenido.sala,
             tieneCentro: this.contenido && this.contenido.centro,
             guardando: false,
+            publicando: false,
             eliminando: false,
             modificado: 0
         }
     },
     computed: {
+        imagenesFondo() {
+            return this.$store.getters.getImageFor('eventos')
+        },
+        publicado() {
+            return !!this.contenido.publishedAt
+        },
         cimage() {
             // la imagen que queremos subir o la del contenido 
-            return this.imagenSubir ? this.imagenSubir.src : this.contenido.imagen ? this.contenido.imagen.url : null
+            return this.imagenSubir ? this.imagenSubir.url : this.contenido.imagen ? this.contenido.imagen.url : null
         },
         accion() {
             return this.contenido.id ? 'Editar' : 'Nuevo'
         },
-        verbo() {
-            return !this.contenido.id ? 'Publicar' : this.guardando ? 'Publicando' : this.modificado ? 'Guardar' : 'Publicado'
+        verboPublicar() {
+            return this.publicando ? 'Publicando' : !this.publicado ? 'Publicar' : 'Publicado'
+        },
+        verboGuardar() {
+            return this.guardando ? 'Guardando' : this.modificado ? 'Guardar' : 'Guardado'
         },
         contentJSON() {
             return JSON.stringify(this.contenido)
@@ -347,15 +314,35 @@ export default {
     },
     mounted() {
         this.recalcularImagenesAdicionales()
+        this.$refs.imagenesFondo.addEventListener('scroll', this.handleScroll)
+        this.$refs.descripcion.addEventListener('change', this.handleDescription)
+        this.$refs.descripcion.addEventListener('keydown', this.handleDescription)
+    },
+    destroy() {
+        this.$refs.imagenesFondo.removeEventListener('scroll', this.handleScroll)
+        this.$refs.descripcion.removeEventListener('change', this.handleDescription)
+        this.$refs.descripcion.removeEventListener('keydown', this.handleDescription)
     },
     methods: {
+        handleScroll() {
+            this.isInLeft = this.$refs.imagenesFondo && this.$refs.imagenesFondo.scrollLeft == 0
+        },
+        handleDescription() {
+            this.descriptionLength = this.$refs.descripcion.value.length
+        },
+        scrollToLeft() {
+            this.$refs.imagenesFondo.scrollLeft -= 80
+        },
+        scrollToRight() {
+            this.$refs.imagenesFondo.scrollLeft += 80
+        },
         dragged() {
             this.ordenQueQuiero = [...this.imagenesAdicionales]
             this.modificado++
         },
         recalcularImagenesAdicionales() {
             const o = this.ordenQueQuiero
-            const list = (this.contenido ? this.contenido.imagenes : []).concat(this.imagenesSubir.map(x => ({ url: x.src })))
+            const list = (this.contenido && this.contenido.imagenes ? this.contenido.imagenes : []).concat(this.imagenesSubir.map(x => ({ url: x.src })))
             this.$set(this, 'imagenesAdicionales', list.sort(function (a, b) {
                 const ia = o.findIndex(x => x.url === a.url)
                 const ib = o.findIndex(x => x.url === b.url)
@@ -371,13 +358,13 @@ export default {
                 this.imagenesSubir.splice(idx, 1)
             this.modificado++
         },
-        onImagen(payload) {
+        /*onImagen(payload) {
             this.imagenSubir = {
                 src: payload.images[0],
                 file: payload.files[0]
             }
             this.modificado++
-        },
+        },*/
         onImagenes(payload) {
             for (const i in payload.images)
                 this.imagenesSubir.push({ src: payload.images[i], file: payload.files[i] })
@@ -414,22 +401,40 @@ export default {
                     })
             }
         },
-        async submit() {
+        onPublicar() {
+            if (this.publicado) {
+                if (confirm("¿Quieres anular la publicación? El evento dejará de estar disponible para el público"))
+                    this.despublicar()
+            } else
+                this.publicar()
+        },
+        publicar() {
+
+        },
+        despublicar() {
+
+        },
+        async onSubmit() {
             this.clearErrors()
             this.guardando = true
             // primero subimos la imagen
             let imagenId = null
             let imagenes = []
-            const promises = []
+            let noErrors = true
 
-            if (this.imagenSubir && this.imagenSubir.file) {
+            if (this.imagenSubir && this.imagenSubir.id)
+                imagenId = this.imagenSubir.id
+
+            /* if (this.imagenSubir && this.imagenSubir.file) {
+                console.warn('VAMOS A SUBIR IMAGEN', this.imagenSubir)
                 promises.push(
                     new Promise((success, reject) => {
                         const form = new FormData()
+                        console.log('file', this.imagenSubir.file)
                         form.append("files", this.imagenSubir.file)
-                        this.$strapi.create("upload", form)
-                            .then(async (response) => {
-                                imagenId = response[0].id
+                        this.$strapi.upload(form)
+                            .then(async (data) => {
+                                imagenId = data[0].id
                                 success()
                             })
                             .catch(err => {
@@ -438,38 +443,39 @@ export default {
                             })
                     })
                 )
-            }
+            } */
+
 
             if (this.imagenesSubir.length) {
-                promises.push(
-                    new Promise((success, reject) => {
-                        const form = new FormData()
-                        for (const img of this.imagenesSubir)
-                            form.append("files", img.file)
-                        const imgs = this.imagenesSubir
-                        this.$strapi.create("upload", form)
-                            .then(async (response) => {
-                                imagenes = response
-                                for (const i in imagenes)
-                                    imagenes[i].src = imgs[i].src  // para tener el src que corresponde a this.ordenQueQuiero
-                                success()
-                            })
-                            .catch(err => {
-                                console.warn(err)
-                                reject(err)
-                            })
+
+                const form = new FormData()
+                for (const img of this.imagenesSubir)
+                    form.append("files", img.file)
+                const imgs = this.imagenesSubir
+                await this.$strapi.upload(form)
+                    .then(async (response) => {
+                        console.warn('RESPONSE DE SUBIR IMAGENES', response)
+                        imagenes = response
+                        for (const i in imagenes)
+                            imagenes[i].src = imgs[i].src  // para tener el src que corresponde a this.ordenQueQuiero
                     })
-                )
+                    .catch(err => {
+                        console.warn(err)
+                        noErrors = false
+                    })
             }
 
-            await Promise.all(promises)
-
-            this.guardarEvento(imagenId, imagenes)
+            if (noErrors)
+                this.guardarEvento(imagenId, imagenes)
         },
         async guardarEvento(idImage, imagenes) {
+            console.log('guardarEvento', idImage, imagenes)
+            console.log('strapi1?', this.$strapi)
             const data = { ...this.contenido }
-            data.imagen = idImage ? idImage : data.imagen.id
+            console.log('data', data)
+            data.imagen = idImage ? idImage : data.imagen ? data.imagen.id : null
             const o = this.ordenQueQuiero
+            if (!data.imagenes) data.imagenes = []
             data.imagenes = data.imagenes.concat(imagenes)
                 // importante guardar en el orden deseado por el usuario, o el que ya estaba antes
                 .sort(function (a, b) {
@@ -478,44 +484,75 @@ export default {
                     return (ia === -1 ? 998 : ia) - (ib === -1 ? 997 : ib)
                 })
                 .map(x => x.id)
+            console.log('strapi2?', this.$strapi)
             if (this.contenido.id) {
-                this.$strapi
-                    .update('eventos', this.contenido.id, data)
-                    .then((contenido) => {
-                        this.imagenSubir = null
-                        this.imagenesSubir = []
-                        this.ordenQueQuiero = []
-                        for (const field in contenido) {
-                            if (relaciones11.includes(field))
-                                this.$set(this.contenido, field, contenido[field] ? contenido[field].id : null)
-                            else
-                                this.$set(this.contenido, field, contenido[field])
-                        }
-                        this.$nextTick(() => {
-                            this.guardando = false
+                console.log('saving content data', data)
+
+                /*fetch(this.$config.strapiUrl + `/eventos/${this.contenido.id}`, {
+                    method: 'PUT', // or 'PUT'
+                    body: JSON.stringify({ data }), // data can be `string` or {object}!
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${this.$strapi.token}`
+                    }
+                }).
+                    then(res => {
+                        console.log('1st res', res)
+                        return res.json()
+                    })*/
+
+                //.catch(error => console.error('Error:', error))
+
+                this.$strapi.update('eventos', this.contenido.id, data)
+                    //  $axios.put(`/eventos/${this.contenido.id}`, {data})
+                    .then((response) => {
+                        console.log('2nd response', response)
+                        if (response.error)
+                            this.setErr(response.error)
+                        else {
+                            const { data: contenido } = response
+                            this.imagenSubir = null
+                            this.imagenesSubir = []
+                            this.ordenQueQuiero = []
+                            for (const field in contenido) {
+                                if (relaciones11.includes(field))
+                                    this.$set(this.contenido, field, contenido[field] ? contenido[field].id : null)
+                                else
+                                    this.$set(this.contenido, field, contenido[field])
+                            }
                             this.modificado = 0
-                        })
+                        }
+                        // this.$nextTick(() => {
+                        this.guardando = false
+                        // })
                     })
                     .catch(err => {
+                        console.log('SAVE.CATCH', err, JSON.stringify(err))
                         this.setErr(err)
                         this.guardando = false
                     })
             }
             else
-                this.$strapi.create('eventos', data)
-                    .then((contenido) => {
-
-                        // registro de actividad
-                        this.$strapi.create('historials', {
-                            accion: 'evento_creado',
-                            titulo: contenido.titulo,
-                            url: `/eventos/${contenido.id}`
-                        })
-
-                        // recargamos la página para que se muestra en modo edición con la ruta correcta
-                        this.$router.push(`/eventos/editar/${contenido.id}`)
+                this.$strapi.create('eventos', data, { headers: { 'Content-Type': 'application/json' } })
+                    .then((response) => {
+                        console.log('CREATED response', response)
+                        if (response.error)
+                            this.setErr(response.error)
+                        else {
+                            const contenido = response.data ? response.data : response
+                            // registro de actividad
+                            /*this.$strapi.create('historials', {
+                                accion: 'evento_creado',
+                                titulo: contenido.titulo,
+                                url: `/eventos/${contenido.id}`
+                            })*/
+                            // recargamos la página para que se muestra en modo edición con la ruta correcta
+                            this.$router.push(`/eventos/editar/${contenido.id}`)
+                        }
+                        this.guardando = false
                     })
                     .catch(err => {
+                        console.log('CREATE.CATCH', err, JSON.stringify(err))
                         this.setErr(err)
                         this.guardando = false
                     })

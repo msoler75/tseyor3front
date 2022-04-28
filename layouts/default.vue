@@ -1,7 +1,8 @@
 <template>
   <div id="__main-container" class="surface-0 w-full font-sans relative"
     :class="(travelling ? 'travelling ' : 'in-page') + (pageConfig.background ? '' : 'no-background')">
-    <div class="absolute w-screen h-screen z-0" :style="imagenFondo"></div>
+    <div class="absolute w-full h-screen z-0" :style="imagenFondo"></div>
+
     <!-- Navigation starts-->
     <NavTop v-model="currentTab" :rutasMenu="rutasMenu" ref="nav" @showSideMenu="showSideMenu" />
 
@@ -52,7 +53,6 @@
     <div @click="clickOff" class="relative z-10"
       :class="pageConfig.contained ? 'container xs:px-1 sm:px-3 md:px-6 mx-auto' : ''">
       <div class="w-full">
-        <portal-target name="portal0"></portal-target>
         <!-- Place your content here -->
         <nuxt id="__content" class="mx-auto" :class="pageConfig.contained ? 'mb-5' : ''" ref="page" />
       </div>
@@ -62,8 +62,9 @@
       <Buscar @close="showBuscarPanel = false" />
     </Modal>
     <div class="spacer" />
-    <Footer v-show="!onlyContent" class="mt-auto" :class="pageConfig.contained ? 'pt-9' : ''" />
+    <Footer v-show="!onlyContent&&pageConfig.footer" class="mt-auto" :class="pageConfig.contained ? 'pt-9' : ''" />
     <Confirm />
+    <portal-target name="bottom-app" class="sticky bottom-0 z-20"></portal-target>
   </div>
 </template>
 
@@ -100,13 +101,16 @@ export default {
       window.addEventListener('keydown', this.handleKey);
     }
     const token = localStorage.getItem('jwt')
-    if (token) {
-      this.$strapi.setToken(token)
+    console.log('TOKEN localstorage', token)
+    /*
+    //if (!this.$strapi.user&&token) {
+      this.$strapi.token = token
       this.$store.commit(
         "SET_USER",
         await this.$strapi.fetchUser()
       )
-    }
+   // }
+   */
   },
   /* destroyed() {
     if (process.client)
@@ -358,9 +362,8 @@ export default {
       this.lastY = y
     },
     handleKey(e) {
-      console.warn(e)
-      if (e.key === 'k' && e.ctrlKey || e.metaKey) {
-        e.preventDefault(); //prevent the default action (save page in this case)
+      if (e.key === 'k' && (e.ctrlKey || e.metaKey)) {
+        e.preventDefault()
         this.onBuscar()
       }
     },
@@ -374,17 +377,6 @@ export default {
       localStorage.removeItem('jwt')
       this.$router.push("/")
     },
-    /* getIcon(path) {
-      return this.$store.getters.getIcon(path);
-    },
-    getTitle() {
-      console.log("layout.getTitle");
-      const title = this.$store.getters.title;
-      console.log("layout.getTitle title=", title);
-      if (title) return title;
-      console.log("layout.getTitle returning", this.$ucFirst(this.$route.name));
-      return this.$ucFirst(this.$route.name);
-    }, */
     showSideMenu() {
       this.showSidebar = true;
       this.currentTab = ""

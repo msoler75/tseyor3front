@@ -9,7 +9,7 @@
         <div class="flex mb-2">
           <NLink :to="'/eventos/' + data.id"
            @click.native.prevent="clicked=true">
-            <div class="font-bold text-xl mb-2 mr-4">{{ ctitle }}</div>
+            <div class="font-bold text-xl mb-2 mr-4 break-all">{{ ctitle }}</div>
           </NLink>
           <CalendarDay :date="data.fechaComienzo" class="ml-auto" />
         </div>

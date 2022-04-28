@@ -247,7 +247,6 @@ export default {
     methods: {
         toggleMostrarMenuUsuario() {
             this.mostrarMenuUsuario = !this.mostrarMenuUsuario
-            console.log('mostrarMenuUsuario', this.mostrarMenuUsuario)
         },
         resizeHandler() {
             this.updateSoftPath()
@@ -280,7 +279,6 @@ export default {
         },
         inPath(url) {
             const path = this.$route.path;
-            // console.log('inPath de', url, 'estando en path=', path)
             if (url === "/") return path === "/";
             if (url === path) return true
             for (const item of this.rutasMenu) {
@@ -294,7 +292,6 @@ export default {
                     for (const elem of this.$store.getters.buildRoutes(this.getAllDescendants(item.items))) {
                         if (elem.noCurrent) continue
                         if (path.startsWith(elem.href)) {
-                            // console.log('path startsWith elem.href=', elem.href)
                             return true;
                         }
                     }

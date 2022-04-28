@@ -4,6 +4,8 @@ import eyeClosed from "~/assets/svg/icons/eyeclosed.svg?raw";
 export default () => ({
   // logged In user
   user: null,
+  // imagenes por defecto según tipos
+  defaultImages: {},
   // audio en reproducción
   audioPlaying: {},
   // iconos de tipo svg
@@ -17,15 +19,16 @@ export default () => ({
     background : true,
     breadcrumb: true,
     focused: false,
+    footer: true
   },
   // ocultar menú navegación top
   navHidden: false,
   // ver solo el contenido (oculta menus y footer)
   onlyContent: false,
-  // imagen de fondo (para eventos)
-  backgroundImageUrl: null,
   // ver menú de usuario
   menuUsuario: false,
+  // imagen de fondo (para eventos)
+  backgroundImageUrl: null,
   // estamos viajando entre páginas
   travelling: true,
   // próximo path en la transición de cambio de página

@@ -87,7 +87,7 @@
 export default {
   async asyncData({ route, $strapi, $error }) {
     try {
-      const [contenido] = await $strapi.findThis(route, {
+      const contenido = await $strapi.getContent(route, {
         populate: {
           imagen: '*',
           comentarios: '*',

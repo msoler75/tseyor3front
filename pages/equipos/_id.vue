@@ -85,7 +85,7 @@ export default {
   async asyncData({ route, $strapi, $mdToHtml, $error }) {
     try {
       // let contenido = { miembros: [], coordinadores: [] }
-      const { data: [contenido] } = await $strapi.findThis(route)
+      const contenido = await $strapi.getContent(route)
       if (!contenido)
         return $error(404, 'Equipo no encontrado')
       contenido.textoHTML = $mdToHtml(contenido.pizarra/*, contenido.imagenes*/)
@@ -170,7 +170,7 @@ export default {
     async actualizarMiembros() {
       // await this.$strapi.fetchUser() // actualizamos los datos del usuario actual y el equipo con sus miembros después de la operación
       const id = this.$route.params.id
-      const { data: [equipo] } = await this.$strapi.findThis(route)
+      const equipo = await this.$strapi.getContent(route)
       console.log('listado actualizado', equipo.miembros)
       this.contenido = equipo
       this.equipo = equipo

@@ -118,7 +118,6 @@ export default {
               //height: 500,
             }
           })
-          console.warn(img)
           return `<img
           src="${this.$img(src, { quality: 70 })}"
           srcset="${img.srcset}"
@@ -148,26 +147,6 @@ export default {
         })
         this.relacionados = relacionados
       }
-    },
-
-
-    likedItem(id) {
-      if(!this.$strapi.user) return
-      if (this.contenido.likes)
-        this.contenido.likes.push({
-          usuario: this.$strapi.user
-        })
-    },
-    dislikedItem(id) {
-      if(!this.$strapi.user) return
-      if (this.contenido.likes) {
-        console.log('disliked', id, this.contenido.likes)
-        const idx = this.contenido.likes.findIndex(x => x.usuario.id === this.$strapi.user.id)
-        if (idx > -1) this.contenido.likes.splice(idx, 1)
-      }
-    },
-    saveRefreshedItem(id, likes) {
-      this.$set(this.contenido, 'likes', likes)
-    },
+    }
   }
 }

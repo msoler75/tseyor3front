@@ -31,7 +31,7 @@ export default {
   mixins: [vercontenido, likes, seo],
   async asyncData({ route, $strapi, $error }) {
     try {
-      const { data: [contenido] } = await $strapi.findThis(route)
+      const contenido = await $strapi.getContent(route)
       if (!salas.length)
         return $error(404, 'Sala no encontrada')
       return { contenido, sala: contenido }

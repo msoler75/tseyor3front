@@ -50,7 +50,7 @@
           </p>
 
 
-          <button class="mt-9 btn btn-warning text-lg mx-auto w-32" :disabled="actualizando"
+          <button class="mt-9 btn btn-warning text-lg mx-auto w-32" :disabled="eventoPasado || actualizando"
             @click="quieroAsistir = !quieroAsistir">
             <input class="pointer-events-none mr-4 scale-150" type="checkbox" readonly v-model="quieroAsistir">
             <span>Asistiré</span>
@@ -99,11 +99,12 @@ export default {
   mixins: [vercontenido, likes, seo],
   async asyncData({ route, $strapi, $mdToHtml, $error }) {
     try {
-      const { data: [contenido] } = await $strapi.findThis(route, { populate: '*' })
+      const contenido = await $strapi.getContent(route, { populate: '*' })
       if (!contenido)
         return $error(404, 'Evento no disponible')
       contenido.textoHTML = $mdToHtml(contenido.texto, contenido.imagenes)
-      let quieroAsistir = $strapi.user && !!evento.asistentes.find(x => x.id === $strapi.user.id)
+      // let quieroAsistir = $strapi.user && !!evento.asistentes.find(x => x.id === $strapi.user.id)
+      let quieroAsistir = true
       return { contenido, evento: contenido, quieroAsistir };
     }
     catch (err) {
@@ -118,6 +119,12 @@ export default {
   data() {
     return {
       actualizando: false
+    }
+  },
+  computed: {
+    eventoPasado() {
+      const now = this.$dayjs()
+      return this.$dayjs(this.evento.fechaComienzo).isBefore(now)
     }
   },
   watch: {

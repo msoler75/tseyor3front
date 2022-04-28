@@ -5,10 +5,11 @@ import httpErrorMessage from '~/assets/js/httpErrorMessage'
 
 export default ({
   /*route, $strapi,*/
-  // store,
+  store,
   $md,
   $img,
-  error
+  error,
+  $config
 }, inject) => {
 
   const myError = (obj, msg) => {
@@ -171,6 +172,13 @@ export default ({
     return r.join(' ').replace('la pm', 'La Pm')
   }
 
+  const getImageFor = store.getters.getImageFor
+  const getImageUrlFor = (coleccion) => {
+    const img = getImageFor(coleccion)
+    if(!img) {
+      return {url: $config.defaultImage}
+    }
+  }
 
   inject('error', myError)
   inject('ucFirst', ucFirst)
@@ -178,4 +186,6 @@ export default ({
   inject('slugify', slugify)
   inject('mdToHtml', mdToHtml)
   inject('normalizarTitulo', normalizarTitulo)
+  inject('imagenColeccion', getImageFor)
+  inject('imagenUrlColeccion', getImageUrlFor)
 }
