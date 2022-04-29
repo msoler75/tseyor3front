@@ -87,7 +87,7 @@ export default {
                     reader.onload = e => {
                         that.files.push(file)
                         that.images.push(e.target.result)
-                        s({ file, image: e.target.result })
+                        //({ file, image: e.target.result })
                     }
                     reader.readAsDataURL(file)
                 }

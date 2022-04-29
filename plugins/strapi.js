@@ -138,20 +138,21 @@ export default ({
           headers: {
             Authorization: `Bearer ${this.token}`,
             "Content-Type": "application/json"
-          },
-          body: JSON.stringify({
-            data
-          })
+          }
         })
         .then(res => res.json())
     }
 
 
-    async update(collection, id, data) {
+    async update(collection, id, data, params) {
+      const query = !params ? '' : typeof params === 'string' ? params : '?' + qs.stringify(params, {
+        encodeValuesOnly: true,
+      })
+      console.warn('QUERY', `/${collection}${query}/${id}${query}`, params, 'token=', this.token)
       console.warn('STRAPI.PUT', id, {
         data
       }, 'token=', this.token)
-      return fetch(`${$config.strapiUrl}/${collection}/${id}`, {
+      return fetch(`${$config.strapiUrl}/${collection}/${id}${query}`, {
           method: "PUT",
           headers: {
             Authorization: `Bearer ${this.token}`,
@@ -170,18 +171,16 @@ export default ({
 
     async create(collection, data) {
       console.log('STRAPI.CREATE', collection, data)
-      /*if (collection === 'upload')
-        return $axios.post(`/${collection}`, data instanceof FormData ? data : {
-          data
-        }, params)
-*/
+      const headers = data instanceof FormData ? {} : {
+        "Content-Type": "application/json"
+      }
       return fetch(`${$config.strapiUrl}/${collection}`, {
           method: "POST",
           headers: {
-            Authorization: `Bearer ${this.token}`,
-            "Content-Type": "application/json"
+            ...headers,
+            Authorization: `Bearer ${this.token}`
           },
-          body: JSON.stringify({
+          body: data instanceof FormData ? data : JSON.stringify({
             data
           })
         })
