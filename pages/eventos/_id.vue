@@ -13,7 +13,7 @@
       Pasado</Card>
 
     <div class="evento-wrapper bg-blue-gray dark:bg-blue-gray-900 grid w-full pb-9"
-      style="margin-top: calc(40vh - 170px)">
+      style="margin-top: calc(54vh - 170px)">
       <div class="order-1 bg-red text-center flex justify-center items-center h-20 md:col-span-2 xl:col-span-1">
         <div class="p-5 font-bold text-white text-3xl lg:text-4xl">{{
             $dayjs(evento.fechaComienzo).format('D MMM YYYY')
@@ -28,7 +28,7 @@
         </div>
       </Card>
       <div class="order-5 md:order-3 xl:order-4 flex flex-col space-y-6 justify-start items-center">
-        <Card class="p-7 m-5 mt-12 whitespace-nowrap text-gray-700 flex flex-wrap lg:flex-col">
+        <Card class="sticky top-20 p-7 m-5 mt-12 whitespace-nowrap text-gray-700 flex flex-wrap lg:flex-col">
           <p class="my-1" v-if="evento.sala">
             <icon icon="globe" class="!w-8 mr-2 text-gray" />Evento online
           </p>

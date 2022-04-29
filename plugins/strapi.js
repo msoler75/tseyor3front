@@ -141,6 +141,7 @@ export default ({
           }
         })
         .then(res => res.json())
+        .then(r=>r.meta.pagination.total)
     }
 
 

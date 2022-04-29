@@ -191,6 +191,16 @@
                 </Card>
 
                 <div class="space-x-3 sm:space-x-6 flex justify-center ">
+
+                    <NLink v-if="contenido.id && publicado && !publicando" :to="`/eventos/${contenido.id}`"
+                        class="btn btn-gray w-auto text-center" title="Ver Evento"
+                        :disabled="eliminando || guardando || publicando">
+                        <div class="flex justify-center items-center">
+                            <icon class="!w-3" icon="arrow-left" />&nbsp;
+                        </div>
+                    </NLink>
+
+
                     <button class="btn w-auto text-center whitespace-nowrap" @click.prevent="onPublicar"
                         :class="publicado ? 'btn-success' : 'btn-gray'"
                         :disabled="!contenido.id || eliminando || guardando || publicando || !!modificado">
@@ -213,16 +223,9 @@
                         </div>
                     </button>
 
-                    <NLink v-if="contenido.id && publicado && !publicando" :to="`/eventos/${contenido.id}`"
-                        class="btn btn-gray w-auto text-center" title="Ver Evento"
-                        :disabled="eliminando || guardando || publicando">
-                        <div class="flex justify-center items-center">
-                            <icon class="!w-3" icon="eye" />&nbsp;
-                        </div>
-                    </NLink>
-
-                    <div v-if="contenido.id" @click="borrarEvento" class="btn btn-error w-auto text-center"
-                        :disabled="eliminando || guardando || publicando" title="Borrar Evento">
+                    <div v-if="contenido.id && !publicado" @click="borrarEvento"
+                        class="btn btn-error w-auto text-center" :disabled="eliminando || guardando || publicando"
+                        title="Borrar Evento">
                         <div class="flex justify-center items-center">
                             <icon class="!w-3" icon="trash" />&nbsp;
                         </div>
@@ -451,12 +454,20 @@ export default {
         publicar() {
             this.contenido.publishedAt = new Date().toISOString()
             this.publicando = true
-            this.guardarEvento()
+            this.guardarEvento().then(() => {
+                if (this.thereErrors)
+                    this.contenido.publishedAt = null
+            })
         },
         despublicar() {
+            let fechaPublicacion = this.contenido.publishedAt
             this.contenido.publishedAt = null
             this.publicando = true
-            this.guardarEvento()
+            this.guardarEvento().then(() => {
+                console.warn('hayERrores?', this.thereErrors)
+                if (this.thereErrors)
+                    this.contenido.publishedAt = fechaPublicacion
+            })
         },
         async onSubmit() {
             this.clearErrors()
@@ -517,7 +528,7 @@ export default {
             console.log('strapi1?', this.$strapi)
             const data = { ...this.contenido }
             console.log('data', data)
-            data.imagen = idImage ? idImage : data.imagen ? data.imagen.id : null
+            data.imagen = idImage ? idImage : !data.imagen ? null : data.imagen.id ? data.imagen.id : data.imagen
             const o = this.ordenQueQuiero
             if (!imagenes) imagenes = []
             if (!data.imagenes) data.imagenes = []
@@ -548,7 +559,7 @@ export default {
 
                 //.catch(error => console.error('Error:', error))
 
-                this.$strapi.update('eventos', this.contenido.id, data, {
+                return this.$strapi.update('eventos', this.contenido.id, data, {
                     populate: { imagen: '*', imagenes: '*', organiza: '*', sala: '*' }
                 })
                     //  $axios.put(`/eventos/${this.contenido.id}`, {data})
@@ -585,7 +596,7 @@ export default {
                     })
             }
             else
-                this.$strapi.create('eventos', data)
+                return this.$strapi.create('eventos', data)
                     .then((response) => {
                         console.log('CREATED response', response)
                         if (response.error)
