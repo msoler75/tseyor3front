@@ -238,7 +238,7 @@
 </template>
 
 <script>
-const relaciones11 = ['sala', 'organiza']
+const relaciones11 = ['sala', 'centro']
 import vSelect from "vue-select";
 import Fuse from "fuse.js";
 import validation from "@/mixins/validation"
@@ -261,20 +261,22 @@ export default {
                 imagen: null,
                 tipo: 'encuentro',
                 sala: null,
-                organiza: null,
+                centro: null,
                 autor: null,
                 imagenes: []
             }
             if (id && id !== 'nuevo') {
                 const evento = await $strapi.getContent(route, {
-                    populate: { organiza: '*', imagenes: '*', sala: '*' },
+                    populate: { centro: '*', imagenes: '*', sala: '*' },
                     publicationState: 'preview'
                 })
                 if (!evento)
                     return $error(404, 'Evento no encontrado')
                 contenido = evento
+                console.warn('EVENTO', evento)
                 for (const campo of relaciones11)
                     contenido[campo] = contenido[campo] && contenido[campo].id ? contenido[campo].id : null
+                console.warn('EVENTO2', evento)
             }
             const { data: salas } = await $strapi.find('salas')
             const { data: centros } = await $strapi.find('centros')
@@ -560,7 +562,7 @@ export default {
                 //.catch(error => console.error('Error:', error))
 
                 return this.$strapi.update('eventos', this.contenido.id, data, {
-                    populate: { imagen: '*', imagenes: '*', organiza: '*', sala: '*' }
+                    populate: { imagen: '*', imagenes: '*', centro: '*', sala: '*' }
                 })
                     //  $axios.put(`/eventos/${this.contenido.id}`, {data})
                     .then(async (response) => {
