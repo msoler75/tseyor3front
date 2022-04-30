@@ -19,7 +19,7 @@ export default {
         threshold: {
             type: Number,
             required: false,
-            default: 70
+            default: 100
         }
     },
     watch: {

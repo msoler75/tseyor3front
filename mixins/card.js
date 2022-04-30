@@ -99,7 +99,7 @@ export default {
       );
     },
     ccollection() {
-      return this.collection || this.data.collection || this.data.colleccion;
+      return this.collection || this.data.collection || this.data.coleccion;
     },
     ccategory() {
       if (this.categoryFunction)

@@ -3,7 +3,7 @@
     <h1 class="text-center">
       <icon icon="bolt" class="text-yellow-800 mr-3" />Novedades
     </h1>
-
+    
     <p>mostrando: {{ mostrando }}</p>
     <p>novedades: {{ novedades.length }}</p>
     <p>meta: {{ meta }}</p>
@@ -11,11 +11,12 @@
     <p>novedadesListado: {{ novedadesListado.length }}</p>
     <p>hayMas: {{hayMas}}</p>
 
+    {{lista}}
+
     <Tabs ref="tabs" v-model="viendoCategoria" :items="categorias" class="mb-7 justify-center" @change="cargarMas" />
     <Grid class="grid-cols-fill-w-72 text-center">
       <template v-for="item of novedadesListado">
-        <CardDynamic :key="item.tipo + '-' + item.id" :data="item" :collection="item.tipo" :imageWidth="400"
-          :noText="true" />
+        <CardDynamic :key="item.coleccion + '.' + item.id" :data="item" :imageWidth="400" />
       </template>
     </Grid>
 
@@ -25,6 +26,9 @@
 </template>
 
 <script>
+const CATEGORIAS = ["Todo", "Noticias", "Comunicados", "Eventos", "Libros", "Blogs" /*, "Otros" */]
+const COLECCIONES =  ['noticias', 'comunicados', 'eventos', 'libros', 'entradas']
+
 const perPage = 24
 import seo from '@/mixins/seo.js'
 export default {
@@ -33,6 +37,11 @@ export default {
   async asyncData({ $strapi, $error }) {
     try {
       const { data: novedades, meta, error } = await $strapi.find('contenidos', $strapi.filterByList({
+        filters: {
+          coleccion: {
+            $in: COLECCIONES
+          }
+        },
         pagination: {
           start: 0,
           limit: perPage,
@@ -51,21 +60,21 @@ export default {
       cargando: false,
       mostrando: perPage,
       viendoCategoria: "Todo",
-      categorias: ["Todo", "Noticias", "Comunicados", "Eventos", "Libros", "Blogs" /*, "Otros" */],
+      categorias: CATEGORIAS,
+      metas: {},
       // SEO:
       title: 'Novedades',
       description: 'Noticias, Comunicados, Libros, Eventos, Artículos, Cursos... ',
-      image: 'imagen_a_definir',
-      metas: {}
+      image: 'imagen_a_definir'
     };
   },
   mounted() {
-    this.metas['todo'] = {...this.meta}
+    this.metas['todo'] = { ...this.meta }
   },
   watch: {
     viendoCategoria(newValue) {
       this.mostrando = perPage
-      this.meta = this.vc in this.metas? this.metas[this.vc]: {
+      this.meta = this.vc in this.metas ? this.metas[this.vc] : {
         pagination: {
           start: 0,
           total: 9999
@@ -83,6 +92,11 @@ export default {
       if (this.cargando) return
       this.cargando = true
       const params = this.vc === 'todo' ? {
+        filters: {
+          coleccion: {
+            $in: COLECCIONES
+          }
+        },
         pagination: {
           start: this.loaded, limit: perPage
         }
@@ -102,7 +116,7 @@ export default {
       this.$strapi.find('contenidos', this.$strapi.filterByList(params))
         .then(result => {
           const { data: novedades, meta } = result
-          this.metas[this.vc] = {...meta}
+          this.metas[this.vc] = { ...meta }
           this.meta = meta
           if (this.vc === 'todo')
             this.loaded += novedades.length
@@ -115,35 +129,32 @@ export default {
     }
   },
   computed: {
-    hayMas(){
-      return this.mostrando<this.novedadesFiltradas.length || this.novedadesFiltradas.length<this.meta.pagination.total
+    hayMas() {
+      return this.mostrando < this.novedadesFiltradas.length || this.novedadesFiltradas.length < this.meta.pagination.total
     },
-    vc(){
+    vc() {
       return this.viendoCategoria.toLowerCase().replace('blogs', 'entradas')
     },
     novedadesFiltradas() {
-      const c = this.viendoCategoria.toLowerCase().replace('blogs', 'entradas')
-      if (!c || c === "todo") return this.novedades;
-      /* if (c === "otros")
-        return this.novedades.filter(
-          x => !["noticias", "comunicados", "eventos", "libros", "entradas"].includes(x.tipo)
-        ); */
-      return this.novedades.filter(x => x.coleccion === c);
+      if (this.vc === "todo") return this.novedades
+      return this.novedades.filter(x => x.coleccion === this.vc);
     },
     novedadesListado() {
       // .sort((b,a)=>this.$dayjs(a.updated_at).unix() - this.$dayjs(b.updated_at).unix())
-      return this.novedadesFiltradas.slice(0, this.mostrando).map(x => {
-        if (x.coleccion === 'eventos')
-          x.fechaComienzo = x.extra
-        return x
+      return this.novedadesFiltradas.slice(0, this.mostrando).map(item => {
+        if (item.coleccion === 'eventos')
+          item.fechaComienzo = item.extra
+        item.id = item.idref
+        item.slug = item.slugref
+        return item
       })
+    },
+    lista() {
+      let r = []
+      if (this.vc === "todo") r = []
+      else r = this.novedades.filter(x => x.coleccion !== this.vc)
+      return r.map(x=>({id: x.id, c: x.coleccion}))
     }
   }
 }
 </script>
-
-<style scoped>
-.hooper-wrap>>>.hooper {
-  height: auto;
-}
-</style>
