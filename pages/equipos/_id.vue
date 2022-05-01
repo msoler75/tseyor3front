@@ -21,14 +21,12 @@
         </div>
       </div>
 
-      <div class="surface p-5 cols-2 overflow-auto" v-if="equipo.pizarra">
-        <div v-html="equipo.textoHTML" />
-      </div>
+      <div class="pizarra p-5 cols-2 overflow-auto !rounded-none" v-if="equipo.pizarra" v-html="equipo.textoHTML" />
 
-      <div class="surface p-5 overflow-auto" :class="miembros.length > 8 ? 'cols-2' : ''">
+      <div class="surface p-5 overflow-auto" :class="equipo.miembros.length > 8 ? 'cols-2' : ''">
         <h3>Miembros</h3>
-        <div class="flex flex-wrap" v-if="miembros.length">
-          <Avatar v-for="user of miembros" :key="user.id" :data="user" :class="avatarClass" class="m-1" />
+        <div class="flex flex-wrap" v-if="equipo.miembros.length">
+          <Avatar v-for="user of equipo.miembros" :key="user.id" :data="user" :class="avatarClass" class="m-1" />
         </div>
         <div v-else class="flex flex-col flex-grow justify-center">
           <p class="text-center">No hay miembros</p>
@@ -85,14 +83,36 @@ export default {
   async asyncData({ route, $strapi, $mdToHtml, $error }) {
     try {
       // let contenido = { miembros: [], coordinadores: [] }
-      const contenido = await $strapi.getContent(route)
+      const contenido = await $strapi.getContent(route, {
+        populate: {
+          // actividades: '*',
+          miembros: {
+            fields: ['id', 'username', 'nombreSimbolico'],
+            populate: {
+              imagen: {
+                fields: ['url', 'width', 'height']
+              }
+            }
+          },
+          coordinadores: {
+            fields: ['id', 'username', 'nombreSimbolico'],
+            populate: {
+              imagen: {
+                fields: ['url', 'width', 'height']
+              }
+            }
+          }
+        }
+      })
+      console.warn('EQUIPO', contenido)
       if (!contenido)
         return $error(404, 'Equipo no encontrado')
+      contenido.actividades = []
       contenido.textoHTML = $mdToHtml(contenido.pizarra/*, contenido.imagenes*/)
       return { contenido, equipo: contenido }
     }
     catch (e) {
-      console.warn(e)
+      console.error(e)
       $error(503)
     }
   },
@@ -109,23 +129,20 @@ export default {
     }
   },
   computed: {
+    soyMiembro() {
+      return !!this.equipo.miembros.find(x => x.id === this.$strapi.user.id)
+    },
     soyCoordinador() {
-      return !!this.equipo.coordinadores.find(x => parseInt(x.id) === this.$store.getters.$strapi.user.id)
+      return !!this.equipo.coordinadores.find(x => parseInt(x.id) === this.$strapi.user.id)
     },
     carpetaActualNombre() {
       if (this.carpetaActual) return 'Archivos'
       return this.carpetaActual.id === this.equipo.carpeta.id ? 'Archivos' : this.carpetaActual.nombre
     },
-    miembros() {
-      const m = this.equipo.coordinadores
-      for (const user of this.equipo.miembros)
-        if (!this.equipo.coordinadores.find(x => x.id === user.id))
-          m.push(user)
-      return m
-    },
     avatarClass() {
-      if (!this.miembros) return ''
-      const n = this.miembros.length
+      return 'w-16 h-16'
+      if (!this.equipo.miembros) return ''
+      const n = this.equipo.miembros.length
       return n < 8 ? 'w-16 h-16' : n < 16 ? 'w-12 h-12' : n < 64 ? 'w-8 h-8' : 'w-4 h-4'
     },
     bgImage() {
@@ -135,21 +152,25 @@ export default {
         backgroundPosition: 'center',
         backgroundSize: 'cover'
       }
-    },
-    soyMiembro() {
-      return !!this.miembros.find(x => x.id === this.$strapi.user.id)
     }
   },
   methods: {
     async entrar() {
-      try {
-        await this.$strapi.$http.$put('/equipos/' + this.equipo.id + '/join')
-        //await this.$auth.fetchUser()
-        // this.$router.app.refresh()  
-        this.actualizarMiembros()
-      } catch (e) {
-
-      }
+      return this.$strapi.put(`/equipos/${this.equipo.id}/join`)
+        .then(res => {
+          if (res.error)
+          {
+            console.error(res.error)
+            this.$alert("Hubo un error")
+          }
+          else {
+            this.$set(this.equipo, 'miembros', res.miembros)
+            this.$set(this.equipo, 'coordinadores', res.coordinadores)
+                         if(this.soyCoordinador) {
+                  this.$alert("Se te ha asignado como miembro coordinador del equipo")
+                }
+          }
+        })
     },
     async salir() {
       this.$confirm({
@@ -157,13 +178,17 @@ export default {
         yes: 'Sí',
         no: 'Cancelar',
         confirmed: async () => {
-          try {
-            await this.$strapi.$http.$put('/equipos/' + this.equipo.id + '/leave')
-            // this.$router.app.refresh()  
-            this.actualizarMiembros()
-          } catch (e) {
-
-          }
+          return this.$strapi.put(`/equipos/${this.equipo.id}/leave`)
+            .then(res => {
+              if (res.error) {
+                console.error(res.error)
+                this.$alert("Hubo un error")
+              }
+              else {
+                this.$set(this.equipo, 'miembros', res.miembros)
+                this.$set(this.equipo, 'coordinadores', res.coordinadores)
+              }
+            })
         },
       })
     },
@@ -214,3 +239,15 @@ export default {
   }
 };
 </script>
+
+<style scoped>
+@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@700&family=Dancing+Script&family=Fuzzy+Bubbles:wght@700&display=swap');
+
+.pizarra {
+  @apply text-lg border-[15px] border-brown-700;
+  font-family: 'Fuzzy Bubbles', cursive;
+  color: white;
+  background: url(/imagenes/pizarra.jpg);
+  background-size: cover;
+}
+</style>

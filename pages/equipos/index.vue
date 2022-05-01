@@ -11,13 +11,8 @@
       <Card class="p-3">
         <div class="flex items-center whitespace-nowrap">
           <div class="w-14 h-14 mr-5 flex-shrink-0">
-            <nuxt-img
-              :src="equipo.imagen ? equipo.imagen.url : '/imagenes/equipo.jpg'"
-              :width="70"
-              :height="70"
-              class="w-full h-full rounded-full"
-              fit="cover"
-            />
+            <nuxt-img :src="equipo.imagen ? equipo.imagen.url : '/imagenes/equipo.jpg'" :width="70" :height="70"
+              class="w-full h-full rounded-full" fit="cover" />
           </div>
           <div class="flex-shrink pr-4 whitespace-normal">
             <div>
@@ -31,26 +26,18 @@
             <div class="flex flex-col justify-center items-center">
               <span title="miembros">
                 <icon icon="user" class="mr-1 text-gray" />
-                {{ miembros(equipo) }}
+                {{ equipo.miembros }}
               </span>
             </div>
             <div class="flex flex-col justify-center items-center">
               <span title="actividades">
                 <icon icon="hiking" class="mr-1 text-gray" />
-                {{ equipo.actividades.length }}
+                {{ equipo.actividades }}
               </span>
             </div>
           </div>
         </div>
       </Card>
-    </div>
-
-    <div
-      v-show="hayMas && !cargando"
-      v-observe-visibility="cargarMas"
-      class="mt-3 flex justify-center"
-    >
-      <!-- <button @click="cargarMas" class="btn">Cargar Más...</button> -->
     </div>
   </div>
 </template>
@@ -62,69 +49,61 @@ export default {
   mixins: [seo],
   async asyncData({ route, $strapi, $error }) {
     try {
-      const filters = {
-        _start: 0,
-        _limit: 10
-      }
-      const equipos = await $strapi.find("equipos", filters)
-      return { equipos, filters }
+      let { data: equipos, meta, error } = await $strapi.findList(route, {
+        populate: ['imagen', 'actividades', 'miembros', 'coordinadores'],
+        pagination: {
+          limit: 100
+        }
+      })
+      if (!equipos)
+        return $error(error && error.status ? error.status : 503)
+      equipos = equipos.map(equipo => {
+        if (equipo.coordinadores) {
+          const m = [...equipo.coordinadores]
+          for (const user of equipo.miembros)
+            if (!equipo.coordinadores.find(x => x.id === user.id))
+              m.push(user)
+          equipo.miembros = m.length
+        }
+        else
+          equipo.miembros = 0
+        equipo.actividades = equipo.actividades ? equipo.actividades.length : 0
+        return equipo
+      })
+      return { equipos, meta }
     }
     catch (e) {
+      console.error(e)
       $error(503)
     }
   },
   data() {
     return {
       buscarPor: "",
-      hayMas: true,
       cargando: false,
       // SEO:
       title: 'Equipos',
       description: 'Listado de los diferentes equipos y Departamentos de Tseyor',
-      image: '/imagenes/reunion.jpg'
+      image: this.$store.getters.getImageFor('equipos')
     };
   },
   computed: {
     equiposFiltrados() {
       if (!this.buscarPor) return this.equipos;
       const fuse = new Fuse(this.equipos.map(x => ({
-        ...x, _search: (x.nombre + ' ' + x.descripcion).toLowerCase()
+        ...x, extra: (x.nombre + ' ' + x.descripcion).toLowerCase()
           .replace(/á/, 'a')
           .replace(/é/, 'e')
           .replace(/í/, 'i')
           .replace(/ó/, 'o')
           .replace(/ú/, 'u')
       })), {
-        keys: ["nombre", "descripcion", "_search"],
+        keys: ["nombre", "descripcion", "extra"],
         shouldSort: true,
         threshold: 0.3
       });
       return fuse.search(this.buscarPor).map(({ item }) => item)
-    },
-  },
-  methods: {
-    miembros(equipo) {
-      const m = equipo.coordinadores
-      for (const user of equipo.miembros)
-        if (!equipo.coordinadores.find(x => x.id === user.id))
-          m.push(user)
-      return m.length
-    },
-    async cargarMas() {
-      if (!this.hayMas) return
-      this.filters._start = this.equipos.length
-      const filtro = this.buscarPor.length >= 1 ? { ...this.filters, '_q': this.buscarPor } : this.filters
-      this.cargando = true
-
-      const equipos = await this.$strapi.find('equipos', filtro)
-
-      this.hayMas = equipos.length === this.filters._limit
-      for (const equipo of equipos) {
-        if (!this.equipos.find(x => x.id === equipo.id))
-          this.equipos.push(equipo)
-      }
-      this.cargando = false
-    },
+    }
   }
-};
+}
 </script>

@@ -434,7 +434,7 @@ export default {
                 : fuse.list;
         },
         borrarEvento() {
-            if (confirm("Esto eliminará permanentemente este evento")) {
+            if (this.$confirm("Esto eliminará permanentemente este evento")) {
                 this.eliminando = true
                 this.$strapi.delete('eventos', this.contenido.id)
                     .then(response => {
@@ -448,7 +448,7 @@ export default {
         },
         onPublicar() {
             if (this.publicado) {
-                if (confirm("¿Quieres anular la publicación? El evento dejará de estar disponible para el público"))
+                if (this.$confirm("¿Quieres anular la publicación? El evento dejará de estar disponible para el público"))
                     this.despublicar()
             } else
                 this.publicar()
@@ -569,7 +569,6 @@ export default {
                         console.log('2nd response', response)
                         if (response.error) {
                             this.setErr(response.error)
-                            this.guardando = false
                         }
                         else {
                             const { data: contenido } = response
@@ -585,9 +584,9 @@ export default {
                                 this.$set(this.contenido, field, contenido[field])
                             this.$nextTick(() => {
                                 this.modificado = 0
-                                this.guardando = false
                             })
                         }
+                        this.guardando = false
                         this.publicando = false
                     })
                     .catch(err => {

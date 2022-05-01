@@ -102,6 +102,7 @@ export default {
     // { src: '~plugins/nuxt-hammer.js', mode: 'client' },
     // { src: '~plugins/vue-touch.js', mode: 'client' },
     { src: '~plugins/confirm.js', mode: 'client' },
+    { src: '~plugins/alert.js', mode: 'client' },
   ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components

@@ -5,51 +5,33 @@
             <div>
                 <label for="titulo">Título:</label>
                 <br />
-                <input
-                    type="text"
-                    id="titulo"
-                    v-model="contenido.titulo"
-                    required
-                    :class="fieldValidate('titulo')"
-                />
+                <input type="text" id="titulo" v-model="contenido.titulo" required :class="fieldValidate('titulo')" />
                 <p class="error">{{ errors.titulo }}</p>
             </div>
             <div>
                 <label for="descripcion">Descripción corta:</label>
                 <br />
-                <textarea
-                    id="descripcion"
-                    v-model="contenido.descripcion"
-                    required
-                    :class="fieldValidate('descripcion')"
-                />
-                <p class="italic">Aquí puedes poner el lugar de la experiencia, el nombre del evento (convivencias de...), etc</p>
+                <textarea id="descripcion" v-model="contenido.descripcion" required
+                    :class="fieldValidate('descripcion')" />
+                <p class="italic">Aquí puedes poner el lugar de la experiencia, el nombre del evento (convivencias
+                    de...), etc</p>
                 <p class="error">{{ errors.descripcion }}</p>
             </div>
 
             <div class="flex justify-center">
-                <button
-                    class="btn w-full text-center"
-                    :class="modificado || guardando || creando ? 'btn-warning' : 'btn-success'"
-                    type="submit"
-                    :disabled="eliminando || guardando || !modificado"
-                >
+                <button class="btn w-full text-center"
+                    :class="modificado || guardando || creando ? 'btn-warning' : 'btn-success'" type="submit"
+                    :disabled="eliminando || guardando || !modificado">
                     <div class="flex justify-center items-center">
-                        <icon
-                            class="!w-6"
-                            :icon="guardando ? 'sync spin' : creando ? 'plus-square' : modificado ? 'sync' : 'check'"
-                        />
+                        <icon class="!w-6"
+                            :icon="guardando ? 'sync spin' : creando ? 'plus-square' : modificado ? 'sync' : 'check'" />
                         <span class="inline-block w-28">{{ verbo }}</span>
                     </div>
                 </button>
             </div>
             <div v-if="contenido.id" class="mt-7 flex flex-col justify-center space-y-6">
-                <div
-                    v-if="false"
-                    @click="borrarRecopilacion"
-                    class="btn btn-error w-full text-center"
-                    :disabled="eliminando || guardando"
-                >
+                <div v-if="false" @click="borrarRecopilacion" class="btn btn-error w-full text-center"
+                    :disabled="eliminando || guardando">
                     <div class="flex justify-center items-center">
                         <icon class="!w-6" icon="trash" />
                         <span class="inline-block w-28">Borrar Recopilación</span>
@@ -62,19 +44,16 @@
                 <section v-id="contenido.id" class="w-full">
                     <label class="w-full text-center font-bold uppercase">Enlace para compartir:</label>
                     <div class="flex border bg-gray-50 rounded w-full p-2">
-                        <span>{{enlace}}</span>
+                        <span>{{ enlace }}</span>
                         <span class="ml-auto btn btn-mini btn-warning text-xs whitespace-nowrap"
-                            @click="viendoCompartir=true">
+                            @click="viendoCompartir = true">
                             <icon class="mr-2 xs:mr-2" icon="fas fa-share-alt" />Compartir
                         </span>
                     </div>
                 </section>
 
-                <NLink
-                    :to="`/recopilaciones/${contenido.id}`"
-                    class="btn w-full text-center"
-                    :disabled="eliminando || guardando || modificado"
-                >
+                <NLink :to="`/recopilaciones/${contenido.id}`" class="btn w-full text-center"
+                    :disabled="eliminando || guardando || modificado">
                     <div class="flex justify-center items-center">
                         <icon class="!w-6" icon="eye" />
                         <span class="inline-block w-28">Ver Recopilación</span>
@@ -106,14 +85,14 @@ export default {
         }
         catch (e) {
             console.log(JSON.stringify(e))
-            $error(e.response&&e.response.status?e.response&&e.response.status:503)
+            $error(e.response && e.response.status ? e.response && e.response.status : 503)
         }
     },
     data() {
         return {
             guardando: false,
             eliminando: false,
-            modificado: false,
+            modificado: 0,
             viendoCompartir: false
         }
     },
@@ -131,13 +110,13 @@ export default {
             return !this.contenido || !this.contenido.id
         },
         enlace() {
-            if(!this.contenido) return this.$config.baseUrl + '/recopilaciones'
+            if (!this.contenido) return this.$config.baseUrl + '/recopilaciones'
             return this.$config.baseUrl + `/recopilacion/${this.contenido.id}`
         },
     },
     watch: {
         contentJSON(newValue) {
-            this.modificado = true
+            this.modificado++
         }
     },
     methods: {
@@ -148,12 +127,19 @@ export default {
             const data = { ...this.contenido }
             if (this.contenido.id) {
                 this.$strapi
-                    .update('recopilaciones', this.contenido.id, data)
-                    .then((contenido) => {
-                        this.$nextTick(() => {
-                            this.guardando = false
-                            this.modificado = false
-                        })
+                    .update('recopilaciones', this.contenido.id, data, { populate: '*' })
+                    .then((response) => {
+                        if (response.error) {
+                            this.setErr(response.error)
+                        }
+                        else {
+                            const { data: contenido } = response
+                            this.contenido = contenido
+                            this.$nextTick(() => {
+                                this.modificado = 0
+                            })
+                        }
+                        this.guardando = false
                     })
                     .catch(err => {
                         this.setErr(err)

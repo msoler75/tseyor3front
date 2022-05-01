@@ -82,7 +82,7 @@ export default ({
             data: []
           }
         })*/
-      return fetch(`${$config.strapiUrl}/${collection}${query}`, {
+      return fetch(`${this.url}/${collection}${query}`, {
           method: "GET",
           headers: {
             Authorization: `Bearer ${this.token}`,
@@ -103,7 +103,7 @@ export default ({
           }
         })*/
 
-      return fetch(`${$config.strapiUrl}/${collection}${id}`, {
+      return fetch(`${this.url}/${collection}${id}`, {
           method: "GET",
           headers: {
             Authorization: `Bearer ${this.token}`,
@@ -133,7 +133,7 @@ export default ({
           return 0
         }) */
 
-      return fetch(`${$config.strapiUrl}/${collection}${query}`, {
+      return fetch(`${this.url}/${collection}${query}`, {
           method: "GET",
           headers: {
             Authorization: `Bearer ${this.token}`,
@@ -153,7 +153,7 @@ export default ({
       console.warn('STRAPI.PUT', id, {
         data
       }, 'token=', this.token)
-      return fetch(`${$config.strapiUrl}/${collection}/${id}${query}`, {
+      return fetch(`${this.url}/${collection}/${id}${query}`, {
           method: "PUT",
           headers: {
             Authorization: `Bearer ${this.token}`,
@@ -175,7 +175,7 @@ export default ({
       const headers = data instanceof FormData ? {} : {
         "Content-Type": "application/json"
       }
-      return fetch(`${$config.strapiUrl}/${collection}`, {
+      return fetch(`${this.url}/${collection}`, {
           method: "POST",
           headers: {
             ...headers,
@@ -207,7 +207,7 @@ export default ({
           return null
         })*/
 
-      return fetch(`${$config.strapiUrl}/${collection}/${id}`, {
+      return fetch(`${this.url}/${collection}/${id}`, {
           method: "DELETE",
           headers: {
             Authorization: `Bearer ${this.token}`,
@@ -229,7 +229,7 @@ export default ({
           return false
         })
         */
-      return fetch(`${$config.strapiUrl}/auth/local`, {
+      return fetch(`${this.url}/auth/local`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json"
@@ -340,9 +340,11 @@ export default ({
 
     async getContent(route, params) {
       const collection = this.getCollectionFromRoute(route)
+      const response = await this.find(collection, this.filterByIdSlug(route.params.id, params))
+      console.warn('GETCONTENT RESPONSE', response)
       const {
         data: [content]
-      } = await this.find(collection, this.filterByIdSlug(route.params.id, params))
+      } = response
       return content
     }
 
@@ -351,6 +353,20 @@ export default ({
       return this.find(collection, this.filterByList(params))
     }
 
+    async put(route, data, params) {
+      const query = !params ? '' : typeof params === 'string' ? params : '?' + qs.stringify(params, {
+        encodeValuesOnly: true,
+      })
+      return fetch(`${this.url}${route}${query}`, {
+        method: "PUT",
+        headers: {
+          Authorization: `Bearer ${this.token}`,
+          "Content-Type": "application/json"
+        },
+        body: data
+      })
+        .then(res => res.json())
+    }
 
   }
 
