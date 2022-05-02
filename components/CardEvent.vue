@@ -7,7 +7,7 @@
       </div>
       <div class="px-6 py-4 flex flex-col">
         <div class="flex mb-2">
-          <NLink :to="'/eventos/' + data.id"
+          <NLink :to="chref"
            @click.native.prevent="clicked=true">
             <div class="font-bold text-xl mb-2 mr-4 break-all">{{ ctitle }}</div>
           </NLink>

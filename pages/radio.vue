@@ -71,7 +71,7 @@ export default {
       // SEO:
       title: 'Radio Tseyor',
       description: 'Escucha nuestra radio 24/7',
-      image: 'imagen_a_definir'
+      image: this.$imagenUrlColeccion('radio')
     };
     r.emisoraActiva = r.emisoras[0];
     return r;

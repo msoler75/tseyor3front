@@ -53,6 +53,17 @@ export default ({
       }
     }
 
+    setCookie(cname, cvalue, exdays) {
+      const d = new Date();
+      d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
+      let expires = "expires=" + d.toUTCString();
+      document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+    }
+
+    removeCookie(cname) {
+      let expires = "expires=Thu, 01 Jan 1970 00:00:01 GMT;";
+      document.cookie = cname + "=;" + expires + ";path=/";
+    }
 
     getCookie(cookieString, cname) {
       let name = cname + "=";
@@ -69,6 +80,8 @@ export default ({
       }
       return "";
     }
+
+    // clearCookie()
 
     async find(collection, params) {
       const query = !params ? '' : typeof params === 'string' ? params : '?' + qs.stringify(params, {
@@ -170,12 +183,16 @@ export default ({
     }
 
 
-    async create(collection, data) {
+    async create(collection, data, params) {
+      const query = !params ? '' : typeof params === 'string' ? params : '?' + qs.stringify(params, {
+        encodeValuesOnly: true,
+      })
+      console.warn('QUERY', `/${collection}${query}`, params, 'token=', this.token)
       console.log('STRAPI.CREATE', collection, data)
       const headers = data instanceof FormData ? {} : {
         "Content-Type": "application/json"
       }
-      return fetch(`${this.url}/${collection}`, {
+      return fetch(`${this.url}/${collection}${query}`, {
           method: "POST",
           headers: {
             ...headers,
@@ -219,7 +236,7 @@ export default ({
 
     async login(data) {
       console.log('QUERY', `/auth/local}`, data)
-      /*return $axios.post(`/auth/local`, params)
+      /*return $axios.post(`/auth/local`, data)
         .then(r => {
           console.log('LOGGED', r.data)
           this.token = r.data.jwt
@@ -234,15 +251,25 @@ export default ({
           headers: {
             "Content-Type": "application/json"
           },
-          body: JSON.stringify({
-            data
-          })
+          body: JSON.stringify(data)
         })
         .then(response => response.json())
+        .then(res=>{
+          console.log('LOGIN RES', res)
+          if(!res.error)
+          {
+            this.user = res.user
+            this.token = res.jwt
+            this.setCookie('jwt', this.token)
+          }
+          return res
+        })
     }
 
     async logout() {
       this.token = null
+      this.user = null
+      this.removeCookie('jwt')
       // if(process.client) {}
     }
 
@@ -335,6 +362,7 @@ export default ({
     getCollectionFromRoute(route) {
       console.log('GETCOLLECTION FROM', route.path)
       const parts = route.path.split('/')
+      console.log('parts', parts)
       return parts[1].replace("usuarios", "users")
     }
 
@@ -342,10 +370,8 @@ export default ({
       const collection = this.getCollectionFromRoute(route)
       const response = await this.find(collection, this.filterByIdSlug(route.params.id, params))
       console.warn('GETCONTENT RESPONSE', response)
-      const {
-        data: [content]
-      } = response
-      return content
+      let data = response.data?response.data:response
+      return Array.isArray(data)?data[0]:data
     }
 
     async findList(route, params) {
@@ -366,6 +392,24 @@ export default ({
         body: data
       })
         .then(res => res.json())
+    }
+
+    async updateBorradoresNum() {
+      let borradores = 0
+      if(this.user) 
+      borradores = await this.count('contenidos', this.filterByList({
+        filters: {
+          autorref: {
+            $eq: this.user.id
+          },
+          publishedAt: {
+            $null: true
+          },
+        },
+        publicationState: 'preview',
+        sort: ['updatedAt:desc']
+      }))
+      store.commit('SET_BORRADORES', borradores)
     }
 
   }

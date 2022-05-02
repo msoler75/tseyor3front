@@ -6,7 +6,7 @@
                 <div>
                     <icon icon="circle" class="mr-1 transform scale-50" />
                     Editando <span v-if="contenido.publishedAt" class="font-bold">versión
-                        publicada</span><span class="font-bold" v-else>versión preliminar</span>
+                        publicada</span><span class="font-bold" v-else>borrador</span>
                 </div>
             </Card>
         </div>
@@ -15,7 +15,7 @@
         <form @submit.prevent="onSubmit" class="bg-transparent">
 
             <Card class="order-1 py-5 px-2 xs:px-4 max-w-md mx-auto bg-blue-gray-50 dark:bg-blue-gray-900">
-                <h1>{{ accion }} evento</h1>
+                <h1>{{ accion }} {{ contenido.tipo || 'publicación' }}</h1>
                 <div class="space-y-9">
                     <div>
                         <label for="titulo">Título:</label>
@@ -38,44 +38,20 @@
                         <p class="error">{{ errors.descripcion }}</p>
                     </div>
                     <div>
-                        <label for="imagen">Imagen de fondo:</label>
-                        <nuxt-img v-if="cimage" :src="cimage" fit="cover" width="494px" height="250"
-                            class="max-w-full" />
-                        <div v-else class="h-[250px] bg-gray" />
-                        <input class="opacity-0 h-0 p-0 transform -translate-y-4" type="text" id="imagen" name="imagen"
-                            v-model="imagenSubir" required>
-                        <div class="relative mt-2 select-none transform -translate-y-2">
-                            <span v-show="!isInLeft"
-                                class="absolute shadow text-xs rounded-xs left-0 top-4 bg-white p-1"
-                                @click="scrollToLeft">
-                                <icon icon="chevron-left" />
-                            </span>
-                            <span class="absolute shadow text-xs rounded-xs right-0 top-4 bg-white p-1"
-                                @click="scrollToRight">
-                                <icon icon="chevron-right" />
-                            </span>
-                            <div class="flex space-x-2 overflow-x-auto scroll-smooth" ref="imagenesFondo">
-                                <nuxt-img v-for="imagen of imagenesFondo" :key="imagen.url" fit="cover" width="70"
-                                    height="70" class="cursor-pointer border border-gray" :src="imagen.url"
-                                    @click.native="onImagen(imagen)" />
-                            </div>
-                        </div>
-                        <p class="error">{{ errors.imagen }}</p>
-                    </div>
-                    <div>
-                        <label for="imagenes">Imágenes adicionales (opcional):</label>
-                        <p>
-                            <i>Estas imágenes pueden tener texto</i>
-                        </p>
+                        <label for="imagenes">Archivos adjuntos:</label>
                         <client-only>
-                            <draggable tag="ul" :list="imagenesAdicionales" group="main"
+                            <draggable tag="ul" :list="subirAdjuntos" group="main"
                                 class="relative flex flex-wrap justify-center items-start px-7 select-none"
                                 :animation="200" @change="dragged">
-                                <div v-for="item of imagenesAdicionales" :key="item.url"
+                                <div v-for="item of subirAdjuntos" :key="item.url"
                                     class="group relative m-2 cursor-grab">
-                                    <img :src="item.url" style="max-width: 100%; max-height: 30vh" />
+                                    <img v-if="item.url.match(/\.(png|jpe?g|gif|bmp|svg|webp)$/i)" :src="item.url"
+                                        style="max-width: 100%; max-height: 30vh" />
+                                    <div v-else>
+                                        {{ item.url.substr(item.url.lastIndexOf('/') + 1) }}
+                                    </div>
                                     <div class="btn btn-error absolute right-2 top-2 text-xl p-0 w-7 h-7 flex justify-center items-center rounded-full transition duration-200 opacity-0 group-hover:opacity-100"
-                                        @click="eliminarDeImagenes(item.url)" title="Eliminar imagen">&times;</div>
+                                        @click="eliminarDeAdjuntos(item.url)" title="Eliminar imagen">&times;</div>
                                 </div>
                             </draggable>
                         </client-only>
@@ -90,13 +66,16 @@
                         <p class="error">{{ errors.texto }}</p>
                     </div>
                     <div>
-                        <label for="tipo">Tipo de Evento:</label>
+                        <label for="tipo">Tipo de Publicación:</label>
                         <br />
                         <select id="tipo" v-model="contenido.tipo" :class="fieldValidate('tipo')" required>
-                            <option value="Encuentro">Encuentro</option>
-                            <option value="Curso">Curso</option>
-                            <option value="Presentación">Presentación</option>
-                            <option value="Otros">Otros</option>
+                            <option value="Personal">Personal</option>
+                            <option value="Notificación">Notificación</option>
+                            <option value="Orden del día">Orden del día</option>
+                            <option value="Presentación">Orden del día</option>
+                            <option value="Acta o Resumen">Acta o Resumen</option>
+                            <option value="Anexo">Anexo</option>
+                            <option value="Acuerdo">Acuerdo</option>
                         </select>
                         <p class="error">{{ errors.tipo }}</p>
                     </div>
@@ -192,15 +171,6 @@
 
                 <div class="space-x-3 sm:space-x-6 flex justify-center ">
 
-                    <NLink v-if="contenido.id && publicado && !publicando" :to="`/eventos/${contenido.id}`"
-                        class="btn btn-gray w-auto text-center" title="Ver Evento"
-                        :disabled="eliminando || guardando || publicando">
-                        <div class="flex justify-center items-center">
-                            <icon class="!w-3" icon="arrow-left" />&nbsp;
-                        </div>
-                    </NLink>
-
-
                     <button class="btn w-auto text-center whitespace-nowrap" @click.prevent="onPublicar"
                         :class="publicado ? 'btn-success' : 'btn-gray'"
                         :disabled="!contenido.id || eliminando || guardando || publicando || !!modificado">
@@ -223,13 +193,22 @@
                         </div>
                     </button>
 
-                    <div v-if="contenido.id && !publicado" @click="borrarEvento"
+                    <div v-if="publicando || contenido.id && !publicado" @click="borrarContenido"
                         class="btn btn-error w-auto text-center" :disabled="eliminando || guardando || publicando"
                         title="Borrar Evento">
                         <div class="flex justify-center items-center">
                             <icon class="!w-3" icon="trash" />&nbsp;
                         </div>
                     </div>
+
+                    <NLink v-if="contenido.id && publicado && !publicando" :to="`/eventos/${contenido.id}`"
+                        class="btn btn-gray w-auto text-center" title="Ver Evento"
+                        :disabled="eliminando || guardando || publicando">
+                        <div class="flex justify-center items-center">
+                            <icon class="!w-3" icon="eye" />&nbsp;
+                        </div>
+                    </NLink>
+
                 </div>
 
             </div>
@@ -238,7 +217,7 @@
 </template>
 
 <script>
-const relaciones11 = ['sala', 'centro']
+const relaciones11 = ['equipo']
 import vSelect from "vue-select";
 import Fuse from "fuse.js";
 import validation from "@/mixins/validation"
@@ -256,32 +235,25 @@ export default {
                 texto: '',
                 descripcion: '',
                 zonaHoraria: 'España',
-                fechaComienzo: $dayjs().format('YYYY-MM-DDTHH:mm:ssZ[Z]'),
-                fechaFinal: null,
                 imagen: null,
-                tipo: 'encuentro',
-                sala: null,
-                centro: null,
-                autor: null,
-                imagenes: []
+                tipo: null,
+                adjuntos: [],
+                equipo: null
             }
-            if (id && id !== 'nuevo') {
-                const evento = await $strapi.getContent(route, {
+            if (id && id !== 'nueva') {
+                const publicacion = await $strapi.getContent(route, {
                     populate: { centro: '*', imagenes: '*', sala: '*' },
                     publicationState: 'preview'
                 })
-                if (!evento)
-                    return $error(404, 'Evento no encontrado')
-                contenido = evento
-                console.warn('EVENTO', evento)
+                if (!publicacion)
+                    return $error(404, 'Publicación no encontrada')
+                contenido = publicacion
                 for (const campo of relaciones11)
                     contenido[campo] = contenido[campo] && contenido[campo].id ? contenido[campo].id : null
-                console.warn('EVENTO2', evento)
             }
-            const { data: salas } = await $strapi.find('salas')
-            const { data: centros } = await $strapi.find('centros')
+            const { data: equipos } = await $strapi.find('equipos')
             console.log('ASYNC LOADED EVENT', contenido)
-            return { contenido, salas, centros }
+            return { contenido, equipos }
         }
         catch (e) {
             console.error(e)
@@ -290,18 +262,18 @@ export default {
     },
     data() {
         return {
-            isInLeft: true,
             scrollingTo: 0,
             descriptionLength: 0,
             maxLengthDescription: 120,
             imagenSubir: null,
             imagenesSubir: [],
             dragData: {},
-            imagenesAdicionales: [],
+            subirAdjuntos: [],
             ordenQueQuiero: [],
             tieneSala: false,
             tieneFinal: false,
             tieneCentro: false,
+            // estados
             guardando: false,
             publicando: false,
             eliminando: false,
@@ -341,11 +313,11 @@ export default {
             this.updateVariables()
         },
         modificado(newValue) {
-            this.recalcularImagenesAdicionales()
+            this.recalcularsubirAdjuntos()
         }
     },
     mounted() {
-        this.recalcularImagenesAdicionales()
+        this.recalcularsubirAdjuntos()
         this.$refs.imagenesFondo.addEventListener('scroll', this.handleScroll)
         this.$refs.descripcion.addEventListener('change', this.handleDescription)
         this.$refs.descripcion.addEventListener('keydown', this.handleDescription)
@@ -355,6 +327,7 @@ export default {
         this.$refs.imagenesFondo.removeEventListener('scroll', this.handleScroll)
         this.$refs.descripcion.removeEventListener('change', this.handleDescription)
         this.$refs.descripcion.removeEventListener('keydown', this.handleDescription)
+        this.$strapi.updateBorradoresNum()
     },
     methods: {
         updateVariables() {
@@ -365,35 +338,23 @@ export default {
             this.tieneSala = !!this.contenido.sala
             this.tieneCentro = !!this.contenido.centro
         },
-        handleScroll() {
-            this.isInLeft = this.$refs.imagenesFondo && this.$refs.imagenesFondo.scrollLeft == 0
-        },
-        handleDescription() {
-            this.descriptionLength = this.$refs.descripcion.value.length
-        },
-        scrollToLeft() {
-            this.$refs.imagenesFondo.scrollLeft -= 80
-        },
-        scrollToRight() {
-            this.$refs.imagenesFondo.scrollLeft += 80
-        },
         dragged() {
-            this.ordenQueQuiero = [...this.imagenesAdicionales]
+            this.ordenQueQuiero = [...this.subirAdjuntos]
             this.modificado++
         },
-        recalcularImagenesAdicionales() {
+        recalcularsubirAdjuntos() {
             const o = this.ordenQueQuiero
-            const list = (this.contenido && this.contenido.imagenes ? this.contenido.imagenes : []).concat(this.imagenesSubir.map(x => ({ url: x.src })))
-            this.$set(this, 'imagenesAdicionales', list.sort(function (a, b) {
+            const list = (this.contenido && this.contenido.adjuntos ? this.contenido.adjuntos : []).concat(this.imagenesSubir.map(x => ({ url: x.src })))
+            this.$set(this, 'subirAdjuntos', list.sort(function (a, b) {
                 const ia = o.findIndex(x => x.url === a.url)
                 const ib = o.findIndex(x => x.url === b.url)
                 return (ia === -1 ? 998 : ia) - (ib === -1 ? 997 : ib)
             }))
         },
-        eliminarDeImagenes(url) {
-            let idx = this.contenido.imagenes.findIndex(x => x.url === url)
+        eliminarDeAdjuntos(url) {
+            let idx = this.contenido.adjuntos.findIndex(x => x.url === url)
             if (idx > -1)
-                this.contenido.imagenes.splice(idx, 1)
+                this.contenido.adjuntos.splice(idx, 1)
             idx = this.imagenesSubir.findIndex(x => x.src === url)
             if (idx > -1)
                 this.imagenesSubir.splice(idx, 1)
@@ -406,10 +367,6 @@ export default {
             }
             this.modificado++
         },*/
-        onImagen(imagen) {
-            this.imagenSubir = imagen;
-            this.modificado++
-        },
         onImagenes(payload) {
             for (const i in payload.images)
                 this.imagenesSubir.push({ src: payload.images[i], file: payload.files[i] })
@@ -433,30 +390,41 @@ export default {
                 ? fuse.search(search).map(({ item }) => item)
                 : fuse.list;
         },
-        borrarEvento() {
-            if (this.$confirm("Esto eliminará permanentemente este evento")) {
-                this.eliminando = true
-                this.$strapi.delete('eventos', this.contenido.id)
-                    .then(response => {
-                        this.$router.push('/eventos')
-                    })
-                    .catch(err => {
-                        console.error(err)
-                        this.eliminando = false
-                    })
-            }
+        borrarContenido() {
+            this.$confirm({
+                message: 'Esto eliminará permanentemente este evento',
+                yes: 'Borrar Evento',
+                no: 'Cancelar',
+                confirmed: async () => {
+                    this.eliminando = true
+                    this.$strapi.delete('eventos', this.contenido.id)
+                        .then(response => {
+                            this.$router.push('/eventos')
+                        })
+                        .catch(err => {
+                            console.error(err)
+                            this.eliminando = false
+                        })
+                }
+            })
         },
         onPublicar() {
             if (this.publicado) {
-                if (this.$confirm("¿Quieres anular la publicación? El evento dejará de estar disponible para el público"))
-                    this.despublicar()
+                this.$confirm({
+                    message: '¿Quieres anular la publicación? El evento dejará de estar disponible para el público',
+                    yes: 'Despublicar',
+                    no: 'Cancelar',
+                    confirmed: () => {
+                        this.despublicar()
+                    }
+                })
             } else
                 this.publicar()
         },
         publicar() {
             this.contenido.publishedAt = new Date().toISOString()
             this.publicando = true
-            this.guardarEvento().then(() => {
+            this.guardarContenido().then(() => {
                 if (this.thereErrors)
                     this.contenido.publishedAt = null
             })
@@ -465,7 +433,7 @@ export default {
             let fechaPublicacion = this.contenido.publishedAt
             this.contenido.publishedAt = null
             this.publicando = true
-            this.guardarEvento().then(() => {
+            this.guardarContenido().then(() => {
                 console.warn('hayERrores?', this.thereErrors)
                 if (this.thereErrors)
                     this.contenido.publishedAt = fechaPublicacion
@@ -523,10 +491,10 @@ export default {
             }
 
             if (noErrors)
-                this.guardarEvento(imagenId, imagenes)
+                this.guardarContenido(imagenId, imagenes)
         },
-        async guardarEvento(idImage, imagenes) {
-            console.log('guardarEvento', idImage, imagenes)
+        async guardarContenido(idImage, imagenes) {
+            console.log('guardarContenido', idImage, imagenes)
             console.log('strapi1?', this.$strapi)
             const data = { ...this.contenido }
             console.log('data', data)
@@ -585,6 +553,7 @@ export default {
                             this.$nextTick(() => {
                                 this.modificado = 0
                             })
+                            this.$strapi.updateBorradoresNum()
                         }
                         this.guardando = false
                         this.publicando = false
@@ -611,7 +580,8 @@ export default {
                                 url: `/eventos/${contenido.id}`
                             })*/
                             // recargamos la página para que se muestra en modo edición con la ruta correcta
-                            this.$router.push(`/eventos/editar/${contenido.id}`)
+                            this.$router.push(`/eventos/${contenido.id}/editar`)
+                            this.$strapi.updateBorradoresNum()
                         }
                         this.guardando = false
                     })

@@ -67,7 +67,7 @@ export default {
       // SEO:
       title: 'Audios',
       description: 'Talleres, meditaciones, reflexiones, música...',
-      image: 'imagen_a_definir'
+      image: this.$imagenUrlColeccion('audios')
     };
   },
   computed: {

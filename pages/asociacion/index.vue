@@ -57,7 +57,7 @@ export default {
       // SEO:
       title: 'Tseyor Centro de Estudios',
       description: 'Toda la información sobre la Asociación Tseyor Centro de Estudios Socioculturales',
-      image: 'imagen_a_definir'
+      image: this.$imagenUrlColeccion('generica')
     }
   }
 };

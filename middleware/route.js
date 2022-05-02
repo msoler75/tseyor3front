@@ -8,6 +8,7 @@ export default function ({ res, route, store }) {
     store.commit('setBreadcrumb', true)
     store.commit('setFocused', false)
     */
+   // console.warn('ROUTE', route)
    store.commit('setMenuUsuario', false)
     store.commit('setNextPathBreadcrumb', route.path)
     store.commit('travelling', true)

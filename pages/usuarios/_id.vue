@@ -1,7 +1,17 @@
 <template>
-  <section class="flex justify-center">
-    {{ usuario }}
-    <Card class="w-full max-w-lg p-2 sm:py-5 sm:px-7 text-center">
+  <section class="w-full max-w-lg flex flex-col items-center space-y-4 px-1">
+
+    <Card center v-if="soyYo && borradoresNum" class="w-full p-8 space-y-6">
+
+      <span class="text-lg">Tienes <span class="bg-error text-white rounded-full px-2 mx-1">{{ borradoresNum
+      }}</span> borrador{{ borradoresNum > 1 ? 'es' : '' }} pendiente{{ borradoresNum > 1 ? 's' : '' }}</span>
+      <div class="flex justify-center">
+        <NLink class="btn btn-error w-auto" to="/borradores">Ver Borradores</NLink>
+      </div>
+
+    </Card>
+
+    <Card class="w-full sm:py-5 sm:px-7 text-center">
       <h1 class="!mt-5">{{ usuario.nombreSimbolico || usuario.username }}</h1>
 
       <div class="my-4 mx-auto w-36 h-36 overflow-hidden rounded-full shadow">
@@ -42,6 +52,7 @@
 
       <section>
         <h2>Equipos</h2>
+        {{ usuario.equipos }}
         <div class="px-6 pt-4 pb-2 mt-auto">
           <NLink v-for="equipo of usuario.equipos" :key="equipo.id" :to="'/equipos/' + equipo.id"
             class="inline-block bg-gray-200 dark:bg-gray-dark-700 text-gray-700 dark:text-gray-400 rounded-full px-3 py-1 text-sm mr-2 mb-2">
@@ -88,13 +99,11 @@ export default {
   async asyncData({ route, $strapi, $error }) {
     try {
       const contenido = await $strapi.getContent(route, {
-        populate: {
-          imagen: '*',
-          comentarios: '*',
-        }
+        populate: '*' // ['role', 'comentarios', 'grupos', 'contacto', 'imagen', 'equipos', 'coordina']
       })
       if (!contenido)
         return $error(404, 'Usuario no encontrado')
+
       return { contenido, usuario: contenido, historial: [] }
     } catch (e) {
       console.error(e)
@@ -124,6 +133,9 @@ export default {
     }
   },*/
   computed: {
+    borradoresNum() {
+      return this.$store.getters.borradoresNum
+    },
     soyYo() {
       if (!this.$strapi.user) return false
       return this.$strapi.user.id === this.usuario.id

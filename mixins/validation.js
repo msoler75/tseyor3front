@@ -33,6 +33,7 @@ export default {
         this.errors[e] = ''
     },
     translate(msg) {
+      if(!msg||typeof msg!=='string') return msg
       return msg
         .replace('Request failed with status code 403', 'Acceso denegado')
         .replace('Request failed with status code 400', 'Error en los datos')
@@ -42,6 +43,7 @@ export default {
         .replace('must be at least', 'debe ser de al menos')
         .replace('characters', 'caracteres')
         .replace('Policy Failed', 'Permiso denegado')
+        .replace('Invalid identifier or password', 'Identificador o contraseña no válidos')
     },
     fieldValidate(field) {
       return this.errors[field] ? 'border-4 border-red' : ''

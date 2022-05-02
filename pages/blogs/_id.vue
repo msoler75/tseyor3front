@@ -97,7 +97,7 @@ export default {
       // SEO:
       title: 'Blogs',
       description: 'Blogs de la comunidad Tseyor',
-      image: 'imagen_a_definir'
+      image: this.$imagenUrlColeccion('noticias')
     }
   },
   computed: {

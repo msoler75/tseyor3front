@@ -45,9 +45,12 @@ export default {
   mixins: [seo],
   async asyncData({ route, $strapi, $error }) {
     try {
-      const normativas = await $strapi.find('normativas')
-      return { normativas }
+      const {data:normativas, meta, error} = await $strapi.findList(route)
+      if (!normativas)
+        return $error(error && error.status ? error.status : 503)
+      return { normativas, meta }
     } catch (e) {
+      console.error(e)
       $error(503)
     }
   },

@@ -100,7 +100,7 @@ export default {
         const pathShowing = this.$store.getters.getPathBreadcrumb || this.$route.fullPath
         // console.log('typeof', typeof pathShowing, pathShowing)
         if (typeof pathShowing === 'object') return pathShowing
-        const path = pathShowing.replace(/\/\d+$/, '')
+        const path = pathShowing.replace(/\/\d+(\/editar)?$/, '')
         let r = this.crumbsRecursive(path)
         if (r.length)
           return r

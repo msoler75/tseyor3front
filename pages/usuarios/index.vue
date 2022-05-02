@@ -28,10 +28,20 @@
 import seo from '@/mixins/seo.js'
 export default {
   mixins: [seo],
-  async asyncData({ route, $strapi, $error }) {
+  async asyncData({ $strapi, $error }) {
     try {
-      const { data: usuarios, meta } = await $strapi.find('users')
-      return { usuarios, meta }
+      const usuarios = await $strapi.find('users', {
+        fields: ['id', 'username', 'nombreSimbolico'],
+        populate: {
+          imagen: {
+            fields: ['url', 'width', 'height']
+          }
+        }
+      })
+      console.log('USUARIOS', usuarios)
+      if(!usuarios)
+        return $error(404)
+      return { usuarios }
     } catch (e) {
       console.error(e)
       $error(503)
@@ -45,7 +55,7 @@ export default {
       // SEO:
       title: 'Usuarios',
       description: 'Usuarios de Tseyor',
-      image: 'imagen_a_definir'
+      image: this.$imagenUrlColeccion('usuarios')
     }
   },
   computed: {
@@ -62,7 +72,7 @@ export default {
     },
     usuariosListados() {
       return this.usuarios
-        .map(x => { if (!x.timestamp) x.timestamp = this.$dayjs(x.updated_at).unix(); return x })
+        .map(x => { if (!x.timestamp) x.timestamp = this.$dayjs(x.updatedAt).unix(); return x })
         .sort((a, b) => {
           return b.timestamp - a.timestamp
         })

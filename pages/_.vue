@@ -10,17 +10,23 @@ export default {
   middleware: 'redirect',
   async asyncData({ route, $strapi, $error }) {
     try {
-      if(route.fullPath === '/archivos')
+      if (route.fullPath === '/archivos')
         return router.push('/archivos/')
       const parts = route.fullPath.split("/")
-      const slug = parts.length > 1 ? parts.pop() : parts[0]
       const ruta = parts.length > 1 ? "/" + parts.join("") : "/"
-      const paginas = await $strapi.find('paginas', { ruta, slug })
-      if (!paginas.length)
-        $error(404)
-      else
-        return { pagina: paginas[0], ruta, slug }
+      const { data: [pagina], error } = await $strapi.find('paginas', {
+        populate: '*',
+        filters: {
+          ruta: {
+            $eq: ruta
+          }
+        }
+      })
+      if (!pagina)
+        return $error(error && error.status ? error.status : 503)
+      return { pagina, ruta }
     } catch (e) {
+      console.error(e)
       $error(503)
     }
   }

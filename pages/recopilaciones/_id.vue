@@ -3,11 +3,9 @@
   <!-- No tiene imagen de fondo -->
   <div class="flex flex-col items-center" focused contained="no">
 
-    <NLink
-      v-if="$strapi.user && contenido && $strapi.user.id === contenido.autor.id"
+    <NLink v-if="$strapi.user && contenido && $strapi.user.id === contenido.autor.id"
       class="btn absolute top-24 right-4 w-12 h-12 flex justify-center items-center rounded-full sm:w-auto sm:h-auto sm:rounded-inherit"
-      :to="`/recopilaciones/editar/${contenido.id}`"
-    >
+      :to="`/recopilaciones/editar/${contenido.id}`">
       <icon icon="edit" />
       <span class="ml-2 hidden sm:inline">Editar</span>
     </NLink>
@@ -24,12 +22,15 @@
       </div>
     </section>
 
-    <Card v-if="!escribio" class="my-12 py-5 px-2 xs:px-4 w-full max-w-md mx-auto bg-blue-gray-50 dark:bg-blue-gray-900">
+    <Card v-if="!escribio"
+      class="my-12 py-5 px-2 xs:px-4 w-full max-w-md mx-auto bg-blue-gray-50 dark:bg-blue-gray-900">
 
       <h3 class="text-center">Registro de la experiencia</h3>
 
       <form @submit.prevent="submit" class="regular-form bg-transparent space-y-9" autocomplete="on">
-        <div v-if="!$strapi.user" class="text-center">¿Ya tienes cuenta? <NLink :to="`/ingresar/?desde=${$route.path}}`">Inicia sesión</NLink></div>
+        <div v-if="!$strapi.user" class="text-center">¿Ya tienes cuenta? <NLink
+            :to="`/ingresar/?desde=${$route.path}}`">Inicia sesión</NLink>
+        </div>
         <div>
           <label v-if="!$strapi.user" for="nombre">Tu nombre:</label>
           <br v-if="!$strapi.user" />
@@ -39,7 +40,7 @@
         <div v-if="!$strapi.user">
           <label for="nombre">Tu correo electrónico:</label>
           <br />
-          <input type="email" id="nombre" v-model="correo" required :disabled="$strapi.user" autocomplete="email"/>
+          <input type="email" id="nombre" v-model="correo" required :disabled="$strapi.user" autocomplete="email" />
           <p class="error">{{ errors.correo }}</p>
         </div>
         <div>
@@ -55,61 +56,55 @@
             <span class="inline-block w-28">{{ enviando ? 'Enviando' : 'Enviar' }}</span>
           </button>
         </div>
-      </form>      
+      </form>
     </Card>
 
-    <div v-if="experiencias.length" class="flex w-full max-w-md mx-auto justify-center items-center space-x-4 bg-blue-gray-100 dark:bg-gray-800 shadow p-5">
+    <div v-if="experiencias.length"
+      class="flex w-full max-w-md mx-auto justify-center items-center space-x-4 bg-blue-gray-100 dark:bg-gray-800 shadow p-5">
 
-      <div
-        v-if="experiencias.length"
-        class="btn btn-gray"
-        v-scroll-to="`#comentario-${experiencias[0].id}`"
-      >
-      <icon icon="eye" class="mr-2"/> 
-      Ver mi experiencia</div>      
-    
-    </div>
-
-    <template v-if="escribio||esAutor">
-
-    <section class="">
-
-      <!-- share modal -->
-      <Comparte v-model="viendoCompartir" />
-
-     
-      <SocialButtons id="social" :uid="uid" :data="contenido" @like="like" @dislike="dislike" @share="viendoCompartir = true"
-      class="mx-auto max-w-xl my-7 lg:my-16" :likeButton="false"/>
-
-  </section>
-
-  <section class="w-full border-t border-gray bg-gray-100 dark:bg-gray-900">
-
-      <!-- comentarios -->
-      <div id="comentarios" class="container mx-auto my-9" v-observe-visibility="(isVisible)=>{mostrarComentarios=mostrarComentarios||isVisible}">
-        <h3 v-if="contenido.comentarios" class="text-center">
-          {{
-            contenido.comentarios +
-              " Experiencia" +
-              (contenido.comentarios !== 1 ? "s" : "")
-          }}
-        </h3>
-        <h3 v-else class="text-center">Escribe tu experiencia</h3>
-        <LazyComments v-if="mostrarComentarios" 
-          placeholder="Escribe tu experiencia..."
-          buttonLabel="Enviar"
-          :uid="uid"
-          :content-title="ctitle"
-          :reload="recargar"
-          @count="$set(contenido, 'comentarios', $event)"
-          class="px-1 xs:px-2"
-          @commented="recargarExperiencias();escribio=true"
-        />
+      <div v-if="experiencias.length" class="btn btn-gray" v-scroll-to="`#comentario-${experiencias[0].id}`">
+        <icon icon="eye" class="mr-2" />
+        Ver mi experiencia
       </div>
 
-  <section v-if="contenido.comentarios" class="my-9 max-w-[16rem] mx-auto text-center">
-      <div class="btn btn-warning w-auto" @click="exportar"><icon icon="download" class="mr-2"/> Exportar experiencias</div>
-  </section>
+    </div>
+
+    <template v-if="escribio || esAutor">
+
+      <section class="">
+
+        <!-- share modal -->
+        <Comparte v-model="viendoCompartir" />
+
+
+        <SocialButtons id="social" :uid="uid" :data="contenido" @like="like" @dislike="dislike"
+          @share="viendoCompartir = true" class="mx-auto max-w-xl my-7 lg:my-16" :likeButton="false" />
+
+      </section>
+
+      <section class="w-full border-t border-gray bg-gray-100 dark:bg-gray-900">
+
+        <!-- comentarios -->
+        <div id="comentarios" class="container mx-auto my-9"
+          v-observe-visibility="(isVisible) => { mostrarComentarios = mostrarComentarios || isVisible }">
+          <h3 v-if="contenido.comentarios" class="text-center">
+            {{
+                contenido.comentarios +
+                " Experiencia" +
+                (contenido.comentarios !== 1 ? "s" : "")
+            }}
+          </h3>
+          <h3 v-else class="text-center">Escribe tu experiencia</h3>
+          <LazyComments v-if="mostrarComentarios" placeholder="Escribe tu experiencia..." buttonLabel="Enviar"
+            :uid="uid" :content-title="ctitle" :reload="recargar" @count="$set(contenido, 'comentarios', $event)"
+            class="px-1 xs:px-2" @commented="recargarExperiencias(); escribio = true" />
+        </div>
+
+        <section v-if="contenido.comentarios" class="my-9 max-w-[16rem] mx-auto text-center">
+          <div class="btn btn-warning w-auto" @click="exportar">
+            <icon icon="download" class="mr-2" /> Exportar experiencias
+          </div>
+        </section>
 
       </section>
 
@@ -128,8 +123,9 @@ export default {
   mixins: [vercontenido, likes, seo, validation],
   async asyncData({ route, $strapi, store, $error }) {
     try {
-      const id = route.params.id;
-      const contenido = await $strapi.findOne("recopilaciones", id)
+      const contenido = await $strapi.getContent(route, {
+        publicationState: 'preview'
+      })
       if (!contenido)
         return $error(404, 'Recopilación no encontrada')
       let escribio = false
@@ -160,7 +156,7 @@ export default {
   },
   computed: {
     dias() {
-      return this.$dayjs().diff(this.contenido.created_at, 'day') 
+      return this.$dayjs().diff(this.contenido.created_at, 'day')
     },
     reciente() {
       return this.contenido ? this.dias < 1 : false
@@ -176,12 +172,12 @@ export default {
   },
   methods: {
     async recargarExperiencias() {
-      this.$set(this, 'experiencias', 
-            await this.$strapi.find('comentarios', 
-            { 
-              uid: `/recopilaciones/${this.contenido.id}`, 
-              'autor.id': this.$strapi.user.id 
-            }))
+      this.$set(this, 'experiencias',
+        await this.$strapi.find('comentarios',
+          {
+            uid: `/recopilaciones/${this.contenido.id}`,
+            'autor.id': this.$strapi.user.id
+          }))
     },
     async submit() {
       this.enviando = true
@@ -191,21 +187,21 @@ export default {
         correo: this.correo ? this.correo : null,
         texto: this.experiencia
       })
-         .then(async comentario => {
-          if(this.$strapi.user)
+        .then(async comentario => {
+          if (this.$strapi.user)
             this.recargarExperiencias()
 
-            this.recargar++
+          this.recargar++
           // registro de actividad
           this.$strapi.create('historials', {
             accion: 'experiencia_compartida',
             titulo: this.ctitle,
-            url: this.uid + '#comentario-'+comentario.id
+            url: this.uid + '#comentario-' + comentario.id
           })
           this.escribio = true
           this.enviando = false
-        }) 
-        .catch(err=>{
+        })
+        .catch(err => {
           this.enviando = false
           this.setErr(err)
         })
@@ -221,13 +217,13 @@ export default {
     },
     async exportar() {
       let html = ''
-      const comentarios = await this.$strapi.find('comentarios', 
-            { 
-              _sort: 'updated_at:ASC',
-              uid: `/recopilaciones/${this.contenido.id}`
-            })
-      for(const comentario of comentarios) {
-        const autor = comentario.autor&&comentario.autor.id?comentario.autor.nombreSimbolico||comentario.autor.username:comentario.nombre
+      const comentarios = await this.$strapi.find('comentarios',
+        {
+          _sort: 'updated_at:ASC',
+          uid: `/recopilaciones/${this.contenido.id}`
+        })
+      for (const comentario of comentarios) {
+        const autor = comentario.autor && comentario.autor.id ? comentario.autor.nombreSimbolico || comentario.autor.username : comentario.nombre
         html += '<div>' + autor + ': ' + this.$mdToHtml(comentario.texto) + '</div><br/><br/>\n\n'
       }
 

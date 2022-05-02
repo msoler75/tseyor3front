@@ -16,7 +16,7 @@
     <Tabs ref="tabs" v-model="viendoCategoria" :items="categorias" class="mb-7 justify-center" @change="cargarMas" />
     <Grid class="grid-cols-fill-w-72 text-center">
       <template v-for="item of novedadesListado">
-        <CardDynamic :key="item.coleccion + '.' + item.id" :data="item" :imageWidth="400" />
+        <CardDynamic :key="item.coleccion + item.idref" :data="item" :imageWidth="400" />
       </template>
     </Grid>
 
@@ -65,7 +65,7 @@ export default {
       // SEO:
       title: 'Novedades',
       description: 'Noticias, Comunicados, Libros, Eventos, Artículos, Cursos... ',
-      image: 'imagen_a_definir'
+      image: this.$imagenUrlColeccion('comunicados')
     };
   },
   mounted() {
@@ -144,8 +144,9 @@ export default {
       return this.novedadesFiltradas.slice(0, this.mostrando).map(item => {
         if (item.coleccion === 'eventos')
           item.fechaComienzo = item.extra
-        item.id = item.idref
-        item.slug = item.slugref
+        //item.id = item.idref
+        //item.slug = item.slugref
+        item.href=`/${item.coleccion}/${item.slugref||item.idref}`
         return item
       })
     },

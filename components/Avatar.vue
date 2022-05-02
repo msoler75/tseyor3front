@@ -1,14 +1,21 @@
 <template>
+  <div class="relative">
+    <span v-if="badge" class="absolute bg-error text-white rounded-full -right-1 -top-1 text-xs" style="font-size: .5rem; padding: 0 .35rem">{{ badge }}</span>
     <NLink v-if="cto" :to="cto" class="block flex-shrink-0 rounded-full overflow-hidden dark:ring-1 dark:ring-gray-100">
-        <nuxt-img v-if="cimage" :src="cimage" class="shadow w-full h-full" :alt="cname" :title="cname"/>
-        <div v-else class="h-full flex justify-center items-center shadow uppercase" :style="'background: ' + ccolor">
-            {{initials}}
-        </div>
+      <nuxt-img v-if="cimage" :src="cimage" class="shadow w-full h-full" :alt="cname" :title="cname" />
+      <div v-else class="h-full flex justify-center items-center shadow uppercase" :style="'background: ' + ccolor">
+        {{ initials }}
+      </div>
     </NLink>
-    <nuxt-img v-else-if="cimage" :src="cimage" class="block flex-shrink-0 rounded-full shadow w-full h-full dark:ring-1 dark:ring-gray-100" :alt="cname" :title="cname"/>
-    <div v-else class="flex-shrink-0 rounded-full overflow-hidden flex justify-center items-center shadow uppercase dark:ring-1 dark:ring-gray-100" :style="'background: ' + ccolor">
-        {{initials}}
+    <nuxt-img v-else-if="cimage" :src="cimage"
+      class="block flex-shrink-0 rounded-full shadow w-full h-full dark:ring-1 dark:ring-gray-100" :alt="cname"
+      :title="cname" />
+    <div v-else
+      class="flex-shrink-0 rounded-full overflow-hidden flex justify-center items-center shadow uppercase dark:ring-1 dark:ring-gray-100"
+      :style="'background: ' + ccolor">
+      {{ initials }}
     </div>
+  </div>
 </template>
 
 <script>
@@ -41,6 +48,11 @@ export default {
       required: false,
       default: null
     },
+    badge: {
+      type: Number,
+      required: false,
+      default: null
+    },
     showState: {
       type: Boolean,
       required: false,
@@ -58,53 +70,52 @@ export default {
     },
   },
   computed: {
-      cid () {
-          return this.data?this.data.id:null
-      },
-      cto (){
-        if(this.to===false)
+    cid() {
+      return this.data ? this.data.id : null
+    },
+    cto() {
+      if (this.to === false)
         return null
-          if(this.to)
-            return this.to
-          if(this.cid)
-            return `/usuarios/${this.cid}`
-          return null
-      },
+      if (this.to)
+        return this.to
+      if (this.cid)
+        return `/usuarios/${this.cid}`
+      return null
+    },
     cimage() {
-      let image = this.data?this.data.image|| this.data.imagen:this.image
-      if(!image) return null
-      if(typeof image === 'object')
+      let image = this.data ? this.data.image || this.data.imagen : this.image
+      if (!image) return null
+      if (typeof image === 'object')
         return image.url || image.href || image.src
       return image
     },
     cname() {
-        if(this.data)
-        {
-          let name = this.data.name || this.data.nombreSimbolico || this.data.username || this.data.nombre || this.data.user ||this.data.usuario 
-          if(!name&& this.data&& this.data.email)
-            name = this.data.email.replace(/@.*/, '')
-          return name || ''
-        }
-        return this.name || 'Anónimo'
+      if (this.data) {
+        let name = this.data.name || this.data.nombreSimbolico || this.data.username || this.data.nombre || this.data.user || this.data.usuario
+        if (!name && this.data && this.data.email)
+          name = this.data.email.replace(/@.*/, '')
+        return name || ''
+      }
+      return this.name || 'Anónimo'
     },
     ccolor() {
-        if(this.color) return this.color;
+      if (this.color) return this.color;
       // generamos un color random en base a los datos proporcionados
-        const s = this.cname + this.cimage;
-        let hash = 0;
-        if (s.length === 0) {
-          return "#000";
-        }
-        for (let i = 0; i < s.length; i++) {
-          hash = s.charCodeAt(i) + ((hash << 5) - hash);
-          hash = hash & hash;
-        }
-        let color = "#";
-        for (let i = 0; i < 3; i++) {
-          const value = (hash >> (i * 8)) & 255;
-          color += ("00" + value.toString(16)).substr(-2);
-        }
-        return color;
+      const s = this.cname + this.cimage;
+      let hash = 0;
+      if (s.length === 0) {
+        return "#000";
+      }
+      for (let i = 0; i < s.length; i++) {
+        hash = s.charCodeAt(i) + ((hash << 5) - hash);
+        hash = hash & hash;
+      }
+      let color = "#";
+      for (let i = 0; i < 3; i++) {
+        const value = (hash >> (i * 8)) & 255;
+        color += ("00" + value.toString(16)).substr(-2);
+      }
+      return color;
     },
     initials() {
       const words = this.cname.split(" ");

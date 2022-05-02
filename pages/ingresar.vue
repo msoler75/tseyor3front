@@ -1,6 +1,6 @@
 <template>
   <div class="w-full mx-auto max-w-xs mb-4" breadcrumb="no">
-    <Notification v-if="error" type="danger" :message="error" class="mb-5" />
+    <Notification v-if="errors.message" type="danger" :message="errors.message" class="mb-5" />
 
     <Card>
       <form class="regular-form" method="post" @submit.prevent="login">
@@ -31,23 +31,18 @@
 </template>
 
 <script>
+import validation from "@/mixins/validation"
 export default {
+  mixins: [validation],
   middleware: "guest",
   data() {
     return {
       email: "",
       password: "",
-      error: null,
       entrando: false,
     };
   },
   methods: {
-    setCookie(cname, cvalue, exdays) {
-      const d = new Date();
-      d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
-      let expires = "expires=" + d.toUTCString();
-      document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
-    },
     async login() {
       console.log('Logging...')
       this.error = null;
@@ -70,16 +65,25 @@ export default {
       // https://github.com/Stun3R/nuxt-strapi-sdk/blob/master/examples/client/pages/auth/index.vue
       // console.log('login', this.email, this.password)
       this.entrando = true
-      if (await this.$strapi.login({ identifier: this.email, password: this.password })) {
-        this.$strapi.fetchUser()
-        localStorage.setItem('jwt', this.$strapi.token)
-        this.setCookie("jwt", this.$strapi.token, 7)
-        this.$router.push(this.$route.query.desde || "/")
-      }
-      else {
-        this.entrando = false
-        this.error = this.$strapi.lastError.message
-      }
+      this.$strapi.login({ identifier: this.email, password: this.password })
+        .then(res => {
+          console.warn('INGRESAR. RES', res)
+          if (res.error)
+          {
+            this.setErr(res.error)
+            this.entrando = false
+          }
+          else {
+            localStorage.setItem('jwt', this.$strapi.token)
+            // this.$strapi.setCookie("jwt", this.$strapi.token, 7)
+            this.$router.push(this.$route.query.desde || "/")
+          }
+        })
+        .catch(err => {
+          this.entrando = false
+          this.setErr(err)
+          this.$alert(this.errors.message)
+        })
     }
   }
 };

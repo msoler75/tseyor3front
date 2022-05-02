@@ -3,7 +3,7 @@
 
     <NLink v-if="soyMuul"
       class="btn absolute -top-12 right-4 w-12 h-12 flex justify-center items-center rounded-full sm:w-auto sm:h-auto sm:rounded-inherit"
-      to="/eventos/editar/nuevo">
+      to="/eventos/nuevo/editar">
       <icon icon="edit" />
       <span class="ml-2 hidden sm:inline">Nuevo</span>
     </NLink>
@@ -65,18 +65,20 @@
     </section>
 
 
-    <Card v-else class="bg-opacity-25 dark:bg-opacity-75 flex flex-col mx-auto w-sm max-w-full justify-center items-center text-center" style="height: 50vh">
+    <Card v-else
+      class="bg-opacity-25 dark:bg-opacity-75 flex flex-col mx-auto w-sm max-w-full justify-center items-center text-center"
+      style="height: 50vh">
       <h2>No hay eventos programados</h2>
       <Suscribe />
 
-      <div class="cursor-pointer mt-7 text-xs text-diminished hover:text-orange"
-        v-scroll-to="'#eventos-pasados'">
+      <div class="cursor-pointer mt-7 text-xs text-diminished hover:text-orange" v-scroll-to="'#eventos-pasados'">
         <span>Ver eventos pasados</span>
       </div>
     </Card>
 
     <SuscriptionSection id="suscription" title="Eventos TSEYOR" description="Eventos de la comunidad Tseyor"
-      collection="eventos" :image="$imagenColeccion('eventos')" class="border-t-4 border-b-4 border-gray-100 dark:border-t-gray-500 dark:border-b-gray-dark-700 dark:border-black bg-white/75 dark:bg-gray-dark-900 w-full" />
+      collection="eventos" :image="$imagenColeccion('eventos')"
+      class="border-t-4 border-b-4 border-gray-100 dark:border-t-gray-500 dark:border-b-gray-dark-700 dark:border-black bg-white/75 dark:bg-gray-dark-900 w-full" />
 
     <div id="eventos-pasados" class="container mx-auto my-12 px-2 sm:px-7">
       <h1 class="text-center mb-12">Eventos Pasados</h1>
@@ -94,10 +96,12 @@ export default {
   mixins: [seo],
   async asyncData({ route, $strapi, $error }) {
     try {
-      const { data: eventos, meta } = await $strapi.findList(route, {
+      const { data: eventos, meta, error } = await $strapi.findList(route, {
         fields: ['id', 'slug', 'titulo', 'descripcion', 'fechaComienzo', 'publishedAt', 'updatedAt'],
         sort: ['fechaComienzo:desc']
       })
+      if (!eventos)
+        return $error(error && error.status ? error.status : 503)
       return { eventos, meta }
     }
     catch (e) {

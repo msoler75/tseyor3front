@@ -6,6 +6,10 @@ export default {
     return state.user
   },
 
+  borradoresNum(state) {
+    return state.borradoresNum
+  },
+
   getImageFor: state => (collection) => {
     console.warn('getImageFor', collection)
     if(!(collection in state.defaultImages) || !state.defaultImages[collection]) 

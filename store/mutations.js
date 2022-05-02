@@ -9,6 +9,11 @@ export default {
     state.defaultImages = obj
   },
 
+  SET_BORRADORES(state, num) {
+    console.log('SET_BORRADORES', num)
+    state.borradoresNum = num
+  },
+
   setPageConfig(state, payload) {
     // console.log('setPageConfig', payload)
     state.pageConfig = {

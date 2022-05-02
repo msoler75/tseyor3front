@@ -7,22 +7,8 @@
     <NavTop v-model="currentTab" :rutasMenu="rutasMenu" ref="nav" @showSideMenu="showSideMenu" />
 
     <!-- User Menu -->
-    <Card v-if="$strapi.user" v-show="menuUsuario"
-      class="py-3 px-5 w-52 fixed right-0 top-[48px] sm:top-[51px] md:top-[68px] lg:top-[72px] xl:top-[76px] z-40">
-      <ul class="list-none">
-        <li v-for="item of userMenuItems" :key="item.href">
-          <NLink v-if="item.href" :to="item.href" class="block py-1">
-            <icon v-if="item.icon" :icon="item.icon" class="!w-4 mr-3 text-gray" />
-            {{ item.name }}
-          </NLink>
-          <div v-else-if="item.click" @click="item.click" class="cursor-pointer block py-1">
-            <icon v-if="item.icon" :icon="item.icon" class="!w-4 mr-3 text-gray" />
-            {{ item.name }}
-          </div>
-        </li>
-        <li></li>
-      </ul>
-    </Card>
+    <MenuUser v-if="$strapi.user" v-show="menuUsuario" />
+
     <!-- Page title starts -->
     <!-- Navigation ends -->
     <div
@@ -62,8 +48,8 @@
       <Buscar @close="showBuscarPanel = false" />
     </Modal>
     <div class="spacer" />
-    <Footer v-show="!onlyContent&&pageConfig.footer" class="mt-auto" :class="pageConfig.contained ? 'pt-9' : ''" />
-    <Confirm />
+    <Footer v-show="!onlyContent && pageConfig.footer" class="mt-auto" :class="pageConfig.contained ? 'pt-9' : ''" />
+    <ModalConfirm />
     <ModalAlert />
     <portal-target name="bottom-app" class="sticky bottom-0 z-20"></portal-target>
   </div>
@@ -85,14 +71,10 @@ export default {
       }
     }
   }, */
-  watch: {
-    user(newValue) {
-      this.actualizarUrlPerfil()
-    },
-  },
+
   // created()
   async mounted() {
-    this.actualizarUrlPerfil()
+    //this.actualizarUrlPerfil()
     // emulamos comportamiento de beforeEnter de transición de página
     this.$store.commit('travelling', false)
     this.$store.dispatch('beforeEnter', this.$refs['page'].$el)
@@ -120,25 +102,6 @@ export default {
   data() {
     return {
       showBuscarPanel: false,
-      userMenuItems: [
-        {
-          icon: "fas fa-user",
-          name: "Mi Perfil",
-          href: null
-        },
-        {
-          icon: "fas fa-envelope",
-          name: "Suscripciones",
-          href: '/suscripciones'
-        },
-        {
-          icon: "fas fa-sign-out-alt",
-          name: "Cerrar Sesión",
-          click: () => {
-            this.logout()
-          }
-        },
-      ],
       lastY: 0,
       lastDy: 0,
       lastChangeY: 0,
@@ -309,7 +272,7 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(["user", "travelling", "pageConfig", "menuUsuario", "navHidden", "onlyContent", "backgroundImageUrl"]),
+    ...mapGetters(["borradoresNum", "travelling", "pageConfig", "menuUsuario", "navHidden", "onlyContent", "backgroundImageUrl"]),
     rutasMenu() {
       return this.$store.getters.buildRoutes(this.menuitems)
     },
@@ -332,14 +295,6 @@ export default {
   methods: {
     clickOff() {
       this.$refs.nav.closeAllMenus()
-    },
-    actualizarUrlPerfil() {
-      let url
-      if (!this.$strapi.user) url = '/'
-      else url = `/usuarios/${this.$strapi.user.id}`
-      const menu = this.userMenuItems.find(x => x.icon === "fas fa-user")
-      if (menu)
-        menu.href = url
     },
     handleScroll(event) {
       const threshold = 120
@@ -371,10 +326,6 @@ export default {
     async logout() {
       // await this.$auth.logout()
       await this.$strapi.logout()
-      this.$store.commit(
-        "SET_USER",
-        null
-      );
       localStorage.removeItem('jwt')
       this.$router.push("/")
     },

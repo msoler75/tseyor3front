@@ -4,6 +4,8 @@ import eyeClosed from "~/assets/svg/icons/eyeclosed.svg?raw";
 export default () => ({
   // logged In user
   user: null,
+  // borradoresNum
+  borradoresNum: 0,
   // imagenes por defecto según tipos
   defaultImages: {},
   // audio en reproducción

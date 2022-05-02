@@ -47,7 +47,7 @@ export default {
             this.title = title
             this.message = message
             this.yes = yes || 'Sí'
-            this.no = no || 'No'
+            this.no = no || 'Cancelar'
             this.confirmed = confirmed
             this.cancelled = cancelled
         }

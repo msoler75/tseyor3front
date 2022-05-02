@@ -48,15 +48,16 @@ export default {
     },
     beforeRouteLeave(to, from, next) {
       console.log('nuxt.config.beforeRouteLeave')
+      //this.$store.dispatch('beforeRouteLeave', from, next)
     },
     afterEnter (el) {
-      console.log('After enter...', el);
+      console.log('nuxt.config.afterEnter', el);
     },
-    beforeLeave(el) {
-      console.log('beforeLeave', el)
+    beforeLeave(el, from, to) {
+      console.log('nuxt.config.beforeLeave', el, from, to)
     },
     afterLeave(el) {
-      console.log('afterLeave', el)
+      console.log('nuxt.config.afterLeave', el)
     },
   },
 
@@ -161,7 +162,7 @@ export default {
     '@nuxtjs/markdownit',
     // ['nuxt-tailvue', {modal: true, toast: true}],
     // https://github.com/Maronato/vue-toastification
-    // "vue-toastification/nuxt",
+    "vue-toastification/nuxt",
     ['vue-scrollto/nuxt', {
       // default options
       container: "body",
@@ -336,7 +337,7 @@ export default {
       // suffix: true,
       icons: { 
         // list the icons you want to add, not listed icons will be tree-shaked
-        solid: ['faBars', 'faHeart', 'faDownload', 'faPlay', 'faPause', 'faChevronRight', 'faChevronLeft', 'faChevronDown','faChevronUp', 'faExclamation', 'faExclamationTriangle', 'faSearch', 'faSignInAlt', 'faFile', 'faFileAlt', 'faFileImage', 'faFileAudio', 'faFileVideo', 'faFilePowerpoint', 'faFileWord', 'faFilePdf', 'faFileArchive', 'faBook', 'faComments', 'faMusic', 'faSitemap', 'faRoute', 'faBolt', 'faHeadphones', 'faBroadcastTower', 'faLink', 'faBalanceScale', 'faScroll', 'faArrowLeft', 'faArrowRight', 'faHome', 'faUser', 'faMapMarkedAlt', 'faThLarge', 'faCheckCircle', 'faInfoCircle', 'faCheck', 'faShareAlt', 'faCalendarDay', 'faPaperclip', 'faCalendarAlt', 'faGlobe', 'faHourglass', 'faDonate', 'faQuestion', 'faQuestionCircle', 'faTree', 'faBookOpen', 'faFolderOpen', 'faFolder', 'faUsers', 'faGavel', 'faFileSignature', 'faWalking', 'faMapSigns', 'faCalendarWeek', 'faPeopleCarry', 'faLocationArrow', 'faCircle', 'faFeatherAlt', 'faEdit', 'faNewspaper', 'faBullhorn', 'faPenAlt', 'faRss', 'faFastBackward', 'faGlobeAmericas', 'faGraduationCap', 'faHandsHelping', 'faChessRook', 'faUniversity', 'faPlayCircle', 'faExchangeAlt', 'faEnvelopeOpenText', 'faBriefcaseMedical', 'faChalkboardTeacher', 'faCaretRight', 'faCaretLeft', 'faStepBackward', 'faStepForward', 'faSignOutAlt', 'faDoorOpen', 'faHiking', 'faBell', 'faSync', 'faPlusSquare', 'faTrash', 'faCrop', 'faEye', 'faEyeSlash', 'faEnvelope', 'faPaperPlane', 'faCopy', 'faImages', 'faUpload', 'faCloudUploadAlt', 'faSpinner', 'faTimes', 'faFolderPlus', 'faFileUpload', 'faMicrophone', 'faTasks', 'faCog'], 
+        solid: ['faBars', 'faHeart', 'faDownload', 'faPlay', 'faPause', 'faChevronRight', 'faChevronLeft', 'faChevronDown','faChevronUp', 'faExclamation', 'faExclamationTriangle', 'faSearch', 'faSignInAlt', 'faFile', 'faFileAlt', 'faFileImage', 'faFileAudio', 'faFileVideo', 'faFilePowerpoint', 'faFileWord', 'faFilePdf', 'faFileArchive', 'faBook', 'faComments', 'faMusic', 'faSitemap', 'faRoute', 'faBolt', 'faHeadphones', 'faBroadcastTower', 'faLink', 'faBalanceScale', 'faScroll', 'faArrowLeft', 'faArrowRight', 'faHome', 'faUser', 'faMapMarkedAlt', 'faThLarge', 'faCheckCircle', 'faInfoCircle', 'faCheck', 'faShareAlt', 'faCalendarDay', 'faPaperclip', 'faCalendarAlt', 'faGlobe', 'faHourglass', 'faDonate', 'faQuestion', 'faQuestionCircle', 'faTree', 'faBookOpen', 'faFolderOpen', 'faFolder', 'faUsers', 'faGavel', 'faFileSignature', 'faWalking', 'faMapSigns', 'faCalendarWeek', 'faPeopleCarry', 'faLocationArrow', 'faCircle', 'faFeatherAlt', 'faEdit', 'faNewspaper', 'faBullhorn', 'faPenAlt', 'faRss', 'faFastBackward', 'faGlobeAmericas', 'faGraduationCap', 'faHandsHelping', 'faChessRook', 'faUniversity', 'faPlayCircle', 'faExchangeAlt', 'faEnvelopeOpenText', 'faBriefcaseMedical', 'faChalkboardTeacher', 'faCaretRight', 'faCaretLeft', 'faStepBackward', 'faStepForward', 'faSignOutAlt', 'faDoorOpen', 'faHiking', 'faBell', 'faSync', 'faPlusSquare', 'faTrash', 'faCrop', 'faEye', 'faEyeSlash', 'faEnvelope', 'faPaperPlane', 'faCopy', 'faImages', 'faUpload', 'faCloudUploadAlt', 'faSpinner', 'faTimes', 'faFolderPlus', 'faFileUpload', 'faMicrophone', 'faTasks', 'faCog', 'faSquare', 'faCheckSquare'], 
         regular: ['faHeart', 'faComments', 'faClipboard', 'faFrown', 'faComment', 'faCalendarAlt', 'faUser', 'faBell', 'faClock', 'faEnvelope'], 
         // include all icons. But dont do this. 
         //regular: true, 

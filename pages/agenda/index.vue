@@ -202,7 +202,7 @@ export default {
       // SEO:
       title: 'Agenda',
       description: 'Agenda personalizada de tus actividades',
-      image: 'imagen_a_definir'
+      image: this.$imagenUrlColeccion('agenda')
     };
   },
   computed: {

@@ -24,6 +24,8 @@ export default {
       "SET_DEFAULT_IMAGES",
       imagenes
     )
+    if($strapi.user)
+      $strapi.updateBorradoresNum()
   },
   // page transition
   beforeEnter(store, el) {
@@ -46,5 +48,10 @@ export default {
     store.commit('setPageConfig', config)
     store.commit('updateBreadcrumb')
     store.commit('travelling', false)
-  }
+  },
+
+   // page transition
+   /*beforeRouteLeave(ctx) {
+    console.warn('VUEX.ACTION.BEFOREROUTELEAVE', ctx)
+  }*/
 }

@@ -222,7 +222,7 @@ export default {
       // SEO:
       title: 'Buscar en la web',
       description: 'Búsqueda global',
-      image: 'imagen_a_definir'
+      image: this.$imagenUrlColeccion('generica')
     };
   },
   mounted() {

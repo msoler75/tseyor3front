@@ -18,48 +18,64 @@
                 <p class="error">{{ errors.descripcion }}</p>
             </div>
 
-            <div class="flex justify-center">
-                <button class="btn w-full text-center"
-                    :class="modificado || guardando || creando ? 'btn-warning' : 'btn-success'" type="submit"
-                    :disabled="eliminando || guardando || !modificado">
-                    <div class="flex justify-center items-center">
-                        <icon class="!w-6"
-                            :icon="guardando ? 'sync spin' : creando ? 'plus-square' : modificado ? 'sync' : 'check'" />
-                        <span class="inline-block w-28">{{ verbo }}</span>
-                    </div>
-                </button>
-            </div>
-            <div v-if="contenido.id" class="mt-7 flex flex-col justify-center space-y-6">
-                <div v-if="false" @click="borrarRecopilacion" class="btn btn-error w-full text-center"
-                    :disabled="eliminando || guardando">
-                    <div class="flex justify-center items-center">
-                        <icon class="!w-6" icon="trash" />
-                        <span class="inline-block w-28">Borrar Recopilación</span>
+           
+
+           <div
+                class="surface surface-gray fixed bottom-0 left-0 right-0 overflow-x-autotext-sm !border-0 border-t z-30 shadow flex flex-col items-center py-3 space-y-3 px-2 text-xs xm:text-sm sm:text-base">
+
+                <Card v-if="thereErrors" id="errors" class="p-3 bg-red-400 ">
+                    <p class="error font-bold !text-white">
+                        <icon icon="exclamation-triangle" class="mr-2 transform scale-75" />
+                        <span>{{ errors.message }}</span>
+                    </p>
+                </Card>
+
+                <div class="space-x-3 sm:space-x-6 flex justify-center ">
+
+                    <NLink v-if="contenido.id && publicado && !publicando" :to="`/eventos/${contenido.id}`"
+                        class="btn btn-gray w-auto text-center" title="Ver Evento"
+                        :disabled="eliminando || guardando || publicando">
+                        <div class="flex justify-center items-center">
+                            <icon class="!w-3" icon="arrow-left" />&nbsp;
+                        </div>
+                    </NLink>
+
+
+                    <button class="btn w-auto text-center whitespace-nowrap" @click.prevent="onPublicar"
+                        :class="publicado ? 'btn-success' : 'btn-gray'"
+                        :disabled="!contenido.id || eliminando || guardando || publicando || !!modificado">
+                        <div class="flex justify-center items-center w-20">
+                            &nbsp;
+                            <icon v-if="publicando" icon='sync spin' />
+                            <span v-else class="inline-block w-28">
+                                <icon v-if="publicado" icon='check' class="mr-2" />
+                                <span>{{ verboPublicar }}</span>
+                            </span>
+                        </div>
+                    </button>
+
+                    <button class="btn w-auto text-center" :class="modificado && !publicando ? '' : 'btn-gray'"
+                        type="submit" :disabled="eliminando || guardando || publicando || (!publicando && !modificado)">
+                        <div class="flex justify-center items-center w-14">
+                            &nbsp;
+                            <icon v-if="guardando" icon='sync spin' />
+                            <span v-else class="inline-block">{{ verboGuardar }}</span>
+                        </div>
+                    </button>
+
+                    <div v-if="contenido.id && !publicado" @click="borrarEvento"
+                        class="btn btn-error w-auto text-center" :disabled="eliminando || guardando || publicando"
+                        title="Borrar Evento">
+                        <div class="flex justify-center items-center">
+                            <icon class="!w-3" icon="trash" />&nbsp;
+                        </div>
                     </div>
                 </div>
 
-
-                <Comparte :url="enlace" v-model="viendoCompartir" />
-
-                <section v-id="contenido.id" class="w-full">
-                    <label class="w-full text-center font-bold uppercase">Enlace para compartir:</label>
-                    <div class="flex border bg-gray-50 rounded w-full p-2">
-                        <span>{{ enlace }}</span>
-                        <span class="ml-auto btn btn-mini btn-warning text-xs whitespace-nowrap"
-                            @click="viendoCompartir = true">
-                            <icon class="mr-2 xs:mr-2" icon="fas fa-share-alt" />Compartir
-                        </span>
-                    </div>
-                </section>
-
-                <NLink :to="`/recopilaciones/${contenido.id}`" class="btn w-full text-center"
-                    :disabled="eliminando || guardando || modificado">
-                    <div class="flex justify-center items-center">
-                        <icon class="!w-6" icon="eye" />
-                        <span class="inline-block w-28">Ver Recopilación</span>
-                    </div>
-                </NLink>
             </div>
+
+
+
         </form>
     </Card>
 </template>
@@ -90,10 +106,12 @@ export default {
     },
     data() {
         return {
+            viendoCompartir: false,
+            // estados
             guardando: false,
+            publicando: false,
             eliminando: false,
-            modificado: 0,
-            viendoCompartir: false
+            modificado: 0
         }
     },
     computed: {
@@ -148,17 +166,23 @@ export default {
             }
             else
                 this.$strapi.create('recopilaciones', data)
-                    .then((contenido) => {
-
+                    .then((response) => {
+                        if(response.error)
+                        {
+                            this.setErr(response.error)
+                        }
+                        else{
+                            this.$router.push(`/recopilaciones/${response.data.id}`)
+                        }
+                        //console.log('RESPUESTA', respuesta)
                         // registro de actividad
-                        this.$strapi.create('historials', {
+                        /* this.$strapi.create('historials', {
                             accion: 'recopilacion_creada',
                             titulo: contenido.titulo,
                             url: `/recopilaciones/${contenido.id}`
-                        })
+                        }) */
 
                         // recargamos la página para que se muestra en modo edición con la ruta correcta
-                        this.$router.push(`/recopilaciones/editar/${contenido.id}`)
                     })
                     .catch(err => {
                         this.setErr(err)
