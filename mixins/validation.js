@@ -45,7 +45,8 @@ export default {
         .replace('Policy Failed', 'Permiso denegado')
         .replace('Invalid identifier or password', 'Identificador o contraseña no válidos')
     },
-    fieldValidate(field) {
+    inputClassError(field) {
+      console.warn('inputClassError', field, this.errors[field])
       return this.errors[field] ? 'border-4 border-red' : ''
     },
     setErr(error) {

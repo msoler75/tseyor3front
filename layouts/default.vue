@@ -323,12 +323,6 @@ export default {
         this.onBuscar()
       }
     },
-    async logout() {
-      // await this.$auth.logout()
-      await this.$strapi.logout()
-      localStorage.removeItem('jwt')
-      this.$router.push("/")
-    },
     showSideMenu() {
       this.showSidebar = true;
       this.currentTab = ""

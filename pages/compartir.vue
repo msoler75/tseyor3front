@@ -22,25 +22,34 @@ export default {
         },
         compartir() {
             const { statusMessage } = this.$refs;
-            statusMessage.value = ""
             const that = this
             this.$nextTick(() => {
                 that.resizeTextarea()
             })
-            this.$toast.success("¡Mensaje enviado!", {
-                position: "bottom-right",
-                timeout: 5000,
-                closeOnClick: true,
-                pauseOnFocusLoss: true,
-                pauseOnHover: true,
-                draggable: true,
-                draggablePercent: 0.6,
-                showCloseButtonOnHover: false,
-                hideProgressBar: true,
-                closeButton: "button",
-                icon: true,
-                rtl: false
-            });
+            this.$strapi.create('publicaciones', {
+                titulo: '.',
+                texto: statusMessage.value,
+                tipo: 'Personal'
+            }).then(response => {
+                if (!response.error) {
+                    statusMessage.value = ""
+                    this.$toast.success("¡Mensaje enviado!", {
+                        position: "bottom-right",
+                        timeout: 5000,
+                        closeOnClick: true,
+                        pauseOnFocusLoss: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        draggablePercent: 0.6,
+                        showCloseButtonOnHover: false,
+                        hideProgressBar: true,
+                        closeButton: "button",
+                        icon: true,
+                        rtl: false
+                    });
+                }
+            })
+
         }
     },
 }

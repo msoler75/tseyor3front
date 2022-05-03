@@ -43,12 +43,7 @@ export default ({
         const jwt = this.getCookie(document.cookie, 'jwt')
         if (jwt) {
           this.token = jwt
-          this.fetchUser().then(user => {
-            store.commit(
-              "SET_USER",
-              user
-            )
-          })
+          this.fetchUser()
         }
       }
     }

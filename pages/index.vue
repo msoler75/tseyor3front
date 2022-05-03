@@ -1,10 +1,13 @@
 <template>
   <div class="max-w-xl mx-auto" breadcrumb="no">
 
+    <NotificationDrafts v-if="$strapi.user" class="mb-7" />
+
     <Grid class="grid-cols-1 sm:grid-cols-2 gap-3 lg:gap-5 xl:gap-7">
-      <NLink v-for="item of secciones" :key="item.name" :to="item.url" class="card flex w-full shadow rounded p-3" :class="item.class">
+      <NLink v-for="item of secciones" :key="item.name" :to="item.url" class="card flex w-full shadow rounded p-3"
+        :class="item.class">
         <div class="text-4xl w-16 sm:text-3xl sm:w-12 flex-shrink-0 flex justify-center items-center pr-4"
-        :class="item.color">
+          :class="item.color">
           <icon :icon="item.icon" />
         </div>
         <div>
@@ -27,7 +30,7 @@
 import seo from '@/mixins/seo.js'
 export default {
   mixins: [seo],
-  data () {
+  data() {
     return {
       estado: "",
       items: [

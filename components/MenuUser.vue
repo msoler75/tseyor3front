@@ -59,5 +59,14 @@ export default {
             // this.actualizarUrlPerfil()
         },
     },
+    methods:
+    {
+        async logout() {
+            // await this.$auth.logout()
+            await this.$strapi.logout()
+            localStorage.removeItem('jwt')
+            this.$router.push("/")
+        },
+    }
 }
 </script>

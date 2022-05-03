@@ -1,15 +1,7 @@
 <template>
   <section class="w-full max-w-lg flex flex-col items-center space-y-4 px-1">
 
-    <Card center v-if="soyYo && borradoresNum" class="w-full p-8 space-y-6">
-
-      <span class="text-lg">Tienes <span class="bg-error text-white rounded-full px-2 mx-1">{{ borradoresNum
-      }}</span> borrador{{ borradoresNum > 1 ? 'es' : '' }} pendiente{{ borradoresNum > 1 ? 's' : '' }}</span>
-      <div class="flex justify-center">
-        <NLink class="btn btn-error w-auto" to="/borradores">Ver Borradores</NLink>
-      </div>
-
-    </Card>
+    <NotificationDrafts v-if="soyYo" />
 
     <Card class="w-full sm:py-5 sm:px-7 text-center">
       <h1 class="!mt-5">{{ usuario.nombreSimbolico || usuario.username }}</h1>
@@ -133,9 +125,6 @@ export default {
     }
   },*/
   computed: {
-    borradoresNum() {
-      return this.$store.getters.borradoresNum
-    },
     soyYo() {
       if (!this.$strapi.user) return false
       return this.$strapi.user.id === this.usuario.id
@@ -200,15 +189,6 @@ export default {
     linkComentario(comentario) {
       return `${comentario.uid}#comentario-${comentario.id}`
     },
-    async fetchUser() {
-      await this.$store.commit(
-        "SET_USER",
-        await this.strapi.fetchUser()
-      )
-      const usuarios = await this.$strapi.find('users', { id: this.id })
-      if (usuarios.length)
-        this.usuario = usuarios[0]
-    },
     async guardarFrase() {
       this.subiendoFrase = true
       this.usuario.frase = this.nuevaFrase
@@ -226,16 +206,18 @@ export default {
       const form = new FormData()
       form.append("files", files[0])
       const that = this
-      this.$strapi.create("upload", form)
+      this.$strapi.upload(form)
         .then(async (response) => {
+          this.subiendoImagen = false
           console.log('response', response)
           if (response[0].id) {
-            await this.$strapi.update('users', this.usuario.id, { imagen: response[0].id })
-            await this.fetchUser()
-            setTimeout(function () { that.subiendoImagen = false }, 500)
+            const user = await this.$strapi.update('users', this.$strapi.user.id, { imagen: response[0].id })
+            console.warn('UPDATE USER RESULT', user)
+            if (user) {
+              this.$strapi.user = user
+              this.$set(this.usuario, 'imagen', user.imagen)
+            }
           }
-          else
-            this.subiendoImagen = false
         })
         .catch(err => {
           console.log(err)
