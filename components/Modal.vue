@@ -13,13 +13,13 @@
                 class="w-full flex items-center p-3 border-b border-gray-300 dark:border-gray-800 dark:bg-gray-900 shadow-sm"
             >
                 <span class="font-bold flex-grow text-lg text-center">{{ title }}</span>
-                <span
+                <span v-show="closeable"
                     class="transition duration-200 cursor-pointer rounded-full bg-gray-300 hover:bg-gray-400 dark:bg-gray-700 dark:hover:bg-gray-600 text-3xl flex-grow-0 w-8 h-8 ml-auto flex justify-center items-center"
                     @click="localValue = false"
                 >&times;</span>
             </div>
             <span
-                v-else
+                v-else v-show="closeable"
                 class="absolute right-3 top-3 z-10 transition duration-200 cursor-pointer rounded-full bg-gray-300 hover:bg-gray-400 dark:bg-gray-700 dark:hover:bg-gray-600 text-3xl flex-grow-0 w-8 h-8 ml-auto flex justify-center items-center"
                 @click="localValue = false"
             >&times;</span>
@@ -33,7 +33,12 @@ import vmodel from '~/mixins/vmodel.js'
 export default {
     mixins: [vmodel],
     props: {
-        title: {}
+        title: {},
+        closeable: {
+            type: Boolean,
+            required: false,
+            default: true
+        }
     },
     mounted() {
         if (this.localValue)

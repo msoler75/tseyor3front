@@ -1,9 +1,10 @@
 <template>
     <div class="max-w-full w-lg mx-auto pb-16" focused footer="no">
 
-        <ContentEdit ref="ce" :content="contenido" :error="error" collection="publicaciones" @submit="onSubmit" :masculine="false">
-
+        <ContentEdit ref="ce" :content="contenido" :error="error" collection="publicaciones" @submit="onSubmit"
+            :masculine="false">
             <template v-slot:default="{ inputClassError, errors }">
+
                 <div>
                     <label for="titulo">Título:</label>
                     <br />
@@ -33,22 +34,7 @@
 
                 <div>
                     <label for="adjuntos">Archivos adjuntos:</label>
-                    <client-only>
-                        <draggable tag="ul" :list="adjuntosAdicionales" group="main"
-                            class="relative flex flex-wrap justify-center items-start px-7 select-none" :animation="200"
-                            @change="dragged">
-                            <div v-for="item of adjuntosAdicionales" :key="item.url"
-                                class="group relative m-2 cursor-grab">
-                                <img v-if="item.url.match(/\.(png|webp|svg|jpe?g)$/)" :src="item.url"
-                                    style="max-width: 100%; max-height: 30vh" />
-                                <div v-else>{{ item.url.substr(item.lastIndexOf("/") + 1) }}</div>
-                                <div class="btn btn-error absolute right-2 top-2 text-xl p-0 w-7 h-7 flex justify-center items-center rounded-full transition duration-200 opacity-0 group-hover:opacity-100"
-                                    @click="eliminarDeAdjuntos(item.url)" title="Eliminar archivo">&times;</div>
-                            </div>
-                        </draggable>
-                    </client-only>
-                    <InputImage id="adjuntos" :value="adjuntosSubir" :multiple="true" @change="onAdjuntar" class="mt-3"
-                        :class="inputClassError('adjuntos')" textButton="Añadir" />
+                    <FilesDropDrag v-model="contenido.adjuntos" ref="adjuntos" />
                     <p class="error">{{ errors.adjuntos }}</p>
                 </div>
 
@@ -81,11 +67,11 @@
 const relaciones11 = ['sala']
 import vSelect from "vue-select";
 import Fuse from "fuse.js";
-import validation from "@/mixins/validation"
+//import validation from "@/mixins/validation"
 import draggable from "vuedraggable";
 export default {
     components: { vSelect, draggable },
-    mixins: [validation],
+    //  mixins: [validation],
     // middleware: 'logged',
     async asyncData({ route, $strapi, $dayjs, $error }) {
         try {
@@ -126,10 +112,10 @@ export default {
     },
     data() {
         return {
-            adjuntosSubir: [],
-            dragData: {},
-            adjuntosAdicionales: [],
-            ordenQueQuiero: [],
+            // adjuntosSubir: [],
+            // dragData: {},
+            // adjuntosAdicionales: [],
+            // ordenQueQuiero: [],
             tieneSala: false,
             error: {}
         }
@@ -144,20 +130,29 @@ export default {
         }
     },
     mounted() {
-        this.recalcularadjuntosAdicionales()
+        // this.recalcularAdjuntos()
         console.warn('REFS', this.$refs)
         this.updateVariables()
+        this.$store.commit('setDropHandler', this.addFiles)
     },
+    /* ya lo hace el middleware route 
+        destroy() {
+        this.$store.commit('setDropHandler', null)
+    },*/
     methods: {
+        addFiles(e) {
+            console.warn('DROPPED.ADDFILES', e)
+            this.$refs.adjuntos.addFiles(e)
+        },
         updateVariables() {
             console.log('updateVariables', this.contenido)
             this.tieneSala = !!this.contenido.sala
         },
-        dragged() {
+        /* dragged() {
             this.ordenQueQuiero = [...this.adjuntosAdicionales]
             this.$refs.ce.modified++
-        },
-        recalcularadjuntosAdicionales() {
+        },*/
+        /*recalcularAdjuntos() {
             const o = this.ordenQueQuiero
             const list = (this.contenido && this.contenido.adjuntos ? this.contenido.adjuntos : []).concat(this.adjuntosSubir.map(x => ({ url: x.src })))
             this.$set(this, 'adjuntosAdicionales', list.sort(function (a, b) {
@@ -175,6 +170,7 @@ export default {
                 this.adjuntosSubir.splice(idx, 1)
             this.$refs.ce.modified++
         },
+        */
         /*onImagen(payload) {
             this.imagenSubir = {
                 src: payload.images[0],
@@ -186,11 +182,18 @@ export default {
             this.imagenSubir = imagen;
             this.$refs.ce.modified++
         },
-        onAdjuntar(payload) {
-            for (const i in payload.images)
-                this.adjuntosSubir.push({ src: payload.images[i], file: payload.files[i] })
+        /*onAdjuntar(items) {
+            console.warn('onadjuntar', payload)
+            //for (const i in payload)
+            //  this.adjuntosSubir.push({ file: payload[i] })
+            for (const item of items)
+            {
+                console.warn('agregamos', item)
+                this.contenido.adjuntos.push({ file: item })
+            }
             this.$refs.ce.modified++
-        },
+            //this.recalcularAdjuntos()
+        },*/
         fuseSalas(options, search) {
             const fuse = new Fuse(options, {
                 keys: ["nombre", "descripcion"],
@@ -210,94 +213,55 @@ export default {
                 : fuse.list;
         },
 
+        resetState() {
+            this.$refs.ce.clearState()
+        },
 
         async onSubmit(data) {
             // primero subimos la imagen
-            let imagenId = null
             let adjuntos = []
-            let noErrors = true
+            this.error = null
 
-            if (this.imagenSubir && this.imagenSubir.id)
-                imagenId = this.imagenSubir.id
-
-            /* if (this.imagenSubir && this.imagenSubir.file) {
-                console.warn('VAMOS A SUBIR IMAGEN', this.imagenSubir)
-                promises.push(
-                    new Promise((success, reject) => {
-                        const form = new FormData()
-                        console.log('file', this.imagenSubir.file)
-                        form.append("files", this.imagenSubir.file)
-                        this.$strapi.upload(form)
-                            .then(async (data) => {
-                                imagenId = data[0].id
-                                success()
-                            })
-                            .catch(err => {
-                                console.warn(err)
-                                reject(err)
-                            })
-                    })
-                )
-            } */
-
-
-            if (this.adjuntosSubir.length) {
-
+            if (data.adjuntos.length) {
                 const form = new FormData()
-                for (const img of this.adjuntosSubir)
-                    form.append("files", img.file)
-                const imgs = this.adjuntosSubir
-                await this.$strapi.upload(form)
-                    .then((response) => {
-                        console.warn('RESPONSE DE SUBIR adjuntos', response)
-                        adjuntos = response
-                        for (const i in adjuntos)
-                            adjuntos[i].src = imgs[i].src  // para tener el src que corresponde a this.ordenQueQuiero
-                    })
-                    .catch(err => {
-                        console.warn(err)
-                        noErrors = false
-                    })
+                var uploadSome = false
+                for (const item of data.adjuntos)
+                    if (item.file) {
+                        console.log('append file', item.file)
+                        form.append("files", item.file)
+                        uploadSome = true
+                        adjuntos.push({ name: item.file.name })
+                    }
+                    else
+                        adjuntos.push(item)
+                if (uploadSome) {
+                    await this.$strapi.upload(form)
+                        .then((response) => {
+                            if (response.error) {
+                                this.error = response.error
+                            }
+                            else {
+                                for (const item of response) {
+                                    let idx = adjuntos.findIndex(x => x.name == item.name)
+                                    if (idx > -1)
+                                        adjuntos[idx] = item
+                                }
+                            }
+                        })
+                        .catch(err => {
+                            this.error = err
+                        })
+                }
             }
 
-            if (noErrors)
-                this.guardarContenido(data, imagenId, adjuntos)
-        },
-        async guardarContenido(data, idImage, adjuntos) {
-            console.log('guardarContenido', idImage, adjuntos)
-            console.log('strapi1?', this.$strapi)
-            console.log('data', data)
-            data.imagen = idImage ? idImage : !data.imagen ? null : data.imagen.id ? data.imagen.id : data.imagen
-            const o = this.ordenQueQuiero
-            if (!adjuntos) adjuntos = []
-            if (!data.adjuntos) data.adjuntos = []
-            data.adjuntos = data.adjuntos.concat(adjuntos)
-                // importante guardar en el orden deseado por el usuario, o el que ya estaba antes
-                .sort(function (a, b) {
-                    const ia = o.findIndex(x => x.url === a.url || x.url === a.src)
-                    const ib = o.findIndex(x => x.url === b.url || x.url === b.src)
-                    return (ia === -1 ? 998 : ia) - (ib === -1 ? 997 : ib)
-                })
-                .map(x => x.id)
-            console.log('strapi2?', this.$strapi)
+            if (this.error) {
+                this.resetState()
+                return
+            }
+
+            data.adjuntos = this.$idy(adjuntos)
+
             if (this.contenido.id) {
-                console.log('saving content data', data)
-
-                /*fetch(this.$config.strapiUrl + `/eventos/${this.contenido.id}`, {
-                    method: 'PUT', // or 'PUT'
-                    body: JSON.stringify({ data }), // data can be `string` or {object}!
-                    headers: {
-                        'Content-Type': 'application/json',
-                        Authorization: `Bearer ${this.$strapi.token}`
-                    }
-                }).
-                    then(res => {
-                        console.log('1st res', res)
-                        return res.json()
-                    })*/
-
-                //.catch(error => console.error('Error:', error))
-
                 return this.$strapi.update('publicaciones', this.contenido.id, data, {
                     populate: { imagen: '*', adjuntos: '*', centro: '*', sala: '*' }
                 })
@@ -310,31 +274,24 @@ export default {
                         else {
                             const { data: contenido } = response
                             console.log('CONTENIDO:', contenido)
-                            this.imagenSubir = contenido.imagen
                             for (const campo of relaciones11)
                                 contenido[campo] = contenido[campo] && typeof contenido[campo] === 'object' ? contenido[campo].id : null
-
-                            this.imagenSubir = null
-                            this.adjuntosSubir = []
-                            this.ordenQueQuiero = []
                             for (const field in contenido)
                                 this.$set(this.contenido, field, contenido[field])
                             this.$nextTick(() => {
-                                this.$refs.ce.clearState()
+                                this.resetState()
                                 // this.$refs.ce.modified = 0
                             })
                             this.$strapi.updateBorradoresNum()
                         }
-                        //this.$refs.ce.saving = false
-                        //this.$refs.ce.publishing = false
-                        this.$refs.ce.clearState()
+                        this.resetState()
                     })
                     .catch(err => {
                         console.log('SAVE.CATCH', err, JSON.stringify(err))
                         this.error = err
                         // this.$refs.ce.saving = false
                         // this.$refs.ce.publishing = false
-                        this.$refs.ce.clearState()
+                        this.resetState()
                     })
             }
             else
@@ -357,13 +314,13 @@ export default {
                         }
                         console.log('REFS CE', this.$refs.ce)
                         //this.$refs.ce.saving = false
-                        this.$refs.ce.clearState()
+                        this.resetState()
                     })
                     .catch(err => {
                         console.log('CREATE.CATCH', err, JSON.stringify(err))
                         this.error = err
                         // this.$refs.ce.saving = false
-                        this.$refs.ce.clearState()
+                        this.resetState()
                     })
         }
     }

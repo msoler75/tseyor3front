@@ -17,9 +17,9 @@ export default {
   setPageConfig(state, payload) {
     // console.log('setPageConfig', payload)
     state.pageConfig = {
-      contained: true,
-      background: true,
       breadcrumb: true,
+      background: true,
+      contained: true,
       focused: false,
       footer: true,
       ...payload
@@ -35,7 +35,7 @@ export default {
         'breadcrumb',
         'contained',
         'focused',
-        'footer'
+        'footer',
       ]
       for (const key of pageConfigKeywords) {
         if (d && de && state.pageConfig[key])
@@ -49,6 +49,16 @@ export default {
     // cuando cambiamos de página, además mostramos el menu top navigation
     state.navHidden = false
     console.log(state.pageConfig)
+  },
+
+  setDropHandler(state, func) {
+    console.log('setDropHandler', func, state)
+    state.dropHandler = func
+  },
+
+  setDropAccept(state, accept) {
+    console.log('setDropAccept', accept, state)
+    state.dropAccept = accept || '*/*'
   },
 
   setNextPathBreadcrumb(state, payload) {

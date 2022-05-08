@@ -44,9 +44,9 @@ export default {
         .replace('characters', 'caracteres')
         .replace('Policy Failed', 'Permiso denegado')
         .replace('Invalid identifier or password', 'Identificador o contraseña no válidos')
+        .replace('Forbidden', 'No tienes permisos')
     },
     inputClassError(field) {
-      console.warn('inputClassError', field, this.errors[field])
       return this.errors[field] ? 'border-4 border-red' : ''
     },
     setErr(error) {
@@ -73,7 +73,7 @@ export default {
           break;
       }
       if (firstEl)
-        this.$scrollTo('#' + firstEl.id, 500, {
+        this.$scrollTo(firstEl, 500, {
           offset: -250
         })
       console.log('this.errors', this.errors)

@@ -21,8 +21,11 @@ export default () => ({
     background : true,
     breadcrumb: true,
     focused: false,
-    footer: true
+    footer: true,
   },
+  // drop handler
+  dropHandler: null,
+  dropAccept: '*/*',
   // ocultar menú navegación top
   navHidden: false,
   // ver solo el contenido (oculta menus y footer)

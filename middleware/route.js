@@ -13,6 +13,9 @@ export default function ({ res, route, store }) {
     store.commit('setNextPathBreadcrumb', route.path)
     store.commit('travelling', true)
     store.commit('setBackgroundImageUrl', null)
+    // reseteamos dropHandler
+    store.commit('setDropHandler', null)
+    store.commit('setDropAccept', null)
     
     // res.timing.end('midd')
 }

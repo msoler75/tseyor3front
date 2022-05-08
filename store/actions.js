@@ -1,5 +1,3 @@
-
-
 export default {
   async nuxtServerInit(store, context) {
     const {
@@ -24,7 +22,7 @@ export default {
       "SET_DEFAULT_IMAGES",
       imagenes
     )
-    if($strapi.user)
+    if ($strapi.user)
       $strapi.updateBorradoresNum()
   },
   // page transition
@@ -36,7 +34,7 @@ export default {
       'breadcrumb',
       'contained',
       'focused',
-      'footer'
+      'footer',
     ]
     for (const key of pageConfigKeywords) {
       const value = el.getAttribute(key)
@@ -44,14 +42,15 @@ export default {
         config[key] = value && value === true || (value.toLowerCase() !== 'no' && value !== '0')
       }
     }
+
     // console.log('config', config)
     store.commit('setPageConfig', config)
     store.commit('updateBreadcrumb')
     store.commit('travelling', false)
   },
 
-   // page transition
-   /*beforeRouteLeave(ctx) {
+  // page transition
+  /*beforeRouteLeave(ctx) {
     console.warn('VUEX.ACTION.BEFOREROUTELEAVE', ctx)
   }*/
 }

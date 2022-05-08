@@ -1,5 +1,5 @@
 <template>
-    <form @submit.prevent="onSubmit">
+    <form @submit.prevent="onSubmit" class="select-none">
 
         <div v-if="content.id" class="max-w-md mx-auto mb-3 flex flex-col space-y-4">
             <Card class="p-3 !outline-2"
@@ -29,7 +29,7 @@
                 </p>
             </Card>
 
-            <div class="space-x-3 sm:space-x-6 flex justify-center ">
+            <div class="space-x-3 sm:space-x-6 flex justify-center">
 
                 <button class="btn w-auto text-center whitespace-nowrap" @click.prevent="onPublishButton"
                     :class="published ? 'btn-success' : 'btn-gray'"
@@ -139,7 +139,10 @@ export default {
             this.$emit('change', { modified: this.modified, ...this.content })
         },
         error(newValue) {
+            if(newValue)
             this.setErr(newValue)
+            else
+            this.clearErrors()
         }
     },
     methods: {
@@ -205,7 +208,7 @@ export default {
         clearState() {
             this.publishing = false
             this.saving = false
-            this.modified = 0
+            this.modified = this.thereErrors?1:0
         }
     }
 }

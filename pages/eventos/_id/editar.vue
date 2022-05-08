@@ -50,20 +50,8 @@
                 </div>
                 <div>
                     <label for="imagenes">Imágenes adicionales (opcional):</label>
-                    <client-only>
-                        <draggable tag="ul" :list="imagenesAdicionales" group="main"
-                            class="relative flex flex-wrap justify-center items-start px-7 select-none" :animation="200"
-                            @change="dragged">
-                            <div v-for="item of imagenesAdicionales" :key="item.url"
-                                class="group relative m-2 cursor-grab">
-                                <img :src="item.url" style="max-width: 100%; max-height: 30vh" />
-                                <div class="btn btn-error absolute right-2 top-2 text-xl p-0 w-7 h-7 flex justify-center items-center rounded-full transition duration-200 opacity-0 group-hover:opacity-100"
-                                    @click="eliminarDeImagenes(item.url)" title="Eliminar imagen">&times;</div>
-                            </div>
-                        </draggable>
-                    </client-only>
-                    <InputImage id="imagenes" :value="imagenesSubir" :multiple="true" @change="onImagenes" class="mt-3"
-                        :class="inputClassError('imagenes')" textButton="Añadir" />
+                    <FilesDropDrag v-model="contenido.imagenes" ref="imagenes" accept="image/*"
+                        :class="inputClassError('imagenes')" />
                     <p class="error">{{ errors.imagenes }}</p>
                 </div>
                 <div>
@@ -169,11 +157,8 @@
 const relaciones11 = ['sala', 'centro']
 import vSelect from "vue-select";
 import Fuse from "fuse.js";
-import validation from "@/mixins/validation"
-import draggable from "vuedraggable";
 export default {
-    components: { vSelect, draggable },
-    mixins: [validation],
+    components: { vSelect },
     // middleware: 'logged',
     async asyncData({ route, $strapi, $dayjs, $error }) {
         try {
@@ -228,7 +213,6 @@ export default {
             imagenesSubir: [],
             dragData: {},
             imagenesAdicionales: [],
-            ordenQueQuiero: [],
             tieneSala: false,
             tieneFinal: false,
             tieneCentro: false,
@@ -245,12 +229,13 @@ export default {
         }
     },
     mounted() {
-        this.recalcularImagenesAdicionales()
         console.warn('REFS', this.$refs)
         this.$refs.imagenesFondo.addEventListener('scroll', this.handleScroll)
         this.$refs.descripcion.addEventListener('change', this.handleDescription)
         this.$refs.descripcion.addEventListener('keydown', this.handleDescription)
         this.updateVariables()
+        this.$store.commit('setDropHandler', this.addFiles)
+        this.$store.commit('setDropAccept', 'image/*')
     },
     destroy() {
         this.$refs.imagenesFondo.removeEventListener('scroll', this.handleScroll)
@@ -258,6 +243,10 @@ export default {
         this.$refs.descripcion.removeEventListener('keydown', this.handleDescription)
     },
     methods: {
+        addFiles(e) {
+            console.warn('DROPPED.ADDFILES', e)
+            this.$refs.imagenes.addFiles(e)
+        },
         updateVariables() {
             console.log('updateVariables', this.contenido)
             if (!this.imagenSubir)
@@ -278,28 +267,8 @@ export default {
         scrollToRight() {
             this.$refs.imagenesFondo.scrollLeft += 80
         },
-        dragged() {
-            this.ordenQueQuiero = [...this.imagenesAdicionales]
-            this.$refs.ce.modified++
-        },
-        recalcularImagenesAdicionales() {
-            const o = this.ordenQueQuiero
-            const list = (this.contenido && this.contenido.imagenes ? this.contenido.imagenes : []).concat(this.imagenesSubir.map(x => ({ url: x.src })))
-            this.$set(this, 'imagenesAdicionales', list.sort(function (a, b) {
-                const ia = o.findIndex(x => x.url === a.url)
-                const ib = o.findIndex(x => x.url === b.url)
-                return (ia === -1 ? 998 : ia) - (ib === -1 ? 997 : ib)
-            }))
-        },
-        eliminarDeImagenes(url) {
-            let idx = this.contenido.imagenes.findIndex(x => x.url === url)
-            if (idx > -1)
-                this.contenido.imagenes.splice(idx, 1)
-            idx = this.imagenesSubir.findIndex(x => x.src === url)
-            if (idx > -1)
-                this.imagenesSubir.splice(idx, 1)
-            this.$refs.ce.modified++
-        },
+
+
         /*onImagen(payload) {
             this.imagenSubir = {
                 src: payload.images[0],
@@ -315,6 +284,7 @@ export default {
             for (const i in payload.images)
                 this.imagenesSubir.push({ src: payload.images[i], file: payload.files[i] })
             this.$refs.ce.modified++
+            // this.recalcularImagenes()
         },
         fuseSalas(options, search) {
             const fuse = new Fuse(options, {
@@ -336,93 +306,59 @@ export default {
         },
 
 
+        resetState() {
+            this.$refs.ce.clearState()
+        },
+
         async onSubmit(data) {
-            // primero subimos la imagen
-            let imagenId = null
             let imagenes = []
-            let noErrors = true
+            this.error = null
 
-            if (this.imagenSubir && this.imagenSubir.id)
-                imagenId = this.imagenSubir.id
+            // primero subimos las imagenes
 
-            /* if (this.imagenSubir && this.imagenSubir.file) {
-                console.warn('VAMOS A SUBIR IMAGEN', this.imagenSubir)
-                promises.push(
-                    new Promise((success, reject) => {
-                        const form = new FormData()
-                        console.log('file', this.imagenSubir.file)
-                        form.append("files", this.imagenSubir.file)
-                        this.$strapi.upload(form)
-                            .then(async (data) => {
-                                imagenId = data[0].id
-                                success()
-                            })
-                            .catch(err => {
-                                console.warn(err)
-                                reject(err)
-                            })
-                    })
-                )
-            } */
-
-
-            if (this.imagenesSubir.length) {
-
+            if (data.imagenes.length) {
                 const form = new FormData()
-                for (const img of this.imagenesSubir)
-                    form.append("files", img.file)
-                const imgs = this.imagenesSubir
-                await this.$strapi.upload(form)
-                    .then((response) => {
-                        console.warn('RESPONSE DE SUBIR IMAGENES', response)
-                        imagenes = response
-                        for (const i in imagenes)
-                            imagenes[i].src = imgs[i].src  // para tener el src que corresponde a this.ordenQueQuiero
-                    })
-                    .catch(err => {
-                        console.warn(err)
-                        noErrors = false
-                    })
+                var uploadSome = false
+                for (const item of data.imagenes)
+                    if (item.file) {
+                        console.log('append file', item.file)
+                        form.append("files", item.file)
+                        uploadSome = true
+                        imagenes.push({ name: item.file.name })
+                    }
+                    else
+                        imagenes.push(item)
+                if (uploadSome) {
+                    await this.$strapi.upload(form)
+                        .then((response) => {
+                            if (response.error) {
+                                this.error = response.error
+                            }
+                            else {
+                                for (const item of response) {
+                                    let idx = imagenes.findIndex(x => x.name == item.name)
+                                    if (idx > -1)
+                                        imagenes[idx] = item
+                                }
+                            }
+                        })
+                        .catch(err => {
+                            this.error = err
+                        })
+                }
             }
 
-            if (noErrors)
-                this.guardarContenido(data, imagenId, imagenes)
-        },
-        async guardarContenido(data, idImage, imagenes) {
-            console.log('guardarContenido', idImage, imagenes)
-            console.log('strapi1?', this.$strapi)
-            console.log('data', data)
-            data.imagen = idImage ? idImage : !data.imagen ? null : data.imagen.id ? data.imagen.id : data.imagen
-            const o = this.ordenQueQuiero
-            if (!imagenes) imagenes = []
-            if (!data.imagenes) data.imagenes = []
-            data.imagenes = data.imagenes.concat(imagenes)
-                // importante guardar en el orden deseado por el usuario, o el que ya estaba antes
-                .sort(function (a, b) {
-                    const ia = o.findIndex(x => x.url === a.url || x.url === a.src)
-                    const ib = o.findIndex(x => x.url === b.url || x.url === b.src)
-                    return (ia === -1 ? 998 : ia) - (ib === -1 ? 997 : ib)
-                })
-                .map(x => x.id)
-            console.log('strapi2?', this.$strapi)
+            if (this.error) {
+                this.resetState()
+                return
+            }
+
+            data.imagenes = this.$idy(imagenes)
+            data.imagen = this.$idy(data.imagen)
+            data.sala = this.$idy(data.sala)
+            data.centro = this.$idy(data.centro)
+
             if (this.contenido.id) {
-                console.log('saving content data', data)
-
-                /*fetch(this.$config.strapiUrl + `/eventos/${this.contenido.id}`, {
-                    method: 'PUT', // or 'PUT'
-                    body: JSON.stringify({ data }), // data can be `string` or {object}!
-                    headers: {
-                        'Content-Type': 'application/json',
-                        Authorization: `Bearer ${this.$strapi.token}`
-                    }
-                }).
-                    then(res => {
-                        console.log('1st res', res)
-                        return res.json()
-                    })*/
-
-                //.catch(error => console.error('Error:', error))
-
                 return this.$strapi.update('eventos', this.contenido.id, data, {
                     populate: { imagen: '*', imagenes: '*', centro: '*', sala: '*' }
                 })
@@ -445,21 +381,21 @@ export default {
                             for (const field in contenido)
                                 this.$set(this.contenido, field, contenido[field])
                             this.$nextTick(() => {
-                                this.$refs.ce.clearState()
+                                this.resetState()
                                 // this.$refs.ce.modified = 0
                             })
                             this.$strapi.updateBorradoresNum()
                         }
                         //this.$refs.ce.saving = false
                         //this.$refs.ce.publishing = false
-                        this.$refs.ce.clearState()
+                        this.resetState()
                     })
                     .catch(err => {
                         console.log('SAVE.CATCH', err, JSON.stringify(err))
                         this.error = err
                         // this.$refs.ce.saving = false
                         // this.$refs.ce.publishing = false
-                        this.$refs.ce.clearState()
+                        this.resetState()
                     })
             }
             else
@@ -482,13 +418,13 @@ export default {
                         }
                         console.log('REFS CE', this.$refs.ce)
                         //this.$refs.ce.saving = false
-                        this.$refs.ce.clearState()
+                        this.resetState()
                     })
                     .catch(err => {
                         console.log('CREATE.CATCH', err, JSON.stringify(err))
                         this.error = err
                         // this.$refs.ce.saving = false
-                        this.$refs.ce.clearState()
+                        this.resetState()
                     })
         }
     }

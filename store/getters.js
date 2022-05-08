@@ -100,6 +100,14 @@ export default {
     return state.pageConfig
   },
 
+  dropHandler(state){
+    return state.dropHandler
+  },
+
+  dropAccept(state){
+    return state.dropAccept
+  },
+
   travelling(state) {
     return state.travelling
   },

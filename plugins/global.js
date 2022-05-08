@@ -175,9 +175,20 @@ export default ({
   const getImageFor = store.getters.getImageFor
   const getImageUrlFor = (coleccion) => {
     const img = getImageFor(coleccion)
-    if(!img) {
-      return {url: $config.defaultImage}
+    if (!img) {
+      return {
+        url: $config.defaultImage
+      }
     }
+  }
+
+  const idy = (data) => {
+    if(!data) return null
+    if (Array.isArray(data))
+      return data.map(x => x.id)
+    if (typeof data === 'object')
+      return data.id
+    return data
   }
 
   inject('error', myError)
@@ -188,4 +199,5 @@ export default ({
   inject('normalizarTitulo', normalizarTitulo)
   inject('imagenColeccion', getImageFor)
   inject('imagenUrlColeccion', getImageUrlFor)
+  inject('idy', idy)
 }

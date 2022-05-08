@@ -12,6 +12,7 @@
   "dependencies": {
     "@blokwise/dynamic": "^1.4.1",
     "@gerhobbelt/markdown-it-attrs": "^4.0.0-22",
+    "@matrx/dragster": "^0.6.0",
     "@meilisearch/instant-meilisearch": "^0.6.0",
     "@nuxt/content": "^1.14.0",
     "@nuxtjs/apollo": "^4.0.1-rc.5",
@@ -23,6 +24,7 @@
     "@nuxtjs/robots": "^2.5.0",
     "@nuxtjs/strapi": "^0.3.1",
     "@nuxtjs/svg": "^0.1.12",
+    "blueimp-load-image": "^5.16.0",
     "core-js": "^3.9.1",
     "express": "^4.17.1",
     "fs": "^0.0.1-security",
