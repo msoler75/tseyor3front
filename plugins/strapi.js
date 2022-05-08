@@ -102,7 +102,7 @@ export default ({
 
     // parece que params no hace nada
     async findOne(collection, id) {
-      console.log('QUERY', `/${collection}/${id}`)
+      console.log('QUERY', `/${collection}/${id}`, 'token=', this.token)
       /*return $axios.get(`/${collection}/${id}`)
         .then(r => r.data)
         .catch(err => {
@@ -111,7 +111,7 @@ export default ({
           }
         })*/
 
-      return fetch(`${this.url}/${collection}${id}`, {
+      return fetch(`${this.url}/${collection}/${id}`, {
           method: "GET",
           headers: {
             Authorization: `Bearer ${this.token}`,
@@ -119,6 +119,7 @@ export default ({
           }
         })
         .then(res => res.json())
+        .then(res => !res.error?res.data:res)
     }
 
 
@@ -149,7 +150,7 @@ export default ({
           }
         })
         .then(res => res.json())
-        .then(r=>r.meta.pagination.total)
+        .then(r=>r.meta?r.meta.pagination.total:Array.isArray(r)?r.length:r)
     }
 
 

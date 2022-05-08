@@ -186,10 +186,8 @@ export default {
                 if (!evento)
                     return $error(404, 'Evento no encontrado')
                 contenido = evento
-                console.warn('EVENTO', evento)
                 for (const campo of relaciones11)
                     contenido[campo] = contenido[campo] && contenido[campo].id ? contenido[campo].id : null
-                console.warn('EVENTO2', evento)
             }
             const { data: salas } = await $strapi.find('salas')
             const { data: centros } = await $strapi.find('centros')
@@ -307,6 +305,7 @@ export default {
 
 
         resetState() {
+            if(this.$refs.ce)
             this.$refs.ce.clearState()
         },
 
@@ -362,39 +361,26 @@ export default {
                 return this.$strapi.update('eventos', this.contenido.id, data, {
                     populate: { imagen: '*', imagenes: '*', centro: '*', sala: '*' }
                 })
-                    //  $axios.put(`/eventos/${this.contenido.id}`, {data})
                     .then(async (response) => {
-                        console.log('2nd response', response)
                         if (response.error) {
                             this.error = response.error
                         }
                         else {
                             const { data: contenido } = response
-                            console.log('CONTENIDO:', contenido)
                             this.imagenSubir = contenido.imagen
                             for (const campo of relaciones11)
                                 contenido[campo] = contenido[campo] && typeof contenido[campo] === 'object' ? contenido[campo].id : null
-
-                            this.imagenSubir = null
-                            this.imagenesSubir = []
-                            this.ordenQueQuiero = []
                             for (const field in contenido)
                                 this.$set(this.contenido, field, contenido[field])
-                            this.$nextTick(() => {
-                                this.resetState()
-                                // this.$refs.ce.modified = 0
-                            })
                             this.$strapi.updateBorradoresNum()
                         }
-                        //this.$refs.ce.saving = false
-                        //this.$refs.ce.publishing = false
-                        this.resetState()
+                        this.$nextTick(() => {
+                            this.resetState()
+                        })
                     })
                     .catch(err => {
                         console.log('SAVE.CATCH', err, JSON.stringify(err))
                         this.error = err
-                        // this.$refs.ce.saving = false
-                        // this.$refs.ce.publishing = false
                         this.resetState()
                     })
             }
@@ -416,14 +402,11 @@ export default {
                             this.$router.push(`/eventos/${contenido.id}/editar`)
                             this.$strapi.updateBorradoresNum()
                         }
-                        console.log('REFS CE', this.$refs.ce)
-                        //this.$refs.ce.saving = false
                         this.resetState()
                     })
                     .catch(err => {
                         console.log('CREATE.CATCH', err, JSON.stringify(err))
                         this.error = err
-                        // this.$refs.ce.saving = false
                         this.resetState()
                     })
         }

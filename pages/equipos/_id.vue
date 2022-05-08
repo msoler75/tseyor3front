@@ -1,5 +1,8 @@
 <template>
   <section class="relative px-7 mb-7" contained="no">
+
+  <Equipo :equipo="equipo"/>
+
     <GridFluid class="gap-4">
       <div class="h-64 md:h-full" :style="bgImage"></div>
 
@@ -21,7 +24,7 @@
         </div>
       </div>
 
-      <div class="pizarra p-5 cols-2 overflow-auto !rounded-none" v-if="equipo.pizarra" v-html="equipo.textoHTML" />
+      <div class="pizarra p-5 cols-2 overflow-auto !rounded-none" v-if="equipo.pizarra" v-html="equipo.pizarraHTML" />
 
       <div class="surface p-5 overflow-auto" :class="equipo.miembros.length > 8 ? 'cols-2' : ''">
         <h3>Miembros</h3>
@@ -63,6 +66,25 @@
           </NLink>
         </div>
       </div>
+
+      <div v-if="soyCoordinador" class="p-5 surface flex flex-col">
+        <h3>Coordinación</h3>
+        <TButton :to="`/publicaciones/nueva/editar?equipo=${equipo.id}`" class="text-center">Nueva publicación</TButton>
+      </div>
+
+      <div class="flex flex-col space-y-2 !border-0 !shadow-none">
+        <h3>Publicaciones</h3>
+        <Card v-for="publi of publicaciones" :key="publi.id" class="py-2 px-4 flex flex-col shrink-0">
+          <NLink :to="`/publicaciones/${publi.id}`" class="text-gray-dark-800 dark:text-gray-100">
+          <div class="w-full">{{ $ucFirst(publi.titulo) }}</div>
+          <div class="text-xs text-diminished flex justify-between">
+            <span>{{$dayjs(publi.publishedAt).fromNow()}}</span>
+            <span class="">{{publi.tipo}}</span>
+          </div>
+          </NLink>
+        </Card>
+      </div>
+
     </GridFluid>
 
     <section class="mt-7 flex">
@@ -108,8 +130,27 @@ export default {
       if (!contenido)
         return $error(404, 'Equipo no encontrado')
       contenido.actividades = []
-      contenido.textoHTML = $mdToHtml(contenido.pizarra/*, contenido.imagenes*/)
-      return { contenido, equipo: contenido }
+      contenido.pizarraHTML = $mdToHtml(contenido.pizarra/*, contenido.imagenes*/)
+
+      /* contenido.numMiembros = await $strapi.count('usuarios', {
+        filters: {
+          equipos: {
+            $eq: contenido.id
+          }
+        }
+      }) */
+
+      const { data: publicaciones, meta } = await $strapi.find('publicaciones', {
+        filters: {
+          equipo: {
+            id: {
+              $eq: contenido.id
+            }
+          }
+        }
+      })
+
+      return { contenido, publicaciones, meta, equipo: contenido }
     }
     catch (e) {
       console.error(e)
@@ -158,17 +199,16 @@ export default {
     async entrar() {
       return this.$strapi.put(`/equipos/${this.equipo.id}/join`)
         .then(res => {
-          if (res.error)
-          {
+          if (res.error) {
             console.error(res.error)
             this.$alert("Hubo un error")
           }
           else {
             this.$set(this.equipo, 'miembros', res.miembros)
             this.$set(this.equipo, 'coordinadores', res.coordinadores)
-                         if(this.soyCoordinador) {
-                  this.$alert("Se te ha asignado como miembro coordinador del equipo")
-                }
+            if (this.soyCoordinador) {
+              this.$alert("Se te ha asignado como miembro coordinador del equipo")
+            }
           }
         })
     },

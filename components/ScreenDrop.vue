@@ -4,7 +4,6 @@
         @dragstart="dragstart"
         >
         <!-- https://stackoverflow.com/questions/63063312/why-doesnt-the-drop-event-work-for-me-in-vue  -->
-        {{ dragging }}
 
         <Modal v-model="dragging" class="justify-center items-center" :closeable="false">
             <div ref="dropzone" pepito

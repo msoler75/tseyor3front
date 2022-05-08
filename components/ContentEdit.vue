@@ -1,5 +1,5 @@
 <template>
-    <form @submit.prevent="onSubmit" class="select-none">
+    <form @submit.prevent="onSubmit" class="select-none" ref="form">
 
         <div v-if="content.id" class="max-w-md mx-auto mb-3 flex flex-col space-y-4">
             <Card class="p-3 !outline-2"
@@ -15,7 +15,7 @@
         <Card class="order-1 py-5 px-2 xs:px-4 max-w-md mx-auto bg-blue-gray-50 dark:bg-blue-gray-900">
             <div class="space-y-9">
                 <h1>{{ verbAction }} {{ singular }}</h1>
-                <slot :inputClassError="inputClassError" :errors="errors" />
+                <slot :inputClassError="inputClassError" :errors="errors" :modified="modified" />
             </div>
         </Card>
 
@@ -113,7 +113,7 @@ export default {
             return this.content.publishedAt
         },
         verbAction() {
-            return this.content.id ? 'Editar' : 'Nuevo'
+            return this.content.id ? 'Editar' : this.masculine ? 'Nuevo' : 'Nueva'
         },
         verbPublish() {
             return this.publishing ? 'Publicando' : !this.published ? 'Publicar' : 'Publicado'
@@ -139,10 +139,20 @@ export default {
             this.$emit('change', { modified: this.modified, ...this.content })
         },
         error(newValue) {
-            if(newValue)
-            this.setErr(newValue)
+            if (newValue)
+                this.setErr(newValue)
             else
-            this.clearErrors()
+                this.clearErrors()
+        }
+    },
+    mounted() {
+        if (!this.content.id) {
+            const firstInp = this.$refs.form.querySelector("input:not(:disabled)")
+            if (firstInp)
+                this.$nextTick(() => {
+                    firstInp.focus()
+                    this.$scrollTo(firstInp, 500)
+                })
         }
     },
     methods: {
@@ -208,7 +218,7 @@ export default {
         clearState() {
             this.publishing = false
             this.saving = false
-            this.modified = this.thereErrors?1:0
+            this.modified = this.thereErrors ? 1 : 0
         }
     }
 }
