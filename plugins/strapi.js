@@ -390,24 +390,6 @@ export default ({
         .then(res => res.json())
     }
 
-    async updateBorradoresNum() {
-      let borradores = 0
-      if(this.user) 
-      borradores = await this.count('contenidos', this.filterByList({
-        filters: {
-          autorref: {
-            $eq: this.user.id
-          },
-          publishedAt: {
-            $null: true
-          },
-        },
-        publicationState: 'preview',
-        sort: ['updatedAt:desc']
-      }))
-      store.commit('SET_BORRADORES', borradores)
-    }
-
   }
 
   const strapi4 = new strapiv4()

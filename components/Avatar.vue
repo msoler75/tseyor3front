@@ -1,14 +1,16 @@
 <template>
   <div class="relative">
     <span v-if="badge" class="absolute bg-error text-white rounded-full -right-1 -top-1 text-xs" style="font-size: .5rem; padding: 0 .35rem">{{ badge }}</span>
-    <NLink v-if="cto" :to="cto" class="block flex-shrink-0 rounded-full overflow-hidden dark:ring-1 dark:ring-gray-100">
-      <nuxt-img v-if="cimage" :src="cimage" class="shadow w-full h-full" :alt="cname" :title="cname" />
+    <NLink v-if="cto" :to="cto" class="block w-full h-full max-h-full max-w-full flex-shrink-0 rounded-full overflow-hidden dark:ring-1 dark:ring-gray-100">
+      <nuxt-img v-if="cimage" :src="cimage" class="shadow max-w-full max-h-full  w-full h-full" :alt="cname" fit="cover" :title="cname" :class="transition?'transition duration-200':''"/>
       <div v-else class="h-full flex justify-center items-center shadow uppercase" :style="'background: ' + ccolor">
         {{ initials }}
       </div>
     </NLink>
     <nuxt-img v-else-if="cimage" :src="cimage"
-      class="block flex-shrink-0 rounded-full shadow w-full h-full dark:ring-1 dark:ring-gray-100" :alt="cname"
+    fit="cover" 
+      class="block flex-shrink-0 rounded-full shadow max-w-full max-h-full w-full h-full dark:ring-1 dark:ring-gray-100" :alt="cname"
+      :class="transition?'transition duration-200':''"
       :title="cname" />
     <div v-else
       class="flex-shrink-0 rounded-full overflow-hidden flex justify-center items-center shadow uppercase dark:ring-1 dark:ring-gray-100"
@@ -68,6 +70,11 @@ export default {
       },
       default: null,
     },
+    transition: {
+      type: Boolean,
+      required: false,
+      default: false
+    }
   },
   computed: {
     cid() {

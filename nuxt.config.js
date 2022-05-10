@@ -94,20 +94,29 @@ export default {
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
   plugins: [
-    '~plugins/axios',
+    // '~plugins/axios',
     '~plugins/strapi.js',
     '~plugins/global.js',
+    '~plugins/borradores.js',
     { src: '~plugins/vue-observe-visibility.js', mode: 'client' },
     { src: '~plugins/scrollto.js', mode: 'client' },
     { src: '~plugins/meilisearch.js', mode: 'client' },
     // { src: '~plugins/nuxt-hammer.js', mode: 'client' },
     // { src: '~plugins/vue-touch.js', mode: 'client' },
     { src: '~plugins/confirm.js', mode: 'client' },
+    { src: '~plugins/prompt.js', mode: 'client' },
     { src: '~plugins/alert.js', mode: 'client' },
   ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
-  components: true,
+  // components: true,
+
+  components: {
+    dirs: [
+      '~/components',
+      '~/components/principales'
+    ]
+  },
 
   // Modules for dev and build (recommended): https://go.nuxtjs.dev/config-modules
   buildModules: [

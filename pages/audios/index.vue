@@ -40,9 +40,11 @@
 import seo from '@/mixins/seo.js'
 export default {
   mixins: [seo],
-  async asyncData({ route, $strapi, $error }) {
+  async asyncData({ $strapi, $error }) {
     try {
-      const { data: audios, meta } = await $strapi.find('audios', { populate:'*', sort: 'publishedAt:desc' })
+      const { data: audios, meta, error } = await $strapi.find('audios', { populate:'*', sort: 'publishedAt:desc' })
+      if(error)
+        return $error(error)
       return { audios, meta }
     }
     catch (e) {

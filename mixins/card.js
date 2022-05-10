@@ -115,8 +115,10 @@ export default {
       return r;
     },
     ctext() {
+      return 'CARDTEXT'
       return (
         this.text ||
+        !this.data?null:
         this.data.text ||
         this.data.texto ||
         this.data.description ||

@@ -1,9 +1,9 @@
 <template>
     <Modal v-model="opened" :title="title">
-        <div class="p-5">
-            <div class="font-bold text-center mb-7" v-html="message"/>
+        <div class="p-5 xm:min-w-[300px]">
+            <div class="font-bold text-center mb-7" v-html="message" />
             <div class="flex justify-center">
-                <TButton @click="close" class="w-1/2 text-center">{{ accept }}</TButton>
+                <TButton @click="close" class="text-center">{{ accept }}</TButton>
             </div>
         </div>
     </Modal>
@@ -18,6 +18,7 @@ export default {
             message: '',
             opened: false,
             accept: 'Entendido',
+            closed: null
         }
     },
     mounted() {
@@ -25,17 +26,17 @@ export default {
     },
     methods: {
         close() {
-            this.opened = false;
+            this.opened = false
+            if(this.closed) 
+                this.closed()
         },
-        dialog({ title, yes, no, message, open, confirmed, cancelled }) {
+        dialog({ title, accept, message, open, closed }) {
             this.opened = open
-            if(!this.opened) return
+            if (!this.opened) return
             this.title = title
             this.message = message
-            this.yes = yes || 'Sí'
-            this.no = no || 'No'
-            this.confirmed = confirmed
-            this.cancelled = cancelled
+            this.accept = accept || this.accept
+            this.closed = closed
         }
     }
 }

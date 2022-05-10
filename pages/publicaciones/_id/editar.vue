@@ -123,8 +123,7 @@ export default {
     },
     computed: {
         tipos() {
-            if (this.contenido.equipo) return ['Notificación', 'Orden del día', 'Acta o Resumen',
-                'Anexo', 'Acuerdo']
+            if (this.contenido.equipo) return ['Notificación', 'Orden del día', 'Acta o Resumen', 'Anexo', 'Acuerdo']
             return ['Personal', 'Notificación']
         },
         adjuntosFondo() {
@@ -230,7 +229,7 @@ export default {
                                 contenido[campo] = contenido[campo] && typeof contenido[campo] === 'object' ? contenido[campo].id : null
                             for (const field in contenido)
                                 this.$set(this.contenido, field, contenido[field])
-                            this.$strapi.updateBorradoresNum()
+                            this.$updateBorradoresNum()
                         }
                         this.$nextTick(() => {
                             this.resetState()
@@ -258,7 +257,7 @@ export default {
                             })*/
                             // recargamos la página para que se muestra en modo edición con la ruta correcta
                             this.$router.push(`/publicaciones/${contenido.id}/editar`)
-                            this.$strapi.updateBorradoresNum()
+                            this.$updateBorradoresNum()
                         }
                         console.log('REFS CE', this.$refs.ce)
                         this.resetState()

@@ -1,137 +1,100 @@
 <template>
-  <section class="relative px-7 mb-7" contained="no">
+  <section class="relative px-7 mb-7 container container-xl mx-auto space-y-6 lh:space-y-0 lg:flex lg:space-x-6"
+    contained="no">
 
-  <Equipo :equipo="equipo"/>
+    <Equipo :equipo="equipo" class="lg:hidden" />
 
-    <GridFluid class="gap-4">
-      <div class="h-64 md:h-full" :style="bgImage"></div>
+    <div class="w-full space-y-6">
 
-      <div class="surface p-5 text-center flex flex-col justify-center">
-        <h2 class="my-0">{{ equipo.nombre }}</h2>
-        <section class="text-3xl my-5">
-          <Icon icon="people-carry" />
-        </section>
-        <p>{{ equipo.descripcion }}</p>
-        <div class="mt-5 h-8 flex justify-center items-center">
-          <div v-if="soyMiembro" class="italic">
-            <Icon icon="check-circle" class="text-green mr-1" />Eres miembro
-          </div>
-          <div v-else>
-            <Button @click="entrar" class="btn">
-              <Icon icon="door-open" class="mr-2" />Inscríbete
-            </Button>
-          </div>
+      <Card class="p-5 bg-yellow-50 dark:bg-brown-700" v-if="anuncioHTML">
+        <div class="anuncio" v-html="anuncioHTML" />
+        <div class="w-full flex opacity-50 text-xs">
+          <span @click="editarAnuncio" class="cursor-pointer">
+            <icon icon="pen-alt" />
+          </span>
+          <span @click="eliminarAnuncio" class="ml-4 cursor-pointer">
+            <icon icon="trash" />
+          </span>
+          <span class="ml-auto">{{ $dayjs(anuncio.updatedAt).fromNow() }}</span>
         </div>
+      </Card>
+
+      <div v-else-if="soyCoordinador">
+        <span @click="editarAnuncio" class="space-x-2 text-xs bg-yellow-50 px-2 py-1 rounded-full cursor-pointer">
+          <icon icon="pen-alt" /> Poner anuncio
+        </span>
       </div>
 
-      <div class="pizarra p-5 cols-2 overflow-auto !rounded-none" v-if="equipo.pizarra" v-html="equipo.pizarraHTML" />
-
-      <div class="surface p-5 overflow-auto" :class="equipo.miembros.length > 8 ? 'cols-2' : ''">
-        <h3>Miembros</h3>
-        <div class="flex flex-wrap" v-if="equipo.miembros.length">
-          <Avatar v-for="user of equipo.miembros" :key="user.id" :data="user" :class="avatarClass" class="m-1" />
-        </div>
-        <div v-else class="flex flex-col flex-grow justify-center">
-          <p class="text-center">No hay miembros</p>
-        </div>
-        <template v-if="equipo.coordinadores.length">
-          <h3>Coordinadores</h3>
-          <div class="flex flex-wrap">
-            <Avatar v-for="user of equipo.coordinadores" :key="user.id" :data="user" :class="avatarClass" class="m-1" />
-          </div>
-        </template>
-      </div>
-
-      <div v-if="equipo.actividades && equipo.actividades.length" class="surface p-5">
-        <h3>
-          <Icon icon="hiking" class="mr-3" />Actividades
-        </h3>
-        <div class="flex flex-col space-y-4">
-          <NLink v-for="actividad of equipo.actividades" :key="actividad.id" class="p-3 btn btn-gray"
-            :to="'/actividades/' + actividad.id">
-            {{ actividad.titulo }}
-            <span v-if="actividad.descripcion" class="text-diminished">— {{ actividad.descripcion }}</span>
-          </NLink>
-        </div>
-      </div>
-
-      <div v-if="carpetaActualId" class="p-5 surface flex flex-col">
-        <h3>{{ carpetaActualNombre }}</h3>
-        <FilesFolder @loaded="carpetaActual = $event" v-model="carpetaActualId" :idRootFolder="equipo.carpeta.id"
-          class="w-full max-w-full h-full overflow-y-auto max-h-[240px]" :droppable="soyCoordinador"
-          navigationMode="Embed" iconClass="text-xl" textClass="text-sm" subtextClass="text-xs" boxClass="w-8 mr-2" />
-        <div class="flex justify-center mt-2">
-          <NLink class="ml-auto text-xs btn btn-gray btn-mini" :to="`${carpetaActual.ruta}`">
-            <icon icon="search" />
-          </NLink>
-        </div>
-      </div>
-
-      <div v-if="soyCoordinador" class="p-5 surface flex flex-col">
-        <h3>Coordinación</h3>
-        <TButton :to="`/publicaciones/nueva/editar?equipo=${equipo.id}`" class="text-center">Nueva publicación</TButton>
-      </div>
-
-      <div class="flex flex-col space-y-2 !border-0 !shadow-none">
+      <div class="flex justify-between items-center">
         <h3>Publicaciones</h3>
-        <Card v-for="publi of publicaciones" :key="publi.id" class="py-2 px-4 flex flex-col shrink-0">
-          <NLink :to="`/publicaciones/${publi.id}`" class="text-gray-dark-800 dark:text-gray-100">
-          <div class="w-full">{{ $ucFirst(publi.titulo) }}</div>
-          <div class="text-xs text-diminished flex justify-between">
-            <span>{{$dayjs(publi.publishedAt).fromNow()}}</span>
-            <span class="">{{publi.tipo}}</span>
-          </div>
-          </NLink>
-        </Card>
+
+        <TButton v-if="soyCoordinador" :to="`/publicaciones/nueva/editar?equipo=${equipo.id}`" class="text-center">
+          <icon icon="pen-alt" class="mr-2" /> Nueva publicación
+        </TButton>
       </div>
 
-    </GridFluid>
+      <Card v-for="publi of publicacionesFiltro" :key="publi.id" class="py-2 space-y-2 px-4 flex flex-col shrink-0">
+        <NLink :to="`/publicaciones/${publi.id}`"
+          class="w-full flex justify-between items-center text-gray-dark-800 dark:text-gray-100"
+          v-if="publi.publishedAt">
+          <span :class="publi.publishedAt ? '' : 'opacity-50'">{{ $ucFirst(publi.titulo) }}</span>
+        </NLink>
+        <div class="w-full flex justify-between items-center text-gray-dark-800 dark:text-gray-100" v-else>
+          <span :class="publi.publishedAt ? '' : 'opacity-50'">{{ $ucFirst(publi.titulo) }}</span>
+          <span class="bg-error text-white text-xs rounded-full px-3 py-1">BORRADOR</span>
+        </div>
+        <div class="w-full text-xs text-diminished flex space-x-2 justify-between items-center">
+          <div class="rounded-full bg-orange-700 text-white text-xs py-1 px-3 uppercase tracking-wider">{{ publi.tipo }}
+          </div>
+          <div v-if="publi.publishedAt" class="ml-auto">{{ $dayjs(publi.publishedAt).fromNow() }}</div>
+          <TButton class="btn-mini w-20" v-if="soyCoordinador" :to="`/publicaciones/${publi.id}/editar`">
+            <icon icon="pen-alt" class="mr-2" /> Editar
+          </TButton>
+        </div>
+      </Card>
+    </div>
 
-    <section class="mt-7 flex">
-      <button v-if="soyMiembro" class="btn btn-gray ml-auto" @click="salir">
-        <Icon icon="sign-out-alt" class="mr-1" />Salir del equipo
-      </button>
-    </section>
+    <Equipo :equipo="equipo" :vertical="true" class="hidden lg:block" />
   </section>
 </template>
 
 <script>
 import vercontenido from "@/mixins/vercontenido.js"
-import likes from "@/mixins/likes.js"
 import seo from "@/mixins/seo.js"
 export default {
-  mixins: [vercontenido, likes, seo],
-  middleware: 'logged',
-  async asyncData({ route, $strapi, $mdToHtml, $error }) {
+  mixins: [vercontenido, seo],
+  middleware: "logged",
+  async asyncData({ route, $strapi, $borradoresEquipo, $error }) {
     try {
       // let contenido = { miembros: [], coordinadores: [] }
       const contenido = await $strapi.getContent(route, {
         populate: {
-          // actividades: '*',
           miembros: {
-            fields: ['id', 'username', 'nombreSimbolico'],
+            fields: ["id", "username", "nombreSimbolico"],
             populate: {
               imagen: {
-                fields: ['url', 'width', 'height']
+                fields: ["url", "width", "height"]
               }
             }
           },
           coordinadores: {
-            fields: ['id', 'username', 'nombreSimbolico'],
+            fields: ["id", "username", "nombreSimbolico"],
             populate: {
               imagen: {
-                fields: ['url', 'width', 'height']
+                fields: ["url", "width", "height"]
               }
             }
+          },
+          actividades: {
+            fields: ["id", "titulo", "descripcion"],
+            populate: '*'
           }
         }
-      })
-      console.warn('EQUIPO', contenido)
+      });
+      console.warn("EQUIPO", contenido);
       if (!contenido)
-        return $error(404, 'Equipo no encontrado')
-      contenido.actividades = []
-      contenido.pizarraHTML = $mdToHtml(contenido.pizarra/*, contenido.imagenes*/)
-
+        return $error(404, "Equipo no encontrado");
+      // contenido.pizarraHTML = $mdToHtml(contenido.pizarra /*, contenido.imagenes*/);
       /* contenido.numMiembros = await $strapi.count('usuarios', {
         filters: {
           equipos: {
@@ -139,106 +102,134 @@ export default {
           }
         }
       }) */
-
-      const { data: publicaciones, meta } = await $strapi.find('publicaciones', {
+      const { data: publicaciones, meta } = await $strapi.find("publicaciones", {
         filters: {
           equipo: {
             id: {
               $eq: contenido.id
             }
           }
-        }
-      })
-
-      return { contenido, publicaciones, meta, equipo: contenido }
+        },
+        publicationState: 'preview',
+        sort: ['publishedAt:desc']
+      });
+      var borradoresEquipo = await $borradoresEquipo(contenido.id)
+      return { contenido, publicaciones, meta, equipo: contenido, borradoresEquipo };
     }
     catch (e) {
-      console.error(e)
-      $error(503)
+      console.error(e);
+      $error(503);
     }
   },
   data() {
     return {
       carpetaActual: null,
       carpetaActualId: null
-    }
+    };
   },
-  mounted() {
+  async mounted() {
     if (this.equipo.carpeta) {
-      this.$set(this, 'carpetaActual', this.equipo.carpeta)
-      this.carpetaActualId = this.equipo.carpeta.id
+      this.$set(this, "carpetaActual", this.equipo.carpeta);
+      this.carpetaActualId = this.equipo.carpeta.id;
     }
   },
   computed: {
     soyMiembro() {
-      return !!this.equipo.miembros.find(x => x.id === this.$strapi.user.id)
+      return !!this.equipo.miembros.find(x => x.id === this.$strapi.user.id);
     },
     soyCoordinador() {
-      return !!this.equipo.coordinadores.find(x => parseInt(x.id) === this.$strapi.user.id)
+      return !!this.equipo.coordinadores.find(x => parseInt(x.id) === this.$strapi.user.id);
+    },
+    publicacionesFiltro() {
+      return this.soyCoordinador ? this.publicaciones :
+        this.publicaciones.filter(x => x.publishedAt)
+    },
+    anuncio() {
+      return this.publicaciones.find(x => x.tipo == 'Anuncio')
+    },
+    anuncioHTML() {
+      if (!this.anuncio) return ''
+      return this.$mdToHtml(this.anuncio.texto)
     },
     carpetaActualNombre() {
-      if (this.carpetaActual) return 'Archivos'
-      return this.carpetaActual.id === this.equipo.carpeta.id ? 'Archivos' : this.carpetaActual.nombre
-    },
-    avatarClass() {
-      return 'w-16 h-16'
-      if (!this.equipo.miembros) return ''
-      const n = this.equipo.miembros.length
-      return n < 8 ? 'w-16 h-16' : n < 16 ? 'w-12 h-12' : n < 64 ? 'w-8 h-8' : 'w-4 h-4'
+      if (this.carpetaActual)
+        return "Archivos";
+      return this.carpetaActual.id === this.equipo.carpeta.id ? "Archivos" : this.carpetaActual.nombre;
     },
     bgImage() {
-      const imgUrl = this.$img(this.equipo.imagen ? this.equipo.imagen.url : '/imagenes/equipo.jpg', { width: 400, format: 'webp', quality: 70 })
+      const imgUrl = this.$img(this.equipo.imagen ? this.equipo.imagen.url : "/imagenes/equipo.jpg", { width: 400, format: "webp", quality: 70 });
       return {
         backgroundImage: `url('${imgUrl}')`,
-        backgroundPosition: 'center',
-        backgroundSize: 'cover'
-      }
+        backgroundPosition: "center",
+        backgroundSize: "cover"
+      };
     }
   },
   methods: {
-    async entrar() {
-      return this.$strapi.put(`/equipos/${this.equipo.id}/join`)
-        .then(res => {
-          if (res.error) {
-            console.error(res.error)
-            this.$alert("Hubo un error")
+    async editarAnuncio() {
+      this.$prompt({
+        message: 'Editar anuncio',
+        response: this.anuncio ? this.anuncio.texto : '',
+        accepted: (response) => {
+          if (this.anuncio) {
+            this.$strapi.update('publicaciones', this.anuncio.id, {
+              texto: response
+            })
+              .then(res => {
+                if (res.error)
+                  this.$alert('Hubo un error. Tal vez el texto es demasiado corto')
+                else {
+                  this.anuncio.texto = response
+                  this.anuncio.updatedAt = new Date().toISOString()
+                }
+              })
           }
           else {
-            this.$set(this.equipo, 'miembros', res.miembros)
-            this.$set(this.equipo, 'coordinadores', res.coordinadores)
-            if (this.soyCoordinador) {
-              this.$alert("Se te ha asignado como miembro coordinador del equipo")
-            }
-          }
-        })
-    },
-    async salir() {
-      this.$confirm({
-        message: '¿Quieres salir del equipo?',
-        yes: 'Sí',
-        no: 'Cancelar',
-        confirmed: async () => {
-          return this.$strapi.put(`/equipos/${this.equipo.id}/leave`)
-            .then(res => {
-              if (res.error) {
-                console.error(res.error)
-                this.$alert("Hubo un error")
-              }
-              else {
-                this.$set(this.equipo, 'miembros', res.miembros)
-                this.$set(this.equipo, 'coordinadores', res.coordinadores)
-              }
+            this.$strapi.create('publicaciones', {
+              equipo: this.equipo.id,
+              tipo: 'Anuncio',
+              texto: response
             })
-        },
+              .then(res => {
+                if (res.error) {
+                  this.$alert('Hubo un error. Tal vez el texto es demasiado corto')
+                }
+                else {
+                  console.log('ANUNCIO CREADO', res)
+                  this.publicaciones.push(res.data)
+                }
+              })
+          }
+        }
       })
     },
+
+    async eliminarAnuncio() {
+      this.$confirm({
+        message: 'Esto eliminará el anuncio. ¿Quieres continuar?',
+        confirmed: () => {
+          this.$strapi.delete('publicaciones', this.anuncio.id)
+            .then(res => {
+              if (res.error) {
+                this.$alert('Hubo algún error')
+              }
+              else {
+                const idx = this.publicaciones.findIndex(x => x.id === this.anuncio.id)
+                this.publicaciones.splice(idx, 1)
+              }
+            }
+            )
+        }
+      })
+    },
+
     async actualizarMiembros() {
       // await this.$strapi.fetchUser() // actualizamos los datos del usuario actual y el equipo con sus miembros después de la operación
-      const id = this.$route.params.id
-      const equipo = await this.$strapi.getContent(route)
-      console.log('listado actualizado', equipo.miembros)
-      this.contenido = equipo
-      this.equipo = equipo
+      const id = this.$route.params.id;
+      const equipo = await this.$strapi.getContent(route);
+      console.log("listado actualizado", equipo.miembros);
+      this.contenido = equipo;
+      this.equipo = equipo;
     }
     /*
     async getEquipos() {
@@ -249,7 +240,7 @@ export default {
     async updateEquipos(equipos) {
       console.log('update_equipos', equipos)
       const r = await this.$axios.put('/api/users/'+this.$strapi.user.id, {equipos})
-      this.$router.app.refresh()     
+      this.$router.app.refresh()
     },
     async entrar2() {
       const equipos = await this.getEquipos()
@@ -261,7 +252,7 @@ export default {
         return
       }
       equipos.push(this.equipo.id)
-      this.updateEquipos(equipos)   
+      this.updateEquipos(equipos)
     },
     async salir2() {
       const equipos = await this.getEquipos()
@@ -273,21 +264,17 @@ export default {
         return
       }
       equipos.splice(idx, 1)
-      this.updateEquipos(equipos)     
+      this.updateEquipos(equipos)
     }
     */
-  }
+  },
 };
 </script>
 
 <style scoped>
 @import url('https://fonts.googleapis.com/css2?family=Caveat:wght@700&family=Dancing+Script&family=Fuzzy+Bubbles:wght@700&display=swap');
 
-.pizarra {
-  @apply text-lg border-[15px] border-brown-700;
+.anuncio {
   font-family: 'Fuzzy Bubbles', cursive;
-  color: white;
-  background: url(/imagenes/pizarra.jpg);
-  background-size: cover;
 }
 </style>

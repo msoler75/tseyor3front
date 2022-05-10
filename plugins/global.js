@@ -9,7 +9,8 @@ export default ({
   $md,
   $img,
   error,
-  $config
+  $config,
+  $strapi
 }, inject) => {
 
   const myError = (obj, msg) => {
@@ -183,7 +184,7 @@ export default ({
   }
 
   const idy = (data) => {
-    if(!data) return null
+    if (!data) return null
     if (Array.isArray(data))
       return data.map(x => x.id)
     if (typeof data === 'object')
@@ -191,6 +192,7 @@ export default ({
     return data
   }
 
+  
   inject('error', myError)
   inject('ucFirst', ucFirst)
   inject('teaser', teaser)

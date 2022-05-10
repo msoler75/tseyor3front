@@ -1,5 +1,5 @@
 <template>
-    <section contained="no" focused>
+    <section class="flex flex-col items-center" contained="no" background="no" focused>
 
         <NLink v-if="contenido.autor && $strapi.user && $strapi.user.id === contenido.autor.id"
             class="btn absolute -top-12 right-4 w-12 h-12 flex justify-center items-center rounded-full sm:w-auto sm:h-auto sm:rounded-inherit"
@@ -8,7 +8,25 @@
             <span class="ml-2 hidden sm:inline">Editar</span>
         </NLink>
 
-        <v-clamp v-html="contenido.textoHTML"/>
+        <Contenido :contenido="contenido" @share="viendoCompartir = true"/>
+
+        <!-- share modal -->
+        <Comparte v-model="viendoCompartir" />
+
+        <SocialButtons id="social" :uid="uid" :data="contenido" @like="like" @dislike="dislike"
+            :likeButton="['Notificación', 'Información', 'Personal', 'Descripción'].includes(contenido.tipo)"
+            @share="viendoCompartir = true" class="mx-auto max-w-xl my-7 lg:my-16" />
+
+        <!-- comentarios -->
+        <div id="comentarios" class="container mx-auto my-9"
+            v-observe-visibility="(isVisible) => { mostrarComentarios = mostrarComentarios || isVisible }">
+            <h3 v-if="contenido.comentarios" class="text-center">{{ contenido.comentarios + ' Comentario' +
+                    (contenido.comentarios !== 1 ? 's' : '')
+            }}</h3>
+            <h3 v-else class="text-center">Coméntalo</h3>
+            <LazyComments v-if="mostrarComentarios" :uid="uid" :content-title="ctitle"
+                @count="$set(contenido, 'comentarios', $event)" class="px-1 xs:px-2" />
+        </div>
 
     </section>
 </template>
@@ -21,7 +39,12 @@ export default {
     mixins: [vercontenido, likes, seo],
     async asyncData({ route, $strapi, $mdToHtml, $error }) {
         try {
-            const contenido = await $strapi.getContent(route, { populate: '*' })
+            const contenido = await $strapi.getContent(route, {
+                populate: {
+                    imagen: ['url', 'width', 'height'],
+                    miembros: '*'
+                }
+            })
             console.warn('EVENTO', contenido)
             if (!contenido)
                 return $error(404, 'Evento no disponible')
@@ -48,6 +71,9 @@ export default {
         eventoPasado() {
             const now = this.$dayjs()
             return this.$dayjs(this.evento.fechaComienzo).isBefore(now)
+        },
+        lineasContenido() {
+            return this.contenido.texto.split("\n").length
         }
     },
     watch: {

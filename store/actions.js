@@ -22,8 +22,8 @@ export default {
       "SET_DEFAULT_IMAGES",
       imagenes
     )
-    if ($strapi.user)
-      $strapi.updateBorradoresNum()
+    //if ($strapi.user)
+      //$strapi.updateBorradoresNum()
   },
   // page transition
   beforeEnter(store, el) {

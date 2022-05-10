@@ -22,6 +22,9 @@ export default {
         return (this.contenido.descripcion || this.contenido.texto || this.contenido.frase || '').substr(0, 576)
       return (this.description || this.descripcion || '').substr(0, 576)
     },
+    cdate() {
+      return this.date || this.fecha || (this.contenido ? this.contenido.publishedAt : null)
+    },
     cclase() {
       return (
         this.type ||
@@ -44,6 +47,7 @@ export default {
     ctext() {
       return (
         this.text ||
+        !this.contenido ? '' :
         this.contenido.text ||
         this.contenido.texto ||
         this.contenido.description ||
@@ -88,7 +92,7 @@ export default {
       return `/${this.ccollection}/${this.contenido.id}`
     }
   },
-  async mounted(){
+  async mounted() {
     // CARGA Nº de COMENTARIOS
     this.$set(this.contenido, 'comentarios', await this.$strapi.count('comentarios', {
       filters: {
@@ -128,7 +132,9 @@ export default {
     },
     async cargarRelacionados() {
       if (!this.relacionados.length) {
-        const { data: relacionados } = await this.$strapi.find(this.ccoleccion, {
+        const {
+          data: relacionados
+        } = await this.$strapi.find(this.ccoleccion, {
           filters: {
             id: {
               $ne: this.contenido.id,

@@ -51,6 +51,7 @@
     <div class="spacer" />
     <Footer v-show="!onlyContent && pageConfig.footer" class="mt-auto" :class="pageConfig.contained ? 'pt-9' : ''" />
     <ModalConfirm />
+    <ModalPrompt />
     <ModalAlert />
     <portal-target name="bottom-app" class="sticky bottom-0 z-20"></portal-target>
   </ScreenDrop>
@@ -96,7 +97,7 @@ export default {
       )
    // }
    */
-    
+    this.$updateBorradoresNum()
   },
  
   /* destroyed() {

@@ -372,7 +372,7 @@ export default {
                                 contenido[campo] = contenido[campo] && typeof contenido[campo] === 'object' ? contenido[campo].id : null
                             for (const field in contenido)
                                 this.$set(this.contenido, field, contenido[field])
-                            this.$strapi.updateBorradoresNum()
+                            this.$updateBorradoresNum()
                         }
                         this.$nextTick(() => {
                             this.resetState()
@@ -400,7 +400,7 @@ export default {
                             })*/
                             // recargamos la página para que se muestra en modo edición con la ruta correcta
                             this.$router.push(`/eventos/${contenido.id}/editar`)
-                            this.$strapi.updateBorradoresNum()
+                            this.$updateBorradoresNum()
                         }
                         this.resetState()
                     })
