@@ -3,12 +3,12 @@
   <!-- No tiene imagen de fondo -->
   <section class="flex flex-col items-center" contained="no" background="no" focused>
 
-    <Contenido :contenido="contenido" @share="viendoCompartir = true" :date="contenido.fechaComunicado"/>
+    <Contenido :contenido="contenido" @share="viendoCompartir = true" :fecha="contenido.fechaComunicado"/>
     
     <!-- share modal -->
     <Comparte v-model="viendoCompartir" />
 
-    <SocialButtons id="social" :uid="uid" :data="contenido" @like="like" @dislike="dislike"
+    <SocialBotones id="social" :uid="uid" :contenido="contenido" @like="like" @dislike="dislike"
       @share="viendoCompartir = true" class="mx-auto max-w-xl my-7 lg:my-16" />
 
     <SuscriptionSection id="suscription" title="Comunicados TSEYOR"
@@ -28,7 +28,7 @@
           (contenido.comentarios !== 1 ? 's' : '')
       }}</h3>
       <h3 v-else class="text-center">Coméntalo</h3>
-      <LazyComments v-if="mostrarComentarios" :uid="uid" :content-title="ctitle"
+      <LazyComentarios v-if="mostrarComentarios" :uid="uid" :contenido="contenido"
         @count="$set(contenido, 'comentarios', $event)" class="px-1 xs:px-2" />
     </div>
   </section>
@@ -61,7 +61,6 @@ export default {
       })
       if (!contenido)
         return $error(404, 'Comunicado no encontrado')
-      // contenido.textoHTML = $mdToHtml(contenido.texto, contenido.imagenes)
       return { contenido, comunicado: contenido }
     }
     catch (e) {

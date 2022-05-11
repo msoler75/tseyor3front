@@ -23,7 +23,7 @@
 <script>
 export default {
   props: {
-    data: {
+    user: {
       type: Object,
       required: false,
       default() {

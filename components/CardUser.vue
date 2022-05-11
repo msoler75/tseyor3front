@@ -1,7 +1,7 @@
 <template>
   <Card center class="p-5">
     <slot>
-      <Avatar :data="data" class="w-32 h-32"/>
+      <Avatar :user="data" class="w-32 h-32"/>
       <div class="py-4">
         <NLink :to="'/usuarios/' + data.id" class="inline-block w-full font-bold text-xl mb-2 mr-4">
             {{ ctitle }}

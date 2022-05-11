@@ -61,7 +61,7 @@
                     <template v-if="evento.asistentes && evento.asistentes.length">
                         <p class="mt-14 mb-2 font-bold text-center">Asistentes:</p>
                         <div class="flex flex-wrap justify-center">
-                            <Avatar v-for="user of evento.asistentes" :key="user.id" :data="user"
+                            <Avatar v-for="user of evento.asistentes" :key="user.id" :user="user"
                                 class="w-12 h-12 m-1" />
                         </div>
                     </template>
@@ -74,7 +74,7 @@
             <!-- share modal -->
             <Comparte v-model="viendoCompartir" />
 
-            <SocialButtons id="social" :uid="uid" :data="contenido" @like="like" @dislike="dislike"
+            <SocialBotones id="social" :uid="uid" :contenido="contenido" @like="like" @dislike="dislike"
                 @share="viendoCompartir = true" class="mx-auto max-w-xl my-7 lg:my-16" />
 
             <!-- comentarios -->
@@ -87,7 +87,7 @@
                     }}
                 </h3>
                 <h3 v-else class="text-center">Coméntalo</h3>
-                <Comments :uid="uid" :content-title="ctitle" @count="$set(contenido, 'comentarios', $event)"
+                <Comentarios :uid="uid" :contenido="contenido" @count="$set(contenido, 'comentarios', $event)"
                     class="px-1 xs:px-2" />
             </div>
         </section>

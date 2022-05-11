@@ -77,8 +77,8 @@
         <Comparte v-model="viendoCompartir" />
 
 
-        <SocialButtons id="social" :uid="uid" :data="contenido" @like="like" @dislike="dislike"
-          @share="viendoCompartir = true" class="mx-auto max-w-xl my-7 lg:my-16" :likeButton="false" />
+        <SocialBotones id="social" :uid="uid" :contenido="contenido" @like="like" @dislike="dislike"
+          @share="viendoCompartir = true" class="mx-auto max-w-xl my-7 lg:my-16" :mostrarLike="false" />
 
       </section>
 
@@ -95,8 +95,8 @@
             }}
           </h3>
           <h3 v-else class="text-center">Escribe tu experiencia</h3>
-          <LazyComments v-if="mostrarComentarios" placeholder="Escribe tu experiencia..." buttonLabel="Enviar"
-            :uid="uid" :content-title="ctitle" :reload="recargar" @count="$set(contenido, 'comentarios', $event)"
+          <LazyComentarios v-if="mostrarComentarios" placeholder="Escribe tu experiencia..." buttonLabel="Enviar"
+            :uid="uid" :contenido="contenido" :reload="recargar" @count="$set(contenido, 'comentarios', $event)"
             class="px-1 xs:px-2" @commented="recargarExperiencias(); escribio = true" />
         </div>
 

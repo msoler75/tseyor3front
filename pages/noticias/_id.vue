@@ -3,40 +3,12 @@
   <!-- No tiene imagen de fondo -->
   <div class="flex flex-col items-center" contained="no" background="no" focused>
 
-    <!-- article container -->
-    <div class="px-3 sm:px-5 md:px-7 relative w-full shrink-0 flex-grow-1 max-w-3xl flex flex-col items-start">
-      <div class="hidden 4xl:block absolute right-0 translate-x-3 5xl:translate-x-10 h-full">
-        <SocialIcons class="sticky top-32 mb-6 text-xs 5xl:text-sm" :content="contenido"
-          @share="viendoCompartir = true" />
-      </div>
-
-      <!-- article wrapper -->
-      <ArticleWrapper>
-        <!-- article heading -->
-        <h1 class>{{ ctitle }}</h1>
-
-        <div class="w-full flex mb-5 items-center justify-start text-xs sm:text-sm">
-          <span>
-            <icon icon="far fa-calendar-alt" class="mr-1" />
-            <span>{{ $dayjs(contenido.publishedAt).format("DD-MMM-YYYY") }}</span>
-          </span>
-
-          <div class="4xl:hidden ml-auto">
-            <SocialIcons :content="contenido" :horizontal="true" @share="viendoCompartir = true" />
-          </div>
-        </div>
-
-        <!-- <nuxt-img :src="cimage" /> -->
-
-        <!-- article content -->
-        <Article class="my-9 text-justify" v-html="noticia.textoHTML" />
-      </ArticleWrapper>
-    </div>
+    <Contenido :contenido="contenido" @share="viendoCompartir = true"/>
 
     <!-- share modal -->
     <Comparte v-model="viendoCompartir" />
 
-    <SocialButtons id="social" :uid="uid" :data="contenido" @like="like" @dislike="dislike" @share="viendoCompartir = true"
+    <SocialBotones id="social" :uid="uid" :contenido="contenido" @like="like" @dislike="dislike" @share="viendoCompartir = true"
       class="mx-auto max-w-xl my-7 lg:my-16" />
 
     <SuscriptionSection id="suscription" title="Noticias TSEYOR"
@@ -60,7 +32,7 @@
         }}
       </h3>
       <h3 v-else class="text-center">Coméntalo</h3>
-      <LazyComments v-if="mostrarComentarios" :uid="uid" :content-title="ctitle"
+      <LazyComentarios v-if="mostrarComentarios" :uid="uid" :contenido="contenido"
         @count="$set(contenido, 'comentarios', $event)" class="px-1 xs:px-2" />
     </div>
   </div>
@@ -72,15 +44,11 @@ import likes from "@/mixins/likes.js"
 import seo from "@/mixins/seo.js"
 export default {
   mixins: [vercontenido, likes, seo],
-  async asyncData({ route, $strapi, $mdToHtml, $error }) {
+  async asyncData({ route, $strapi, $error }) {
     try {
       const contenido = await $strapi.getContent(route)
       if (!contenido)
         return $error(404, 'Noticia no encontrada')
-      contenido.textoHTML = $mdToHtml(
-        contenido.texto,
-        contenido.imagenes
-      )
       return { contenido, noticia: contenido }
     } catch (e) {
       console.error(e)

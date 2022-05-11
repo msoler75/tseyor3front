@@ -3,7 +3,7 @@
 
 
     <div v-for="comentario of comentarios" :key="comentario.id">
-      <Comment :id="`comentario-${comentario.id}`" :data="comentario" @responder="onResponder($event)" />
+      <Comentario :id="`comentario-${comentario.id}`" :comentario="comentario" @responder="onResponder($event)" />
 
       <Card v-if="responderA === comentario.id" :id="'respuesta-a-' + comentario.id" class="p-5">
         <form @submit.prevent="responder(comentario.id)">
@@ -18,7 +18,7 @@
         <div v-for="respuesta of comentario.respuestas" :key="respuesta.id" :id="`comentario-${respuesta.id}`"
           class="comment flex flex-col mb-5">
 
-          <Comment :id="`comentario-${respuesta.id}`" :data="respuesta" @responder="onResponder($event)" />
+          <Comentario :id="`comentario-${respuesta.id}`" :comentario="respuesta" @responder="onResponder($event)" />
 
           <Card v-if="responderA === respuesta.id" :id="'respuesta-a-' + respuesta.id" class="p-5">
             <form @submit.prevent="responder(comentario.id)">
@@ -45,7 +45,7 @@
           </div>
         </div>
         <div class="mt-2 flex justify-between items-center">
-          <button type="submit" class="btn" :disabled="enviando || !nuevoComentario">{{ buttonLabel }}</button>
+          <button type="submit" class="btn" :disabled="enviando || !nuevoComentario">{{ textoBoton }}</button>
           <InputImage v-if="$strapi.user" multiple id="imagen" :value="imagenesSubir" @change="onImagenes" class="my-3"
             textButton iconButton />
         </div>
@@ -67,8 +67,8 @@ export default {
       type: String,
       required: true
     },
-    contentTitle: {
-      type: String,
+    contenido: {
+      type: Object,
       required: true
     },
     placeholder: {
@@ -76,7 +76,7 @@ export default {
       required: false,
       default: 'Nuevo comentario...'
     },
-    buttonLabel: {
+    textoBoton: {
       type: String,
       required: false,
       default: 'Comentar'
@@ -232,11 +232,11 @@ methods: {
         .then(comentario => {
           console.log('respuesta', comentario)
           // registro de actividad
-          this.$strapi.create('historials', {
+          /*this.$strapi.create('historials', {
             accion: 'comentario_respuesta',
             titulo: this.contentTitle,
             url: this.uid + '#comentario-' + respondiendo
-          })
+          })*/
         })
       this.responderA = null
       this.respuestaTexto = ''

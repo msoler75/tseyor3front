@@ -131,7 +131,7 @@ export default {
       return html
     },
     async cargarRelacionados() {
-      if (!this.relacionados.length) {
+      if (!this.relacionados||!this.relacionados.length) {
         const {
           data: relacionados
         } = await this.$strapi.find(this.ccoleccion, {

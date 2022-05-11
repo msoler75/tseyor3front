@@ -63,7 +63,7 @@
                         <div alt="theme-icon" v-html="colorModeIcon" class="w-10" />
                     </div>
                     <template v-if="$strapi.user">
-                        <Avatar :data="$strapi.user" :badge="userBadge" class="text-3xl w-8 h-8 cursor-pointer" :to="false"
+                        <Avatar :user="$strapi.user" :badge="userBadge" class="text-3xl w-8 h-8 cursor-pointer" :to="false"
                             @click.native="toggleMostrarMenuUsuario" />
                     </template>
                     <template v-else>

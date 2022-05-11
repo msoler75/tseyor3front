@@ -1,7 +1,7 @@
 <template>
   <section class="w-full max-w-lg flex flex-col items-center space-y-4 px-1">
 
-    <NotificationDrafts v-if="soyYo" />
+    <NotificacionBorradores v-if="soyYo" />
 
     <Card class="w-full sm:py-5 sm:px-7 text-center">
       <h1 class="!mt-5">{{ usuario.nombreSimbolico || usuario.username }}</h1>

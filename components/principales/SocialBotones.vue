@@ -2,8 +2,8 @@
   <section class="social-buttons">
 
     <!-- buttons -->
-    <Grid class="font-thin whitespace-nowrap w-full px-3 sm:px-5 grid-cols-1" :class="likeButton?'sm:grid-cols-3':'sm:grid-cols-2'">
-      <template v-if="likeButton">
+    <Grid class="font-thin whitespace-nowrap w-full px-3 sm:px-5 grid-cols-1" :class="mostrarLike?'sm:grid-cols-3':'sm:grid-cols-2'">
+      <template v-if="mostrarLike">
         <div
           v-if="likeing"
           class="max-w-xs mx-auto min-w-40 btn flex items-center justify-center"
@@ -37,15 +37,15 @@
         <icon class="mr-2 xs:mr-4" icon="far fa-comment" />
         <span
           v-if="nComments"
-        >{{ nComments + ' ' + (nComments !== 1 ? commentLabels[2] : commentLabels[1]) }}</span>
-        <span v-else>{{commentLabels[0]}}</span>
+        >{{ nComments + ' ' + (nComments !== 1 ? etiquetasComentarios[2] : etiquetasComentarios[1]) }}</span>
+        <span v-else>{{etiquetasComentarios[0]}}</span>
       </a>
     </Grid>
 
-    <template v-if="showLikes&&likesCount">
+    <template v-if="mostrarQuienDioLike&&likesCount">
       <p class="mt-14 mb-2 font-bold text-center">Nos gusta este contenido:</p>
       <div class="flex flex-wrap justify-center">
-        <Avatar v-for="like of likesList" :key="like.usuario.id" :data="like.usuario" class="w-12 h-12 m-1" />
+        <Avatar v-for="like of likesList" :key="like.usuario.id" :user="like.usuario" class="w-12 h-12 m-1" />
       </div>
     </template>
   </section>
@@ -60,21 +60,21 @@ export default {
       type: String,
       required: true
     },
-    data: {
+    contenido: {
       type: Object,
       required: true,
     },
-    likeButton: {
+    mostrarLike: {
       type: Boolean, 
       required: false,
       default: true
     },
-    commentLabels: {
+    etiquetasComentarios: {
       type: Array,
       required: false,
       default() { return ['Coméntalo','Comentario','Comentarios'] }
     },
-    showLikes: {
+    mostrarQuienDioLike: {
       type: Boolean,
       required: false,
       default: true
@@ -82,7 +82,7 @@ export default {
   },
   computed: {
     nComments() {
-      return ('comentarios' in this.data)?this.data.comentarios:0
+      return ('comentarios' in this.contenido)?this.contenido.comentarios:0
     }
   }
 }

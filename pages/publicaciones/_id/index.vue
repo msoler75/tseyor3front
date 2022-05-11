@@ -13,8 +13,8 @@
         <!-- share modal -->
         <Comparte v-model="viendoCompartir" />
 
-        <SocialButtons id="social" :uid="uid" :data="contenido" @like="like" @dislike="dislike"
-            :likeButton="['Notificación', 'Información', 'Personal', 'Descripción'].includes(contenido.tipo)"
+        <SocialBotones id="social" :uid="uid" :contenido="contenido" @like="like" @dislike="dislike"
+            :mostrarLike="['Notificación', 'Información', 'Personal', 'Descripción'].includes(contenido.tipo)"
             @share="viendoCompartir = true" class="mx-auto max-w-xl my-7 lg:my-16" />
 
         <!-- comentarios -->
@@ -24,7 +24,7 @@
                     (contenido.comentarios !== 1 ? 's' : '')
             }}</h3>
             <h3 v-else class="text-center">Coméntalo</h3>
-            <LazyComments v-if="mostrarComentarios" :uid="uid" :content-title="ctitle"
+            <LazyComentarios v-if="mostrarComentarios" :uid="uid" :contenido="contenido"
                 @count="$set(contenido, 'comentarios', $event)" class="px-1 xs:px-2" />
         </div>
 
@@ -37,7 +37,7 @@ import likes from "@/mixins/likes.js"
 import seo from "@/mixins/seo.js"
 export default {
     mixins: [vercontenido, likes, seo],
-    async asyncData({ route, $strapi, $mdToHtml, $error }) {
+    async asyncData({ route, $strapi, $error }) {
         try {
             const contenido = await $strapi.getContent(route, {
                 populate: {
@@ -48,7 +48,6 @@ export default {
             console.warn('EVENTO', contenido)
             if (!contenido)
                 return $error(404, 'Evento no disponible')
-            contenido.textoHTML = $mdToHtml(contenido.texto, contenido.imagenes)
             // let quieroAsistir = $strapi.user && !!evento.asistentes.find(x => x.id === $strapi.user.id)
             let quieroAsistir = true
             return { contenido, evento: contenido, quieroAsistir };

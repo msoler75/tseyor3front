@@ -1,7 +1,7 @@
 <template>
   <div class="max-w-xl mx-auto" breadcrumb="no">
 
-    <NotificationDrafts v-if="$strapi.user" class="mb-7" />
+    <NotificacionBorradores v-if="$strapi.user" class="mb-7" />
 
     <Grid class="grid-cols-1 sm:grid-cols-2 gap-3 lg:gap-5 xl:gap-7">
       <NLink v-for="item of secciones" :key="item.name" :to="item.url" class="card flex w-full shadow rounded p-3"

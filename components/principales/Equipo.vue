@@ -100,14 +100,14 @@
         <Card v-if="vertical || expanded" class="py-6 px-3">
             <h3 class="text-base" :class="vertical ? 'text-center' : ''">Miembros</h3>
             <div class="flex flex-wrap" v-if="equipo.miembros.length">
-                <Avatar v-for="user of equipo.miembros" :key="user.id" :data="user" :class="avatarClass" class="m-1" />
+                <Avatar v-for="user of equipo.miembros" :key="user.id" :user="user" :class="avatarClass" class="m-1" />
             </div>
             <div v-else class="flex flex-col flex-grow justify-center">
                 <p class="text-center">No hay miembros</p>
             </div>
             <h3 class="text-base" :class="vertical ? 'text-center' : ''">Coordinadores</h3>
             <div class="flex flex-wrap">
-                <Avatar v-for="user of equipo.coordinadores" :key="user.id" :data="user" :class="avatarClass"
+                <Avatar v-for="user of equipo.coordinadores" :key="user.id" :user="user" :class="avatarClass"
                     class="m-1" />
             </div>
         </Card>
