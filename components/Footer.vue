@@ -36,7 +36,7 @@
         </div>
         <div class="md:max-w-md lg:col-span-2 mt-9 lg:mt-0">
           <span class="text-base font-medium tracking-wide dark:text-gray-300">{{invitacionSuscribirse}}</span>
-          <Suscription collection="boletines" class="min-h-36"/>
+          <Suscribete collection="boletines" class="min-h-36"/>
           <p class="mt-4 text-sm text-gray-500">
             {{notasSuscribirme}}
           </p>

@@ -1,5 +1,5 @@
 <template>
-    <div ref="main" class="surface-0 w-full font-sans relative" @dragover.prevent @drop.stop.prevent="dropNone"
+    <div ref="main" class="surface-0 w-full font-sans relative" @dragover.prevent @drop.stop.prevent="dropNone"    
         @dragster-enter="dragenter" @dragster-leave="dragleave"
         @dragstart="dragstart"
         >
@@ -22,6 +22,7 @@
 </template>
 
 <script>
+// TO-DO  drag from here, drop outside, and try to drag from outside -> it won't work
 import { Dragster } from '@/assets/js/dragster'
 import { mapGetters } from "vuex";
 export default {
@@ -85,6 +86,7 @@ export default {
             this.fromHere = true
         },
         dragenter(e) {
+            if(!this.dropHandler) return
             if(this.fromHere) return
             this.dragging = this.anyFile(e)
             this.prohibited = this.dragging && !this.acceptedFiles(e)

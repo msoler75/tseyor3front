@@ -140,7 +140,7 @@ export default {
       return this.novedades.filter(x => x.coleccion === this.vc);
     },
     novedadesListado() {
-      // .sort((b,a)=>this.$dayjs(a.updated_at).unix() - this.$dayjs(b.updated_at).unix())
+      // .sort((b,a)=>this.$dayjs(a.updatedAt).unix() - this.$dayjs(b.updatedAt).unix())
       return this.novedadesFiltradas.slice(0, this.mostrando).map(item => {
         if (item.coleccion === 'eventos')
           item.fechaComienzo = item.extra

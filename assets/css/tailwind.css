@@ -92,7 +92,7 @@
   }
 
   .card {
-    @apply transition duration-500 shadow-lg;
+    @apply transition duration-500 shadow-sm;
   }
 
   .surface-0 .text-diminished {

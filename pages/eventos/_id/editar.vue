@@ -312,10 +312,10 @@ export default {
         async onSubmit(data) {
             let imagenes = []
             this.error = null
-
+            console.log('onSubmit', data)
             // primero subimos las imagenes
 
-            if (data.imagenes.length) {
+            if (data.imagenes&&data.imagenes.length) {
                 const form = new FormData()
                 var uploadSome = false
                 for (const item of data.imagenes)

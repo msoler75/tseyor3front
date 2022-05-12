@@ -1,5 +1,5 @@
 <template>
-    <section class="flex flex-col items-center" contained="no" background="no" focused>
+    <section class="flex flex-col space-y-8 items-center" contained="no" background="no" focused>
 
         <NLink v-if="contenido.autor && $strapi.user && $strapi.user.id === contenido.autor.id"
             class="btn absolute -top-12 right-4 w-12 h-12 flex justify-center items-center rounded-full sm:w-auto sm:h-auto sm:rounded-inherit"
@@ -8,25 +8,30 @@
             <span class="ml-2 hidden sm:inline">Editar</span>
         </NLink>
 
+        <div class="container max-w-[96rem] px-3 sm:px-5 md:px-7">
+        <Equipo v-if="contenido.equipo" :equipo="contenido.equipo"/>
+        </div>
+
         <Contenido :contenido="contenido" @share="viendoCompartir = true"/>
 
         <!-- share modal -->
         <Comparte v-model="viendoCompartir" />
 
         <SocialBotones id="social" :uid="uid" :contenido="contenido" @like="like" @dislike="dislike"
-            :mostrarLike="['Notificación', 'Información', 'Personal', 'Descripción'].includes(contenido.tipo)"
+            :meGusta="['Notificación', 'Información', 'Personal', 'Descripción'].includes(contenido.tipo)"
             @share="viendoCompartir = true" class="mx-auto max-w-xl my-7 lg:my-16" />
 
-        <!-- comentarios -->
-        <div id="comentarios" class="container mx-auto my-9"
-            v-observe-visibility="(isVisible) => { mostrarComentarios = mostrarComentarios || isVisible }">
-            <h3 v-if="contenido.comentarios" class="text-center">{{ contenido.comentarios + ' Comentario' +
-                    (contenido.comentarios !== 1 ? 's' : '')
-            }}</h3>
-            <h3 v-else class="text-center">Coméntalo</h3>
-            <LazyComentarios v-if="mostrarComentarios" :uid="uid" :contenido="contenido"
-                @count="$set(contenido, 'comentarios', $event)" class="px-1 xs:px-2" />
-        </div>
+       <!-- comentarios -->
+    <section id="comentarios" class="w-full py-12 bg-gray-200 dark:bg-transparent" 
+      v-observe-visibility="(isVisible) => { mostrarComentarios = mostrarComentarios || isVisible }">
+      <h3 v-if="contenido.comentarios" class="text-center">{{
+          contenido.comentarios + ' Comentario' +
+          (contenido.comentarios !== 1 ? 's' : '')
+      }}</h3>
+      <h3 v-else class="text-center">Coméntalo</h3>
+      <LazyComentarios v-if="mostrarComentarios" :uid="uid" :contenido="contenido"
+        @count="$set(contenido, 'comentarios', $event)" class="mx-auto px-1 xs:px-2 container container-md" />
+    </section>
 
     </section>
 </template>
@@ -41,60 +46,16 @@ export default {
         try {
             const contenido = await $strapi.getContent(route, {
                 populate: {
-                    imagen: ['url', 'width', 'height'],
-                    miembros: '*'
+                    equipo: '*'
                 }
             })
-            console.warn('EVENTO', contenido)
             if (!contenido)
-                return $error(404, 'Evento no disponible')
-            // let quieroAsistir = $strapi.user && !!evento.asistentes.find(x => x.id === $strapi.user.id)
-            let quieroAsistir = true
-            return { contenido, evento: contenido, quieroAsistir };
+                return $error(404, 'Publicación no disponible')
+            return { contenido, publicacion: contenido };
         }
         catch (err) {
             console.warn(JSON.stringify(err))
             $error(503)
-        }
-    },
-    mounted() {
-        if (this.contenido.imagen)
-            this.$store.commit('setBackgroundImageUrl', this.contenido.imagen.url)
-    },
-    data() {
-        return {
-            actualizando: false
-        }
-    },
-    computed: {
-        eventoPasado() {
-            const now = this.$dayjs()
-            return this.$dayjs(this.evento.fechaComienzo).isBefore(now)
-        },
-        lineasContenido() {
-            return this.contenido.texto.split("\n").length
-        }
-    },
-    watch: {
-        quieroAsistir(asistire) {
-            if (!this.$strapi.user) return
-            this.actualizando = true
-            this.$strapi.$http.$put(`/eventos/${this.contenido.id}/${asistire ? 'join' : 'leave'}`)
-                .then(evento => {
-                    console.log('res as', evento)
-                    this.actualizando = false
-                    this.$set(this.contenido, 'asistentes', evento.asistentes)
-                    const asiste = this.$strapi.user && !!this.contenido.asistentes.find(x => x.id === this.$strapi.user.id)
-                    if (asiste)
-                        this.$strapi.create('historials', {
-                            accion: 'evento_asiste',
-                            titulo: this.ctitle,
-                            url: this.uid
-                        })
-                })
-                .catch(err => {
-                    this.actualizando = false
-                })
         }
     }
 };

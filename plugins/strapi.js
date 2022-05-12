@@ -37,7 +37,7 @@ export default ({
       this.url = `${$config.strapiUrl}`
       this._user = null
       this._token = ''
-      console.warn('NEW STRAPI4!!', this)
+      console.log('NEW STRAPI4!!', this)
       // this.lastError = {}
       if (process.client) {
         const jwt = this.getCookie(document.cookie, 'jwt')
@@ -82,7 +82,7 @@ export default ({
       const query = !params ? '' : typeof params === 'string' ? params : '?' + qs.stringify(params, {
         encodeValuesOnly: true,
       })
-      console.warn('QUERY', `/${collection}${query}`, params, 'token=', this.token)
+      console.log('QUERY', `/${collection}${query}`, params, 'token=', this.token)
       /*return $axios.get(`/${collection}${query}`)
         .then(r => r.data)
         .catch(err => {
@@ -158,8 +158,8 @@ export default ({
       const query = !params ? '' : typeof params === 'string' ? params : '?' + qs.stringify(params, {
         encodeValuesOnly: true,
       })
-      console.warn('QUERY', `/${collection}${query}/${id}${query}`, params, 'token=', this.token)
-      console.warn('STRAPI.PUT', id, {
+      console.log('QUERY', `/${collection}${query}/${id}${query}`, params, 'token=', this.token)
+      console.log('STRAPI.PUT', id, {
         data
       }, 'token=', this.token)
       return fetch(`${this.url}/${collection}/${id}${query}`, {
@@ -183,7 +183,7 @@ export default ({
       const query = !params ? '' : typeof params === 'string' ? params : '?' + qs.stringify(params, {
         encodeValuesOnly: true,
       })
-      console.warn('QUERY', `/${collection}${query}`, params, 'token=', this.token)
+      console.log('QUERY', `/${collection}${query}`, params, 'token=', this.token)
       console.log('STRAPI.CREATE', collection, data)
       const headers = data instanceof FormData ? {} : {
         "Content-Type": "application/json"
@@ -272,10 +272,10 @@ export default ({
 
 
     async fetchUser() {
-      console.warn('STRAPI.FETCHUSER')
+      console.log('STRAPI.FETCHUSER')
       /* return $axios.get(`/users/me`)
         .then(r => {
-          console.warn('USER FETCHED', r.data)
+          console.log('USER FETCHED', r.data)
           this.user = r.data
           return r.data
         }) */
@@ -303,7 +303,7 @@ export default ({
 
     set token(token) {
       this._token = token
-      console.warn('SET TOKEN', token)
+      console.log('SET TOKEN', token)
       /*$axios.defaults.headers.common = token && token != 'null' ? {
         Authorization: `Bearer ${token}`
       } : {} */
@@ -365,7 +365,7 @@ export default ({
     async getContent(route, params) {
       const collection = this.getCollectionFromRoute(route)
       const response = await this.find(collection, this.filterByIdSlug(route.params.id, params))
-      console.warn('GETCONTENT RESPONSE', response)
+      console.log('GETCONTENT RESPONSE', response)
       let data = response.data?response.data:response
       return Array.isArray(data)?data[0]:data
     }

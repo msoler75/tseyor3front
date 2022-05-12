@@ -2,8 +2,8 @@
   <section class="social-buttons">
 
     <!-- buttons -->
-    <Grid class="font-thin whitespace-nowrap w-full px-3 sm:px-5 grid-cols-1" :class="mostrarLike?'sm:grid-cols-3':'sm:grid-cols-2'">
-      <template v-if="mostrarLike">
+    <Grid class="font-thin whitespace-nowrap w-full px-3 sm:px-5 grid-cols-1" :class="meGusta?'sm:grid-cols-3':'sm:grid-cols-2'">
+      <template v-if="meGusta">
         <div
           v-if="likeing"
           class="max-w-xs mx-auto min-w-40 btn flex items-center justify-center"
@@ -42,7 +42,7 @@
       </a>
     </Grid>
 
-    <template v-if="mostrarQuienDioLike&&likesCount">
+    <template v-if="mostrarListaMeGusta&&likesCount">
       <p class="mt-14 mb-2 font-bold text-center">Nos gusta este contenido:</p>
       <div class="flex flex-wrap justify-center">
         <Avatar v-for="like of likesList" :key="like.usuario.id" :user="like.usuario" class="w-12 h-12 m-1" />
@@ -64,7 +64,7 @@ export default {
       type: Object,
       required: true,
     },
-    mostrarLike: {
+    meGusta: {
       type: Boolean, 
       required: false,
       default: true
@@ -74,7 +74,7 @@ export default {
       required: false,
       default() { return ['Coméntalo','Comentario','Comentarios'] }
     },
-    mostrarQuienDioLike: {
+    mostrarListaMeGusta: {
       type: Boolean,
       required: false,
       default: true

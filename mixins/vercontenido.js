@@ -61,7 +61,7 @@ export default {
       return this.contenido ? this.contenido.clase : 'default'
     },
     cimage() {
-      let src = this.image || this.imagen || this.contenido.image || this.contenido.imagen;
+      let src = this.image || this.imagen || (this.contenido?(this.contenido.image || this.contenido.imagen):'')
       if (Array.isArray(src)) src = src[0]
       if (src && typeof src === 'object')
         src = src.url

@@ -77,7 +77,7 @@
                             <span
                                 v-if="showDate"
                                 class="ml-auto"
-                            >{{ $dayjs(carpeta.created_at).fromNow() }}</span>
+                            >{{ $dayjs(carpeta.createdAt).fromNow() }}</span>
                         </div>
                     </div>
                     <span
@@ -133,7 +133,7 @@
                                 <span
                                     v-if="showDate"
                                     class="ml-auto w-1/3 text-right"
-                                >{{ $dayjs(archivo.media.updated_at).fromNow() }}</span>
+                                >{{ $dayjs(archivo.media.updatedAt).fromNow() }}</span>
                             </div>
                         </div>
                         <span
@@ -194,8 +194,8 @@ const query_carpeta =
     nombre
     slug
     descripcion
-    created_at
-    updated_at
+    createdAt
+    updatedAt
     ruta
     autor {
         id
@@ -230,8 +230,8 @@ const query_carpeta =
         size
         hash
         url
-        created_at
-        updated_at
+        createdAt
+        updatedAt
       }
       autor {
         id

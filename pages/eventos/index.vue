@@ -76,7 +76,7 @@
       </div>
     </Card>
 
-    <SuscriptionSection id="suscription" title="Eventos TSEYOR" description="Eventos de la comunidad Tseyor"
+    <SuscripcionSeccion id="suscription" title="Eventos TSEYOR" description="Eventos de la comunidad Tseyor"
       collection="eventos" :image="$imagenColeccion('eventos')"
       class="border-t-4 border-b-4 border-gray-100 dark:border-t-gray-500 dark:border-b-gray-dark-700 dark:border-black bg-white/75 dark:bg-gray-dark-900 w-full" />
 

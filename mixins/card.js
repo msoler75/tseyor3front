@@ -30,6 +30,11 @@ export default {
       required: false,
       default: false
     },
+    date: {
+      type: String,
+      required: false,
+      default: null
+    },
     noDate: {
       type: Boolean,
       required: false,
@@ -137,7 +142,7 @@ export default {
       return this.tags || this.data.tags || this.data.etiquetas;
     },
     cdate() {
-      return this.date || this.data.date || (this.creation ? this.data.created_at : this.data.updated_at || this.data.modified_at || this.data.published_at) || (this.creation ? this.data.updated_at || this.data.published_at : this.data.created_at) || this.data.updated_at || this.data.published_at || this.data.created_at || this.data.fecha || null
+      return this.date || this.data.date || (this.creation ? this.data.createdAt : this.data.updatedAt || this.data.modified_at || this.data.published_at) || (this.creation ? this.data.updatedAt || this.data.published_at : this.data.createdAt) || this.data.updatedAt || this.data.published_at || this.data.createdAt || this.data.fecha || null
     },
     cclase() {
       return this.data ? this.data.clase : "default";
@@ -164,6 +169,7 @@ export default {
   },
   watch: {
     clicked(newValue) {
+      return
       const card = this.$el
       const pos = card.getBoundingClientRect()
       const box = document.createElement("DIV")

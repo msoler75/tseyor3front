@@ -21,7 +21,6 @@
     <!-- share modal -->
     <Comparte v-model="viendoCompartir" />
 
-
     <SocialBotones id="social" :uid="uid" :contenido="contenido" @like="like" @dislike="dislike"
       @share="viendoCompartir = true" class="mx-auto max-w-xl my-7 lg:my-16" />
 
@@ -31,11 +30,11 @@
       <HCarousel center :items="relacionados" collection="entradas" />
     </div>
 
-    <SuscriptionSection id="suscription" :title="entrada.blog.nombre" :description="entrada.blog.descripcion"
+    <SuscripcionSeccion id="suscription" :title="entrada.blog.nombre" :description="entrada.blog.descripcion"
       collection="blogs" :content-id="entrada.blog.id" image="./imagenes/grupo-1.jpg" class="bg-blue-gray-900 w-full" />
 
     <!-- comentarios -->
-    <div id="comentarios" class="container mx-auto my-9"
+    <section id="comentarios" class="w-full py-12 bg-gray-200 dark:bg-transparent" 
       v-observe-visibility="(isVisible) => { mostrarComentarios = mostrarComentarios || isVisible }">
       <h3 v-if="contenido.comentarios" class="text-center">{{
           contenido.comentarios + ' Comentario' +
@@ -43,8 +42,8 @@
       }}</h3>
       <h3 v-else class="text-center">Coméntalo</h3>
       <LazyComentarios v-if="mostrarComentarios" :uid="uid" :contenido="contenido"
-        @count="$set(contenido, 'comentarios', $event)" class="px-1 xs:px-2" />
-    </div>
+        @count="$set(contenido, 'comentarios', $event)" class="mx-auto px-1 xs:px-2 container container-md" />
+    </section>
   </div>
 </template>
 

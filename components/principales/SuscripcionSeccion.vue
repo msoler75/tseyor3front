@@ -13,7 +13,7 @@
         <div class="mt-2 text-center text-gray-300 xs:px-5 mb-7 text-diminished" v-html="description" />
       </div>
       <div class="sm:w-1/2">
-        <Suscription :collection="collection" :content-id="contentId" :label="clabel"
+        <Suscribete :collection="collection" :content-id="contentId" :label="clabel"
           class="items-center text-gray-200 min-h-36" />
       </div>
     </div>

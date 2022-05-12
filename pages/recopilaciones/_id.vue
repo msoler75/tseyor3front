@@ -78,15 +78,15 @@
 
 
         <SocialBotones id="social" :uid="uid" :contenido="contenido" @like="like" @dislike="dislike"
-          @share="viendoCompartir = true" class="mx-auto max-w-xl my-7 lg:my-16" :mostrarLike="false" />
+          @share="viendoCompartir = true" class="mx-auto max-w-xl my-7 lg:my-16" :meGusta="false" />
 
       </section>
 
       <section class="w-full border-t border-gray bg-gray-100 dark:bg-gray-900">
 
         <!-- comentarios -->
-        <div id="comentarios" class="container mx-auto my-9"
-          v-observe-visibility="(isVisible) => { mostrarComentarios = mostrarComentarios || isVisible }">
+        <section id="comentarios" class="w-full py-12 bg-gray-200 dark:bg-transparent" 
+      v-observe-visibility="(isVisible) => { mostrarComentarios = mostrarComentarios || isVisible }">
           <h3 v-if="contenido.comentarios" class="text-center">
             {{
                 contenido.comentarios +
@@ -97,8 +97,8 @@
           <h3 v-else class="text-center">Escribe tu experiencia</h3>
           <LazyComentarios v-if="mostrarComentarios" placeholder="Escribe tu experiencia..." buttonLabel="Enviar"
             :uid="uid" :contenido="contenido" :reload="recargar" @count="$set(contenido, 'comentarios', $event)"
-            class="px-1 xs:px-2" @commented="recargarExperiencias(); escribio = true" />
-        </div>
+            class="mx-auto px-1 xs:px-2 container container-md" @commented="recargarExperiencias(); escribio = true" />
+        </section>
 
         <section v-if="contenido.comentarios" class="my-9 max-w-[16rem] mx-auto text-center">
           <div class="btn btn-warning w-auto" @click="exportar">
@@ -156,14 +156,14 @@ export default {
   },
   computed: {
     dias() {
-      return this.$dayjs().diff(this.contenido.created_at, 'day')
+      return this.$dayjs().diff(this.contenido.createdAt, 'day')
     },
     reciente() {
       return this.contenido ? this.dias < 1 : false
     },
     hace() {
       if (this.dias > 2)
-        return this.$dayjs(this.contenido.created_at).fromNow()
+        return this.$dayjs(this.contenido.createdAt).fromNow()
       return 'Hace unas horas'
     },
     esAutor() {
@@ -208,7 +208,7 @@ export default {
     },
     download(data) {
       var c = document.createElement("a");
-      c.download = this.$dayjs(this.contenido.created_at).format('YYYY-MM-DD') + ' - ' + this.contenido.titulo + ".html";
+      c.download = this.$dayjs(this.contenido.createdAt).format('YYYY-MM-DD') + ' - ' + this.contenido.titulo + ".html";
       var t = new Blob([data], {
         type: "text/html"
       });
@@ -219,7 +219,7 @@ export default {
       let html = ''
       const comentarios = await this.$strapi.find('comentarios',
         {
-          _sort: 'updated_at:ASC',
+          _sort: 'updatedAt:ASC',
           uid: `/recopilaciones/${this.contenido.id}`
         })
       for (const comentario of comentarios) {

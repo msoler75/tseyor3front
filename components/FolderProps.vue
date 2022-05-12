@@ -21,7 +21,7 @@
                     <label class="font-bold">Información de carpeta:</label>
                     <table>
                         <tr><td><label class="text-diminished mr-4">Ubicada en:  </label> </td><td><span>{{localValue.ruta}}</span></td></tr>
-                        <tr><td><label class="text-diminished mr-4">Creada en:  </label></td><td><span>{{$dayjs(localValue.created_at)}}</span></td></tr>
+                        <tr><td><label class="text-diminished mr-4">Creada en:  </label></td><td><span>{{$dayjs(localValue.createdAt)}}</span></td></tr>
                         <tr><td><label class="text-diminished mr-4">Creada por:  </label></td><td><span>{{localValue.autor?localValue.autor.nombreSimbolico:'Administradores'}}</span></td></tr>
                     </table>
                 </div>
@@ -41,7 +41,7 @@
                 <table>
                     <tr><td><label class="text-diminished mr-4">Nombre: </label> </td><td><span>{{localValue.nombre}}</span></td></tr>
                     <tr><td><label class="text-diminished mr-4">Ubicada en:  </label> </td><td><span>{{localValue.ruta}}</span></td></tr>
-                    <tr><td><label class="text-diminished mr-4">Creada en:  </label></td><td><span>{{$dayjs(localValue.created_at)}}</span></td></tr>
+                    <tr><td><label class="text-diminished mr-4">Creada en:  </label></td><td><span>{{$dayjs(localValue.createdAt)}}</span></td></tr>
                     <tr><td><label class="text-diminished mr-4">Creada por:  </label></td><td><span>{{localValue.autor?localValue.autor.nombreSimbolico:'Administradores'}}</span></td></tr>
                 </table>
                 <div class="flex justify-center">

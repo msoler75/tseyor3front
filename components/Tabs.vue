@@ -18,6 +18,10 @@
       <Icon v-if="item.icon" :icon="item.icon" class="mr-1" />
       <span>{{ $ucFirst(getLabel(item)) }}</span>
       <span v-if="item.count" class="ml-2 text-xs bg-black bg-opacity-20 text-white dark:text-gray-500 px-1 rounded">{{item.count}}</span>
+      <span v-if="item.closeable" class="px-2 transform translate-x-2 text-sm cursor-pointer opacity-75 hover:opacity-100" @click.stop="close(item)"
+      :title="item.title">
+        <icon icon="times"/>
+      </span>
     </div>
   </div>
 </template>
@@ -76,23 +80,27 @@ export default {
       }
     },
     value(value) {
-      const item = this.findItem(value)
+      console.log('TABS.value', value)
+      // const item = this.findItem(value)
       this.currentTab = value // this.getValue(value);
     }
   },
   methods: {
     next() {
-      const ct = this.currentTab;
+      console.log('TABS.NEXT')
+      const ct = this.currentTab
       const cur = this.labels.findIndex(x => x === ct);
       this.currentTab = (cur + 1) % this.labels.length;
     },
     prev() {
-      const ct = this.currentTab;
+      console.log('TABS.PREV')
+      const ct = this.currentTab
       const cur = this.labels.findIndex(x => x === ct);
       this.currentTab = (cur - 1 + this.labels.length) % this.labels.length;
     },
     getLabel(item) {
-      console.log('getLabel', item)
+      // console.log('getLabel', item)
+      if(!item) return ''
       if (typeof item === 'string') return item
       return (item.label || item.name || item.nombre || item.etiqueta || item.title || item.titulo)
     },
@@ -115,9 +123,14 @@ export default {
       const idx = this.items.findIndex(item => this.getValue(item) === value)
       if (idx > -1) return idx
       return this.items.findIndex(item => this.getLabel(item) === value)
+    },
+    close(item) {
+      if(item.onClose)
+        item.close(item)
+      this.$emit('close', item)
     }
   }
-};
+}
 </script>
 
 <style scoped>

@@ -135,7 +135,7 @@ export default {
     librosListados() {
       const ob = this.ordenarPor
       return this.librosFiltrados
-        // .map(x=>{if(!x.timestamp)x.timestamp = this.$  (x.updated_at)})
+        // .map(x=>{if(!x.timestamp)x.timestamp = this.$  (x.updatedAt)})
         .sort((a, b) => {
           return 
           a - b // a.nombre.localeCompare(b.nombre)

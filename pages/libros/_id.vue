@@ -45,24 +45,21 @@
       <HCarousel center :items="relacionados" :noText="true" collection="libros" />
     </section>
 
-    <SuscriptionSection id="suscription" title="Biblioteca Tseyor"
+    <SuscripcionSeccion id="suscription" title="Biblioteca Tseyor"
       description="Todos los libros emanados de las conversaciones interdimensionales mantenidas con nuestros Guías Estelares disponibles para descarga en formato PDF"
       collection="libros" image="/imagenes/libros.jpg" class="bg-blue-gray-900 w-full" />
 
     <!-- comentarios -->
-    <div id="comentarios" class="container mx-auto my-9 max-w-3xl"
+    <section id="comentarios" class="w-full py-12 bg-gray-200 dark:bg-transparent" 
       v-observe-visibility="(isVisible) => { mostrarComentarios = mostrarComentarios || isVisible }">
-      <h3 v-if="contenido.comentarios" class="text-center">
-        {{
-            contenido.comentarios +
-            ' Comentario' +
-            (contenido.comentarios !== 1 ? 's' : '')
-        }}
-      </h3>
+      <h3 v-if="contenido.comentarios" class="text-center">{{
+          contenido.comentarios + ' Comentario' +
+          (contenido.comentarios !== 1 ? 's' : '')
+      }}</h3>
       <h3 v-else class="text-center">Coméntalo</h3>
-      <LazyComentarios :uid="uid" :contenido="contenido" @count="$set(contenido, 'comentarios', $event)"
-        class="px-1 xs:px-2" />
-    </div>
+      <LazyComentarios v-if="mostrarComentarios" :uid="uid" :contenido="contenido"
+        @count="$set(contenido, 'comentarios', $event)" class="mx-auto px-1 xs:px-2 container container-md" />
+    </section>
 
     <portal to="contenido">
       <p>This slot content will be rendered wherever the portal-target with name 'destination'

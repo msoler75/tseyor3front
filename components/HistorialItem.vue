@@ -27,7 +27,7 @@ export default {
             }
         },
         tiempo () {
-            return this.$dayjs(this.data['created_at']).fromNow()
+            return this.$dayjs(this.data['createdAt']).fromNow()
         }
     }
 }

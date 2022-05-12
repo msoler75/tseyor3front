@@ -1,5 +1,5 @@
 <template>
-  <div class="max-w-xl mx-auto" :class="$device.isMobileOrTablet ? 'touch' : 'mouse'">
+  <div :class="$device.isMobileOrTablet ? 'touch' : 'mouse'">
 
 
     <div v-for="comentario of comentarios" :key="comentario.id">
