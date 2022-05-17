@@ -1,10 +1,13 @@
+Filebrowser.org  
+vue file manager  https://codecanyon.net/item/vue-file-manager-with-laravel-backend/25815986
+
+vue file manager light https://codecanyon.net/item/vue-file-manager-light-your-private-storage-cloud/37498433
+
 me gusta el diseño: https://sendpulse.cl/
 
 https://www.cunef.edu/estudio/grado-en-ingenieria-informatica/#:~:text=El%20Grado%20en%20Ingenier%C3%ADa%20Inform%C3%A1tica,alcanzar%20un%20equilibrio%20entre%20objetivos
 
 check https://codepen.io/TurkAysenur/pen/JjGKKrP
-
--arreglar editar nombre de carpeta actual, dos veces, cambiando nombre y cancelar, aunque cancela el  nombre de la carpeta se ve cambiado, no debería ser
 
 
 

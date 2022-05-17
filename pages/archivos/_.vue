@@ -1,297 +1,316 @@
 <template>
-  <div>
-    <Card class="p-1 sm:p-5 md:p-9">
-      <FilesFolder
-        v-if="carpetaRaiz"
-        v-model="carpetaActualId"
-        class="w-full h-full overflow-y-auto"
-        @click="clickHandler"
-        :navigationMode="navigationMode"
-        @navigated="navegacion"
-        @loaded="loaded"
-        :refresh="refresh"
-        :showUploader="true"
-        :showDate="true"
-        :showSize="true"
-        :showDescription="true"
-        :showControls="true"
-      />
-    </Card>
-    <FolderProps v-model="nuevaCarpeta" :showIt="verModalCarpeta" @accept="crearCarpeta" @close="verModalCarpeta=false" textAccept="Crear carpeta"/>
-    <div class="mt-5"
-    v-if="tengoPermiso(carpetaActual, 'creacion')||tengoPermiso(carpetaActual, 'administracion')"
-    >
-      <progress v-if="uploading" max="100" :value="currentProgress" class="w-full h-8 rounded" />
-      <div v-else class="flex space-x-4 items-center justify-end">
-        <div class="btn btn-gray text-sm" @click="verModalCarpeta=true">
-          <icon icon="folder-plus" class="mr-2" />Crear carpeta
+  <div class="flex flex-col sm:flex-row">
+    <div v-if="$strapi.user" class="space-y-4">
+      idCarpetaActual: {{ idCarpetaActual }}
+
+      <section @click="raiz" class="space-x-2">
+        <icon icon="home" class="w-4" />
+        <span class="font-bold">Archivos</span>
+      </section>
+
+      <section @click="misArchivos" class="space-x-2">
+        <icon icon="far fa-user" class="w-4" />
+        <span class="font-bold">Mis Archivos</span>
+      </section>
+
+      <section class="space-x-2">
+        <icon icon="upload" class="w-4" />
+        <span class="font-bold">Subidas recientes</span>
+      </section>
+
+      <section @click="verCompartidas" class="space-x-2">
+        <icon icon="link" class="w-4" />
+        <span class="font-bold">Carpetas compartidas</span>
+      </section>
+
+      <section @click="papelera" class="space-x-2">
+        <icon icon="trash" class="w-4" />
+        <span class="font-bold">Papelera</span>
+      </section>
+
+      <div class="font-bold text-diminished mt-8">Colaboración</div>
+
+      <section @click="vistaEquipos" class="space-x-2">
+        <icon icon="people-carry" class="w-4" />
+        <span class="font-bold">Equipos</span>
+      </section>
+
+      <section @click="vistaGrupos" class="space-x-2">
+        <icon icon="users" class="w-4" />
+        <span class="font-bold">Grupos</span>
+      </section>
+
+      <!--
+
+      <section v-if="carpeta">
+        <FilesFolder v-model="carpeta" navigationMode="Click" />
+      </section>
+      <section v-if="carpetasCreadas.length">
+        <FilesFolder v-model="carpetasCreadas" navigationMode="Click" />
+      </section>
+      <section v-if="carpetasLectura.length">
+        <FilesFolder v-model="carpetasLectura" navigationMode="Click" />
+      </section>
+      <section v-if="carpetasEscritura.length">
+        <FilesFolder v-model="carpetasEscritura" navigationMode="Click" />
+      </section>
+      <section v-if="carpetasAdministracion.length">
+        <FilesFolder v-model="carpetasAdministracion" navigationMode="Click" />
+      </section>
+      <section v-if="equipos">
+        <div v-for="equipo of equipos" :key="equipo.id">
+          <template
+            v-if="
+              equipo.carpetasLectura.length || equipo.carpetasEscritura.length
+            "
+          >
+            <span>{{ equipo.nombre }}</span>
+            <FilesFolder
+              v-if="equipo.carpetasLectura.length"
+              v-model="equipo.carpetasLectura"
+              navigationMode="Click"
+            />
+            <FilesFolder
+              v-if="equipo.carpetasEscritura.length"
+              v-model="equipo.carpetasEscritura"
+              navigationMode="Click"
+            />
+          </template>
         </div>
-        <InputFiles
-          :multiple="true"
-          @change="onUpload"
-          textButton="Añadir Archivos"
-        />
-      </div>
+      </section>
+      <section v-if="grupos">
+        <div v-for="grupo of grupos" :key="grupo.id">
+          
+        </div>
+      </section>
+      -->
     </div>
+    <div v-if="idCarpetaActual == urlCompartidas">
+      <h3>Comparten contigo personalmente</h3>
+      <FilesFolder
+        v-model="carpetasCompartidasContigo"
+        placeholder="Ninguna carpeta compartida"
+      />
+
+      <divider />
+
+      <h3>Compartes con los demás</h3>
+      <FilesFolder
+        v-model="carpetasQueCompartes"
+        placeholder="Ninguna carpeta compartida"
+      />
+    </div>
+    <div v-else-if="idCarpetaActual == urlPapelera">
+      <h3>Papelera</h3>
+      <FilesFolder v-model="elementosBorrados" />
+    </div>
+    <div v-else-if="idCarpetaActual == urlEquipos">
+      <h3>Equipos</h3>
+      <div v-if="equiposFiltrados.length">
+        <div v-for="equipo of equiposFiltrados" :key="equipo.id">
+          <span class="font-bold">{{ equipo.nombre }}</span>
+          <FilesFolder
+            v-if="equipo.carpeta"
+            v-model="equipo.carpeta"
+            navigationMode="Click"
+          />
+          <FilesFolder
+            v-if="equipo.carpetasLectura.length"
+            v-model="equipo.carpetasLectura"
+            navigationMode="Click"
+          />
+          <FilesFolder
+            v-if="equipo.carpetasEscritura.length"
+            v-model="equipo.carpetasEscritura"
+            navigationMode="Click"
+          />
+        </div>
+      </div>
+      <div v-else>No hay nada que mostrar</div>
+    </div>
+    <div v-else-if="idCarpetaActual == urlGrupos">
+      <h3>Grupos</h3>
+      <div v-if="gruposFiltrados.length">
+        <div v-for="grupo of gruposFiltrados" :key="grupo.id">
+          <span>{{ grupo.nombre }}</span>
+          <FilesFolder
+            v-if="grupo.carpetasLectura.length"
+            v-model="grupo.carpetasLectura"
+            navigationMode="Click"
+          />
+          <FilesFolder
+            v-if="grupo.carpetasEscritura.length"
+            v-model="grupo.carpetasEscritura"
+            navigationMode="Click"
+          />
+        </div>
+      </div>
+      <div v-else>No hay nada que mostrar</div>
+    </div>
+    <FilesFolder
+      v-else
+      v-model="idCarpetaActual"
+      navigationMode="Main"
+      :inside="true"
+      :idRootFolder="idRootActual"
+    />
   </div>
 </template>
 
 <script>
-// poner a Main para activar turbo navegación o false para navegación solo con $router
-const NAVIGATION_MODE = 'Main'
-
-import seo from '@/mixins/seo'
-import permisos from '@/mixins/permisos'
+const URL_COMPARTIDAS = "/archivos/___compartidas";
+const URL_PAPELERA = "/archivos/___papelera";
+const URL_EQUIPOS = "/archivos/___equipos";
+const URL_GRUPOS = "/archivos/___grupos";
 export default {
-  mixins: [seo, permisos],
-  middleware: 'archivos',
-  async asyncData({ route, $strapi, $error, $config }) {
+  async asyncData({ route, $strapi, $error }) {
     try {
-      console.log('fullPath:', route.fullPath)
-      const parts = route.fullPath.replace(/\?.*$/, '').split("/").filter(x => !!x)
-      console.log('parts:', parts)
-      // parts.shift()
-      const ruta = parts.length > 0 ? "/" + parts.join("/") : "/"
-      console.log('ruta:', ruta)
-      const [carpetaActual] = await $strapi.find('carpetas', { ruta })
-      console.log('carpetaActual', carpetaActual)
-      if (!carpetaActual)
-        return $error(404)
-      let carpetaRaiz
-      if (ruta !== $config.archivosRuta)
-        [carpetaRaiz] = await $strapi.find('carpetas', { ruta: $config.archivosRuta })
-      if (!carpetaRaiz)
-        carpetaRaiz = carpetaActual
-      return { carpetaRaiz, carpetaActual, contenido: carpetaActual }
-    }
-    catch (e) {
-      console.warn(e)
-      if (e.statusCode)
-        $error(e.statusCode)
-      else
-        $error(503)
+      const parts = route.fullPath
+        .replace(/\?.*$/, "")
+        .split("/")
+        .filter((x) => !!x);
+      const ruta = parts.length > 0 ? "/" + parts.join("/") : "/";
+      /*const {
+        data: [contenido],
+      } = await $strapi.find("carpetas", {
+        filters: {
+          ruta: {
+            $eq: ruta,
+          },
+        },
+        // populate: '*'
+      });*/
+      // if (!contenido) return $error(404, "Carpeta no encontrada");
+      console.log("USER?", $strapi.user);
+      const data = $strapi.user.id
+        ? await $strapi.find("users/me", {
+            fields: ["id"],
+            populate: {
+              carpeta: "*",
+              carpetasCreadas: { publicationState: "preview" },
+              carpetasLectura: "*",
+              carpetasEscritura: "*",
+              carpetasAdministracion: "*",
+              equipos: {
+                populate: ["carpeta", "carpetasLectura", "carpetasEscritura"],
+              },
+              grupos: {
+                populate: ["carpetasLectura", "carpetasEscritura"],
+              },
+            },
+          })
+        : {
+            carpeta: null,
+            carpetasCreadas: [],
+            carpetasLectura: [],
+            carpetasEscritura: [],
+            carpetasAdministracion: [],
+            equipos: [],
+            grupos: [],
+          };
+
+      const root = $strapi.findOne("carpetas", {
+        filters: {
+          ruta: {
+            $eq: "/archivos",
+          },
+        },
+      });
+
+      return {
+        ...data,
+        idCarpetaActual: ruta,
+        idRoot: root.id,
+        idRootActual: root.id,
+      };
+    } catch (e) {
+      console.log(e);
+      $error(503);
     }
   },
   data() {
     return {
-      carpetaActualId: null,
-      navigationMode: NAVIGATION_MODE,
-      refresh: 1,
-      uploading: false,
-      currentProgress: 0,
-      verModalCarpeta: false,
-      nuevaCarpeta: {nombre:'', autor: {id:null}, permisos:{}}
-    }
-  },
-  mounted() {
-    // para que la nueva carpeta proporcione los permisos de autor al usuario actual
-      this.resetNuevaCarpeta()
-    console.log('nuxt-child.mounted!')
-    this.carpetaActualId = this.carpetaActual ? this.carpetaActual.id : this.carpetaActualId
-    console.log('***child.mounted.updateBreadcrumb')
-    this.updateBreadcrumb()
-    if (NAVIGATION_MODE === 'Main') {
-      window.onpopstate = this.onchangeurl
-      // event fire when pushState
-      this.$nuxt.$on('pushState', params => {
-        // do your logic with params
-        console.log('pushState', params)
-      })
-
-      // event fire when pushState
-      this.$nuxt.$on('popState', params => {
-        // do your logic with params
-        console.log('popState', params)
-      })
-    }
-  },
-  beforeUnmount() {
-    // window.removeEventListener('popstate', this.onchangeurl)
-
-    /*    this.$nuxt.$off('pushState')
-    this.$nuxt.$off('popState') */
-  },
-  methods: {
-    loaded(carpeta) {
-      console.log('_ loaded!!!')
-      this.$store.commit('travelling', false)
-      this.$store.dispatch('beforeEnter', this.$el)
-
-      // this.carpetaActualId = this.carpetaActual?this.carpetaActual.id:this.carpetaActualId
-      this.carpetaActual = carpeta
-      console.log('***child.loaded.updateBreadcrumb')
-      this.updateBreadcrumb()
-    },
-    // este método se activa cuando la navegación main está activada
-    navegacion(carpeta) {
-      console.log('navigated to', carpeta)
-      if (!carpeta) return
-      if (carpeta.id === this.carpetaActual.id) return
-      this.carpetaActual = carpeta
-      window.event.preventDefault()
-      return false
-      // Where there are history.pushState
-      // this.$nuxt.$emit('pushState', params)
-    },
-    // en cambio esta se activa cuando hay un 'click' en una carpeta
-    clickHandler(carpeta) {
-      if (!carpeta) return
-      if (carpeta.id === this.carpetaActual.id) return
-      this.$router.push(carpeta.ruta)
-    },
-    updateBreadcrumb() {
-      console.log('archivos.updateBreadcrumb()')
-      const carpeta = this.carpetaActual
-      const rootData = this.$store.getters.getRouteData(this.$config.archivosRuta)
-      const breadcrumb = []
-      const parts = carpeta.ruta.split("/").filter(x => !!x)
-      // parts.shift()
-      let rutaParcial = ''
-      const that = this
-      while (parts.length) {
-        const part = parts.shift()
-        rutaParcial += '/' + part
-        const ruta = rutaParcial
-        // const base = ruta===this.$config.archivosRuta?this.$store.getters.getRouteData(ruta):{}
-        breadcrumb.push({
-          name: part,
-          href: rutaParcial,
-          click: this.navigationMode === 'Main' ? async (event) => {
-            console.log('clicked!', event, ruta)
-            event.preventDefault()
-            event.stopPropagation();
-            const [carpeta] = await this.$strapi.find('carpetas', { ruta })
-            console.log('carpeta', carpeta)
-            console.log('current carpetaId', that.carpetaActualId)
-            if (carpeta)
-              that.carpetaActualId = carpeta.id
-            history.pushState({}, null, carpeta.ruta)
-            // that.updateBreadcrumb()
-            return false
-          } : null,
-          icon: rootData.icon
-        })
-      }
-
-      this.$store.commit('setNextPathBreadcrumb', breadcrumb)
-      this.$store.commit('updateBreadcrumb')
-    },
-
-    onchangeurl(event) {
-      // alert("location: " + document.location + ", state: " + JSON.stringify(event.state));
-      console.log('popstate!', event, location.pathname)
-      /* if(location.pathname!==this.carpetaActual.ruta) {
-        const carpetas = this.$strapi.find('carpetas', {ruta: newValue})
-        const carpeta = carpetas[0]
-        console.log('carpeta con ruta', newValue, carpeta)
-        if(carpeta)
-          this.$set(this, 'carpeta', carpeta)
-      } */
-    },
-    onProgress(progress) {
-      console.log('progress', progress)
-      this.currentProgress = Math.round((progress.loaded / progress.total) * 100);
-    },
-    onUpload(files) {
-      console.log('onUpload', files)
-      this.uploading = true
-      this.currentProgress = 0
-      const form = new FormData()
-      for (const file of files)
-        form.append("files", file)
-      const token = this.$strapi.getToken()
-      this.$axios.$post(
-        '/api/upload',
-        form, // <-- this formData has a big file attachment
-        {
-          headers: {
-            Authorization: `Bearer ${token}`
-          },
-          onUploadProgress: (progress) => this.onProgress(progress) // <-- this updates the progress bar
-        })
-
-        //this.$strapi.create("upload", form)
-        .then(async (response) => {
-          console.log('uploaded!')
-          console.log(response)
-          for (const result of response) {
-            console.log(result)
-            console.log('crearemos archivos en la carpeta', this.carpetaActualId)
-            await this.$strapi.create("archivos", { carpeta: this.carpetaActualId, nombre: result.name, media: result.id })
-              .catch(err => {
-                console.warn(err)
-              })
-          }
-          this.refresh++
-          // alert('archivos cargados')
-          this.currentProgress = 100
-          this.uploading = false
-        })
-        .catch(err => {
-          console.warn(err)
-        })
-    },
-    resetNuevaCarpeta() {
-      this.nuevaCarpeta = {nombre:'', autor: {id:null}, permisos:{}}
-      if(this.$strapi.user)
-        this.nuevaCarpeta.autor.id = this.$strapi.user.id
-      this.nuevaCarpeta.padre = this.carpetaActualId  
-    },
-    crearCarpeta() {
-      /// this.nuevaCarpeta
-      this.$strapi.create("carpetas", this.nuevaCarpeta)
-      .then(response=>{
-        this.refresh++
-        this.resetNuevaCarpeta()
-      })
-      .catch(error=>{
-        console.warn(JSON.stringify(error))
-                    let msg = 'Error al guardar'
-                    switch (error.statusCode) {
-                        case 403: msg = 'No tienes permisos'
-                    }
-                    this.$toast.error(msg, {
-                        position: "bottom-left",
-                        timeout: 5000,
-                        closeOnClick: true,
-                        pauseOnFocusLoss: true,
-                        pauseOnHover: true,
-                        draggable: true,
-                        draggablePercent: 0.6,
-                        showCloseButtonOnHover: false,
-                        hideProgressBar: true,
-                        closeButton: "button",
-                        icon: true,
-                        rtl: false
-                    });
-      })
-    }
+      urlCompartidas: URL_COMPARTIDAS,
+      urlPapelera: URL_PAPELERA,
+      urlEquipos: URL_EQUIPOS,
+      urlGrupos: URL_GRUPOS,
+    };
   },
   computed: {
-    carpetaActualJSON() {
-      return JSON.stringify(this.carpetaActual)
+    equiposFiltrados() {
+      return this.equipos.filter(
+        (x) =>
+          x.carpeta || x.carpetasLectura.length || x.carpetasEscritura.length
+      );
     },
-    rutaActual() {
-      return this.$route.fullPath
-    }
+    gruposFiltrados() {
+      return this.grupos.filter(
+        (x) => x.carpetasLectura.length || x.carpetasEscritura.length
+      );
+    },
+    carpetasCompartidasContigo: {
+      get() {
+        return this.carpetasLectura
+          .concat(this.carpetasEscritura)
+          .filter((x) => x.publishedAt);
+      },
+      set(newValue) {},
+    },
+    carpetasQueCompartes: {
+      get() {
+        return this.carpetasCreadas
+          .filter((x) => x.publishedAt)
+          .filter(
+            (x) =>
+              x.lecturaAcceso != "Nadie" ||
+              x.escrituraAcceso != "Nadie" ||
+              x.lecturaUsuarios.length ||
+              x.escrituraUsuarios.length ||
+              x.lecturaGrupos.length ||
+              x.escrituraGrupos.length ||
+              x.lecturaEquipos.length ||
+              x.escrituraEquipos.length ||
+              x.administracionUsuarios.length
+          );
+      },
+      set(newValue) {},
+    },
+    elementosBorrados: {
+      get() {
+        return this.carpetasCreadas.filter((x) => !x.publishedAt);
+      },
+      set(newValue) {},
+    },
   },
-  watch: {
-    carpetaActualJSON(newValue) {
-      console.log('***child.watched.carpetaActual.updateBreadcrumb')
-      this.updateBreadcrumb()
-      this.nuevaCarpeta.padre = this.carpetaActualId
+  methods: {
+    raiz() {
+      this.idCarpetaActual = this.idRoot;
+      this.idRootActual = this.idRoot;
+      // this.idRootActual = this.carpeta.id
+      history.pushState({}, null, "/archivos");
     },
-    rutaActual(newValue) {
-      console.log('!watched rutaActual')
-      /*
-      this.$nextTick(()=>{
-        this.$store.commit('travelling', false)
-        this.$store.dispatch('beforeEnter', this.$el)
-        this.carpetaActualId = this.carpetaActual?this.carpetaActual.id:this.carpetaActualId
-        this.updateBreadcrumb()
-      })
-      */
-    }
-  }
-}
+    misArchivos() {
+      this.idCarpetaActual = this.carpeta.id;
+      this.idRootActual = this.carpeta.id;
+      // this.idRootActual = this.carpeta.id
+      history.pushState({}, null, this.carpeta.ruta);
+    },
+    verCompartidas() {
+      this.idCarpetaActual = URL_COMPARTIDAS;
+      history.pushState({}, null, URL_COMPARTIDAS);
+    },
+    papelera() {
+      this.idCarpetaActual = URL_PAPELERA;
+      history.pushState({}, null, URL_PAPELERA);
+    },
+    vistaEquipos() {
+      this.idCarpetaActual = URL_EQUIPOS;
+      history.pushState({}, null, URL_EQUIPOS);
+    },
+    vistaGrupos() {
+      this.idCarpetaActual = URL_GRUPOS;
+      history.pushState({}, null, URL_GRUPOS);
+    },
+  },
+};
 </script>

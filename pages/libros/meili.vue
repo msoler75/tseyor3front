@@ -57,7 +57,7 @@
           class="surface w-full rounded-lg border border-blue-gray-900 border-opacity-20 py-7 px-2 md:p-7"
         >
           <div slot="item" slot-scope="{ item }">
-            <CardBook
+            <CardLibro
               book-size="book-xs md:book-sm"
               :key="item.id"
               :data="item"

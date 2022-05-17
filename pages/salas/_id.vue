@@ -16,7 +16,7 @@
 
     <h1 class="mt-12">Eventos y Actividades</h1>
     <Grid class="justify-center grid-cols-fill-w-64 text-center">
-      <CardEvent v-for="evento of sala.eventos" :key="'related-' + evento.id" :id="'evento-' + evento.id" :data="evento"
+      <CardEvento v-for="evento of sala.eventos" :key="'related-' + evento.id" :id="'evento-' + evento.id" :data="evento"
         :noText="true" collection="eventos" />
     </Grid>
   </div>

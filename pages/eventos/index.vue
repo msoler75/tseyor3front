@@ -57,7 +57,7 @@
 
         <div>
           <h1 class="text-center">Próximos Eventos</h1>
-          <CardEvent v-for="evento of eventosProximos" :key="'evvvv' + evento.id" :id="'evento-' + evento.id"
+          <CardEvento v-for="evento of eventosProximos" :key="'evvvv' + evento.id" :id="'evento-' + evento.id"
             :data="evento" collection="eventos" class="mb-4 max-w-md" />
         </div>
       </div>
@@ -66,7 +66,7 @@
 
 
     <Card v-else
-      class="bg-opacity-25 dark:bg-opacity-75 flex flex-col mx-auto w-sm max-w-full justify-center items-center text-center"
+      class="bg-opacity-25 dark:bg-opacity-75 flex flex-col mx-auto mb-4 w-sm max-w-full justify-center items-center text-center"
       style="height: 50vh">
       <h2>No hay eventos programados</h2>
       <Suscribe />
@@ -83,7 +83,7 @@
     <div id="eventos-pasados" class="container mx-auto my-12 px-2 sm:px-7">
       <h1 class="text-center mb-12">Eventos Pasados</h1>
       <Grid class="grid-cols-fill-w-64 text-center">
-        <CardEvent v-for="evento of eventosPasados" :key="'past-' + evento.id" :id="'evento-' + evento.id"
+        <CardEvento v-for="evento of eventosPasados" :key="'past-' + evento.id" :id="'evento-' + evento.id"
           :data="evento" collection="eventos" />
       </Grid>
     </div>
@@ -98,6 +98,11 @@ export default {
     try {
       const { data: eventos, meta, error } = await $strapi.findList(route, {
         fields: ['id', 'slug', 'titulo', 'descripcion', 'fechaComienzo', 'publishedAt', 'updatedAt'],
+        filters: {
+          titulo: {
+            $contains: 'h'
+          }
+        },
         sort: ['fechaComienzo:desc']
       })
       if (!eventos)

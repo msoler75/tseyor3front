@@ -16,7 +16,7 @@
                     <span @click="eliminarAnuncio" class="ml-4 cursor-pointer">
                         <icon icon="trash" />
                     </span>
-                    <span class="ml-auto">{{ $dayjs(anuncio.updatedAt).fromNow() }}</span>
+                    <span class="ml-auto">{{ $dayjs(this.equipo.anuncio.updatedAt).fromNow() }}</span>
                 </div>
             </Card>
 
@@ -27,12 +27,19 @@
                 </span>
             </div>
 
-            <Tabs compact :group="false" v-model="currentTab" :items="tabs" @change="tabChange" @close="tabClosed"
+            <Tabs id="tabs" compact :group="false" v-model="currentTab" :items="tabs" @change="tabChange" @close="tabClosed"
                 class="flex-wrap" />
 
             <template v-if="enVistaEquipo && currentTab == 'Información'">
 
-                info
+                <Card v-if="equipo.texto" class="p-5">
+                    <div v-html="$mdToHtml(equipo.texto)"/> 
+                </Card>
+
+                <Card v-for="publi of equipo.informaciones" :key="publi.id" class="p-5">
+                    <h3>{{ $ucFirst(publi.titulo) }}</h3>
+                    <div v-html="$mdToHtml(publi.texto)"/> 
+                </Card>
 
             </template>
 
@@ -70,7 +77,7 @@
                 </Card>
             </template>
 
-            <nuxt-child v-else @publi="nuevaTab" />
+            <nuxt-child v-else @publi="nuevaTab" @close="closedPubli"/>
 
         </div>
 
@@ -108,7 +115,9 @@ export default {
                     actividades: {
                         fields: ["id", "titulo", "descripcion"],
                         populate: '*'
-                    }
+                    },
+                    anuncio:'*',
+                    informaciones: '*'
                 }
             });
             if (!contenido)
@@ -127,11 +136,15 @@ export default {
                         id: {
                             $eq: contenido.id
                         }
+                    },
+                    tipo: {
+                        $notIn: ['Anuncio', 'Información']
                     }
                 },
                 publicationState: 'preview',
                 sort: ['publishedAt:desc']
-            });
+            })
+            // if(contenido.anuncio)
             var borradoresEquipo = await $borradoresEquipo(contenido.id)
             return { contenido, publicaciones, meta, equipo: contenido, borradoresEquipo };
         }
@@ -168,14 +181,11 @@ export default {
         },
         publicacionesFiltro() {
             return this.soyCoordinador ? this.publicaciones :
-                this.publicaciones.filter(x => x.publishedAt)
-        },
-        anuncio() {
-            return this.publicaciones.find(x => x.tipo == 'Anuncio')
+                this.publicaciones.filter(x => x.publishedAt && !['Anuncio', 'Información'].includes(x.tipo))
         },
         anuncioHTML() {
-            if (!this.anuncio) return ''
-            return this.$mdToHtml(this.anuncio.texto)
+            if (!this.equipo.anuncio) return ''
+            return this.$mdToHtml(this.equipo.anuncio.texto)
         },
         carpetaActualNombre() {
             if (this.carpetaActual)
@@ -195,6 +205,10 @@ export default {
         }
     },
     methods: {
+        closedPubli(){
+            this.currentTab='Publicaciones'
+            this.$scrollTo('#__main-container', 900)
+        },
         tabDefault() {
             console.log('TABDEFAULT')
             if (this.soyMiembro)
@@ -252,18 +266,18 @@ export default {
         async editarAnuncio() {
             this.$prompt({
                 message: 'Editar anuncio',
-                response: this.anuncio ? this.anuncio.texto : '',
+                response: this.equipo.anuncio?this.equipo.anuncio.texto:'',
                 accepted: (response) => {
-                    if (this.anuncio) {
-                        this.$strapi.update('publicaciones', this.anuncio.id, {
+                    if (this.equipo.anuncio) {
+                        this.$strapi.update('publicaciones', this.equipo.anuncio.id, {
                             texto: response
                         })
                             .then(res => {
                                 if (res.error)
                                     this.$alert('Hubo un error. Tal vez el texto es demasiado corto')
                                 else {
-                                    this.anuncio.texto = response
-                                    this.anuncio.updatedAt = new Date().toISOString()
+                                    this.equipo.anuncio.texto = response
+                                    this.equipo.anuncio.updatedAt = new Date().toISOString()
                                 }
                             })
                     }
@@ -271,6 +285,7 @@ export default {
                         this.$strapi.create('publicaciones', {
                             equipo: this.equipo.id,
                             tipo: 'Anuncio',
+                            titulo:'anuncio del equipo '+this.equipo.nombre,
                             texto: response
                         })
                             .then(res => {
@@ -279,7 +294,11 @@ export default {
                                 }
                                 else {
                                     console.log('ANUNCIO CREADO', res)
-                                    this.publicaciones.push(res.data)
+                                    //this.publicaciones.push(res.data)
+                                    this.equipo.anuncio = res.data
+                                    this.$strapi.update('equipos', this.equipo.id, {
+                                        anuncio: this.equipo.anuncio.id
+                                    })
                                 }
                             })
                     }
@@ -291,14 +310,16 @@ export default {
             this.$confirm({
                 message: 'Esto eliminará el anuncio. ¿Quieres continuar?',
                 confirmed: () => {
-                    this.$strapi.delete('publicaciones', this.anuncio.id)
+                    this.$strapi.delete('publicaciones', this.equipo.anuncio.id)
                         .then(res => {
                             if (res.error) {
                                 this.$alert('Hubo algún error')
                             }
                             else {
-                                const idx = this.publicaciones.findIndex(x => x.id === this.anuncio.id)
-                                this.publicaciones.splice(idx, 1)
+                                this.equipo.anuncio = null
+                                this.$strapi.update('equipos', this.equipo.id, {
+                                    anuncio: null
+                                })
                             }
                         }
                         )

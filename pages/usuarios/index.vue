@@ -15,7 +15,7 @@
       </form>
     </section>
     <Grid class="grid-cols-fill-w-40">
-      <CardUser v-for="usuario of usuariosListados" :key="usuario.id" :data="usuario" />
+      <CardUsuario v-for="usuario of usuariosListados" :key="usuario.id" :data="usuario" />
     </Grid>
 
     <div v-show="hayMas && !cargando" v-observe-visibility="cargarMas" class="mt-3 flex justify-center">

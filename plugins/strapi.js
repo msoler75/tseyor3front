@@ -98,6 +98,10 @@ export default ({
           }
         })
         .then(res => res.json())
+        .then(x=>{
+          console.log('FIND RESULT', x)
+          return x
+        })
     }
 
     // parece que params no hace nada

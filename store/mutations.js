@@ -10,7 +10,7 @@ export default {
   },
 
   SET_BORRADORES(state, num) {
-    console.log('SET_BORRADORES', num)
+    //console.log('SET_BORRADORES', num)
     state.borradoresNum = num
   },
 
@@ -48,16 +48,16 @@ export default {
 
     // cuando cambiamos de página, además mostramos el menu top navigation
     state.navHidden = false
-    console.log(state.pageConfig)
+    //console.log(state.pageConfig)
   },
 
   setDropHandler(state, func) {
-    console.log('setDropHandler', func, state)
+    //console.log('setDropHandler', func, state)
     state.dropHandler = func
   },
 
   setDropAccept(state, accept) {
-    console.log('setDropAccept', accept, state)
+    //console.log('setDropAccept', accept, state)
     state.dropAccept = accept || '*/*'
   },
 

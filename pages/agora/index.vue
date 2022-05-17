@@ -29,7 +29,7 @@
       </section>
     </Card>
 
-    <CardBook landscape :data="{
+    <CardLibro landscape :data="{
        id:4,
       title: 'Ágora del Junantal', 
       texto:'Monografía que recoge todas las informaciones sobre el proceso de creación y desarrollo del Ágora del Junantal.', 

@@ -23,7 +23,7 @@
       </section>
     </Card>
 
-      <CardBook landscape :data="{
+      <CardLibro landscape :data="{
        id:4,
       title: 'Comisión de Tseyor', 
       texto:'Monografía que recoge todas las informaciones sobre el proceso de creación y desarrollo de la Comisión de Tseyor.', 

@@ -19,7 +19,7 @@
       <ais-infinite-hits v-show="!cambiandoVista" ref="hits">
         <template v-slot="{ items, refineNext, isLastPage }">
           <Grid class="grid-cols-fill-w-64 text-center">
-            <CardBook v-for="item of items" :key="item.id" book-size="book-sm" :data="item" :noText="true" :noDate="true"/>
+            <CardLibro v-for="item of items" :key="item.id" book-size="book-sm" :data="item" :noText="true" :noDate="true"/>
           </Grid>
           <div class="flex justify-center mt-4" v-if="!isLastPage">
             <LoadMore @click="refineNext" class="my-7"/>
@@ -37,7 +37,7 @@
     </ais-instant-search>
 
     <Grid v-if="vistaInicial" class="grid-cols-fill-w-64 text-center">
-      <CardBook v-for="libro of libros" :key="libro.id" book-size="book-sm" :data="libro" :noText="true" :noDate="true"/>
+      <CardLibro v-for="libro of libros" :key="libro.id" book-size="book-sm" :data="libro" :noText="true" :noDate="true"/>
     </Grid>
 
   </div>

@@ -25,9 +25,9 @@ export default {
   mixins: [CardMix],
   computed: {
     currentComponent () {
-      if(this.ccollection === 'libros') return 'CardBook'
-      if(this.ccollection === 'eventos') return 'CardEvent'
-      if(this.ccollection === 'cursos') return 'CardEvent'
+      if(this.ccollection === 'libros') return 'CardLibro'
+      if(this.ccollection === 'eventos') return 'CardEvento'
+      if(this.ccollection === 'cursos') return 'CardEvento'
       return 'Card'
     }
   }

@@ -35,7 +35,7 @@
           </Card>
 
           <Grid v-show="viendoSeccion === 'bibliografia'" class="grid-cols-fill-w-56 text-center mt-3">
-            <CardBook v-for="libro of guia.libros" :key="libro.id" :data="libro" :noText="true" book-size="book-sm" />
+            <CardLibro v-for="libro of guia.libros" :key="libro.id" :data="libro" :noText="true" book-size="book-sm" />
           </Grid>
         </div>
 

@@ -33,8 +33,8 @@
         </div>
 
 
-        <TButton :to="`/equipos/${equipo.slug}`">
-            <icon icon="arrow-left" class="mr-2" />{{ equipo.nombre }}
+        <TButton @click="back">
+            <icon icon="arrow-left" class="mr-2" />Publicaciones
         </TButton>
     </div>
 </template>
@@ -75,7 +75,7 @@ export default {
     },
     mounted() {
         console.warn('P MOUNTED!')
-        this.$scrollTo("#publicacion", 500)
+        this.$scrollTo("#tabs", 500)
         this.$emit('publi', this.contenido)
     },
     computed: {
@@ -86,6 +86,11 @@ export default {
             if (!this.$strapi.user) return false
             return !!this.equipo.coordinadores.find(x => x.id === this.$strapi.user.id);
         },
+    },
+    methods: {
+        back() {
+            this.$emit("close")
+        }
     }
 }
 </script>

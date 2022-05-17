@@ -43,7 +43,7 @@
     </Card>
 
     
-     <CardBook landscape :data="{
+     <CardLibro landscape :data="{
       id:5,
       title: 'La Universidad Tseyor de Granada', 
       texto:'Monografía que recoge todas las informaciones sobre el proceso de creación y desarrollo la Universidad Tseyor de Granada.', 

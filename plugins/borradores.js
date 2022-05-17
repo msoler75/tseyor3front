@@ -36,6 +36,9 @@ export default ({
           publishedAt: {
             $null: true
           },
+          tipo: {
+            $notIn: ['Anuncio', 'Información']
+          }
         },
         publicationState: 'preview',
         sort: ['updatedAt:desc']
