@@ -1,42 +1,42 @@
 <template>
   <div class="flex flex-col sm:flex-row">
-    <div v-if="$strapi.user" class="space-y-4">
+    <div v-if="$strapi.user" class="space-y-4 p-5">
       idCarpetaActual: {{ idCarpetaActual }}
 
-      <section @click="raiz" class="space-x-2">
-        <icon icon="home" class="w-4" />
-        <span class="font-bold">Archivos</span>
+      <section @click="raiz" class="flex space-x-2 items-center">
+         <icon icon="svg" :svg="iconHome" class="w-5" />
+        <span class="font-bold">Archivos Tseyor</span>
       </section>
 
-      <section @click="misArchivos" class="space-x-2">
-        <icon icon="far fa-user" class="w-4" />
+      <section @click="misArchivos" class="flex space-x-2 items-center">
+        <icon icon="far fa-user" class="w-5" />
         <span class="font-bold">Mis Archivos</span>
       </section>
 
-      <section class="space-x-2">
-        <icon icon="upload" class="w-4" />
+      <section class="flex space-x-2 items-center">
+        <icon icon="svg" :svg="iconUpload" class="w-5" />
         <span class="font-bold">Subidas recientes</span>
       </section>
 
-      <section @click="verCompartidas" class="space-x-2">
-        <icon icon="link" class="w-4" />
+      <section @click="verCompartidas" class="flex space-x-2 items-center">
+        <icon icon="link" class="w-5" />
         <span class="font-bold">Carpetas compartidas</span>
       </section>
 
-      <section @click="papelera" class="space-x-2">
-        <icon icon="trash" class="w-4" />
+      <section @click="papelera" class="flex space-x-2 items-center">
+        <icon icon="far fa-trash-alt" class="w-5" />
         <span class="font-bold">Papelera</span>
       </section>
 
       <div class="font-bold text-diminished mt-8">Colaboración</div>
 
-      <section @click="vistaEquipos" class="space-x-2">
-        <icon icon="people-carry" class="w-4" />
+      <section @click="vistaEquipos" class="flex space-x-2 items-center">
+        <icon icon="people-carry" class="w-5" />
         <span class="font-bold">Equipos</span>
       </section>
 
-      <section @click="vistaGrupos" class="space-x-2">
-        <icon icon="users" class="w-4" />
+      <section @click="vistaGrupos" class="flex space-x-2 items-center">
+        <icon icon="users" class="w-5" />
         <span class="font-bold">Grupos</span>
       </section>
 
@@ -113,16 +113,19 @@
             v-if="equipo.carpeta"
             v-model="equipo.carpeta"
             navigationMode="Click"
+            @click="clickedOn"
           />
           <FilesFolder
             v-if="equipo.carpetasLectura.length"
             v-model="equipo.carpetasLectura"
             navigationMode="Click"
+            @click="clickedOn"
           />
           <FilesFolder
             v-if="equipo.carpetasEscritura.length"
             v-model="equipo.carpetasEscritura"
             navigationMode="Click"
+            @click="clickedOn"
           />
         </div>
       </div>
@@ -137,11 +140,13 @@
             v-if="grupo.carpetasLectura.length"
             v-model="grupo.carpetasLectura"
             navigationMode="Click"
+            @click="clickedOn"
           />
           <FilesFolder
             v-if="grupo.carpetasEscritura.length"
             v-model="grupo.carpetasEscritura"
             navigationMode="Click"
+            @click="clickedOn"
           />
         </div>
       </div>
@@ -158,6 +163,8 @@
 </template>
 
 <script>
+import iconUpload from "~/assets/svg/icons/cloud-upload.svg?raw";
+import iconHome from "~/assets/svg/icons/home.svg?raw";
 const URL_COMPARTIDAS = "/archivos/___compartidas";
 const URL_PAPELERA = "/archivos/___papelera";
 const URL_EQUIPOS = "/archivos/___equipos";
@@ -230,6 +237,8 @@ export default {
   },
   data() {
     return {
+      iconUpload,
+      iconHome,
       urlCompartidas: URL_COMPARTIDAS,
       urlPapelera: URL_PAPELERA,
       urlEquipos: URL_EQUIPOS,
@@ -311,6 +320,12 @@ export default {
       this.idCarpetaActual = URL_GRUPOS;
       history.pushState({}, null, URL_GRUPOS);
     },
+    clickedOn(carpeta) {
+      this.idCarpetaActual = carpeta.id;
+      // this.idRootActual = this.idRoot;
+      // this.idRootActual = this.carpeta.id
+      history.pushState({}, null, carpeta.ruta);
+    }
   },
 };
 </script>

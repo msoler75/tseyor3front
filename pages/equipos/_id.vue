@@ -14,7 +14,7 @@
                         <icon icon="pen-alt" />
                     </span>
                     <span @click="eliminarAnuncio" class="ml-4 cursor-pointer">
-                        <icon icon="trash" />
+                        <icon icon="far fa-trash-alt" />
                     </span>
                     <span class="ml-auto">{{ $dayjs(this.equipo.anuncio.updatedAt).fromNow() }}</span>
                 </div>
