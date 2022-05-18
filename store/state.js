@@ -1,5 +1,6 @@
 import ufo from "@/assets/svg/icons/ufo.svg?raw";
 import eyeClosed from "~/assets/svg/icons/eyeclosed.svg?raw";
+import iconUpload from "~/assets/svg/icons/cloud-upload.svg?raw";
 
 export default () => ({
   // logged In user
@@ -13,7 +14,8 @@ export default () => ({
   // iconos de tipo svg
   svgIcons: {
     ufo: ufo,
-    eyeClosed: eyeClosed
+    eyeClosed: eyeClosed,
+    iconUpload: iconUpload
   },
   // configuración de página
   pageConfig: {
@@ -99,7 +101,7 @@ export default () => ({
       name: "Archivos",
       icon: "fas fa-folder-open",
       description: "Zona de archivos para descargar",
-      parent: "/recursos"
+      // parent: "/recursos"
     },
     "/centros": {
       name: "Centros Tseyor",
@@ -419,6 +421,43 @@ export default () => ({
       name: "Ingresar",
       icon: "fas fa-sign-in-alt",
       description: "Iniciar sesión con tu cuenta",
+    },
+
+
+    
+    "/___papelera": {
+      name: "Papelera",
+      icon: "far fa-trash-alt",
+      description: "Archivos en tu papelera",
+      parent: "/archivos"
+    },
+    "/___compartidas": {
+      name: "Carpetas Compartidas",
+      icon: "link",
+      description: "Carpetas que has compartido o que comparten contigo",
+      parent: "/archivos"
+    },
+    "/___equipos": {
+      name: "Equipos",
+      icon: "people-carry",
+      description: "Carpetas que tienen relación con equipos de los que eres miembro",
+      parent: "/archivos"
+    },
+    "/___grupos": {
+      name: "Grupos",
+      icon: "users",
+      description: "Carpetas que tienen relación con grupos a los que perteneces",
+      parent: "/archivos"
+    },
+    "/___subidos": {
+      name: "Subidas Recientes",
+      icon: "svg iconUpload",
+      description: "Archivos recientemente subidos por ti",
+      parent: "/archivos"
+    },
+    "___noarchivos": {
+      name: "No hay archivos",
+      parent: "/archivos"
     }
   },
 });

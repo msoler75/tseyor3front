@@ -23,11 +23,14 @@ export default {
       imagenes
     )
     //if ($strapi.user)
-      //$strapi.updateBorradoresNum()
+    //$strapi.updateBorradoresNum()
   },
   // page transition
   beforeEnter(store, el) {
     // console.log('store.BeforeEnter...', el)
+    if (el.id == '__content')
+      el = el.firstChild
+
     const config = {}
     const pageConfigKeywords = [
       'background',
@@ -37,9 +40,11 @@ export default {
       'footer',
     ]
     for (const key of pageConfigKeywords) {
-      const value = el.getAttribute(key)
-      if (value !== null) {
-        config[key] = value && value === true || (value.toLowerCase() !== 'no' && value !== '0')
+      if('getAttribute' in el){
+        const value = el.getAttribute(key)
+        if (value !== null) {
+          config[key] = value && value === true || (value.toLowerCase() !== 'no' && value !== '0')
+        }
       }
     }
 

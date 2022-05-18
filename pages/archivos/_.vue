@@ -1,175 +1,164 @@
 <template>
-  <div class="flex flex-col sm:flex-row">
-    <div v-if="$strapi.user" class="space-y-4 p-5">
-      idCarpetaActual: {{ idCarpetaActual }}
+  <section
+    class="archivos flex flex-col sm:flex-row justify-start"
+    contained="no"
+    background="no"
+  >
+    <div
+      v-if="$strapi.user"
+      class="
+        surface
+        !bg-gray-100
+        dark:!bg-gray-900
+        !border-l-0 !border-r-0 !border-b-0
+        sm:!border-b-1
+        py-5
+        px-5
+        lg:px-20
+        xl:pl-32
+        select-none
+        whitespace-nowrap
+      "
+    >
+      <div class="flex justify-between items-start">
+        <div class="w-full overflow-y-auto">
+          <template v-for="(menu, index) of options">
+            <section
+              v-if="menu.handler"
+              :key="index"
+              @click="onSelect(menu)"
+              class="space-x-3 flex-grow items-center px-2"
+              :class="
+                (vista == menu.value ? 'item-selected' : '') +
+                (viewMenu || vista == menu.value
+                  ? ' flex'
+                  : ' hidden sm:flex') +
+                (viewMenu ? ' mb-3 sm:mb-5' : ' sm:mb-5')
+              "
+            >
+              <icon :icon="menu.icon" :svg="menu.svg" class="w-5" />
+              <span class="font-bold flex-grow">{{ menu.label }}</span>
+            </section>
+            <div
+              v-else
+              :class="viewMenu ? '' : 'hidden sm:block'"
+              :key="index"
+              class="pt-1 sm:pt-3 pb-1 sm:pb-1 text-diminished font-bold mb-3"
+            >
+              {{ menu.label }}
+            </div>
+          </template>
+        </div>
+        <icon
+          :icon="viewMenu ? 'chevron-up' : 'chevron-down'"
+          class="cursor-pointer sm:hidden py-1 px-2"
+          @click.native="viewMenu = !viewMenu"
+        />
+      </div>
+    </div>
+    <div
+      class="
+        surface
+        w-full
+        flex-grow
+        py-5
+        px-5
+        sm:px-10
+        lg:px-14
+        !border-l
+        -0
+        !border-r-0
+        !sm:border-l-1
+      "
+    >
+      <div v-if="idCarpetaActual == urlNoArchivos">
+        <h3>Tus archivos</h3>
+        No tienes espacio para archivos
+      </div>
+      <div v-else-if="idCarpetaActual == urlCompartidas">
+        <h3>Compartidas para ti</h3>
+        <FilesFolder
+          v-model="compartidasContigo"
+          placeholder="Ninguna carpeta compartida"
+        />
 
-      <section @click="raiz" class="flex space-x-2 items-center">
-         <icon icon="svg" :svg="iconHome" class="w-5" />
-        <span class="font-bold">Archivos Tseyor</span>
-      </section>
+        <divider />
 
-      <section @click="misArchivos" class="flex space-x-2 items-center">
-        <icon icon="far fa-user" class="w-5" />
-        <span class="font-bold">Mis Archivos</span>
-      </section>
-
-      <section class="flex space-x-2 items-center">
-        <icon icon="svg" :svg="iconUpload" class="w-5" />
-        <span class="font-bold">Subidas recientes</span>
-      </section>
-
-      <section @click="verCompartidas" class="flex space-x-2 items-center">
-        <icon icon="link" class="w-5" />
-        <span class="font-bold">Carpetas compartidas</span>
-      </section>
-
-      <section @click="papelera" class="flex space-x-2 items-center">
-        <icon icon="far fa-trash-alt" class="w-5" />
-        <span class="font-bold">Papelera</span>
-      </section>
-
-      <div class="font-bold text-diminished mt-8">Colaboración</div>
-
-      <section @click="vistaEquipos" class="flex space-x-2 items-center">
-        <icon icon="people-carry" class="w-5" />
-        <span class="font-bold">Equipos</span>
-      </section>
-
-      <section @click="vistaGrupos" class="flex space-x-2 items-center">
-        <icon icon="users" class="w-5" />
-        <span class="font-bold">Grupos</span>
-      </section>
-
-      <!--
-
-      <section v-if="carpeta">
-        <FilesFolder v-model="carpeta" navigationMode="Click" />
-      </section>
-      <section v-if="carpetasCreadas.length">
-        <FilesFolder v-model="carpetasCreadas" navigationMode="Click" />
-      </section>
-      <section v-if="carpetasLectura.length">
-        <FilesFolder v-model="carpetasLectura" navigationMode="Click" />
-      </section>
-      <section v-if="carpetasEscritura.length">
-        <FilesFolder v-model="carpetasEscritura" navigationMode="Click" />
-      </section>
-      <section v-if="carpetasAdministracion.length">
-        <FilesFolder v-model="carpetasAdministracion" navigationMode="Click" />
-      </section>
-      <section v-if="equipos">
-        <div v-for="equipo of equipos" :key="equipo.id">
-          <template
-            v-if="
-              equipo.carpetasLectura.length || equipo.carpetasEscritura.length
-            "
-          >
-            <span>{{ equipo.nombre }}</span>
+        <h3>Compartes con los demás</h3>
+        <FilesFolder
+          v-model="carpetasQueCompartes"
+          placeholder="Ninguna carpeta compartida"
+        />
+      </div>
+      <div v-else-if="idCarpetaActual == urlPapelera">
+        <h3>Papelera</h3>
+        <FilesFolder v-model="elementosBorrados" />
+      </div>
+      <div v-else-if="idCarpetaActual == urlEquipos">
+        <div v-if="equiposFiltrados.length">
+          <div v-for="equipo of equiposFiltrados" :key="equipo.id">
+            <h4>{{ equipo.nombre }}</h4>
+            <FilesFolder
+              v-if="equipo.carpeta"
+              v-model="equipo.carpeta"
+              navigationMode="Click"
+              @click="onClicked"
+              :showTitle="false"
+            />
             <FilesFolder
               v-if="equipo.carpetasLectura.length"
               v-model="equipo.carpetasLectura"
               navigationMode="Click"
+              @click="onClicked"
             />
             <FilesFolder
               v-if="equipo.carpetasEscritura.length"
               v-model="equipo.carpetasEscritura"
               navigationMode="Click"
+              @click="onClicked"
             />
-          </template>
+          </div>
         </div>
-      </section>
-      <section v-if="grupos">
-        <div v-for="grupo of grupos" :key="grupo.id">
-          
-        </div>
-      </section>
-      -->
-    </div>
-    <div v-if="idCarpetaActual == urlCompartidas">
-      <h3>Comparten contigo personalmente</h3>
-      <FilesFolder
-        v-model="carpetasCompartidasContigo"
-        placeholder="Ninguna carpeta compartida"
-      />
-
-      <divider />
-
-      <h3>Compartes con los demás</h3>
-      <FilesFolder
-        v-model="carpetasQueCompartes"
-        placeholder="Ninguna carpeta compartida"
-      />
-    </div>
-    <div v-else-if="idCarpetaActual == urlPapelera">
-      <h3>Papelera</h3>
-      <FilesFolder v-model="elementosBorrados" />
-    </div>
-    <div v-else-if="idCarpetaActual == urlEquipos">
-      <h3>Equipos</h3>
-      <div v-if="equiposFiltrados.length">
-        <div v-for="equipo of equiposFiltrados" :key="equipo.id">
-          <span class="font-bold">{{ equipo.nombre }}</span>
-          <FilesFolder
-            v-if="equipo.carpeta"
-            v-model="equipo.carpeta"
-            navigationMode="Click"
-            @click="clickedOn"
-          />
-          <FilesFolder
-            v-if="equipo.carpetasLectura.length"
-            v-model="equipo.carpetasLectura"
-            navigationMode="Click"
-            @click="clickedOn"
-          />
-          <FilesFolder
-            v-if="equipo.carpetasEscritura.length"
-            v-model="equipo.carpetasEscritura"
-            navigationMode="Click"
-            @click="clickedOn"
-          />
-        </div>
+        <div v-else>No hay nada que mostrar</div>
       </div>
-      <div v-else>No hay nada que mostrar</div>
-    </div>
-    <div v-else-if="idCarpetaActual == urlGrupos">
-      <h3>Grupos</h3>
-      <div v-if="gruposFiltrados.length">
-        <div v-for="grupo of gruposFiltrados" :key="grupo.id">
-          <span>{{ grupo.nombre }}</span>
-          <FilesFolder
-            v-if="grupo.carpetasLectura.length"
-            v-model="grupo.carpetasLectura"
-            navigationMode="Click"
-            @click="clickedOn"
-          />
-          <FilesFolder
-            v-if="grupo.carpetasEscritura.length"
-            v-model="grupo.carpetasEscritura"
-            navigationMode="Click"
-            @click="clickedOn"
-          />
+      <div v-else-if="idCarpetaActual == urlGrupos">
+        <div v-if="gruposFiltrados.length">
+          <div v-for="grupo of gruposFiltrados" :key="grupo.id">
+            <span>{{ grupo.nombre }}</span>
+            <FilesFolder
+              v-if="grupo.carpetasLectura.length"
+              v-model="grupo.carpetasLectura"
+              navigationMode="Click"
+              @click="onClicked"
+            />
+            <FilesFolder
+              v-if="grupo.carpetasEscritura.length"
+              v-model="grupo.carpetasEscritura"
+              navigationMode="Click"
+              @click="onClicked"
+            />
+          </div>
         </div>
+        <div v-else>No hay nada que mostrar</div>
       </div>
-      <div v-else>No hay nada que mostrar</div>
+      <FilesFolder
+        v-else
+        v-model="idCarpetaActual"
+        navigationMode="Click"
+        @click="onClicked"
+        :updateBreadcrumb="true"
+        :inside="true"
+        :idRootFolder="idRootActual"
+      />
     </div>
-    <FilesFolder
-      v-else
-      v-model="idCarpetaActual"
-      navigationMode="Main"
-      :inside="true"
-      :idRootFolder="idRootActual"
-    />
-  </div>
+  </section>
 </template>
 
 <script>
-import iconUpload from "~/assets/svg/icons/cloud-upload.svg?raw";
-import iconHome from "~/assets/svg/icons/home.svg?raw";
-const URL_COMPARTIDAS = "/archivos/___compartidas";
-const URL_PAPELERA = "/archivos/___papelera";
-const URL_EQUIPOS = "/archivos/___equipos";
-const URL_GRUPOS = "/archivos/___grupos";
+import vSelect from "vue-select";
+import "vue-select/dist/vue-select.css";
 export default {
+  components: { vSelect },
   async asyncData({ route, $strapi, $error }) {
     try {
       const parts = route.fullPath
@@ -188,8 +177,7 @@ export default {
         // populate: '*'
       });*/
       // if (!contenido) return $error(404, "Carpeta no encontrada");
-      console.log("USER?", $strapi.user);
-      const data = $strapi.user.id
+      const data = $strapi.user
         ? await $strapi.find("users/me", {
             fields: ["id"],
             populate: {
@@ -224,6 +212,7 @@ export default {
         },
       });
 
+      console.warn("DATA", data);
       return {
         ...data,
         idCarpetaActual: ruta,
@@ -237,13 +226,89 @@ export default {
   },
   data() {
     return {
-      iconUpload,
-      iconHome,
-      urlCompartidas: URL_COMPARTIDAS,
-      urlPapelera: URL_PAPELERA,
-      urlEquipos: URL_EQUIPOS,
-      urlGrupos: URL_GRUPOS,
+      urlCompartidas: this.$config.archivosRuta + "/___compartidas",
+      urlSubidos: this.$config.archivosRuta + "/___subidos",
+      urlPapelera: this.$config.archivosRuta + "/___papelera",
+      urlEquipos: this.$config.archivosRuta + "/___equipos",
+      urlGrupos: this.$config.archivosRuta + "/___grupos",
+      urlNoArchivos: this.$config.archivosRuta + "/___noarchivos",
+      vista: "",
+      viewMenu: false,
+      options: [
+        {
+          label: "Archivos Tseyor",
+          value: "general",
+          icon: "home",
+          handler: this.onArchivos,
+        },
+        {
+          label: "Mis Archivos",
+          value: "misArchivos",
+          icon: "far fa-user",
+          handler: this.onMisArchivos,
+        },
+        {
+          label: "Subidas Recientes",
+          value: "subidos",
+          icon: "svg iconUpload",
+          handler: this.onSubidos,
+        },
+        {
+          label: "Papelera",
+          value: "papelera",
+          icon: "far fa-trash-alt",
+          handler: this.onPapelera,
+        },
+        {
+          label: "Colaboración",
+        },
+        {
+          label: "Carpetas Compartidas",
+          value: "compartidas",
+          icon: "link",
+          handler: this.onCompartidas,
+        },
+
+        {
+          label: "Equipos",
+          value: "equipos",
+          icon: "people-carry",
+          handler: this.onEquipos,
+        },
+        {
+          label: "Grupos",
+          value: "grupos",
+          icon: "users",
+          handler: this.onGrupos,
+        },
+      ],
     };
+  },
+  mounted() {
+    if (this.carpeta && this.$route.path === this.urlNoArchivos)
+      this.$router.push(this.carpeta.ruta);
+    this.vista = "general";
+    switch (this.$route.path) {
+      case this.urlCompartidas:
+        this.vista = "compartidas";
+        break;
+      case this.urlPapelera:
+        this.vista = "papelera";
+        break;
+      case this.urlEquipos:
+        this.vista = "equipos";
+        break;
+      case this.urlGrupos:
+        this.vista = "grupos";
+        break;
+      case this.urlNoArchivos:
+        this.vista = "misArchivos";
+      case this.urlSubidos:
+        this.vista = "subidos";
+        break;
+    }
+    if (this.carpeta && this.idCarpetaActual == this.carpeta.ruta)
+      this.vista = "misArchivos";
   },
   computed: {
     equiposFiltrados() {
@@ -257,9 +322,10 @@ export default {
         (x) => x.carpetasLectura.length || x.carpetasEscritura.length
       );
     },
-    carpetasCompartidasContigo: {
+    compartidasContigo: {
       get() {
-        return this.carpetasLectura
+        let carpetas = this.carpetasLectura || [];
+        return carpetas
           .concat(this.carpetasEscritura)
           .filter((x) => x.publishedAt);
       },
@@ -292,40 +358,83 @@ export default {
     },
   },
   methods: {
-    raiz() {
-      this.idCarpetaActual = this.idRoot;
+    pushRoute(obj, updateBreadcrumb) {
+      let ruta = typeof obj === "object" ? obj.ruta : obj;
+      console.log("pushRoute", ruta, "original", obj);
+      this.idCarpetaActual = ruta;
+      history.pushState({}, null, ruta);
+      if(updateBreadcrumb)
+       this.$store.commit("updateBreadcrumb", ruta);
+    },
+    onSelect(menu) {
+      if (screen.width < 640) {
+        if (this.viewMenu) menu.handler();
+        this.viewMenu = !this.viewMenu;
+      } else {
+        menu.handler();
+        this.viewMenu = false;
+      }
+    },
+    onArchivos() {
+      this.vista = "general";
       this.idRootActual = this.idRoot;
       // this.idRootActual = this.carpeta.id
-      history.pushState({}, null, "/archivos");
+      this.pushRoute(this.$config.archivosRuta);
     },
-    misArchivos() {
-      this.idCarpetaActual = this.carpeta.id;
-      this.idRootActual = this.carpeta.id;
+    onMisArchivos() {
+      this.vista = "misArchivos";
+      if (this.carpeta) {
+        this.idRootActual = this.carpeta.id;
+        this.pushRoute(this.carpeta.ruta);
+      } else {
+        this.pushRoute(this.urlNoArchivos, true);
+      }
       // this.idRootActual = this.carpeta.id
-      history.pushState({}, null, this.carpeta.ruta);
     },
-    verCompartidas() {
-      this.idCarpetaActual = URL_COMPARTIDAS;
-      history.pushState({}, null, URL_COMPARTIDAS);
+    onSubidos() {
+      // alert("No implementado");
+      this.vista = "subidos";
+      this.pushRoute(this.urlSubidos, true);
     },
-    papelera() {
-      this.idCarpetaActual = URL_PAPELERA;
-      history.pushState({}, null, URL_PAPELERA);
+    onCompartidas() {
+      this.vista = "compartidas";
+      this.pushRoute(this.urlCompartidas, true);
     },
-    vistaEquipos() {
-      this.idCarpetaActual = URL_EQUIPOS;
-      history.pushState({}, null, URL_EQUIPOS);
+    onPapelera() {
+      this.vista = "papelera";
+      this.pushRoute(this.urlPapelera, true);
     },
-    vistaGrupos() {
-      this.idCarpetaActual = URL_GRUPOS;
-      history.pushState({}, null, URL_GRUPOS);
+    onEquipos() {
+      this.vista = "equipos";
+      this.pushRoute(this.urlEquipos, true);
     },
-    clickedOn(carpeta) {
-      this.idCarpetaActual = carpeta.id;
+    onGrupos() {
+      this.vista = "grupos";
+      this.pushRoute(this.urlGrupos, true);
+    },
+    onClicked(carpeta) {
+      console.warn("onClicke", carpeta);
       // this.idRootActual = this.idRoot;
       // this.idRootActual = this.carpeta.id
-      history.pushState({}, null, carpeta.ruta);
-    }
+      this.pushRoute(carpeta);
+    },
   },
 };
 </script>
+
+<style scoped>
+@import url("https://fonts.googleapis.com/css2?family=Karla:wght@500&display=swap");
+.xarchivos {
+  font-family: "Karla", sans-serif;
+}
+.archivos >>> h1,
+.archivos h3 {
+  @apply text-lg mb-4 text-diminished opacity-75;
+}
+.archivos h4 {
+  @apply mt-0 text-base mb-4 font-bold text-diminished;
+}
+.item-selected {
+  @apply text-sello-centro dark:text-orange;
+}
+</style>

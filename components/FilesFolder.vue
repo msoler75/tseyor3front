@@ -13,8 +13,13 @@
       <icon icon="spinner spin" />
     </div>
     <div v-else-if="carpetaActual" class="flex flex-col">
-      <h1 v-if="showTitle" class="flex justify-between">
-        {{ carpetaActual.nombreOriginal || carpetaActual.nombre }}
+      <h1
+        v-if="
+          showTitle && (carpetaActual.nombreOriginal || carpetaActual.nombre)
+        "
+        class="flex justify-between"
+      >
+        <span>{{ carpetaActual.nombreOriginal || carpetaActual.nombre }}</span>
         <span
           v-if="showControls"
           class="self-center cursor-pointer text-gray text-xl ml-2 pl-2 pr-1"
@@ -42,13 +47,11 @@
       >
         <div class="flex w-full overflow-hidden">
           <div
-            class="
-              flex flex-shrink-0
-              justify-center
-              items-center
-              group
+            class="flex flex-shrink-0 justify-center items-center group"
+            :class="
+              boxClass +
+              (carpeta.publishedAt ? ' text-orange-200' : ' text-gray-500')
             "
-            :class="boxClass + (carpeta.publishedAt?' text-orange-200':' text-gray-500')"
           >
             <div
               v-if="carpeta.nombreMostrar === '..'"
@@ -94,12 +97,13 @@
           >
             <a
               target="_blank"
-              class="
-                font-bold
-                text-gray-dark-900
-                dark:text-gray-50
+              class="font-bold text-gray-dark-900 dark:text-gray-50"
+              :class="
+                textClass +
+                (carpeta.publishedAt
+                  ? ' cursor-pointer'
+                  : ' pointer-events-none')
               "
-              :class="textClass+ (carpeta.publishedAt ? ' cursor-pointer':' pointer-events-none')"
               @click.stop.prevent="flexNavigateTo(carpeta)"
               :href="carpeta.ruta"
               >{{ carpeta.nombreMostrar || carpeta.nombre }}</a
@@ -130,57 +134,58 @@
           />
         </div>
       </div>
-      <div
-        v-if="showFiles"
-        v-for="(archivo, index) of archivos"
-        :key="'archivo-' + archivo.id"
-        class="w-full"
-      >
-        <div class="flex w-full overflow-hidden">
-          <div
-            class="flex flex-shrink-0 text-gray justify-center items-center"
-            :class="boxClass"
-          >
-            <icon :icon="iconFromExt(archivo.media.ext)" :class="iconClass" />
-          </div>
-          <div class="w-full flex justify-between items-center">
-            <div class="w-full overflow-ellipsis">
-              <a
-                target="_blank"
-                :href="archivo.media.url"
-                download
-                class="leading-4 inline-flex"
-                :class="textClass"
-                style="
-                  display: inline-block;
-                  max-width: 90%;
-                  overflow: hidden;
-                  text-overflow: ellipsis;
-                  white-space: nowrap;
-                "
-                >{{ archivo.nombre }}</a
-              >
-              <div
-                class="flex w-full justify-between text-xs text-diminished"
-                :class="subtextClass"
-              >
-                <span v-if="showSize" class="w-1/3 flex-grow-0 flex-shrink-0"
-                  >{{ archivo.media.size }} Kb</span
-                >
-                <span v-if="showDate" class="ml-auto w-1/3 text-right">{{
-                  $dayjs(archivo.media.updatedAt).fromNow()
-                }}</span>
-              </div>
-            </div>
-            <span
-              v-if="showControls"
-              class="cursor-pointer text-gray text-xl ml-2 pl-2 pr-1"
-              @click="$set(mostrarPropsArchivos, index, true)"
-              >&vellip;</span
+      <template v-if="showFiles">
+        <div
+          v-for="(archivo, index) of archivos"
+          :key="'archivo-' + archivo.id"
+          class="w-full"
+        >
+          <div class="flex w-full overflow-hidden">
+            <div
+              class="flex flex-shrink-0 text-gray justify-center items-center"
+              :class="boxClass"
             >
+              <icon :icon="iconFromExt(archivo.media.ext)" :class="iconClass" />
+            </div>
+            <div class="w-full flex justify-between items-center">
+              <div class="w-full overflow-ellipsis">
+                <a
+                  target="_blank"
+                  :href="archivo.media.url"
+                  download
+                  class="leading-4 inline-flex"
+                  :class="textClass"
+                  style="
+                    display: inline-block;
+                    max-width: 90%;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    white-space: nowrap;
+                  "
+                  >{{ archivo.nombre }}</a
+                >
+                <div
+                  class="flex w-full justify-between text-xs text-diminished"
+                  :class="subtextClass"
+                >
+                  <span v-if="showSize" class="w-1/3 flex-grow-0 flex-shrink-0"
+                    >{{ archivo.media.size }} Kb</span
+                  >
+                  <span v-if="showDate" class="ml-auto w-1/3 text-right">{{
+                    $dayjs(archivo.media.updatedAt).fromNow()
+                  }}</span>
+                </div>
+              </div>
+              <span
+                v-if="showControls"
+                class="cursor-pointer text-gray text-xl ml-2 pl-2 pr-1"
+                @click="$set(mostrarPropsArchivos, index, true)"
+                >&vellip;</span
+              >
+            </div>
           </div>
         </div>
-      </div>
+      </template>
     </div>
   </div>
 </template>
@@ -204,6 +209,7 @@ export default {
       required: false,
       default: "Route",
     },
+    updateBreadcrumb: { type: Boolean, required: false, default: false },
     textClass: {},
     subtextClass: {},
     iconClass: { type: String, required: false, default: "text-6xl" },
@@ -249,8 +255,8 @@ export default {
           : [this.carpetaActual];
       console.warn("R", r);
       if (
-        (this.carpetaActual.padre &&
-          (this.carpetaActual.id !== this.idRootFolder || this.inside))
+        this.carpetaActual.padre &&
+        (this.carpetaActual.id !== this.idRootFolder || this.inside)
       )
         r.unshift({ ...this.carpetaActual.padre, nombreMostrar: ".." });
       return r;
@@ -278,10 +284,16 @@ export default {
       for (var i = 0; i < newValue.length; i++)
         this.mostrarPropsArchivos[i] = false;
     },
+    carpetaActual(carpeta) {
+      console.warn('CARPETAACTUAL.WATCH')
+      if (!carpeta) return;
+      if (this.updateBreadcrumb && carpeta.ruta)
+        this._updateBreadcrumb();
+    },
   },
-  created() {
-    // this.myfetch()
-  },
+  // created() {
+  // this.myfetch()
+  // },
   data() {
     return {
       carpetaActual: null,
@@ -352,6 +364,49 @@ export default {
       } else if (this.navigationMode === "Click") {
         this.$emit("click", carpeta);
       } else this.$router.push(carpeta.ruta);
+    },
+    _updateBreadcrumb() {
+      console.log("archivos.updateBreadcrumb()");
+      const carpeta = this.carpetaActual;
+      const rootData = this.$store.getters.getRouteData(
+        this.$config.archivosRuta
+      );
+      const breadcrumb = [];
+      const parts = carpeta.ruta.split("/").filter((x) => !!x);
+      // parts.shift()
+      let rutaParcial = "";
+      const that = this;
+      while (parts.length) {
+        const part = parts.shift();
+        rutaParcial += "/" + part;
+        const ruta = rutaParcial;
+        // const base = ruta===this.$config.archivosRuta?this.$store.getters.getRouteData(ruta):{}
+        breadcrumb.push({
+          name: part,
+          href: rutaParcial,
+          click:
+            this.navigationMode === "Main"
+              ? async (event) => {
+                  console.log("clicked!", event, ruta);
+                  event.preventDefault();
+                  event.stopPropagation();
+                  const [carpeta] = await this.$strapi.find("carpetas", {
+                    ruta,
+                  });
+                  console.log("carpeta", carpeta);
+                  console.log("current carpetaId", that.carpetaActualId);
+                  if (carpeta) that.carpetaActualId = carpeta.id;
+                  history.pushState({}, null, carpeta.ruta);
+                  // that.updateBreadcrumb()
+                  return false;
+                }
+              : null,
+          icon: rootData.icon,
+        });
+      }
+
+      this.$store.commit("setNextPathBreadcrumb", breadcrumb);
+      this.$store.commit("updateBreadcrumb");
     },
     guardarPropsCarpeta(carpeta) {
       console.log("GuardarPropsCarpeta", carpeta);

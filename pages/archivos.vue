@@ -1,5 +1,5 @@
 <template>
-  <div class="w-full max-w-xl mx-auto">
+  <div class="w-full mx-auto">
       <nuxt-child :key="$route.fullPath">
           <NLink to="/archivos/">Ver Archivos</NLink>
       </nuxt-child>

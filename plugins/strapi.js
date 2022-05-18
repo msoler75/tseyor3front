@@ -284,9 +284,13 @@ export default ({
           return r.data
         }) */
       return this.find('users/me').then(user => {
-        console.log('RET USER', user)
-        this.user = user
-        return user
+        console.warn('RET USER', user)
+        if(!user.error)
+        {
+          this.user = user
+          return user
+        }
+        return null
       })
     }
 

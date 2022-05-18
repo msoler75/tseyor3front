@@ -13,12 +13,13 @@
     <!-- Page title starts -->
     <!-- Navigation ends -->
     <div
+    v-if="pageConfig.breadcrumb"
       class="mt-5 mb-3 lg:mt-6 lg:mb-5 container xs:px-1 sm:px-3 md:px-6 mx-auto lg:flex-row items-start lg:items-center justify-between pb-4 border-gray-300 relative"
       @click="clickOff">
-      <Breadcrumb :present="pageConfig.breadcrumb && !travelling" class="absolute text-xs xl:text-sm" />
+    <Breadcrumb :present="!travelling" class="absolute text-xs xl:text-sm" />
 
-      <h4 class="mt-2 text-2xl font-bold leading-tight text-gray-800 dark:text-gray-200">
-        <div v-if="false">{{ title }}</div>
+      <h4 v-if="false" class="mt-2 text-2xl font-bold leading-tight text-gray-800 dark:text-gray-200">
+        <div >{{ title }}</div>
       </h4>
 
       <!--
@@ -36,6 +37,9 @@
       </div>
       -->
     </div>
+    <div v-else-if="pageConfig.contained" class="h-8">
+
+    </div> 
     <!-- Page title ends -->
     <div @click="clickOff" class="relative z-10"
       :class="pageConfig.contained ? 'container xs:px-1 sm:px-3 md:px-6 mx-auto' : ''">
@@ -79,6 +83,7 @@ export default {
   async mounted() {
     //this.actualizarUrlPerfil()
     // emulamos comportamiento de beforeEnter de transición de página
+    console.warn('page', this.$refs['page'].$el)
     this.$store.commit('travelling', false)
     this.$store.dispatch('beforeEnter', this.$refs['page'].$el)
     this.$store.commit('updateBreadcrumb')
