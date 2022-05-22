@@ -108,6 +108,10 @@ export default {
     return state.dropAccept
   },
 
+  breadcrumbHandler(state) {
+    return state.breadcrumbHandler
+  },
+
   travelling(state) {
     return state.travelling
   },

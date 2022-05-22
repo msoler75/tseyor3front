@@ -61,6 +61,11 @@ export default {
     state.dropAccept = accept || '*/*'
   },
 
+  setBreadcrumbHandler(state, handler) {
+    console.log('setBreadcrumbHandler', handler)
+    state.breadcrumbHandler = handler
+  },
+
   setNextPathBreadcrumb(state, payload) {
     // console.log('setNextPathBreadcrumb', payload)
     state.nextPathBreadcrumb = payload

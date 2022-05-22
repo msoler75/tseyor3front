@@ -6,7 +6,7 @@ export default {
     const token = $strapi.getCookie(context.req.headers.cookie, "jwt")
     if (token)
       $strapi.token = token
-    console.warn('COOKIE TOKEN', token)
+    //console.warn('COOKIE TOKEN', token)
     // carga las imágenes por defecto
     store.commit(
       "SET_USER",

@@ -1,6 +1,6 @@
 <template>
   <section
-    class="archivos flex flex-col sm:flex-row justify-start"
+    class="archivos flex flex-col sm:flex-row justify-start h-full"
     contained="no"
     background="no"
   >
@@ -12,28 +12,24 @@
         dark:!bg-gray-900
         !border-l-0 !border-r-0 !border-b-0
         sm:!border-b-1
-        py-5
-        px-5
-        lg:px-20
-        xl:pl-32
         select-none
         whitespace-nowrap
       "
     >
       <div class="flex justify-between items-start">
-        <div class="w-full overflow-y-auto">
+        <div class="w-full overflow-y-auto text-lg">
           <template v-for="(menu, index) of options">
             <section
               v-if="menu.handler"
               :key="index"
               @click="onSelect(menu)"
-              class="space-x-3 flex-grow items-center px-2"
+              class="px-5 lg:px-20 xl:pl-32 space-x-3 flex-grow items-center cursor-pointer hover:bg-white dark:hover:bg-black"
               :class="
                 (vista == menu.value ? 'item-selected' : '') +
                 (viewMenu || vista == menu.value
                   ? ' flex'
                   : ' hidden sm:flex') +
-                (viewMenu ? ' mb-3 sm:mb-5' : ' sm:mb-5')
+                (viewMenu ? ' py-4' : ' py-4')
               "
             >
               <icon :icon="menu.icon" :svg="menu.svg" class="w-5" />
@@ -43,7 +39,7 @@
               v-else
               :class="viewMenu ? '' : 'hidden sm:block'"
               :key="index"
-              class="pt-1 sm:pt-3 pb-1 sm:pb-1 text-diminished font-bold mb-3"
+              class="px-5 lg:px-20 xl:pl-32 pt-3 pb-1 sm:pt-4 text-diminished font-bold"
             >
               {{ menu.label }}
             </div>
@@ -51,7 +47,7 @@
         </div>
         <icon
           :icon="viewMenu ? 'chevron-up' : 'chevron-down'"
-          class="cursor-pointer sm:hidden py-1 px-2"
+          class="cursor-pointer sm:hidden py-5 px-2"
           @click.native="viewMenu = !viewMenu"
         />
       </div>
@@ -71,13 +67,14 @@
         !sm:border-l-1
       "
     >
-      <div v-if="idCarpetaActual == urlNoArchivos">
+      <div v-if="vista == 'noArchivos'">
         <h3>Tus archivos</h3>
         No tienes espacio para archivos
       </div>
-      <div v-else-if="idCarpetaActual == urlCompartidas">
+      <div v-else-if="vista == 'compartidas'">
         <h3>Compartidas para ti</h3>
-        <FilesFolder
+        <Archivos
+          @click="onClicked"
           v-model="compartidasContigo"
           placeholder="Ninguna carpeta compartida"
         />
@@ -85,66 +82,68 @@
         <divider />
 
         <h3>Compartes con los demás</h3>
-        <FilesFolder
+        <Archivos
+          @click="onClicked"
           v-model="carpetasQueCompartes"
           placeholder="Ninguna carpeta compartida"
         />
       </div>
-      <div v-else-if="idCarpetaActual == urlPapelera">
+      <div v-else-if="vista == 'papelera'">
         <h3>Papelera</h3>
-        <FilesFolder v-model="elementosBorrados" />
+        <Archivos v-model="elementosBorrados" />
       </div>
-      <div v-else-if="idCarpetaActual == urlEquipos">
+      <div v-else-if="vista == 'equipos'">
         <div v-if="equiposFiltrados.length">
           <div v-for="equipo of equiposFiltrados" :key="equipo.id">
             <h4>{{ equipo.nombre }}</h4>
-            <FilesFolder
+            <Archivos
               v-if="equipo.carpeta"
               v-model="equipo.carpeta"
-              navigationMode="Click"
+              modoNavegacion="Click"
               @click="onClicked"
-              :showTitle="false"
+              :mostrarTitulo="false"
             />
-            <FilesFolder
+            <Archivos
               v-if="equipo.carpetasLectura.length"
               v-model="equipo.carpetasLectura"
-              navigationMode="Click"
+              modoNavegacion="Click"
               @click="onClicked"
             />
-            <FilesFolder
+            <Archivos
               v-if="equipo.carpetasEscritura.length"
               v-model="equipo.carpetasEscritura"
-              navigationMode="Click"
+              modoNavegacion="Click"
               @click="onClicked"
             />
           </div>
         </div>
         <div v-else>No hay nada que mostrar</div>
       </div>
-      <div v-else-if="idCarpetaActual == urlGrupos">
+      <div v-else-if="vista == 'grupos'">
         <div v-if="gruposFiltrados.length">
           <div v-for="grupo of gruposFiltrados" :key="grupo.id">
             <span>{{ grupo.nombre }}</span>
-            <FilesFolder
+            <Archivos
               v-if="grupo.carpetasLectura.length"
               v-model="grupo.carpetasLectura"
-              navigationMode="Click"
+              modoNavegacion="Click"
               @click="onClicked"
             />
-            <FilesFolder
+            <Archivos
               v-if="grupo.carpetasEscritura.length"
               v-model="grupo.carpetasEscritura"
-              navigationMode="Click"
+              modoNavegacion="Click"
               @click="onClicked"
             />
           </div>
         </div>
         <div v-else>No hay nada que mostrar</div>
       </div>
-      <FilesFolder
-        v-else
+      <Archivos
+      v-else
+        class="h-min-[60vh] h-full"
         v-model="idCarpetaActual"
-        navigationMode="Click"
+        modoNavegacion="Click"
         @click="onClicked"
         :updateBreadcrumb="true"
         :inside="true"
@@ -232,17 +231,20 @@ export default {
       urlEquipos: this.$config.archivosRuta + "/___equipos",
       urlGrupos: this.$config.archivosRuta + "/___grupos",
       urlNoArchivos: this.$config.archivosRuta + "/___noarchivos",
-      vista: "",
+      vista: "archivos",
       viewMenu: false,
       options: [
         {
-          label: "Archivos Tseyor",
-          value: "general",
-          icon: "home",
+          label: "Base",
+        },
+        {
+          label: "Archivos",
+          value: "archivos",
+          icon: "folder-open",
           handler: this.onArchivos,
         },
         {
-          label: "Mis Archivos",
+          label: "Mi carpeta",
           value: "misArchivos",
           icon: "far fa-user",
           handler: this.onMisArchivos,
@@ -285,30 +287,12 @@ export default {
     };
   },
   mounted() {
-    if (this.carpeta && this.$route.path === this.urlNoArchivos)
-      this.$router.push(this.carpeta.ruta);
-    this.vista = "general";
-    switch (this.$route.path) {
-      case this.urlCompartidas:
-        this.vista = "compartidas";
-        break;
-      case this.urlPapelera:
-        this.vista = "papelera";
-        break;
-      case this.urlEquipos:
-        this.vista = "equipos";
-        break;
-      case this.urlGrupos:
-        this.vista = "grupos";
-        break;
-      case this.urlNoArchivos:
-        this.vista = "misArchivos";
-      case this.urlSubidos:
-        this.vista = "subidos";
-        break;
-    }
-    if (this.carpeta && this.idCarpetaActual == this.carpeta.ruta)
-      this.vista = "misArchivos";
+    //if (this.carpeta && this.$route.path === this.urlNoArchivos)
+    //this.$router.push(this.carpeta.ruta);
+    this.onRuta(this.$router.path);
+    // escuchamos eventos de breadcrumb
+    this.$store.commit("setBreadcrumbHandler", this.onBreadcrumbClicked);
+    window.onpopstate = (event) => this.onRuta(location.pathname);
   },
   computed: {
     equiposFiltrados() {
@@ -361,10 +345,8 @@ export default {
     pushRoute(obj, updateBreadcrumb) {
       let ruta = typeof obj === "object" ? obj.ruta : obj;
       console.log("pushRoute", ruta, "original", obj);
-      this.idCarpetaActual = ruta;
       history.pushState({}, null, ruta);
-      if(updateBreadcrumb)
-       this.$store.commit("updateBreadcrumb", ruta);
+      if (updateBreadcrumb) this.$store.commit("updateBreadcrumb", ruta);
     },
     onSelect(menu) {
       if (screen.width < 640) {
@@ -376,17 +358,18 @@ export default {
       }
     },
     onArchivos() {
-      this.vista = "general";
       this.idRootActual = this.idRoot;
       // this.idRootActual = this.carpeta.id
-      this.pushRoute(this.$config.archivosRuta);
+      this.onClicked(this.$config.archivosRuta);
     },
     onMisArchivos() {
-      this.vista = "misArchivos";
+      console.log("onMisArchivos", "carpeta", this.carpeta);
       if (this.carpeta) {
+        this.vista = "misArchivos";
         this.idRootActual = this.carpeta.id;
-        this.pushRoute(this.carpeta.ruta);
+        this.onClicked(this.carpeta);
       } else {
+        this.vista = "noArchivos";
         this.pushRoute(this.urlNoArchivos, true);
       }
       // this.idRootActual = this.carpeta.id
@@ -413,10 +396,50 @@ export default {
       this.pushRoute(this.urlGrupos, true);
     },
     onClicked(carpeta) {
-      console.warn("onClicke", carpeta);
+      console.warn("onClicked", carpeta);
       // this.idRootActual = this.idRoot;
       // this.idRootActual = this.carpeta.id
+      /* if (carpeta && this.carpeta && carpeta.id === this.carpeta.id && this.vista==='general')
+        this.vista = "misArchivos"
+      else this.vista="general" */
+      this.vista = "archivos";
+      this.idCarpetaActual =
+        typeof carpeta === "object" ? carpeta.ruta : carpeta;
+      console.log("idCArpetaActual", carpeta);
       this.pushRoute(carpeta);
+    },
+    onBreadcrumbClicked(ruta) {
+      console.log("clicked breadcrumb");
+      // alert(ruta);
+      this.onRuta(ruta);
+      //this.onClicked(ruta);
+    },
+    onRuta(ruta) {
+      this.vista = "archivos";
+      switch (ruta) {
+        case this.urlCompartidas:
+          this.onArchivos();
+          break;
+        case this.urlPapelera:
+          this.onPapelera();
+          break;
+        case this.urlEquipos:
+          this.onEquipos();
+          break;
+        case this.urlGrupos:
+          this.onGrupos();
+          break;
+        case this.urlNoArchivos:
+          this.vista = "noArchivos";
+          break;
+        case this.urlSubidos:
+          this.onSubidos();
+          break;
+        default:
+          this.onClicked(ruta);
+      }
+      if (this.carpeta && this.idCarpetaActual == this.carpeta.ruta)
+        this.vista = "misArchivos";
     },
   },
 };

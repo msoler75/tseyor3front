@@ -114,7 +114,8 @@ export default {
   components: {
     dirs: [
       '~/components',
-      '~/components/principales'
+      '~/components/principales',
+      '~/components/archivos',
     ]
   },
 

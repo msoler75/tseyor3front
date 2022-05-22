@@ -12,11 +12,11 @@
 
     <!-- Page title starts -->
     <!-- Navigation ends -->
-    <div
+    <section
     v-if="pageConfig.breadcrumb"
-      class="mt-5 mb-3 lg:mt-6 lg:mb-5 container xs:px-1 sm:px-3 md:px-6 mx-auto lg:flex-row items-start lg:items-center justify-between pb-4 border-gray-300 relative"
+      class="w-full mt-5 mb-3 lg:mt-6 lg:mb-5 xs:px-1 sm:px-3 md:px-6 mx-auto lg:flex-row items-start lg:items-center justify-between pb-4 border-gray-300 relative"
       @click="clickOff">
-    <Breadcrumb :present="!travelling" class="absolute text-xs xl:text-sm" />
+    <Breadcrumb id="breadcrumb" :present="!travelling" class="absolute text-xs xl:text-sm" />
 
       <h4 v-if="false" class="mt-2 text-2xl font-bold leading-tight text-gray-800 dark:text-gray-200">
         <div >{{ title }}</div>
@@ -36,14 +36,14 @@
         </button>
       </div>
       -->
-    </div>
+    </section>
     <div v-else-if="pageConfig.contained" class="h-8">
 
     </div> 
     <!-- Page title ends -->
-    <div @click="clickOff" class="relative z-10"
+    <div @click="clickOff" class="relative z-10 h-full flex-grow"
       :class="pageConfig.contained ? 'container xs:px-1 sm:px-3 md:px-6 mx-auto' : ''">
-      <div class="w-full">
+      <div class="w-full h-full">
         <!-- Place your content here -->
         <nuxt id="__content" class="mx-auto" :class="pageConfig.contained ? 'mb-5' : ''" ref="page" />
       </div>
@@ -358,22 +358,16 @@ methods:{
 <style>
 /* BASIC TEMPLATE LAYOUT */
 
-html {
-  height: 100%;
-}
-
-body {
-  height: 100%;
+html, body, #__layout, #__nuxt {
+  /*padding: 0;*/
   margin: 0;
+  height: 100%;
 }
 
 #__nuxt {
   min-height: 100%;
 }
 
-#__layout {
-  height: 100%;
-}
 
 #__main-container {
   min-height: 100vh;
@@ -383,7 +377,7 @@ body {
 }
 
 #__content {
-  height: auto;
+  xheight: auto;
 }
 
 .spacer {
@@ -468,11 +462,11 @@ html.dark:not(.page-background) #__layout {
   background-image: linear-gradient(to bottom, #11151d 0%, #000 100%);
 }
 
-.breadcrumb {
+#breadcrumb {
   transition: 0.6s opacity linear;
 }
 
-.breadcrumb:not([present]) {
+#breadcrumb:not([present]) {
   /* filter: blur(10px); */
   opacity: 0;
   pointer-events: none;

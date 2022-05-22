@@ -85,9 +85,9 @@
         
              <div v-if="carpetaActualId" class="p-5 surface flex flex-col">
           <h3>{{ carpetaActualNombre }}</h3>
-          <FilesFolder @loaded="carpetaActual = $event" v-model="carpetaActualId" :idRootFolder="equipo.carpeta.id"
+          <Archivos @loaded="carpetaActual = $event" v-model="carpetaActualId" :idRootFolder="equipo.carpeta.id"
             class="w-full max-w-full h-full overflow-y-auto max-h-[240px]" :droppable="soyCoordinador"
-            navigationMode="Embed" iconClass="text-xl" textClass="text-sm" subtextClass="text-xs" boxClass="w-8 mr-2" />
+            modoNavegacion="Embed" iconClass="text-xl" textClass="text-sm" subtextClass="text-xs" boxClass="w-8 mr-2" />
           <div class="flex justify-center mt-2">
             <NLink class="ml-auto text-xs btn btn-gray btn-mini" :to="`${carpetaActual.ruta}`">
               <icon icon="search" />

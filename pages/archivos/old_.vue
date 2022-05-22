@@ -1,20 +1,20 @@
 <template>
   <div>
     <Card class="p-1 sm:p-5 md:p-9">
-      <FilesFolder
+      <Archivos
         v-if="carpetaRaiz"
         v-model="carpetaActualId"
         class="w-full h-full overflow-y-auto"
         @click="clickHandler"
-        :navigationMode="navigationMode"
+        :modoNavegacion="modoNavegacion"
         @navigated="navegacion"
         @loaded="loaded"
         :refresh="refresh"
-        :showUploader="true"
-        :showDate="true"
-        :showSize="true"
-        :showDescription="true"
-        :showControls="true"
+        :mostrarUploader="true"
+        :mostrarFecha="true"
+        :mostrarTamano="true"
+        :mostrarDescripcion="true"
+        :mostrarControles="true"
       />
     </Card>
     <FolderProps v-model="nuevaCarpeta" :showIt="verModalCarpeta" @accept="crearCarpeta" @close="verModalCarpeta=false" textAccept="Crear carpeta"/>
@@ -75,7 +75,7 @@ export default {
   data() {
     return {
       carpetaActualId: null,
-      navigationMode: NAVIGATION_MODE,
+      modoNavegacion: NAVIGATION_MODE,
       refresh: 1,
       uploading: false,
       currentProgress: 0,
@@ -156,7 +156,7 @@ export default {
         breadcrumb.push({
           name: part,
           href: rutaParcial,
-          click: this.navigationMode === 'Main' ? async (event) => {
+          click: this.modoNavegacion === 'Main' ? async (event) => {
             console.log('clicked!', event, ruta)
             event.preventDefault()
             event.stopPropagation();

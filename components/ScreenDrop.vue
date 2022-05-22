@@ -1,5 +1,6 @@
 <template>
-    <div ref="main" class="surface-0 w-full font-sans relative" @dragover.prevent @drop.stop.prevent="dropNone"    
+    <div ref="main" class="surface-0 w-full font-sans relative" 
+        @dragover.prevent @drop.stop.prevent="dropNone"    
         @dragster-enter="dragenter" @dragster-leave="dragleave"
         @dragstart="dragstart"
         >
