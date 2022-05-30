@@ -113,7 +113,7 @@
   }
 
   .btn-mini {
-    @apply py-1 px-2;
+    @apply !py-1 !px-2;
   }
 
   .btn:not([disabled]) {
@@ -173,7 +173,7 @@
 
   input[type='text'],
   input[type='number'],
-  input[type='search'],
+  input[type='search']:not(.vs__search),
   input[type='password'],
   input[type='email'],
   input[type='tel'],
@@ -188,7 +188,7 @@
 
   input[type='text'],
   input[type='number'],
-  input[type='search'],
+  input[type='search']:not(.vs__search),
   input[type='password'],
   input[type='email'],
   input[type='tel'],

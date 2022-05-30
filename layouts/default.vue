@@ -1,5 +1,5 @@
 <template>
-  <ScreenDrop id="__main-container" ref="main" class="surface-0 w-full font-sans relative" 
+  <div id="__main-container" ref="main" class="surface-0 w-full font-sans relative" 
     :class="(travelling ? 'travelling ' : 'in-page') + (pageConfig.background ? '' : 'no-background')">
 
     <div class="absolute w-full h-screen z-0" :style="imagenFondo"></div>
@@ -57,8 +57,9 @@
     <ModalConfirm />
     <ModalPrompt />
     <ModalAlert />
-    <portal-target name="bottom-app" class="sticky bottom-0 z-20"></portal-target>
-  </ScreenDrop>
+    <portal-target name="modal-div" />
+    <portal-target name="bottom-app" class="sticky bottom-0 z-20" multiple/>
+  </div>
 </template>
 
 <script>
@@ -428,6 +429,10 @@ body {
 }
 */
 
+
+body.modal {
+  overflow-y: hidden
+}
 
 
 #__layout {

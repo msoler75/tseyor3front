@@ -85,7 +85,7 @@
         
              <div v-if="carpetaActualId" class="p-5 surface flex flex-col">
           <h3>{{ carpetaActualNombre }}</h3>
-          <Archivos @loaded="carpetaActual = $event" v-model="carpetaActualId" :idRootFolder="equipo.carpeta.id"
+          <Explorador @loaded="carpetaActual = $event" v-model="carpetaActualId" :idRootFolder="equipo.carpeta.id"
             class="w-full max-w-full h-full overflow-y-auto max-h-[240px]" :droppable="soyCoordinador"
             modoNavegacion="Embed" iconClass="text-xl" textClass="text-sm" subtextClass="text-xs" boxClass="w-8 mr-2" />
           <div class="flex justify-center mt-2">

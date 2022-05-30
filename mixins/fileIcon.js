@@ -1,10 +1,12 @@
 export default {
   methods: {
     getExtension (name) {
+      if(!name) return null
       const idx = name.lastIndexOf('.')
       return idx > -1 ? name.substr(idx) : name
     },
     iconFromExt (ext) {
+      if(!ext) return 'file'
       const idx = ext.lastIndexOf('.')
       if (idx > -1) ext = ext.substr(idx + 1)
       switch (ext.toLowerCase()) {

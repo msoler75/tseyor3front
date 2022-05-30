@@ -206,10 +206,28 @@ export default ({
     }
 
 
-    async upload(data) {
+    async upload(data, progress) {
       if (!(data instanceof FormData)) {
         console.error('Para el upload se requiere un FormData')
         throw new Error('Para el upload se requiere un FormData')
+      }
+      if(progress) {
+        return new Promise((success, reject) => {
+        let request = new XMLHttpRequest();
+        request.open('POST', `${this.url}/upload`)
+        request.setRequestHeader('Authorization', `Bearer ${this.token}`)
+        // upload progress event
+        request.upload.addEventListener('progress', progress)
+        // request finished event
+        request.addEventListener('load', function(e) {
+          success(JSON.parse(request.response))
+        });
+        request.addEventListener('error', event => { 
+          reject(event)
+        })
+        // send POST request to server
+        request.send(data);
+        })
       }
       return this.create('upload', data)
     }

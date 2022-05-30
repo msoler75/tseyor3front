@@ -23,7 +23,7 @@
               v-if="menu.handler"
               :key="index"
               @click="onSelect(menu)"
-              class="px-5 lg:px-20 xl:pl-32 space-x-3 flex-grow items-center cursor-pointer hover:bg-white dark:hover:bg-black"
+              class="px-5 lg:px-20 xl:pl-32 space-x-3 flex-grow items-center cursor-pointer sm:hover:bg-white sm:dark:hover:bg-black"
               :class="
                 (vista == menu.value ? 'item-selected' : '') +
                 (viewMenu || vista == menu.value
@@ -57,15 +57,12 @@
         surface
         w-full
         flex-grow
-        py-5
-        px-5
-        sm:px-10
-        lg:px-14
         !border-l
         -0
         !border-r-0
         !sm:border-l-1
       "
+      :class="vista=='archivos'?'':'py-5 px-5 sm:px-10 lg:px-14'"
     >
       <div v-if="vista == 'noArchivos'">
         <h3>Tus archivos</h3>
@@ -73,46 +70,46 @@
       </div>
       <div v-else-if="vista == 'compartidas'">
         <h3>Compartidas para ti</h3>
-        <Archivos
+        <ListadoCarpetas
           @click="onClicked"
-          v-model="compartidasContigo"
+          :carpetas="compartidasContigo"
           placeholder="Ninguna carpeta compartida"
         />
 
         <divider />
 
         <h3>Compartes con los demás</h3>
-        <Archivos
+        <ListadoCarpetas
           @click="onClicked"
-          v-model="carpetasQueCompartes"
+          :carpetas="carpetasQueCompartes"
           placeholder="Ninguna carpeta compartida"
         />
       </div>
       <div v-else-if="vista == 'papelera'">
         <h3>Papelera</h3>
-        <Archivos v-model="elementosBorrados" />
+        <ListadoCarpetas v-model="elementosBorrados"
+        class="w-full lg:text-lg px-2 py-1 md:py-2" />
       </div>
       <div v-else-if="vista == 'equipos'">
         <div v-if="equiposFiltrados.length">
           <div v-for="equipo of equiposFiltrados" :key="equipo.id">
             <h4>{{ equipo.nombre }}</h4>
-            <Archivos
+            <Carpeta
               v-if="equipo.carpeta"
               v-model="equipo.carpeta"
               modoNavegacion="Click"
+              class="w-full lg:text-lg px-2 py-1 md:py-2"
               @click="onClicked"
               :mostrarTitulo="false"
             />
-            <Archivos
+            <ListadoCarpetas
               v-if="equipo.carpetasLectura.length"
-              v-model="equipo.carpetasLectura"
-              modoNavegacion="Click"
+              :carpetas="equipo.carpetasLectura"
               @click="onClicked"
             />
-            <Archivos
+            <ListadoCarpetas
               v-if="equipo.carpetasEscritura.length"
-              v-model="equipo.carpetasEscritura"
-              modoNavegacion="Click"
+              :carpetas="equipo.carpetasEscritura"
               @click="onClicked"
             />
           </div>
@@ -123,30 +120,32 @@
         <div v-if="gruposFiltrados.length">
           <div v-for="grupo of gruposFiltrados" :key="grupo.id">
             <span>{{ grupo.nombre }}</span>
-            <Archivos
+            <ListadoCarpetas
               v-if="grupo.carpetasLectura.length"
-              v-model="grupo.carpetasLectura"
-              modoNavegacion="Click"
+              :carpetas="grupo.carpetasLectura"
               @click="onClicked"
             />
-            <Archivos
+            <ListadoCarpetas
               v-if="grupo.carpetasEscritura.length"
-              v-model="grupo.carpetasEscritura"
-              modoNavegacion="Click"
+              :carpetas="grupo.carpetasEscritura"
               @click="onClicked"
             />
           </div>
         </div>
         <div v-else>No hay nada que mostrar</div>
       </div>
-      <Archivos
+      <Carpeta
       v-else
-        class="h-min-[60vh] h-full"
+      id="explorador"
+        class="w-full h-full py-5
+        px-5
+        sm:px-10
+        lg:px-14"
         v-model="idCarpetaActual"
         modoNavegacion="Click"
         @click="onClicked"
         :updateBreadcrumb="true"
-        :inside="true"
+        :explorando="true"
         :idRootFolder="idRootActual"
       />
     </div>
@@ -158,7 +157,7 @@ import vSelect from "vue-select";
 import "vue-select/dist/vue-select.css";
 export default {
   components: { vSelect },
-  async asyncData({ route, $strapi, $error }) {
+  async asyncData({ route, $strapi, $config, $error }) {
     try {
       const parts = route.fullPath
         .replace(/\?.*$/, "")
@@ -203,13 +202,15 @@ export default {
             grupos: [],
           };
 
-      const root = $strapi.findOne("carpetas", {
+      let {data: [root]} = await $strapi.find("carpetas", {
         filters: {
           ruta: {
-            $eq: "/archivos",
+            $eq:  $config.archivosRuta,
           },
         },
       });
+      if(!root)
+      root = {id: 0} 
 
       console.warn("DATA", data);
       return {
@@ -289,7 +290,7 @@ export default {
   mounted() {
     //if (this.carpeta && this.$route.path === this.urlNoArchivos)
     //this.$router.push(this.carpeta.ruta);
-    this.onRuta(this.$router.path);
+    this.onRuta(this.$route.path);
     // escuchamos eventos de breadcrumb
     this.$store.commit("setBreadcrumbHandler", this.onBreadcrumbClicked);
     window.onpopstate = (event) => this.onRuta(location.pathname);

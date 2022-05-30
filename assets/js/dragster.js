@@ -1,18 +1,21 @@
 export class Dragster {
   constructor(el) {
-    this.dragenter = this.dragenter.bind(this)
-    this.dragleave = this.dragleave.bind(this)
-    this.el = el
-    this.first = false
-    this.second = false
-    this.el.addEventListener("dragenter", this.dragenter, false)
-    this.el.addEventListener("dragleave", this.dragleave, false)
-    this.destroy = this._destroy.bind(this)
     if (!Dragster.dragsters) {
       Dragster.dragsters = {}
     }
-    if (Dragster.dragsters[this.el.id]) throw new Error('A Dragster for element with id "' + this.el.id + '" has already been instantiated')
-    Dragster.dragsters[this.el.id] = this
+    if (Dragster.dragsters[el.id])
+      console.warn('A Dragster for element with id "' + el.id + '" has already been instantiated')
+    else {
+      this.dragenter = this.dragenter.bind(this)
+      this.dragleave = this.dragleave.bind(this)
+      this.el = el
+      this.first = false
+      this.second = false
+      this.el.addEventListener("dragenter", this.dragenter, false)
+      this.el.addEventListener("dragleave", this.dragleave, false)
+      this.destroy = this._destroy.bind(this)
+      Dragster.dragsters[this.el.id] = this
+    }
   }
 
   static getDragster(id) {
@@ -45,6 +48,7 @@ export class Dragster {
     } else if (this.first) {
       this.first = false
     }
+    
     if (!this.first && !this.second) {
       //this.customEvent = document.createEvent("CustomEvent")
       //this.customEvent.initCustomEvent("dragster-leave", true, true, {

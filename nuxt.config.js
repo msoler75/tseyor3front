@@ -35,8 +35,8 @@ export default {
 
   pageTransition: {
     name: 'page',
-    mode: 'out-in',  // orden de páginas, primero desaparece (out) la página actual y luego aparece (in) la página nueva
-    beforeEnter (el) {
+    mode: 'out-in', // orden de páginas, primero desaparece (out) la página actual y luego aparece (in) la página nueva
+    beforeEnter(el) {
       console.log('nuxt.config.beforeEnter', el)
       this.$store.dispatch('beforeEnter', el)
     },
@@ -50,7 +50,7 @@ export default {
       console.log('nuxt.config.beforeRouteLeave')
       //this.$store.dispatch('beforeRouteLeave', from, next)
     },
-    afterEnter (el) {
+    afterEnter(el) {
       console.log('nuxt.config.afterEnter', el);
     },
     beforeLeave(el, from, to) {
@@ -73,20 +73,25 @@ export default {
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
     title: 'Tseyor 3.0',
-    meta: [
-      { charset: 'utf-8' },
-      { name: 'viewport', content: 'width=device-width, initial-scale=1' },
+    meta: [{
+        charset: 'utf-8'
+      },
+      {
+        name: 'viewport',
+        content: 'width=device-width, initial-scale=1'
+      },
       {
         hid: 'description',
         name: 'description',
-        content:
-      'Grupo Tseyor en representación de la Confederación de Mundos Habitados de la Galaxia' ||
-      ''
+        content: 'Grupo Tseyor en representación de la Confederación de Mundos Habitados de la Galaxia' ||
+          ''
       }
     ],
-    link: [
-      { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
-    ]
+    link: [{
+      rel: 'icon',
+      type: 'image/x-icon',
+      href: '/favicon.ico'
+    }]
   },
 
   // Global CSS: https://go.nuxtjs.dev/config-css
@@ -98,14 +103,32 @@ export default {
     '~plugins/strapi.js',
     '~plugins/global.js',
     '~plugins/borradores.js',
-    { src: '~plugins/vue-observe-visibility.js', mode: 'client' },
-    { src: '~plugins/scrollto.js', mode: 'client' },
-    { src: '~plugins/meilisearch.js', mode: 'client' },
+    {
+      src: '~plugins/vue-observe-visibility.js',
+      mode: 'client'
+    },
+    {
+      src: '~plugins/scrollto.js',
+      mode: 'client'
+    },
+    {
+      src: '~plugins/meilisearch.js',
+      mode: 'client'
+    },
     // { src: '~plugins/nuxt-hammer.js', mode: 'client' },
     // { src: '~plugins/vue-touch.js', mode: 'client' },
-    { src: '~plugins/confirm.js', mode: 'client' },
-    { src: '~plugins/prompt.js', mode: 'client' },
-    { src: '~plugins/alert.js', mode: 'client' },
+    {
+      src: '~plugins/confirm.js',
+      mode: 'client'
+    },
+    {
+      src: '~plugins/prompt.js',
+      mode: 'client'
+    },
+    {
+      src: '~plugins/alert.js',
+      mode: 'client'
+    },
   ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
@@ -160,7 +183,8 @@ export default {
     // '@nuxt/content',
     '@nuxt/image',
     '@nuxtjs/dayjs',
-    ['nuxt-gmaps', {key: process.env.MAPS_API_KEY,
+    ['nuxt-gmaps', {
+      key: process.env.MAPS_API_KEY,
       //you can use libraries: ['places']
     }],
     // 'nuxt-compress',
@@ -275,11 +299,19 @@ export default {
   build: {
     babel: {
       plugins: [
-        ['@babel/plugin-proposal-private-methods', { loose: true }],
-        ["@babel/plugin-proposal-private-property-in-object", { "loose": true }]
-    ]},
+        ['@babel/plugin-proposal-private-methods', {
+          loose: true
+        }],
+        ["@babel/plugin-proposal-private-property-in-object", {
+          "loose": true
+        }]
+      ]
+    },
     // analyze: true,
-    extend(config, { isDev, isClient }) {
+    extend(config, {
+      isDev,
+      isClient
+    }) {
       // https://github.com/plotly/plotly.py/issues/2790
       config.node = {
         fs: 'empty',
@@ -343,16 +375,16 @@ export default {
   },
 
   fontawesome: {
-      component: 'fa',
-      // suffix: true,
-      icons: { 
-        // list the icons you want to add, not listed icons will be tree-shaked
-        solid: ['faBars', 'faHeart', 'faDownload', 'faPlay', 'faPause', 'faChevronRight', 'faChevronLeft', 'faChevronDown','faChevronUp', 'faExclamation', 'faExclamationTriangle', 'faSearch', 'faSignInAlt', 'faFile', 'faFileAlt', 'faFileImage', 'faFileAudio', 'faFileVideo', 'faFilePowerpoint', 'faFileWord', 'faFilePdf', 'faFileArchive', 'faBook', 'faComments', 'faMusic', 'faSitemap', 'faRoute', 'faBolt', 'faHeadphones', 'faBroadcastTower', 'faLink', 'faBalanceScale', 'faScroll', 'faArrowLeft', 'faArrowRight', 'faHome', 'faUser', 'faMapMarkedAlt', 'faThLarge', 'faCheckCircle', 'faInfoCircle', 'faCheck', 'faShareAlt', 'faCalendarDay', 'faPaperclip', 'faCalendarAlt', 'faGlobe', 'faHourglass', 'faDonate', 'faQuestion', 'faQuestionCircle', 'faTree', 'faBookOpen', 'faFolderOpen', 'faFolder', 'faUsers', 'faGavel', 'faFileSignature', 'faWalking', 'faMapSigns', 'faCalendarWeek', 'faPeopleCarry', 'faLocationArrow', 'faCircle', 'faFeatherAlt', 'faEdit', 'faNewspaper', 'faBullhorn', 'faPenAlt', 'faRss', 'faFastBackward', 'faGlobeAmericas', 'faGraduationCap', 'faHandsHelping', 'faHandPaper', 'faChessRook', 'faUniversity', 'faPlayCircle', 'faExchangeAlt', 'faEnvelopeOpenText', 'faBriefcaseMedical', 'faChalkboardTeacher', 'faCaretRight', 'faCaretLeft', 'faStepBackward', 'faStepForward', 'faSignOutAlt', 'faDoorOpen', 'faHiking', 'faBell', 'faSync', 'faPlusSquare', 'faTrash', 'faCrop', 'faEye', 'faEyeSlash', 'faEnvelope', 'faPaperPlane', 'faCopy', 'faImages', 'faUpload', 'faCloudUploadAlt', 'faSpinner', 'faTimes', 'faFolderPlus', 'faFileUpload', 'faMicrophone', 'faTasks', 'faCog', 'faSquare', 'faCheckSquare'], 
-        regular: ['faHeart', 'faComments', 'faClipboard', 'faFrown', 'faComment', 'faCalendarAlt', 'faUser', 'faBell', 'faClock', 'faEnvelope', 'faTrashAlt'], 
-        // include all icons. But dont do this. 
-        //regular: true, 
-        brands: ['faFacebook', 'faTwitter', 'faYoutube', 'faWhatsapp', 'faTelegram', 'faInstagram', 'faPinterest', 'faBlogger'] 
-      }
+    component: 'fa',
+    // suffix: true,
+    icons: {
+      // list the icons you want to add, not listed icons will be tree-shaked
+      solid: ['faBars', 'faHeart', 'faDownload', 'faPlay', 'faPause', 'faChevronRight', 'faChevronLeft', 'faChevronDown', 'faChevronUp', 'faExclamation', 'faExclamationTriangle', 'faSearch', 'faSignInAlt', 'faFile', 'faFileAlt', 'faFileImage', 'faFileAudio', 'faFileVideo', 'faFilePowerpoint', 'faFileWord', 'faFilePdf', 'faFileArchive', 'faBook', 'faComments', 'faMusic', 'faSitemap', 'faRoute', 'faBolt', 'faHeadphones', 'faBroadcastTower', 'faLink', 'faBalanceScale', 'faScroll', 'faArrowLeft', 'faArrowRight', 'faHome', 'faUser', 'faMapMarkedAlt', 'faThLarge', 'faCheckCircle', 'faInfoCircle', 'faCheck', 'faShareAlt', 'faCalendarDay', 'faPaperclip', 'faCalendarAlt', 'faGlobe', 'faHourglass', 'faDonate', 'faQuestion', 'faQuestionCircle', 'faTree', 'faBookOpen', 'faFolderOpen', 'faFolder', 'faUsers', 'faGavel', 'faFileSignature', 'faWalking', 'faMapSigns', 'faCalendarWeek', 'faPeopleCarry', 'faLocationArrow', 'faCircle', 'faFeatherAlt', 'faEdit', 'faNewspaper', 'faBullhorn', 'faPenAlt', 'faRss', 'faFastBackward', 'faGlobeAmericas', 'faGraduationCap', 'faHandsHelping', 'faHandPaper', 'faChessRook', 'faUniversity', 'faPlayCircle', 'faExchangeAlt', 'faEnvelopeOpenText', 'faBriefcaseMedical', 'faChalkboardTeacher', 'faCaretRight', 'faCaretLeft', 'faStepBackward', 'faStepForward', 'faSignOutAlt', 'faDoorOpen', 'faHiking', 'faBell', 'faSync', 'faPlusSquare', 'faTrash', 'faCrop', 'faEye', 'faEyeSlash', 'faEnvelope', 'faPaperPlane', 'faCopy', 'faImages', 'faUpload', 'faCloudUploadAlt', 'faSpinner', 'faTimes', 'faFolderPlus', 'faFileUpload', 'faMicrophone', 'faTasks', 'faCog', 'faSquare', 'faCheckSquare'],
+      regular: ['faHeart', 'faComments', 'faClipboard', 'faFrown', 'faComment', 'faCalendarAlt', 'faUser', 'faBell', 'faClock', 'faEnvelope', 'faTrashAlt'],
+      // include all icons. But dont do this. 
+      //regular: true, 
+      brands: ['faFacebook', 'faTwitter', 'faYoutube', 'faWhatsapp', 'faTelegram', 'faInstagram', 'faPinterest', 'faBlogger']
+    }
   },
 
   // [optional] markdownit options
@@ -364,7 +396,7 @@ export default {
     xhtmlOut: true,
     linkify: true,
     breaks: true,
-    typographer:  true, // ... → …    (c) => ©     (tm) (TM) → ™
+    typographer: true, // ... → …    (c) => ©     (tm) (TM) → ™
     // autofill: true, // for markdown-it-imsize
     use: [
       'markdown-it-div',
@@ -375,8 +407,16 @@ export default {
 
   // https://github.com/Maronato/vue-toastification
   toast: {
+    position: "bottom-left",
     timeout: 5000,
-    closeOnClick: true
-  }  
+    closeOnClick: true,
+    hideProgressBar: true,
+    pauseOnHover: true,
+    draggable: true,
+    draggablePercent: 0.6,
+    showCloseButtonOnHover: true,
+    closeButton: "button",
+    rtl: false,
+  }
 
 }

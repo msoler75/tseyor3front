@@ -6,7 +6,7 @@
         <input :required="required" v-model="images" class="absolute left-0 opacity-0 pointer-events-none" />
         <Modal v-model="verModal" :title="title" class="sm:min-w-sm max-w-screen">
             <div class="p-5 max-w-full" :class="images.length > 1 ? '' : 'md:max-w-md'">
-                <Drop v-if="!images.length" @change="onFileSelect" :multiple="multiple && !crop" accept="image/*" />
+                <DropFiles v-if="!images.length" @change="onFileSelect" :multiple="multiple && !crop" accept="image/*" />
                 <template v-if="crop && images.length" class="flex flex-col justify-center">
                     <cropper :src="images[0]" class="cropper" :stencil-props="stencilProps"
                         :stencil-component="stencilComponent" @change="cropChange" />

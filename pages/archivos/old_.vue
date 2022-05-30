@@ -1,7 +1,7 @@
 <template>
   <div>
     <Card class="p-1 sm:p-5 md:p-9">
-      <Archivos
+      <Explorador
         v-if="carpetaRaiz"
         v-model="carpetaActualId"
         class="w-full h-full overflow-y-auto"
@@ -41,9 +41,8 @@
 const NAVIGATION_MODE = 'Main'
 
 import seo from '@/mixins/seo'
-import permisos from '@/mixins/permisos'
 export default {
-  mixins: [seo, permisos],
+  mixins: [seo],
   middleware: 'archivos',
   async asyncData({ route, $strapi, $error, $config }) {
     try {

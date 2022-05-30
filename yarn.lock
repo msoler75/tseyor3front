@@ -1568,11 +1568,6 @@
   resolved "https://registry.yarnpkg.com/@lokidb/loki/-/loki-2.1.0.tgz#f707e184016ce57d6dd12013938c33f9c540960e"
   integrity sha512-u2VH/4h4kZww23bak5I/oRai8VqIZCSuqiLbuSHpYXHB9Na5E9KNazh59prgUyvMzfooY7XKiHejbKVxFoAEOQ==
 
-"@matrx/dragster@^0.6.0":
-  version "0.6.0"
-  resolved "https://registry.yarnpkg.com/@matrx/dragster/-/dragster-0.6.0.tgz#492d9111f0edf488d60cf6646d62d5fbf0613cdc"
-  integrity sha512-sLTlsxTOSxXn0YxQMWp1U+rJiB0Xwn9g0b65+4A6Vh538vQajPSiRMeqdnV6+88+0FNEAZz4W7G3hZiMHRrBtQ==
-
 "@meilisearch/instant-meilisearch@^0.6.0":
   version "0.6.2"
   resolved "https://registry.yarnpkg.com/@meilisearch/instant-meilisearch/-/instant-meilisearch-0.6.2.tgz#6d5d9d046240d5a76ea0586413fde218d2ae5860"
