@@ -17,7 +17,7 @@ export default {
     return state.defaultImages[collection]
   },
 
-  getPathBreadcrumb(state) {
+  currentBreadcrumb(state) {
     return state.pathBreadcrumb
   },
 

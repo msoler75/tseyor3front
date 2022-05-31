@@ -59,11 +59,6 @@
 <script>
 import { mapGetters } from "vuex";
 export default {
-  data() {
-    return {
-      newKey: 1,
-    };
-  },
   methods: {
     navigate(event, crumb) {
       console.log("breadcrumb navigate!", event, crumb);
@@ -111,11 +106,11 @@ export default {
     },
   },
   computed: {
-    ...mapGetters(["breadcrumbHandler", "backgroundImageUrl"]),
+    ...mapGetters(["currentBreadcrumb", "breadcrumbHandler", "backgroundImageUrl"]),
     crumbs() {
       if (process.client) {
         const pathShowing =
-          this.$store.getters.getPathBreadcrumb || this.$route.fullPath;
+          this.currentBreadcrumb || this.$route.fullPath;
         // console.log('typeof', typeof pathShowing, pathShowing)
         if (typeof pathShowing === "object") return pathShowing;
         const path = pathShowing.replace(/\/\d+(\/editar)?$/, "");

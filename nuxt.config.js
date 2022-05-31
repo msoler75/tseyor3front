@@ -9,7 +9,8 @@ export default {
   router: {
     // base: '/web3/',
     prefetchLinks: false,
-    middleware: ['route']
+    middleware: ['route'],
+    mode:'history'
   },
 
   /* serverMiddleware: [

@@ -3,6 +3,9 @@
     class="archivos flex flex-col sm:flex-row justify-start h-full"
     contained="no"
     background="no"
+    breadcrumb="no"
+    footer="no"
+    style="font-family: 'Trebuchet MS'"
   >
     <div
       v-if="$strapi.user"
@@ -17,19 +20,28 @@
       "
     >
       <div class="flex justify-between items-start">
-        <div class="w-full overflow-y-auto text-lg">
+        <div class="w-full overflow-y-auto">
           <template v-for="(menu, index) of options">
             <section
               v-if="menu.handler"
               :key="index"
               @click="onSelect(menu)"
-              class="px-5 lg:px-20 xl:pl-32 space-x-3 flex-grow items-center cursor-pointer sm:hover:bg-white sm:dark:hover:bg-black"
+              class="
+                px-5
+                lg:px-20
+                xl:pl-32
+                space-x-3
+                flex-grow
+                items-center
+                cursor-pointer
+                sm:hover:bg-white sm:dark:hover:bg-black
+              "
               :class="
-                (vista == menu.value ? 'item-selected' : '') +
-                (viewMenu || vista == menu.value
+                (menuActual == menu.value ? 'item-selected' : '') +
+                (viewMenu || menuActual == menu.value
                   ? ' flex'
                   : ' hidden sm:flex') +
-                (viewMenu ? ' py-4' : ' py-4')
+                (viewMenu ? ' py-2' : ' py-4 sm:py-2')
               "
             >
               <icon :icon="menu.icon" :svg="menu.svg" class="w-5" />
@@ -39,7 +51,16 @@
               v-else
               :class="viewMenu ? '' : 'hidden sm:block'"
               :key="index"
-              class="px-5 lg:px-20 xl:pl-32 pt-3 pb-1 sm:pt-4 text-diminished font-bold"
+              class="
+                px-5
+                lg:px-20
+                xl:pl-32
+                pt-3
+                pb-1
+                sm:pt-4
+                text-diminished
+                font-bold
+              "
             >
               {{ menu.label }}
             </div>
@@ -53,101 +74,97 @@
       </div>
     </div>
     <div
-      class="
-        surface
-        w-full
-        flex-grow
-        !border-l
-        -0
-        !border-r-0
-        !sm:border-l-1
-      "
-      :class="vista=='archivos'?'':'py-5 px-5 sm:px-10 lg:px-14'"
+      class="surface w-full flex-grow !border-l -0 !border-r-0 !sm:border-l-1"
+      :class="vista == 'archivos' ? '' : 'py-5 px-5 sm:px-10 lg:px-14'"
     >
-      <div v-if="vista == 'noArchivos'">
-        <h3>Tus archivos</h3>
-        No tienes espacio para archivos
-      </div>
-      <div v-else-if="vista == 'compartidas'">
+      <VistaArchivos
+        v-if="vista == 'misCarpetas'"
+        :cargando="cargandoMisCarpetas"
+      >
+        <h3>Mis carpetas</h3>
+        <ListadoCarpetas
+          :carpetas="misCarpetas"
+          @click="onRuta"
+          placeholder="No tienes ninguna carpeta"
+          :padre="{ ruta: urlMisCarpetas, publishedAt: 1 }"
+        />
+      </VistaArchivos>
+      <VistaArchivos
+        v-else-if="vista == 'compartidas'"
+        :cargando="cargandoCompartidas"
+      >
         <h3>Compartidas para ti</h3>
         <ListadoCarpetas
-          @click="onClicked"
+          @click="onRuta"
           :carpetas="compartidasContigo"
           placeholder="Ninguna carpeta compartida"
+          :padre="{ ruta: urlCompartidas, publishedAt: 1 }"
         />
 
         <divider />
 
         <h3>Compartes con los demás</h3>
         <ListadoCarpetas
-          @click="onClicked"
+          @click="onRuta"
           :carpetas="carpetasQueCompartes"
           placeholder="Ninguna carpeta compartida"
+          :padre="{ ruta: urlCompartidas, publishedAt: 1 }"
         />
-      </div>
-      <div v-else-if="vista == 'papelera'">
+      </VistaArchivos>
+      <VistaArchivos
+        v-else-if="vista == 'papelera'"
+        :cargando="cargandoPapelera"
+      >
         <h3>Papelera</h3>
-        <ListadoCarpetas v-model="elementosBorrados"
-        class="w-full lg:text-lg px-2 py-1 md:py-2" />
-      </div>
-      <div v-else-if="vista == 'equipos'">
+        <ListadoCarpetas
+          :carpetas="elementosBorrados"
+          class="w-full lg:text-lg px-2 py-1 md:py-2"
+          :padre="{ ruta: urlPapelera, publishedAt: 1 }"
+        />
+      </VistaArchivos>
+      <VistaArchivos v-else-if="vista == 'equipos'" :cargando="cargandoEquipos">
         <div v-if="equiposFiltrados.length">
           <div v-for="equipo of equiposFiltrados" :key="equipo.id">
             <h4>{{ equipo.nombre }}</h4>
-            <Carpeta
-              v-if="equipo.carpeta"
-              v-model="equipo.carpeta"
-              modoNavegacion="Click"
-              class="w-full lg:text-lg px-2 py-1 md:py-2"
-              @click="onClicked"
-              :mostrarTitulo="false"
-            />
             <ListadoCarpetas
-              v-if="equipo.carpetasLectura.length"
-              :carpetas="equipo.carpetasLectura"
-              @click="onClicked"
-            />
-            <ListadoCarpetas
-              v-if="equipo.carpetasEscritura.length"
-              :carpetas="equipo.carpetasEscritura"
-              @click="onClicked"
+              v-if="equipo.carpetas.length"
+              :carpetas="equipo.carpetas"
+              @click="onRuta"
+              :padre="{ ruta: urlEquipos, publishedAt: 1 }"
             />
           </div>
         </div>
         <div v-else>No hay nada que mostrar</div>
-      </div>
-      <div v-else-if="vista == 'grupos'">
+      </VistaArchivos>
+      <VistaArchivos v-else-if="vista == 'grupos'" :cargando="cargandoGrupos">
         <div v-if="gruposFiltrados.length">
           <div v-for="grupo of gruposFiltrados" :key="grupo.id">
-            <span>{{ grupo.nombre }}</span>
+            <h3>{{ grupo.nombre }}</h3>
             <ListadoCarpetas
-              v-if="grupo.carpetasLectura.length"
-              :carpetas="grupo.carpetasLectura"
-              @click="onClicked"
-            />
-            <ListadoCarpetas
-              v-if="grupo.carpetasEscritura.length"
-              :carpetas="grupo.carpetasEscritura"
-              @click="onClicked"
+              v-if="grupo.carpetas.length"
+              :carpetas="grupo.carpetas"
+              @click="onRuta"
+              :padre="{ ruta: urlGrupos, publishedAt: 1 }"
             />
           </div>
         </div>
         <div v-else>No hay nada que mostrar</div>
-      </div>
-      <Carpeta
-      v-else
-      id="explorador"
-        class="w-full h-full py-5
-        px-5
-        sm:px-10
-        lg:px-14"
-        v-model="idCarpetaActual"
+      </VistaArchivos>
+      <div v-else class="w-full flex flex-col">
+        rp:{{rutaActual.replace(/\/$/,'')}} ar:{{$config.archivosRuta}}
+        <Breadcrumb v-if="rutaActual.replace(/\/$/,'')!=$config.archivosRuta" class="text-sm py-2 px-5 sm:px-10 lg:px-14" />
+      <Carpeta        
+        id="explorador"
+        class="w-full h-full py-5 px-5 sm:px-10 lg:px-14"
+        :value="idCarpetaActual"
         modoNavegacion="Click"
-        @click="onClicked"
+        @click="onRuta"
         :updateBreadcrumb="true"
         :explorando="true"
         :idRootFolder="idRootActual"
+        :padre="carpetaPadreActual"
       />
+      </div>
     </div>
   </section>
 </template>
@@ -175,42 +192,26 @@ export default {
         // populate: '*'
       });*/
       // if (!contenido) return $error(404, "Carpeta no encontrada");
-      const data = $strapi.user
-        ? await $strapi.find("users/me", {
-            fields: ["id"],
-            populate: {
-              carpeta: "*",
-              carpetasCreadas: { publicationState: "preview" },
-              carpetasLectura: "*",
-              carpetasEscritura: "*",
-              carpetasAdministracion: "*",
-              equipos: {
-                populate: ["carpeta", "carpetasLectura", "carpetasEscritura"],
-              },
-              grupos: {
-                populate: ["carpetasLectura", "carpetasEscritura"],
-              },
-            },
-          })
-        : {
-            carpeta: null,
-            carpetasCreadas: [],
-            carpetasLectura: [],
-            carpetasEscritura: [],
-            carpetasAdministracion: [],
-            equipos: [],
-            grupos: [],
-          };
+      const data = {
+        carpeta: null,
+        carpetasCreadas: [],
+        carpetasLectura: [],
+        carpetasEscritura: [],
+        carpetasAdministracion: [],
+        equipos: [],
+        grupos: [],
+      };
 
-      let {data: [root]} = await $strapi.find("carpetas", {
+      let {
+        data: [root],
+      } = await $strapi.find("carpetas", {
         filters: {
           ruta: {
-            $eq:  $config.archivosRuta,
+            $eq: $config.archivosRuta,
           },
         },
       });
-      if(!root)
-      root = {id: 0} 
+      if (!root) root = { id: 0 };
 
       console.warn("DATA", data);
       return {
@@ -226,13 +227,22 @@ export default {
   },
   data() {
     return {
+      urlArchivos: this.$config.archivosRuta,
       urlCompartidas: this.$config.archivosRuta + "/___compartidas",
       urlSubidos: this.$config.archivosRuta + "/___subidos",
       urlPapelera: this.$config.archivosRuta + "/___papelera",
       urlEquipos: this.$config.archivosRuta + "/___equipos",
       urlGrupos: this.$config.archivosRuta + "/___grupos",
-      urlNoArchivos: this.$config.archivosRuta + "/___noarchivos",
+      urlMisCarpetas: this.$config.archivosRuta + "/___miscarpetas",
+      cargandoMisCarpetas: false,
+      cargandoCompartidas: false,
+      cargandoSubidos: false,
+      cargandoPapelera: false,
+      cargandoEquipos: false,
+      cargandoGrupos: false,
+      carpetaPadreActual: null,
       vista: "archivos",
+      menuActual: "archivos",
       viewMenu: false,
       options: [
         {
@@ -245,10 +255,10 @@ export default {
           handler: this.onArchivos,
         },
         {
-          label: "Mi carpeta",
-          value: "misArchivos",
+          label: "Mis carpetas",
+          value: "misCarpetas",
           icon: "far fa-user",
-          handler: this.onMisArchivos,
+          handler: this.onMisCarpetas,
         },
         {
           label: "Subidas Recientes",
@@ -285,17 +295,28 @@ export default {
           handler: this.onGrupos,
         },
       ],
+      populateCarpetaPermisos: {
+        propietario: "*",
+        lecturaUsuarios: "*",
+        lecturaGrupos: "*",
+        lecturaEquipos: "*",
+        escrituraUsuarios: "*",
+        escrituraGrupos: "*",
+        escrituraEquipos: "*",
+        administracionUsuarios: "*",
+      },
     };
   },
-  mounted() {
-    //if (this.carpeta && this.$route.path === this.urlNoArchivos)
-    //this.$router.push(this.carpeta.ruta);
-    this.onRuta(this.$route.path);
-    // escuchamos eventos de breadcrumb
-    this.$store.commit("setBreadcrumbHandler", this.onBreadcrumbClicked);
-    window.onpopstate = (event) => this.onRuta(location.pathname);
-  },
   computed: {
+    rutaActual() {
+      /*if(process.client)
+      {
+        console.log('LOCATION PATH', location)
+        return ''
+      }*/
+        console.log('ROUTE PATH', this.$route)
+      return this.$route.path
+    },
     equiposFiltrados() {
       return this.equipos.filter(
         (x) =>
@@ -307,46 +328,54 @@ export default {
         (x) => x.carpetasLectura.length || x.carpetasEscritura.length
       );
     },
-    compartidasContigo: {
-      get() {
-        let carpetas = this.carpetasLectura || [];
-        return carpetas
-          .concat(this.carpetasEscritura)
-          .filter((x) => x.publishedAt);
-      },
-      set(newValue) {},
+    compartidasContigo() {
+      let carpetas = this.carpetasLectura || [];
+      return carpetas
+        .concat(this.carpetasEscritura)
+        .filter((x) => x.publishedAt)
+        .filter((v, i, a) => a.findIndex((x) => x.id == v.id) == i)
+        .filter(x=>!this.carpetasQueCompartes.find(z=>z.id==x.id))
     },
-    carpetasQueCompartes: {
-      get() {
-        return this.carpetasCreadas
-          .filter((x) => x.publishedAt)
-          .filter(
-            (x) =>
-              x.lecturaAcceso != "Nadie" ||
-              x.escrituraAcceso != "Nadie" ||
-              x.lecturaUsuarios.length ||
-              x.escrituraUsuarios.length ||
-              x.lecturaGrupos.length ||
-              x.escrituraGrupos.length ||
-              x.lecturaEquipos.length ||
-              x.escrituraEquipos.length ||
-              x.administracionUsuarios.length
-          );
-      },
-      set(newValue) {},
+    carpetasQueCompartes() {
+      return this.carpetasCreadas
+        .filter((x) => x.publishedAt)        
+        .filter(
+          (x) =>
+            x.lecturaAcceso != "Nadie" ||
+            x.escrituraAcceso != "Nadie" ||
+            x.lecturaUsuarios.length ||
+            x.escrituraUsuarios.length ||
+            x.lecturaGrupos.length ||
+            x.escrituraGrupos.length ||
+            x.lecturaEquipos.length ||
+            x.escrituraEquipos.length ||
+            x.administracionUsuarios.length
+        );
     },
-    elementosBorrados: {
-      get() {
-        return this.carpetasCreadas.filter((x) => !x.publishedAt);
-      },
-      set(newValue) {},
+    elementosBorrados() {
+      return this.carpetasCreadas.filter((x) => !x.publishedAt);
     },
+  },
+  mounted() {
+    // cargamos la ruta actual
+    this.onRuta(this.$route.path);
+    // escuchamos eventos de breadcrumb
+    this.$store.commit("setBreadcrumbHandler", this.onBreadcrumbClicked);
+    window.onpopstate = (event) => {
+      this.onRuta(location.pathname);
+      event.preventDefault();
+      return false;
+    };
+  },
+  destroy() {
+    window.onpopstate = null;
   },
   methods: {
     pushRoute(obj, updateBreadcrumb) {
       let ruta = typeof obj === "object" ? obj.ruta : obj;
       console.log("pushRoute", ruta, "original", obj);
-      history.pushState({}, null, ruta);
+      // history.pushState({}, null, ruta);
+      this.$router.push(ruta)
       if (updateBreadcrumb) this.$store.commit("updateBreadcrumb", ruta);
     },
     onSelect(menu) {
@@ -359,70 +388,198 @@ export default {
       }
     },
     onArchivos() {
+      this.vista = "archivos";
+      this.menuActual = "archivos";
       this.idRootActual = this.idRoot;
-      // this.idRootActual = this.carpeta.id
-      this.onClicked(this.$config.archivosRuta);
+      this.idCarpetaActual = this.idRoot;
+      this.pushRoute(this.$config.archivosRuta, true);
+      // this.onRuta(this.$config.archivosRuta);
     },
-    onMisArchivos() {
-      console.log("onMisArchivos", "carpeta", this.carpeta);
-      if (this.carpeta) {
-        this.vista = "misArchivos";
-        this.idRootActual = this.carpeta.id;
-        this.onClicked(this.carpeta);
-      } else {
-        this.vista = "noArchivos";
-        this.pushRoute(this.urlNoArchivos, true);
+    onMisCarpetas() {
+      // console.log("onMisCarpetas", "carpeta", this.carpeta);
+      this.vista = "misCarpetas";
+      this.menuActual = "misCarpetas";
+      this.pushRoute(this.urlMisCarpetas, true);
+      if (this.$strapi.user) {
+        this.cargandoMisCarpetas = true;
+        this.$strapi
+          .find("users/me", {
+            fields: ["id"],
+            populate: {
+              carpeta: {
+                populate: this.populateCarpetaPermisos,
+              },
+              carpetasCreadas: {
+                populate: this.populateCarpetaPermisos,
+                publicationState: "preview",
+              },
+            },
+          })
+          .then((response) => {
+            this.cargandoMisCarpetas = false;
+            this.carpeta = response.carpeta;
+            this.carpetasCreadas = response.carpetasCreadas;
+            this.misCarpetas = [];            
+            if (this.carpeta) this.misCarpetas.push(this.carpeta);
+            this.misCarpetas = this.misCarpetas.concat(this.carpetasCreadas)
+            .filter((v, i, a) => a.findIndex((x) => x.id == v.id) == i).filter(x=>x.publishedAt)
+          });
       }
-      // this.idRootActual = this.carpeta.id
     },
     onSubidos() {
       // alert("No implementado");
       this.vista = "subidos";
+      this.menuActual = "subidos";
       this.pushRoute(this.urlSubidos, true);
     },
     onCompartidas() {
       this.vista = "compartidas";
+      this.menuActual = "compartidas";
       this.pushRoute(this.urlCompartidas, true);
+      if (this.$strapi.user) {
+        this.cargandoCompartidas = true;
+        this.$strapi
+          .find("users/me", {
+            fields: ["id"],
+            populate: {
+              carpetasLectura: {
+                populate: this.populateCarpetaPermisos,
+              },
+              carpetasEscritura: {
+                populate: this.populateCarpetaPermisos,
+              },
+              carpetasCreadas: {
+                populate: this.populateCarpetaPermisos,
+                publicationState: "preview",
+              },
+            },
+          })
+          .then((response) => {
+            this.cargandoCompartidas = false;
+            this.carpetasLectura = response.carpetasLectura;
+            this.carpetasEscritura = response.carpetasEscritura;
+            this.carpetasCreadas = response.carpetasCreadas;
+          });
+      }
     },
     onPapelera() {
       this.vista = "papelera";
+      this.menuActual = "papelera";
       this.pushRoute(this.urlPapelera, true);
+      if (this.$strapi.user) {
+        this.cargandoPapelera = true;
+        this.$strapi
+          .find("users/me", {
+            fields: ["id"],
+            populate: {
+              carpetasCreadas: {
+                populate: this.populateCarpetaPermisos,
+                publicationState: "preview",
+              },
+            },
+          })
+          .then((response) => {
+            this.cargandoPapelera = false;
+            this.carpetasCreadas = response.carpetasCreadas;
+          });
+      }
     },
     onEquipos() {
       this.vista = "equipos";
+      this.menuActual = "equipos";
       this.pushRoute(this.urlEquipos, true);
+      if (this.$strapi.user) {
+        this.cargandoEquipos = true;
+        this.$strapi
+          .find("users/me", {
+            fields: ["id"],
+            populate: {
+              equipos: {
+                populate: {
+                  carpeta: { populate: this.populateCarpetaPermisos },
+                  carpetasLectura: {
+                    populate: this.populateCarpetaPermisos,
+                  },
+                  carpetasEscritura: {
+                    populate: this.populateCarpetaPermisos,
+                  },
+                },
+              },
+            },
+          })
+          .then((response) => {
+            this.cargandoEquipos = false;
+            this.equipos = response.equipos.map((e) => {
+              e.carpetas = [];
+              if (e.carpeta) e.carpetas.push(e.carpeta);
+              e.carpetas = e.carpetas
+                .concat(e.carpetasLectura)
+                .concat(e.carpetasEscritura)
+                .filter((v, i, a) => a.findIndex((x) => x.id == v.id) == i);
+              return e;
+            });
+          });
+      }
     },
     onGrupos() {
       this.vista = "grupos";
+      this.menuActual = "grupos";
       this.pushRoute(this.urlGrupos, true);
-    },
-    onClicked(carpeta) {
-      console.warn("onClicked", carpeta);
-      // this.idRootActual = this.idRoot;
-      // this.idRootActual = this.carpeta.id
-      /* if (carpeta && this.carpeta && carpeta.id === this.carpeta.id && this.vista==='general')
-        this.vista = "misArchivos"
-      else this.vista="general" */
-      this.vista = "archivos";
-      this.idCarpetaActual =
-        typeof carpeta === "object" ? carpeta.ruta : carpeta;
-      console.log("idCArpetaActual", carpeta);
-      this.pushRoute(carpeta);
+      if (this.$strapi.user) {
+        this.cargandoGrupos = true;
+        this.$strapi
+          .find("users/me", {
+            fields: ["id"],
+            populate: {
+              grupos: {
+                populate: {
+                  carpetasLectura: {
+                    populate: this.populateCarpetaPermisos,
+                  },
+                  carpetasEscritura: {
+                    populate: this.populateCarpetaPermisos,
+                  },
+                },
+              },
+            },
+          })
+          .then((response) => {
+            this.cargandoGrupos = false;
+            this.grupos = response.grupos.map((g) => {
+              g.carpetas = g.carpetasLectura
+                .concat(g.carpetasEscritura)
+                .filter((v, i, a) => a.findIndex((x) => x.id == v.id) == i);
+              return g;
+            });
+          });
+      }
     },
     onBreadcrumbClicked(ruta) {
       console.log("clicked breadcrumb");
       // alert(ruta);
       this.onRuta(ruta);
-      //this.onClicked(ruta);
+      // this.menuActual = 'archivos'
+      //this.cambiarACarpeta(ruta);
     },
-    onRuta(ruta) {
-      this.vista = "archivos";
+    onRuta(carpeta) {
+      console.log("OnRuta", carpeta);
+      const ruta = typeof carpeta === "object" ? carpeta.ruta : carpeta;
+      // this.vista = "archivos";
       switch (ruta) {
-        case this.urlCompartidas:
+        case this.urlArchivos:
           this.onArchivos();
+          break;
+        case this.urlMisCarpetas:
+          this.onMisCarpetas();
+          break;
+        case this.urlSubidos:
+          this.onSubidos();
           break;
         case this.urlPapelera:
           this.onPapelera();
+          break;
+        case this.urlCompartidas:
+          this.onCompartidas();
           break;
         case this.urlEquipos:
           this.onEquipos();
@@ -430,17 +587,26 @@ export default {
         case this.urlGrupos:
           this.onGrupos();
           break;
-        case this.urlNoArchivos:
-          this.vista = "noArchivos";
-          break;
-        case this.urlSubidos:
-          this.onSubidos();
-          break;
         default:
-          this.onClicked(ruta);
+          console.warn("cambiarACarpeta", carpeta);
+          if (carpeta.breadcrumb) {
+            this.menuActual = "archivos";
+            this.idRootActual = this.idRoot;
+          }
+          if (
+            typeof carpeta === "object" &&
+            "forzarPadre" in carpeta &&
+            carpeta.forzarPadre
+          )
+            this.carpetaPadreActual = carpeta.forzarPadre;
+          else this.carpetaPadreActual = null;
+          this.vista = "archivos";
+          this.idCarpetaActual =
+            typeof carpeta === "object" ? carpeta.ruta : carpeta;
+          console.log("idCArpetaActual", carpeta);
+          // this.pushRoute(carpeta, false);
+          this.pushRoute(this.idCarpetaActual, true);
       }
-      if (this.carpeta && this.idCarpetaActual == this.carpeta.ruta)
-        this.vista = "misArchivos";
     },
   },
 };

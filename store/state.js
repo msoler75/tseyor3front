@@ -426,7 +426,18 @@ export default () => ({
     },
 
 
-    
+    "/___miscarpetas": {
+      name: "Mis Carpetas",
+      icon: "far fa-user",
+      description: "Carpetas donde puedes guardar y/o compartir tus archivos",
+      parent: "/archivos"
+    },
+    "/___subidos": {
+      name: "Subidos",
+      icon: "svg iconUpload",
+      description: "Archivos subidos recientemente",
+      parent: "/archivos"
+    },
     "/___papelera": {
       name: "Papelera",
       icon: "far fa-trash-alt",

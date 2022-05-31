@@ -1,10 +1,12 @@
 <template>
   <Droppable
-    ref="explorador"
     class="w-full flex select-none"
     v-model="dragging"
     :dropAllowed="escritura"
-    :class="(dragging ? 'bg-yellow' : '') + ( cargando||thereErrors?' max-h-[70vh] justify-center':'')"
+    :class="
+      (dragging ? 'bg-yellow' : '') +
+      (cargando || thereErrors ? ' max-h-[70vh] justify-center' : '')
+    "
     @drop.prevent.stop="drop"
   >
     <div v-if="explorando">
@@ -14,20 +16,7 @@
       >
         <span>{{ errors.message }}</span>
       </div>
-      <div
-        v-else-if="cargando"
-        class="
-          flex
-          w-full
-          h-full
-          text-3xl
-          justify-center
-          items-center
-          text-gray
-        "
-      >
-        <icon icon="spinner spin" />
-      </div>
+      <Loader v-else-if="cargando" />
       <div v-else-if="carpeta" class="w-full flex flex-col">
         <h1
           v-if="mostrarTitulo && (carpeta.nombreOriginal || carpeta.nombre)"
@@ -105,7 +94,7 @@
         class="flex w-full overflow-hidden group"
         target="_blank"
         @click.stop.prevent="flexNavigateTo(carpeta)"
-        :href="carpeta?carpeta.ruta:''"
+        :href="carpeta ? carpeta.ruta : ''"
       >
         <div
           class="flex flex-shrink-0 justify-center items-center"
@@ -200,6 +189,7 @@ export default {
       required: false,
       default: false,
     },
+    padre: {},
     idRootFolder: { type: Number, required: false, default: 0 },
     modoNavegacion: {
       type: String,
@@ -276,12 +266,12 @@ export default {
     carpetaJSON() {
       console.warn("CARPETA ACTUAL", this.carpeta);
       return JSON.stringify(this.carpeta);
-    },
+    }, 
     escritura() {
-      return this.tengoPermiso('escritura')
+      return this.tengoPermiso("escritura");
     },
     administracion() {
-      return this.tengoPermiso('administracion')
+      return this.tengoPermiso("administracion");
     },
     numItems() {
       if (!this.carpeta) return 0;
@@ -292,22 +282,25 @@ export default {
     },
   },
   watch: {
+    localValue(newValue) {
+      console.warn('LOCAL CHANGED')
+      this.$fetch()
+    },
     cargando(newValue) {
       console.warn("CARGANDO", newValue);
     },
-    localValue(newValue) {
-      console.log("localValue changed!!", newValue, this.localValue);
-      this.$fetch();
-      // this.updateBreadcrumb()
-    },
-    carpetaJSON() {      
+    carpetaJSON() {
+      console.log('watch carpetaJSNO', this.padre)
+      if (!this.carpeta || !("subcarpetas" in this.carpeta)) return;
+
+      if(this.padre)
+        this.carpeta.padre = this.padre
+
       console.warn("carpeta.WATCH", this.localValue);
 
       this.carpetas = [];
       this.archivos = [];
-
-      if (!this.carpeta) return;
-      if (this.updateBreadcrumb && this.carpeta.ruta) this._updateBreadcrumb();
+      //      if (this.updateBreadcrumb && this.carpeta.ruta) this._updateBreadcrumb();
 
       if (!Array.isArray(this.carpeta) && this.explorando)
         this.archivos = this.carpeta.archivos;
@@ -328,23 +321,32 @@ export default {
     dragging(newValue) {
       // if (newValue) this.$emit("dragenter");
       // else this.$emit("dragleave");
-    }
+    },
   },
   async fetch() {
     console.log("fetch!", this.localValue);
     this.clearErrors();
     let toFetch = this.localValue;
-    if (this.localValue && typeof this.localValue === "object") {
-      console.warn("ES UN OBJETO O ARRAY");
+    if (
+      this.localValue &&
+      typeof this.localValue === "object" &&
+      "ruta" in this.localValue
+    ) {
+      console.warn("ES UN OBJETO DE TIPO CARPETA");
       this.carpeta = this.localValue;
       this.cargando = false;
       //if ("lecturaUsuarios" in this.carpeta) return;
       //toFetch = this.carpeta.id;
-      return
-    } else {
-      this.cargando = true;
-      console.warn("ES UN ID/RUTA");
+      if (this.updateBreadcrumb) this._updateBreadcrumb();  
+      return;
     }
+
+    this.cargando = true;
+    if (typeof this.localValue === "string") {
+      this.carpeta = { ruta: this.localValue }
+      if (this.updateBreadcrumb) this._updateBreadcrumb();
+    }
+    console.warn("ES UN ID/RUTA");
 
     console.log("go on");
     await this.$strapi
@@ -515,12 +517,12 @@ export default {
     },
     // comprueba si el usuario tiene acceso segun los permisos indicados
     tengoPermiso(modo) {
+      return true;
       console.warn("tengopermisos", modo);
       console.log("carpeta", this.carpeta);
-      if (!modo) return false
-      if (!this.carpeta) return false
+      if (!modo) return false;
+      if (!this.carpeta) return false;
       if (!("lecturaUsuarios" in this.carpeta)) return false;
-
 
       const user = this.$strapi.user;
 
@@ -570,7 +572,7 @@ export default {
         !this.carpeta.propietario
       )
         return false;
-      const aid = this.carpeta.propietario.id
+      const aid = this.carpeta.propietario.id;
       return aid === user.id || parseInt(aid) === user.id;
     },
 
@@ -646,7 +648,7 @@ export default {
     _updateBreadcrumb() {
       console.log("archivos.updateBreadcrumb()");
       const carpeta = this.carpeta;
-      if (!carpeta.ruta) return;
+      if (!carpeta.ruta) {console.log('no carpeta');return;}
       const rootData = this.$store.getters.getRouteData(
         this.$config.archivosRuta
       );
@@ -666,7 +668,7 @@ export default {
           click:
             this.modoNavegacion === "Click"
               ? async (event) => {
-                  this.$emit("click", ruta);
+                  this.$emit("click", {ruta, breadcrumb: true});
                 }
               : this.modoNavegacion === "Main"
               ? async (event) => {

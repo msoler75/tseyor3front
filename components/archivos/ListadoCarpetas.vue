@@ -15,7 +15,8 @@
       class="w-full lg:text-lg px-2 py-1 md:py-2"
       @dragenter="dragging = false"
       @dragleave="dragging = true"
-      @click="$emit('click', $event)"
+      @click="$emit('click', {...$event, forzarPadre:padre})"
+      :padre="padre"
     />
   </div>
 </template>
@@ -24,6 +25,7 @@
 export default {
   props: {
     carpetas: { type: Array, required: true },
+    padre: {},
     textClass: {},
     subtextClass: {},
     iconClass: { type: String, required: false, default: "text-6xl" },

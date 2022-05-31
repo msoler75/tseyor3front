@@ -13,7 +13,7 @@ export default {
       this.$emit('input', value)
     },
     value (value) {
-      this.localValue = value
+      this.$set(this,'localValue',value)
     }
   }
 }
