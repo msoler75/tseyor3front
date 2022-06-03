@@ -1,9 +1,9 @@
 export default function(req, res, next) {
     const redirects = [
-      {
+      /*{
         from: "/archivos", 
         to: "/archivos/"
-      }
+      } */
     ]
     const redirect = redirects.find((r) => r.from === req.url)
     if (redirect) {

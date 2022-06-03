@@ -310,6 +310,10 @@ export default ({
         }
         return null
       })
+      .catch(err=>{
+        console.warn(err)
+        return null
+      })
     }
 
     get user() {

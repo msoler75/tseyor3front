@@ -1,6 +1,6 @@
 <template>
   <div id="__main-container" ref="main" class="surface-0 w-full font-sans relative" 
-    :class="(travelling ? 'travelling ' : 'in-page') + (pageConfig.background ? '' : 'no-background')">
+    :class="(loading ? 'loading ' : 'in-page') + (pageConfig.background ? '' : 'no-background')">
 
     <div class="absolute w-full h-screen z-0" :style="imagenFondo"></div>
 
@@ -16,7 +16,7 @@
     v-if="pageConfig.breadcrumb"
       class="w-full mt-5 mb-3 lg:mt-6 lg:mb-5 xs:px-1 sm:px-3 md:px-6 mx-auto lg:flex-row items-start lg:items-center justify-between pb-4 border-gray-300 relative"
       @click="clickOff">
-    <Breadcrumb id="breadcrumb" :present="!travelling" class="absolute text-xs xl:text-sm" />
+    <Breadcrumb id="breadcrumb" :present="!loading" class="absolute text-xs xl:text-sm" />
 
       <h4 v-if="false" class="mt-2 text-2xl font-bold leading-tight text-gray-800 dark:text-gray-200">
         <div >{{ title }}</div>
@@ -85,7 +85,7 @@ export default {
     //this.actualizarUrlPerfil()
     // emulamos comportamiento de beforeEnter de transición de página
     console.warn('page', this.$refs['page'].$el)
-    this.$store.commit('travelling', false)
+    this.$store.commit('setTravelling', false)
     this.$store.dispatch('beforeEnter', this.$refs['page'].$el)
     this.$store.commit('updateBreadcrumb')
     if (process.client) {
@@ -284,7 +284,7 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(["borradoresNum", "travelling", "pageConfig", "menuUsuario", "navHidden", "onlyContent", "backgroundImageUrl"]),
+    ...mapGetters(["borradoresNum", "loading", "travelling", "pageConfig", "menuUsuario", "navHidden", "onlyContent", "backgroundImageUrl"]),
     rutasMenu() {
       return this.$store.getters.buildRoutes(this.menuitems)
     },
@@ -478,6 +478,9 @@ html.dark:not(.page-background) #__layout {
 }
 
 /* Transitions using the page hook */
+
+
+/* 
 .page-enter-active,
 .page-leave-active {
   transition: all 0.5s ease-out;
@@ -492,6 +495,7 @@ html.dark:not(.page-background) #__layout {
   opacity: 0;
   transform-origin: 50% 50%;
 }
+*/
 
 /*
 .flash {

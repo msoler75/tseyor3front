@@ -18,6 +18,10 @@ export default {
     } = await $strapi.find('imagenes-por-tipo', {
       populate: '*'
     })
+    .catch(err=>{
+      return {data:null}
+    })
+    if(imagenes)
     store.commit(
       "SET_DEFAULT_IMAGES",
       imagenes
@@ -51,7 +55,7 @@ export default {
     // console.log('config', config)
     store.commit('setPageConfig', config)
     store.commit('updateBreadcrumb')
-    store.commit('travelling', false)
+    store.commit('setTravelling', false)
   },
 
   // page transition

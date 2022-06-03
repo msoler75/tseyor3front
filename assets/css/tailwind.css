@@ -238,13 +238,14 @@
     @apply transition-opacity duration-300;
   }
 
-  .travelling .card:not([clicked]),
-  .travelling .tabs {
+  .loading .card:not([clicked]),
+  .loading .tabs {
     @apply opacity-0;
   }
+  
 
-  .travelling .card,
-  .travelling .tabs {
+  .loading .card,
+  .loading .tabs {
     @apply pointer-events-none;
   }
 

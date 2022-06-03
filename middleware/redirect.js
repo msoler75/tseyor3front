@@ -5,10 +5,10 @@ export default function (ctx) {
   let { route, redirect } = ctx
   // console.warn('route.path', route.path)
   const redirects = [
-    {
+    /*{
       from: '/archivos',
       to: '/archivos/'
-    }
+    }*/
   ]
   const mustRedirect = redirects.find(r => r.from === route.path)
   // console.warn('mustRedirect', mustRedirect)

@@ -34,6 +34,8 @@ export default {
     },
     translate(msg) {
       if(!msg||typeof msg!=='string') return msg
+      if(msg.match('Error occured while trying to proxy'))
+      return 'Servicio no disponible'
       return msg
         .replace('Request failed with status code 403', 'Acceso denegado')
         .replace('Request failed with status code 400', 'Error en los datos')
@@ -44,7 +46,7 @@ export default {
         .replace('characters', 'caracteres')
         .replace('Policy Failed', 'Permiso denegado')
         .replace('Invalid identifier or password', 'Identificador o contraseña no válidos')
-        .replace('Forbidden', 'No tienes permisos')
+        .replace('Forbidden', 'No tienes permisos')        
     },
     inputClassError(field) {
       return this.errors[field] ? 'border-4 border-red' : ''

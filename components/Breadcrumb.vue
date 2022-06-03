@@ -64,7 +64,7 @@ export default {
       console.log("breadcrumb navigate!", event, crumb);
       if (crumb.click) {
         console.log("has click");
-        return crumb.click(event);
+        return crumb.click(crumb.value||crumb.href);
       }
       console.log("current route", this.$route.fullPath);
       console.log("no click function, so we route to ", ruta);

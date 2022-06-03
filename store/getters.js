@@ -112,6 +112,10 @@ export default {
     return state.breadcrumbHandler
   },
 
+  loading(state) {
+    return state.loading
+  },
+
   travelling(state) {
     return state.travelling
   },

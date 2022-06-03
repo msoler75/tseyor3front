@@ -6,7 +6,7 @@ export default function ({ res, route, store }) {
    store.commit('setMenuUsuario', false)
     store.commit('setNextPathBreadcrumb', route.path)
     store.commit('setBackgroundImageUrl', null)
-   //store.commit('travelling', true)
+   store.commit('setTravelling', true)
     
     // reseteamos dropHandler
     store.commit('setDropHandler', null)

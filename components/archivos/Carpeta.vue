@@ -20,21 +20,24 @@
       <div v-else-if="carpeta" class="w-full flex flex-col">
         <h1
           v-if="mostrarTitulo && (carpeta.nombreOriginal || carpeta.nombre)"
-          class="flex justify-between"
+          class="flex justify-between relative"
         >
           <span>{{ carpeta.nombreOriginal || carpeta.nombre }}</span>
           <span
             v-if="mostrarControles"
             class="self-center cursor-pointer text-gray text-xl ml-2 pl-2 pr-1"
-            @click="mostrarPropiedades = true"
-            >&vellip;</span
+            @click="mostrarMenu = true"
           >
+            <Loader v-if="guardando" :spinner="true" />
+            <span v-else>&vellip;</span></span
+          >
+          <MenuContextual v-model="mostrarMenu" :items="menuItems" />
         </h1>
         <PropiedadesCarpeta
           v-if="mostrarTitulo && mostrarControles"
           textAccept="Guardar"
           :carpeta="carpeta"
-          @guardar="guardarPropsCarpeta"
+          @guardar="guardar"
           v-model="mostrarPropiedades"
           :administracion="administracion"
         />
@@ -178,6 +181,7 @@
 </template>
 
 <script>
+import { populateCarpeta } from "@/assets/js/carpeta";
 import loadImage from "blueimp-load-image";
 import vmodel from "~/mixins/vmodel.js";
 import validation from "@/mixins/validation";
@@ -237,36 +241,37 @@ export default {
     return {
       /* ESTA VARIABLE SE TIENE QUE ASIGNAR LOS DATOS DE LA CARPETA */
       carpeta: null,
-      populateCarpeta: {
-        populate: {
-          padre: "*",
-          archivos: {
-            populate: ["media"],
-          },
-          subcarpetas: "*",
-          propietario: "*",
-          lecturaUsuarios: "*",
-          lecturaGrupos: "*",
-          lecturaEquipos: "*",
-          escrituraUsuarios: "*",
-          escrituraGrupos: "*",
-          escrituraEquipos: "*",
-          administracionUsuarios: "*",
-        },
-      },
       dragging: false,
       cargando: true,
+      guardando: false,
       carpetas: [],
       archivos: [],
+      mostrarMenu: false,
       mostrarPropiedades: false,
     };
   },
   // fetchOnServer: false,
   computed: {
+    menuItems() {
+      const items = [];
+      if (this.administracion) {
+        items.push({
+          label: "Renombrar",
+          click: this.renombrar,
+        });
+      }
+      items.push({
+        label: "Propiedades",
+        click: () => {
+          this.mostrarPropiedades = true;
+        },
+      });
+      return items;
+    },
     carpetaJSON() {
       console.warn("CARPETA ACTUAL", this.carpeta);
       return JSON.stringify(this.carpeta);
-    }, 
+    },
     escritura() {
       return this.tengoPermiso("escritura");
     },
@@ -283,24 +288,23 @@ export default {
   },
   watch: {
     localValue(newValue) {
-      console.warn('LOCAL CHANGED')
-      this.$fetch()
+      console.warn("LOCAL CHANGED");
+      this.$fetch();
     },
     cargando(newValue) {
       console.warn("CARGANDO", newValue);
     },
     carpetaJSON() {
-      console.log('watch carpetaJSNO', this.padre)
+      console.log("watch carpetaJSNO", this.padre);
       if (!this.carpeta || !("subcarpetas" in this.carpeta)) return;
 
-      if(this.padre)
-        this.carpeta.padre = this.padre
+      if (this.padre) this.carpeta.padre = this.padre;
 
       console.warn("carpeta.WATCH", this.localValue);
 
       this.carpetas = [];
       this.archivos = [];
-      //      if (this.updateBreadcrumb && this.carpeta.ruta) this._updateBreadcrumb();
+      //      if (this.updateBreadcrumb && this.carpeta.ruta) this.updateBreadcrumb();
 
       if (!Array.isArray(this.carpeta) && this.explorando)
         this.archivos = this.carpeta.archivos;
@@ -337,13 +341,13 @@ export default {
       this.cargando = false;
       //if ("lecturaUsuarios" in this.carpeta) return;
       //toFetch = this.carpeta.id;
-      if (this.updateBreadcrumb) this._updateBreadcrumb();  
+      if (this.updateBreadcrumb) this._updateBreadcrumb();
       return;
     }
 
     this.cargando = true;
     if (typeof this.localValue === "string") {
-      this.carpeta = { ruta: this.localValue }
+      this.carpeta = { ruta: this.localValue };
       if (this.updateBreadcrumb) this._updateBreadcrumb();
     }
     console.warn("ES UN ID/RUTA");
@@ -356,7 +360,7 @@ export default {
             ? { id: { $eq: toFetch } }
             : { ruta: { $eq: toFetch } }),
         },
-        ...this.populateCarpeta,
+        populate: populateCarpeta,
       })
       .then((res) => {
         console.log("myfetch result", res);
@@ -379,7 +383,10 @@ export default {
             // for(const k in carpeta)
             // this.$set(this.carpeta, k, carpeta[k])
             this.$emit("loaded", carpeta);
-          } else this.carpeta = null;
+          } else {
+            this.setErr({ message: "Esta carpeta no existe" });
+            this.carpeta = null;
+          }
         }
         this.cargando = false;
       })
@@ -390,6 +397,20 @@ export default {
       });
   },
   methods: {
+    renombrar() {
+      this.$prompt({
+        message: "Nuevo nombre",
+        response: this.carpeta.nombre,
+        accepted: async (response) => {
+          //const regex = new RegExp(this.carpeta.nombre + "$");
+          //this.carpeta.ruta = this.carpeta.ruta.replace(regex, "");
+          //this.carpeta.ruta += "/" + response;
+          //this.carpeta.nombre = response;
+          await this.guardar(response);
+          this.$router.replace(this.carpeta.ruta);
+        },
+      });
+    },
     async drop(e) {
       const items = e.detail
         ? e.detail.dataTransfer.items
@@ -517,7 +538,7 @@ export default {
     },
     // comprueba si el usuario tiene acceso segun los permisos indicados
     tengoPermiso(modo) {
-      return true;
+      // return true;
       console.warn("tengopermisos", modo);
       console.log("carpeta", this.carpeta);
       if (!modo) return false;
@@ -576,36 +597,49 @@ export default {
       return aid === user.id || parseInt(aid) === user.id;
     },
 
-    guardarPropsCarpeta(carpeta) {
-      console.log(
-        "GuardarPropsCarpeta carpeta",
-        JSON.stringify(carpeta.escrituraEquipos)
-      );
-      console.log("escrituraEquipos", JSON.stringify(carpeta.escrituraEquipos));
-      if (typeof carpeta.escrituraEquipos === "undefined")
-        console.warn("escrituraEquipos undefined");
-      if (!carpeta.escrituraEquipos) console.warn("escrituraEquipos NULL");
-      const fields = [
-        "administracionUsuarios",
-        "lecturaUsuarios",
-        "lecturaGrupos",
-        "lecturaEquipos",
-        "escrituraUsuarios",
-        "escrituraGrupos",
-        "escrituraEquipos",
-      ];
-      for (const field of fields) {
-        console.log(field);
-        if (
-          field in carpeta &&
-          carpeta[field] &&
-          typeof carpeta[field] === "object"
-        )
-          carpeta[field] = carpeta[field].map((x) => x.id);
+    // guarda datos de la carpeta, o solo el nombre
+    guardar(datos) {
+      this.guardando = true;
+      console.log("guardar carpeta", JSON.stringify(datos));
+      const carpeta = typeof datos === "object" ? datos : null;
+      const nuevoNombre = typeof datos === "string" ? datos : null;
+      const idCarpeta = carpeta ? carpeta.id : this.carpeta.id;
+      if (carpeta) {
+        console.log(
+          "escrituraEquipos",
+          JSON.stringify(carpeta.escrituraEquipos)
+        );
+        if (typeof carpeta.escrituraEquipos === "undefined")
+          console.warn("escrituraEquipos undefined");
+        if (!carpeta.escrituraEquipos) console.warn("escrituraEquipos NULL");
+        const fields = [
+          "administracionUsuarios",
+          "lecturaUsuarios",
+          "lecturaGrupos",
+          "lecturaEquipos",
+          "escrituraUsuarios",
+          "escrituraGrupos",
+          "escrituraEquipos",
+        ];
+        for (const field of fields) {
+          console.log(field);
+          if (
+            field in carpeta &&
+            carpeta[field] &&
+            typeof carpeta[field] === "object"
+          )
+            carpeta[field] = carpeta[field].map((x) => x.id);
+        }
+        if ("padre" in carpeta && carpeta.padre)
+          carpeta.padre = carpeta.padre.id;
       }
-      if ("padre" in carpeta && carpeta.padre) carpeta.padre = carpeta.padre.id;
-      this.$strapi
-        .update("carpetas", carpeta.id, carpeta, this.populateCarpeta)
+      return this.$strapi
+        .update(
+          "carpetas",
+          idCarpeta,
+          nuevoNombre ? { nombre: nuevoNombre } : carpeta,
+          populateCarpeta
+        )
         .then((response) => {
           if (response.error) {
             let msg = "No se pudo guardar";
@@ -616,19 +650,21 @@ export default {
             this.$toast.error(msg);
           } else {
             const carpeta = response.data;
-            if (carpeta.id === parseInt(this.carpetaActual.id))
+            if (carpeta.id === parseInt(this.carpeta.id))
               //this.$set(this, "carpetaActual", result);
-              this.carpetaActual = carpeta;
-            this.$toast.success("Carpeta guardada");
+              this.carpeta = carpeta;
+            if (!nuevoNombre) this.$toast.success("Carpeta guardada");
           }
+          this.guardando = false;
         })
         .catch((error) => {
           let msg = "No se pudo guardar";
           if (this.setErr) {
-            this.setErr(response);
+            this.setErr(error);
             if (this.errors.message) msg = this.errors.message;
           }
           this.$toast.error(msg);
+          this.guardando = false;
         });
     },
     flexNavigateTo(carpeta) {
@@ -648,50 +684,24 @@ export default {
     _updateBreadcrumb() {
       console.log("archivos.updateBreadcrumb()");
       const carpeta = this.carpeta;
-      if (!carpeta.ruta) {console.log('no carpeta');return;}
-      const rootData = this.$store.getters.getRouteData(
-        this.$config.archivosRuta
-      );
-      const breadcrumb = [];
-      const parts = carpeta.ruta.split("/").filter((x) => !!x);
-      // parts.shift()
-      let rutaParcial = "";
-      const that = this;
-      while (parts.length) {
-        const part = parts.shift();
-        rutaParcial += "/" + part;
-        const ruta = rutaParcial;
-        // const base = ruta===this.$config.archivosRuta?this.$store.getters.getRouteData(ruta):{}
-        breadcrumb.push({
-          name: part,
-          href: rutaParcial,
-          click:
-            this.modoNavegacion === "Click"
-              ? async (event) => {
-                  this.$emit("click", {ruta, breadcrumb: true});
-                }
-              : this.modoNavegacion === "Main"
-              ? async (event) => {
-                  console.log("clicked!", event, ruta);
-                  event.preventDefault();
-                  event.stopPropagation();
-                  const [carpeta] = await this.$strapi.find("carpetas", {
-                    ruta,
-                  });
-                  console.log("carpeta", carpeta);
-                  console.log("current carpetaId", that.carpetaId);
-                  if (carpeta) that.carpetaId = carpeta.id;
-                  history.pushState({}, null, carpeta.ruta);
-                  // that.updateBreadcrumb()
-                  return false;
-                }
-              : null,
-          icon: rootData.icon,
-        });
+      if (!carpeta.ruta) {
+        console.log("no carpeta");
+        return;
       }
-
-      this.$store.commit("setNextPathBreadcrumb", breadcrumb);
-      this.$store.commit("updateBreadcrumb");
+      const breadcrumb = [];
+      carpeta.ruta
+        .split("/")
+        .filter((x) => !!x)
+        .reduce((pv, cv) => {
+          breadcrumb.push({
+            name: cv,
+            href: pv + "/" + cv,
+            click: this.flexNavigateTo,
+            icon: "folder-open",
+          });
+          return pv + "/" + cv;
+        }, "");
+      this.$store.commit("updateBreadcrumb", breadcrumb);
     },
   },
 };

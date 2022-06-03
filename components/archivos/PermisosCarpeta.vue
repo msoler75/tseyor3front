@@ -37,9 +37,9 @@
             <option value="Muul">Muul</option>
             <option value="Nadie">Sólo propietario</option>
           </select>
-          <span v-else class="elem">{{
-            localValue.lecturaAcceso.replace("Todos", "Público")
-          }}</span>
+          <PermisosListado v-else
+                :value="[{nombre: localValue.lecturaAcceso.replace('Todos', 'Público')}]"
+              />          
         </div>
         <div class="text-sm space-y-1">
           <div
@@ -157,9 +157,9 @@
             <option value="Muul">Muul</option>
             <option value="Nadie">Solo propietario</option>
           </select>
-          <span v-else class="elem">{{
-            localValue.escrituraAcceso.replace("Todos", "Público")
-          }}</span>
+          <PermisosListado v-else
+                :value="[{nombre: localValue.escrituraAcceso.replace('Todos', 'Público')}]"
+              />
         </div>
         <div class="text-sm space-y-1">
           <div

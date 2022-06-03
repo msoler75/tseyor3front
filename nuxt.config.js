@@ -10,7 +10,7 @@ export default {
     // base: '/web3/',
     prefetchLinks: false,
     middleware: ['route'],
-    mode:'history'
+    // mode:'history'
   },
 
   /* serverMiddleware: [
@@ -30,7 +30,7 @@ export default {
     archivosRuta: '/archivos',
     meilisearchUrl: process.env.MEILISEARCH_URL || 'http://localhost:7700',
     meilisearchKey: process.env.MEILISEARCH_KEY,
-    strapiUrl: 'http://localhost:3000/api',
+    strapiUrl: 'http://localhost:3000/api'
   },
 
 
@@ -119,15 +119,15 @@ export default {
     // { src: '~plugins/nuxt-hammer.js', mode: 'client' },
     // { src: '~plugins/vue-touch.js', mode: 'client' },
     {
-      src: '~plugins/confirm.js',
+      src: '~plugins/window-confirm.js',
       mode: 'client'
     },
     {
-      src: '~plugins/prompt.js',
+      src: '~plugins/window-prompt.js',
       mode: 'client'
     },
     {
-      src: '~plugins/alert.js',
+      src: '~plugins/window-alert.js',
       mode: 'client'
     },
   ],
@@ -214,21 +214,8 @@ export default {
     // baseURL: '/api' 
   },
 
-  apollo: {
-    clientConfigs: {
-      default: {
-        httpEndpoint: '/api/graphql'
-      }
-    },
-    defaultOptions: {
-      // See 'apollo' definition
-      // For example: default query options
-      $query: {
-        loadingKey: 'loading',
-        fetchPolicy: 'cache-and-network'
-      }
-    }
-  },
+
+  loading: '~/components/Loading.vue',
 
   /*
    ** Auth module configuration
@@ -380,7 +367,7 @@ export default {
     // suffix: true,
     icons: {
       // list the icons you want to add, not listed icons will be tree-shaked
-      solid: ['faBars', 'faHeart', 'faDownload', 'faPlay', 'faPause', 'faChevronRight', 'faChevronLeft', 'faChevronDown', 'faChevronUp', 'faExclamation', 'faExclamationTriangle', 'faSearch', 'faSignInAlt', 'faFile', 'faFileAlt', 'faFileImage', 'faFileAudio', 'faFileVideo', 'faFilePowerpoint', 'faFileWord', 'faFilePdf', 'faFileArchive', 'faBook', 'faComments', 'faMusic', 'faSitemap', 'faRoute', 'faBolt', 'faHeadphones', 'faBroadcastTower', 'faLink', 'faBalanceScale', 'faScroll', 'faArrowLeft', 'faArrowRight', 'faHome', 'faUser', 'faMapMarkedAlt', 'faThLarge', 'faCheckCircle', 'faInfoCircle', 'faCheck', 'faShareAlt', 'faCalendarDay', 'faPaperclip', 'faCalendarAlt', 'faGlobe', 'faHourglass', 'faDonate', 'faQuestion', 'faQuestionCircle', 'faTree', 'faBookOpen', 'faFolderOpen', 'faFolder', 'faUsers', 'faGavel', 'faFileSignature', 'faWalking', 'faMapSigns', 'faCalendarWeek', 'faPeopleCarry', 'faLocationArrow', 'faCircle', 'faFeatherAlt', 'faEdit', 'faNewspaper', 'faBullhorn', 'faPenAlt', 'faRss', 'faFastBackward', 'faGlobeAmericas', 'faGraduationCap', 'faHandsHelping', 'faHandPaper', 'faChessRook', 'faUniversity', 'faPlayCircle', 'faExchangeAlt', 'faEnvelopeOpenText', 'faBriefcaseMedical', 'faChalkboardTeacher', 'faCaretRight', 'faCaretLeft', 'faStepBackward', 'faStepForward', 'faSignOutAlt', 'faDoorOpen', 'faHiking', 'faBell', 'faSync', 'faPlusSquare', 'faTrash', 'faCrop', 'faEye', 'faEyeSlash', 'faEnvelope', 'faPaperPlane', 'faCopy', 'faImages', 'faUpload', 'faCloudUploadAlt', 'faSpinner', 'faTimes', 'faFolderPlus', 'faFileUpload', 'faMicrophone', 'faTasks', 'faCog', 'faSquare', 'faCheckSquare'],
+      solid: ['faBars', 'faHeart', 'faDownload', 'faPlay', 'faPause', 'faChevronRight', 'faChevronLeft', 'faChevronDown', 'faChevronUp', 'faExclamation', 'faExclamationTriangle', 'faSearch', 'faSignInAlt', 'faFile', 'faFileAlt', 'faFileImage', 'faFileAudio', 'faFileVideo', 'faFilePowerpoint', 'faFileWord', 'faFilePdf', 'faFileArchive', 'faBook', 'faComments', 'faMusic', 'faSitemap', 'faRoute', 'faBolt', 'faHeadphones', 'faBroadcastTower', 'faLink', 'faBalanceScale', 'faScroll', 'faArrowLeft', 'faArrowRight', 'faHome', 'faUser', 'faMapMarkedAlt', 'faThLarge', 'faCheckCircle', 'faInfoCircle', 'faCheck', 'faShareAlt', 'faCalendarDay', 'faPaperclip', 'faCalendarAlt', 'faGlobe', 'faHourglass', 'faDonate', 'faQuestion', 'faQuestionCircle', 'faTree', 'faBookOpen', 'faFolderOpen', 'faFolder', 'faUsers', 'faGavel', 'faFileSignature', 'faWalking', 'faMapSigns', 'faCalendarWeek', 'faPeopleCarry', 'faLocationArrow', 'faCircle', 'faFeatherAlt', 'faEdit', 'faNewspaper', 'faBullhorn', 'faPenAlt', 'faRss', 'faFastBackward', 'faGlobeAmericas', 'faGraduationCap', 'faHandsHelping', 'faHandPaper', 'faChessRook', 'faUniversity', 'faPlayCircle', 'faExchangeAlt', 'faEnvelopeOpenText', 'faBriefcaseMedical', 'faChalkboardTeacher', 'faCaretRight', 'faCaretLeft', 'faStepBackward', 'faStepForward', 'faSignOutAlt', 'faDoorOpen', 'faHiking', 'faBell', 'faSync', 'faPlusSquare', 'faTrash', 'faCrop', 'faEye', 'faEyeSlash', 'faEnvelope', 'faPaperPlane', 'faCopy', 'faImages', 'faUpload', 'faCloudUploadAlt', 'faSpinner', 'faTimes', 'faFolderPlus', 'faFileUpload', 'faMicrophone', 'faTasks', 'faCog', 'faSquare', 'faCheckSquare', 'faHistory'],
       regular: ['faHeart', 'faComments', 'faClipboard', 'faFrown', 'faComment', 'faCalendarAlt', 'faUser', 'faBell', 'faClock', 'faEnvelope', 'faTrashAlt'],
       // include all icons. But dont do this. 
       //regular: true, 

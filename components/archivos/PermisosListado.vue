@@ -36,6 +36,6 @@ export default {
 
 <style scoped>
 .elem {
-  @apply px-2 rounded bg-gray-200 text-sm text-gray-dark-900 whitespace-nowrap;
+  @apply px-2 rounded bg-gray-100 dark:bg-gray-900 text-sm text-gray-dark-700 dark:text-gray-300 whitespace-nowrap;
 }
 </style>

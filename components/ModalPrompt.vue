@@ -1,6 +1,6 @@
 <template>
     <Modal v-model="opened" :title="title">
-        <div class="p-5 w-sm max-w-full">
+        <form @submit.prevent="confirm" class="p-5 w-sm max-w-full">
             <div class="font-bold text-center mb-7" v-html="message"/>
             <div v-if="response.indexOf('\n')<0"><input type="text" v-model="response"></div>
             <div v-else><textarea rows="7" v-model="response"></textarea></div>
@@ -8,7 +8,7 @@
                 <TButton variant="success" @click="confirm" class="w-1/2 text-center">{{ yes }}</TButton>
                 <TButton variant="error" @click="cancel" class="w-1/2 text-center">{{ no }}</TButton>
             </div>
-        </div>
+        </form>
     </Modal>
 </template>
 

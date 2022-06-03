@@ -1,0 +1,37 @@
+<template>
+  <div class="py-5 px-5 sm:px-10 lg:px-14">
+    <h3>Recientes</h3>
+    <ListadoCarpetas
+      :carpetas="recientes"
+      @click="$emit('click', $event)"
+      placeholder="Sin actividad reciente"
+      :padre="{ ruta: $route.path + '', publishedAt: 1 }"
+    />
+  </div>
+</template>
+
+<script>
+import {populateCarpetaPermisos} from '@/assets/js/carpeta'
+export default {
+  middleware: ["logged"],
+  async asyncData({ $strapi, $error }) {
+    try {
+      const response = await $strapi.find("users/me", {
+        fields: ["id"],
+        populate: {
+          carpetasCreadas: {
+            populate: populateCarpetaPermisos,
+          },
+        },
+        publicationState: "preview",
+      });
+      let recientes = response.carpetasCreadas
+        .filter((v, i, a) => a.findIndex((x) => x.id == v.id) == i)
+      return { recientes };
+    } catch (e) {
+      console.error(e);
+      $error(503);
+    }
+  },
+};
+</script>

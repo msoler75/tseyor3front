@@ -38,6 +38,8 @@ export default () => ({
   backgroundImageUrl: null,
   // estamos viajando entre páginas
   travelling: true,
+  // estamos cargando una página
+  loading: false,
   // se activa al hacer click en breadcrumb
   breadcrumbHandler: null,
   // próximo path en la transición de cambio de página

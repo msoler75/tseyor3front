@@ -77,7 +77,12 @@ export default {
     state.nextPathBreadcrumb = state.pathBreadcrumb
   },
 
-  travelling(state, payload) {
+  setLoading(state, payload) {
+  // console.log('loading=', payload)
+    state.loading = payload
+  },
+
+  setTravelling(state, payload) {
     // console.log('travelling=', payload)
     state.travelling = payload
   },
