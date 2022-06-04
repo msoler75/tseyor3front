@@ -19,13 +19,13 @@ export default {
       const response = await $strapi.find("users/me", {
         fields: ["id"],
         populate: {
-          carpetasCreadas: {
+          carpetasPropietario: {
             populate: populateCarpetaPermisos,
           },
         },
         publicationState: "preview",
       });
-      let recientes = response.carpetasCreadas
+      let recientes = response.carpetasPropietario
         .filter((v, i, a) => a.findIndex((x) => x.id == v.id) == i)
       return { recientes };
     } catch (e) {

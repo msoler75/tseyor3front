@@ -1,6 +1,6 @@
 <template>
   <section
-    class="archivos flex flex-col sm:flex-row justify-start h-full"
+    class="archivos flex flex-col sm:flex-row justify-start"
     contained="no"
     background="no"
     breadcrumb="no"
@@ -11,9 +11,10 @@
       v-if="$strapi.user"
       class="
         surface
+        flex-grow
         !bg-gray-100
         dark:!bg-gray-900
-        !border-l-0 !border-r-0 !border-b-0        
+        !border-l-0 !border-r-0 !border-b-0
         select-none
         whitespace-nowrap
       "
@@ -75,24 +76,22 @@
     <div class="surface w-full flex flex-col">
       <Breadcrumb
         v-if="verBreadcrumb"
-        class="text-sm py-2 px-5 sm:px-10 lg:px-14"
+        class="text-sm mt-2 py-2 px-5 sm:px-10 lg:px-14"
       />
-      <div
-        v-if="loading"
-        class="w-full flex-grow !border-l-0 !border-r-0"
-      >
-        <Loader class="h-full text-2xl" />
-      </div>
-      <div
-        v-else
-        class="w-full flex-grow !border-l-0 !border-r-0"
-      >
+        <div v-if="!loading" class="w-full flex-grow !border-l-0 !border-r-0">
         <nuxt-child
           v-show="!loading"
           :nuxt-child-key="$route.fullPath"
           @click="onRuta"
+          @borrada="borrada"
         />
       </div>
+      <div class="w-full overflow-hidden flex-grow !border-l-0 !border-r-0 opacity-50">
+        <Loader class="h-full text-2xl surface"
+        :class="loading?'max-h-[80vh]':'max-h-0 transform translate-x-[9999px]'"
+        />
+      </div>
+    
     </div>
   </section>
 </template>
@@ -127,7 +126,7 @@ export default {
   },
   data() {
     return {
-      menuActual: "archivos",
+      menuActual: this.$route.path.substr(this.$route.path.lastIndexOf('/')+1),
       viewMenu: false,
       options: [
         {
@@ -188,7 +187,7 @@ export default {
         "/recientes",
         "/papelera",
         "/compartidas",
-        "misEquipos",
+        "/misEquipos",
         "/misGrupos",
       ].map((x) => this.$config.archivosRuta + x);
       return (
@@ -210,6 +209,10 @@ export default {
         });*/
     },
   },
+  mounted() {
+    if(!this.options.find(x=>x.value===this.menuActual))
+    this.menuActual = 'archivos'
+  },
   methods: {
     onMenu(value) {
       this.menuActual = value;
@@ -220,33 +223,48 @@ export default {
       this.ultimoClick = ruta;
       this.$router.push(ruta);
     },
-    onRuta(carpeta) {
-      console.log("onRuta", carpeta);
+    onRuta(obj) {
+      console.log("onRuta", obj);
       this.ultimoClick = null;
-      const ruta = typeof carpeta === "object" ? carpeta.ruta : carpeta;
+      const ruta = typeof obj === "object" ? obj.ruta : obj;
       this.$router.push(ruta);
-      this.updateBreadcrumb(ruta)
+      this._updateBreadcrumb(ruta);
     },
-    updateBreadcrumb(ruta) {
-      const breadcrumb = []
-      ruta.split("/").filter((x) => !!x)
-      .reduce((pv,cv)=>{
-        breadcrumb.push({
-          name: cv,
-          href: pv+'/'+cv,
-          click: this.flexNavigateTo,
-          icon: 'folder-open',
+    async borrada(rutaBorrada) {
+      console.log('CARPETA BORRADA', rutaBorrada)
+      console.log('ruta Actual', this.$route.path)
+      if (rutaBorrada == this.$route.path) {
+        let ruta = this.$route.path.substr(
+          0,
+          this.$route.path.lastIndexOf("/")
+        );
+        const response = await this.$strapi.find('carpetas', {
+          ruta: {
+            $eq: ruta
+          }
         })
-        return pv+'/'+cv},
-      '')
-      this.$store.commit("updateBreadcrumb", breadcrumb);
+        if(response.error)
+          ruta = this.$config.archivosRuta
+        this.$router.replace({ path: ruta });
+        this._updateBreadcrumb(ruta);
+      }
     },
-    onBreadcrumbClicked(ruta) {
-      console.log("clicked breadcrumb");
-      // alert(ruta);
-      // this.onRuta(ruta);
-      // this.menuActual = 'archivos'
-      //this.cambiarACarpeta(ruta);
+    _updateBreadcrumb(ruta) {
+      console.log("archivos._updateBreadcrumb", ruta);
+      const breadcrumb = [];
+      ruta
+        .split("/")
+        .filter((x) => !!x)
+        .reduce((pv, cv) => {
+          breadcrumb.push({
+            name: cv,
+            href: pv + "/" + cv,
+            click: this.onRuta,
+            icon: "folder-open",
+          });
+          return pv + "/" + cv;
+        }, "");
+      this.$store.commit("updateBreadcrumb", breadcrumb);
     },
   },
 };
@@ -258,11 +276,11 @@ export default {
   font-family: "Karla", sans-serif;
 }
 .archivos >>> h1,
-.archivos h3 {
+.archivos >>> h3 {
   @apply text-lg mb-4 text-diminished opacity-75;
 }
-.archivos h4 {
-  @apply mt-0 text-base mb-4 font-bold text-diminished;
+.archivos >>> h4 {
+  @apply !mt-0 text-base mb-4 font-bold text-diminished;
 }
 .item-selected {
   @apply text-sello-centro dark:text-orange;

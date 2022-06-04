@@ -22,7 +22,7 @@ export default {
           carpeta: {
             populate: populateCarpetaPermisos,
           },
-          carpetasCreadas: {
+          carpetasPropietario: {
             populate: populateCarpetaPermisos,
             publicationState: "preview",            
           },
@@ -31,7 +31,7 @@ export default {
       let misCarpetas = [];
       if (response.carpeta) misCarpetas.push(response.carpeta);
       misCarpetas = misCarpetas
-        .concat(response.carpetasCreadas)
+        .concat(response.carpetasPropietario)
         .filter((v, i, a) => a.findIndex((x) => x.id == v.id) == i)
         .filter((x) => x.publishedAt);
       return { misCarpetas };

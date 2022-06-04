@@ -1,13 +1,16 @@
 <template>
   <Droppable
-    class="w-full flex select-none"
+    class="w-full flex select-none relative"
     v-model="dragging"
     :dropAllowed="escritura"
     :class="
       (dragging ? 'bg-yellow' : '') +
       (cargando || thereErrors ? ' max-h-[70vh] justify-center' : '')
     "
+    @dragstart.prevent=""
     @drop.prevent.stop="drop"
+    @contextmenu.native.prevent.stop="mostrarMenu = $event"
+    :title="carpeta&&!carpeta.publishedAt?'Esta carpeta está en la papelera':''"
   >
     <div v-if="explorando">
       <div
@@ -17,30 +20,37 @@
         <span>{{ errors.message }}</span>
       </div>
       <Loader v-else-if="cargando" />
-      <div v-else-if="carpeta" class="w-full flex flex-col">
-        <h1
-          v-if="mostrarTitulo && (carpeta.nombreOriginal || carpeta.nombre)"
-          class="flex justify-between relative"
-        >
-          <span>{{ carpeta.nombreOriginal || carpeta.nombre }}</span>
-          <span
-            v-if="mostrarControles"
-            class="self-center cursor-pointer text-gray text-xl ml-2 pl-2 pr-1"
-            @click="mostrarMenu = true"
+      <div v-else-if="carpeta" class="w-full flex flex-col justify-between">
+        <div class="px-2 flex justify-between relative z-10">
+          <h1
+            v-if="mostrarTitulo && (carpeta.nombreOriginal || carpeta.nombre)"
+            class="flex justify-between"
           >
-            <Loader v-if="guardando" :spinner="true" />
-            <span v-else>&vellip;</span></span
-          >
-          <MenuContextual v-model="mostrarMenu" :items="menuItems" />
-        </h1>
-        <PropiedadesCarpeta
-          v-if="mostrarTitulo && mostrarControles"
-          textAccept="Guardar"
-          :carpeta="carpeta"
-          @guardar="guardar"
-          v-model="mostrarPropiedades"
-          :administracion="administracion"
-        />
+            <span>{{ carpeta.nombreOriginal || carpeta.nombre }}</span>
+          </h1>
+          <div class="flex">
+            <Loader
+              v-if="procesando"
+              :spinner="true"
+              class="pl-1 flex self-center w-5 h-5"
+            />
+            <span
+              v-else-if="carpeta && mostrarControles && carpeta.nombreMostrar!='..'"
+              class="
+                self-center
+                cursor-pointer
+                text-gray text-xl
+                ml-2
+                pl-2
+                pr-1
+                pointer-events-auto
+              "
+              @click.stop.prevent="mostrarMenu = $event"
+            >
+              &vellip;</span
+            >
+          </div>
+        </div>
         <div
           v-if="
             !carpetas.length &&
@@ -65,6 +75,7 @@
           @click="$emit('click', $event)"
           @dragenter="dragging = false"
           @dragleave="dragging = true"
+          @borrada="carpeta.subcarpetas.splice(index, 1)"
         />
         <template v-if="mostrarArchivos">
           <Archivo
@@ -92,45 +103,44 @@
         </template>
       </div>
     </div>
-    <div v-else>
+    <div v-else class="relative">
       <a
         class="flex w-full overflow-hidden group"
         target="_blank"
+        :class="localValue.publishedAt ? ' ' : ' pointer-events-none'"
         @click.stop.prevent="flexNavigateTo(carpeta)"
         :href="carpeta ? carpeta.ruta : ''"
       >
         <div
           class="flex flex-shrink-0 justify-center items-center"
-          :class="
-            boxClass +
-            (localValue.publishedAt ? ' text-orange-200' : ' text-gray-500')
-          "
+          :class="boxClass"
         >
-          <div
-            v-if="localValue.nombreMostrar === '..'"
-            class="relative flex justify-center items-center"
-            :class="localValue.publishedAt ? 'cursor-pointer' : ''"
-          >
-            <icon icon="fas fa-folder" class="absolute" :class="iconClass" />
-            <icon
-              icon="fas fa-arrow-left"
-              class="group-hover:-translate-x-1 text-xs text-black absolute"
-            />
-          </div>
-          <div v-else class="flex items-center justify-center">
+          <div class="flex items-center justify-center">
             <icon
               icon="folder"
+              class="absolute"
               :class="
                 iconClass +
-                (localValue.publishedAt
-                  ? ' group-hover:hidden cursor-pointer'
-                  : '')
+                (localValue.nombreMostrar != '..' && localValue.publishedAt
+                  ? ' group-hover:hidden'
+                  : '') +
+                (localValue.publishedAt ? ' text-orange-200' : ' text-gray-500')
               "
             />
             <icon
-              v-if="localValue.publishedAt"
+              v-if="!localValue.publishedAt"
+              icon="far fa-trash-alt"
+              class="absolute translate-y-1 scale-90 text-gray-100"
+            />
+            <icon
+              v-if="localValue.nombreMostrar === '..'"
+              icon="fas fa-arrow-left"
+              class="group-hover:-translate-x-1 text-xs text-black absolute"
+            />
+            <icon
+              v-else-if="localValue.publishedAt"
               icon="folder-open"
-              class="hidden group-hover:block cursor-pointer"
+              class="absolute hidden group-hover:block text-orange-200"
               :class="iconClass"
               style="transform: translate(2.5px, -1px)"
             />
@@ -169,14 +179,39 @@
             }}</span>
           </div>
         </div>
-        <span
-          v-if="mostrarControles && localValue.nombreMostrar !== '..'"
-          class="self-center cursor-pointer text-gray text-xl ml-2 pl-2 pr-1"
-          >&vellip;</span
-        >
-        <span v-else-if="mostrarControles" class="ml-2 pl-2 pr-1">&nbsp;</span>
+        <div class="flex">
+          <Loader
+            v-if="procesando"
+            :spinner="true"
+            class="pl-1 flex self-center w-5 h-5"
+          />
+          <span
+            v-else-if="carpeta && mostrarControles && carpeta.nombreMostrar!='..'"
+            class="
+              self-center
+              cursor-pointer
+              text-gray text-xl
+              ml-2
+              pl-2
+              pr-1
+              pointer-events-auto
+            "
+            @click.stop.prevent="mostrarMenu = $event"
+          >
+            &vellip;</span
+          >
+        </div>
       </a>
     </div>
+    <MenuContextual v-if="carpeta" v-model="mostrarMenu" :items="menuItems" />
+    <PropiedadesCarpeta
+      v-if="carpeta && mostrarTitulo && mostrarControles"
+      textAccept="Guardar"
+      :carpeta="carpeta"
+      @guardar="guardar"
+      v-model="mostrarPropiedades"
+      :administracion="administracion"
+    />
   </Droppable>
 </template>
 
@@ -194,6 +229,7 @@ export default {
       default: false,
     },
     padre: {},
+    borrarDefinitivo: { type: Boolean, required: false, default: false },
     idRootFolder: { type: Number, required: false, default: 0 },
     modoNavegacion: {
       type: String,
@@ -240,10 +276,10 @@ export default {
   data() {
     return {
       /* ESTA VARIABLE SE TIENE QUE ASIGNAR LOS DATOS DE LA CARPETA */
-      carpeta: null,
+      carpeta: {},
       dragging: false,
       cargando: true,
-      guardando: false,
+      procesando: false,
       carpetas: [],
       archivos: [],
       mostrarMenu: false,
@@ -254,14 +290,48 @@ export default {
   computed: {
     menuItems() {
       const items = [];
-      if (this.administracion) {
+      if (!this.carpeta) return items;
+
+      if(this.carpeta.nombreMostrar=="..") return items
+
+      if (this.carpeta.publishedAt && this.escritura && this.$route.path==this.carpeta.ruta)
         items.push({
-          label: "Renombrar",
-          click: this.renombrar,
+          label: "Nueva carpeta",
+          icon: "folder-plus",
+          click: this.nueva,
         });
+      if (this.administracion) {
+        if (!this.carpeta.publishedAt)
+          items.push({
+            label: "Restaurar",
+            icon: "fas fa-trash-restore",
+            click: this.restaurar,
+          });
+        else {
+          items.push({
+            label: "Renombrar",
+            icon: "pen-alt",
+            click: this.renombrar,
+          });
+          items.push({
+            label: "Compartir",
+            icon: "share-alt",
+            click: this.compartir,
+          });
+        }
+        if (this.carpeta.publishedAt || this.borrarDefinitivo)
+          items.push({
+            label: this.borrarDefinitivo
+              ? "Eliminar Definitivamente"
+              : "Eliminar",
+            icon: "far fa-trash-alt",
+            click: this.eliminar,
+          });
       }
+
       items.push({
         label: "Propiedades",
+        icon: this.administracion ? "cog" : "info-circle",
         click: () => {
           this.mostrarPropiedades = true;
         },
@@ -341,14 +411,13 @@ export default {
       this.cargando = false;
       //if ("lecturaUsuarios" in this.carpeta) return;
       //toFetch = this.carpeta.id;
-      if (this.updateBreadcrumb) this._updateBreadcrumb();
+      if (this.updateBreadcrumb) this._updateBreadcrumb(this.carpeta.ruta);
       return;
     }
 
     this.cargando = true;
     if (typeof this.localValue === "string") {
-      this.carpeta = { ruta: this.localValue };
-      if (this.updateBreadcrumb) this._updateBreadcrumb();
+      if (this.updateBreadcrumb) this._updateBreadcrumb(this.localValue);
     }
     console.warn("ES UN ID/RUTA");
 
@@ -391,13 +460,51 @@ export default {
         this.cargando = false;
       })
       .catch((e) => {
-        console.error("error", e);
+        console.error(e);
         this.setErr(e);
         this.cargando = false;
       });
   },
   methods: {
+    nueva() {
+      this.$prompt({
+        response: "",
+        message: "Nombre de la carpeta",
+        accepted: (nombre) => {
+          this.procesando = true;
+          this.$strapi
+            .create(
+              "carpetas",
+              {
+                nombre,
+                padre: this.carpeta.id,
+              },
+              populateCarpeta
+            )
+            .then((response) => {
+              console.log("response", response);
+              if (response.error) throw new Error(response.error);
+              const carpeta = response.data;
+              // if (carpeta.padre.id === parseInt(this.carpeta.id))
+              //this.$set(this, "carpetaActual", result);
+              this.carpeta.subcarpetas.push(carpeta);
+              this.procesando = false;
+            })
+            .catch((error) => {
+              console.error(error);
+              let msg = "No se pudo crear";
+              if (this.setErr) {
+                this.setErr(error);
+                if (this.errors.message) msg = this.errors.message;
+              }
+              this.$toast.error(msg);
+              this.procesando = false;
+            });
+        },
+      });
+    },
     renombrar() {
+      const redireccionar = this.$route.path===this.carpeta.ruta
       this.$prompt({
         message: "Nuevo nombre",
         response: this.carpeta.nombre,
@@ -406,10 +513,109 @@ export default {
           //this.carpeta.ruta = this.carpeta.ruta.replace(regex, "");
           //this.carpeta.ruta += "/" + response;
           //this.carpeta.nombre = response;
+          console.log('antes de guardar', this.carpeta)
           await this.guardar(response);
-          this.$router.replace(this.carpeta.ruta);
+          console.log('despues de guardar', this.carpeta)
+          if(redireccionar)
+            this.$router.replace(this.carpeta.ruta);
         },
       });
+    },
+    compartir() {},
+    eliminar() {
+      if (!this.borrarDefinitivo) return this.enviarAPapelera();
+      this.$confirm({
+        message: `Esto eliminará permanentemente la carpeta ${this.carpeta.nombre}`,
+        yes: `Borrar carpeta`,
+        no: "Cancelar",
+        confirmed: async () => {
+          console.log("ruta actual", this.carpeta.ruta);
+          let proximaRuta =
+            this.modoNavegacion == "Route" &&
+            this.carpeta.ruta == this.$route.path
+              ? this.carpeta.ruta.substr(0, this.carpeta.ruta.lastIndexOf("/"))
+              : null;
+          console.log("proximaRuta", proximaRuta);
+          this.procesando = true;
+          this.$strapi
+            .delete("carpetas", this.carpeta.id)
+            .then((response) => {
+              if (response.error)
+                throw new Error("No se pudo eliminar la carpeta");
+              if (proximaRuta) {
+                this.$router.replace({ path: proximaRuta });
+                if (this.updateBreadcrumb) this._updateBreadcrumb(proximaRuta);
+              } else {
+                this.$emit("borrada", this.carpeta.ruta);
+                // this.carpeta = null
+                //if(this.carpeta&&this.carpeta.subcarpetas) {
+                //let idx = this.carpeta.subcarpetas.findIndex(x=>x.id===)
+                //}
+              }
+              this.procesando = false;
+            })
+            .catch((error) => {
+              console.error(error);
+              let msg = "No se pudo eliminar la carpeta";
+              if (this.setErr) {
+                this.setErr(error);
+                if (this.errors.message) msg = this.errors.message;
+              }
+              this.$toast.error(msg);
+              this.procesando = false;
+            });
+        },
+      });
+    },
+    enviarAPapelera() {
+      this.procesando = true;
+      this.$strapi
+        .update("carpetas", this.carpeta.id, {
+          publishedAt: null,
+        })
+        .then((response) => {
+          console.log("enviarAPapelera response", response);
+          if (response.error) throw new Error("No se pudo eliminar la carpeta");
+          this.carpeta.publishedAt = null;
+          this.$emit("borrada", this.carpeta.ruta);
+          this.procesando = false;
+        })
+        .catch((error) => {
+          console.error(error);
+          let msg = "No se pudo eliminar la carpeta";
+          if (this.setErr) {
+            this.setErr(error);
+            if (this.errors.message) msg = this.errors.message;
+          }
+          this.$toast.error(msg);
+          this.procesando = false;
+        });
+    },
+    restaurar() {
+      const date = new Date().toISOString();
+      this.procesando = true;
+      this.$strapi
+        .update("carpetas", this.carpeta.id, {
+          publishedAt: date,
+          populateCarpeta,
+        })
+        .then((response) => {
+          console.log("restaurar response", response);
+          if (response.error)
+            throw new Error("No se pudo restaurar la carpeta");
+          this.carpeta.publishedAt = date;
+          this.procesando = false;
+        })
+        .catch((error) => {
+          console.error(error);
+          let msg = "No se pudo restaurar la carpeta";
+          if (this.setErr) {
+            this.setErr(error);
+            if (this.errors.message) msg = this.errors.message;
+          }
+          this.$toast.error(msg);
+          this.procesando = false;
+        });
     },
     async drop(e) {
       const items = e.detail
@@ -599,16 +805,12 @@ export default {
 
     // guarda datos de la carpeta, o solo el nombre
     guardar(datos) {
-      this.guardando = true;
+      this.procesando = true;
       console.log("guardar carpeta", JSON.stringify(datos));
       const carpeta = typeof datos === "object" ? datos : null;
       const nuevoNombre = typeof datos === "string" ? datos : null;
       const idCarpeta = carpeta ? carpeta.id : this.carpeta.id;
-      if (carpeta) {
-        console.log(
-          "escrituraEquipos",
-          JSON.stringify(carpeta.escrituraEquipos)
-        );
+      if (carpeta) {        
         if (typeof carpeta.escrituraEquipos === "undefined")
           console.warn("escrituraEquipos undefined");
         if (!carpeta.escrituraEquipos) console.warn("escrituraEquipos NULL");
@@ -641,34 +843,31 @@ export default {
           populateCarpeta
         )
         .then((response) => {
-          if (response.error) {
-            let msg = "No se pudo guardar";
-            if (this.setErr) {
-              this.setErr(response);
-              if (this.errors.message) msg = this.errors.message;
-            }
-            this.$toast.error(msg);
-          } else {
-            const carpeta = response.data;
-            if (carpeta.id === parseInt(this.carpeta.id))
-              //this.$set(this, "carpetaActual", result);
-              this.carpeta = carpeta;
-            if (!nuevoNombre) this.$toast.success("Carpeta guardada");
-          }
-          this.guardando = false;
+          console.log("response", response);
+          if (response.error) throw new Error(response.error);
+          const carpeta = response.data;
+          //if (carpeta.id === parseInt(this.carpeta.id))
+          for(const key in carpeta)
+            this.$set(this.carpeta, key, carpeta[key]);
+            //this.carpeta = carpeta;
+          if (!nuevoNombre) this.$toast.success("Carpeta guardada");
+
+          this.procesando = false;
         })
         .catch((error) => {
+          console.error(error);
           let msg = "No se pudo guardar";
           if (this.setErr) {
             this.setErr(error);
             if (this.errors.message) msg = this.errors.message;
           }
           this.$toast.error(msg);
-          this.guardando = false;
+          this.procesando = false;
         });
     },
     flexNavigateTo(carpeta) {
       console.warn("FLEXNAVIGATETO", carpeta, this.modoNavegacion);
+      if (!carpeta.publishedAt) return;
       // if (!carpeta.publishedAt) return;
       console.log("navigated to", carpeta.id, this.modoNavegacion);
       if (this.modoNavegacion === "Embed") this.localValue = carpeta.id;
@@ -681,15 +880,10 @@ export default {
         this.$emit("click", carpeta);
       } else this.$router.push(carpeta.ruta);
     },
-    _updateBreadcrumb() {
-      console.log("archivos.updateBreadcrumb()");
-      const carpeta = this.carpeta;
-      if (!carpeta.ruta) {
-        console.log("no carpeta");
-        return;
-      }
+    _updateBreadcrumb(ruta) {
+      console.log("archivos.updateBreadcrumb()", ruta);
       const breadcrumb = [];
-      carpeta.ruta
+      ruta
         .split("/")
         .filter((x) => !!x)
         .reduce((pv, cv) => {

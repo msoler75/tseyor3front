@@ -2,7 +2,7 @@
    <a
         target="_blank"
         :href="localValue.media &&  localValue.media.url ? localValue.media.url : '#'"
-        :class="localValue.uploading?'pointer-events-none':''"
+        :class="!localValue.publishedAt||localValue.uploading?'pointer-events-none':''"
         download class="flex w-full">
     <div
       class="flex flex-shrink-0 text-gray justify-center items-center"

@@ -53,7 +53,7 @@ export default {
             this.no = no || this.no
             this.accepted = accepted
             this.cancelled = cancelled
-            this.response = response || this.response
+            this.response = response || (""+this.response)
         }
     }
 }

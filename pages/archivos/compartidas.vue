@@ -35,14 +35,14 @@ export default {
           carpetasEscritura: {
             populate: populateCarpetaPermisos,
           },
-          carpetasCreadas: {
+          carpetasPropietario: {
             populate: populateCarpetaPermisos,
             publicationState: "preview",
           },
         },
       });
 
-      const carpetasQueCompartes = response.carpetasCreadas
+      const carpetasQueCompartes = response.carpetasPropietario
         .filter((x) => x.publishedAt)
         .filter(
           (x) =>

@@ -1,20 +1,3 @@
-const populateCarpeta = {
-  padre: "*",
-  archivos: {
-    populate: ["media"],
-  },
-  subcarpetas: "*",
-  propietario: "*",
-  lecturaUsuarios: "*",
-  lecturaGrupos: "*",
-  lecturaEquipos: "*",
-  escrituraUsuarios: "*",
-  escrituraGrupos: "*",
-  escrituraEquipos: "*",
-  administracionUsuarios: "*",
-}
-
-
 const populateCarpetaPermisos = {
   propietario: "*",
   lecturaUsuarios: "*",
@@ -24,6 +7,20 @@ const populateCarpetaPermisos = {
   escrituraGrupos: "*",
   escrituraEquipos: "*",
   administracionUsuarios: "*"
+}
+
+const populateCarpeta = {
+  padre: "*",
+  archivos: {
+    populate: {
+      media: "*",
+      ...populateCarpetaPermisos
+    },
+  },
+  subcarpetas: {
+    populate: populateCarpetaPermisos
+  },
+  ...populateCarpetaPermisos
 }
 
 module.exports = {

@@ -2,13 +2,13 @@
   <div id="__main-container" ref="main" class="surface-0 w-full font-sans relative" 
     :class="(loading ? 'loading ' : 'in-page') + (pageConfig.background ? '' : 'no-background')">
 
-    <div class="absolute w-full h-screen z-0" :style="imagenFondo"></div>
+    <div class="absolute w-full z-0" :style="imagenFondo"></div>
 
     <!-- Navigation starts-->
-    <NavTop v-model="currentTab" :rutasMenu="rutasMenu" ref="nav" @showSideMenu="showSideMenu" />
+    <NavTop v-model="currentTab" :rutasMenu="rutasMenu" ref="nav" @showSideMenu="showSideMenu" @usermenu="menuUsuario=true"/>
 
     <!-- User Menu -->
-    <MenuUser v-if="$strapi.user" v-show="menuUsuario" />
+    <MenuUser v-if="$strapi.user" v-model="menuUsuario" />
 
     <!-- Page title starts -->
     <!-- Navigation ends -->
@@ -41,9 +41,9 @@
 
     </div> 
     <!-- Page title ends -->
-    <div @click="clickOff" class="relative z-10 h-full flex-grow"
+    <div @click="clickOff" class="relative z-10 flex-grow"
       :class="pageConfig.contained ? 'container xs:px-1 sm:px-3 md:px-6 mx-auto' : ''">
-      <div class="w-full h-full">
+      <div class="w-full">
         <!-- Place your content here -->
         <nuxt id="__content" class="mx-auto" :class="pageConfig.contained ? 'mb-5' : ''" ref="page" />
       </div>
@@ -57,7 +57,7 @@
     <ModalConfirm />
     <ModalPrompt />
     <ModalAlert />
-    <portal-target name="modal-div" />
+    <portal-target name="modal-div" />    
     <portal-target name="bottom-app" class="sticky bottom-0 z-20" multiple/>
   </div>
 </template>
@@ -120,6 +120,7 @@ export default {
       buscarPor: '',
       showSidebar: false,
       currentTab: "",
+      menuUsuario: false,
       menuitems: [
         /* { 
           left: true, 
@@ -284,7 +285,7 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(["borradoresNum", "loading", "travelling", "pageConfig", "menuUsuario", "navHidden", "onlyContent", "backgroundImageUrl"]),
+    ...mapGetters(["borradoresNum", "loading", "travelling", "pageConfig", "navHidden", "onlyContent", "backgroundImageUrl"]),
     rutasMenu() {
       return this.$store.getters.buildRoutes(this.menuitems)
     },
@@ -360,21 +361,21 @@ methods:{
 /* BASIC TEMPLATE LAYOUT */
 
 html, body, #__layout, #__nuxt {
-  /*padding: 0;*/
+  padding: 0;
   margin: 0;
   height: 100%;
 }
 
-#__nuxt {
+/*#__nuxt {
   min-height: 100%;
-}
-
+}*/
 
 #__main-container {
-  min-height: 100vh;
-  display: flex;
+  min-height: 100%;
+  /*min-height: 100vh;*/
+  /*display: flex;
   flex-direction: column;
-  justify-content: stretch;
+  justify-content: stretch;*/
 }
 
 #__content {

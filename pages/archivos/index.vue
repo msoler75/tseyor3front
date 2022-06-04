@@ -1,6 +1,6 @@
 <template>
     <Carpeta
-      class="w-full h-full py-5 px-5 sm:px-10 lg:px-14"
+      class="w-full py-5 px-5 sm:px-10 lg:px-14"
       :value="idCarpetaActual"
       modoNavegacion="Click"
       @click="$emit('click', $event)"
@@ -8,6 +8,7 @@
       :explorando="true"
       :idRootFolder="idRootActual"
       :padre="carpetaPadreActual"
+      @borrada="$emit('borrada', $event)"
     />
 </template>
 
@@ -20,22 +21,23 @@ export default {
     idRootActual: { default: 0 },
     carpetaPadreActual: {},
   },
-  async asyncData({ route, $strapi, $config, $error }) {
+  async asyncData({ route, $strapi, $error }) {
     try {
-      const {
-        data: [carpeta],
-      } = await $strapi.find("carpetas", {
+      const response = await $strapi.find("carpetas", {
         filters: {
           ruta: { $eq: route.path },
         },
         populate: populateCarpeta
-      });
+      })
+      if(response.error)
+       return $error(response.error.status)      
+      const carpeta = response.data[0]
       return {
         idCarpetaActual: carpeta ? carpeta : route.path,
       };
     } catch (e) {
-      console.warn(e);
-      $error(503);
+      console.warn('error', e);
+      $error(307);
     }
   }
 };

@@ -6,32 +6,32 @@
       @click="$emit('click', $event)"
       placeholder="No tienes ninguna carpeta"
       :padre="{ ruta: $route.path + '', publishedAt: 1 }"
+      :borrarDefinitivo="true"
     />
   </div>
 </template>
 
 <script>
-import {populateCarpetaPermisos} from '@/assets/js/carpeta'
+import { populateCarpetaPermisos } from "@/assets/js/carpeta";
 export default {
   middleware: ["logged"],
   async asyncData({ $strapi, $error }) {
     try {
       const response = await $strapi.find("users/me", {
         fields: ["id"],
-        filters: {
-          publishedAt: {
-            $null: true,
-          },
-        },
         populate: {
-          carpetasCreadas: {
+          carpetasPropietario: {
             populate: populateCarpetaPermisos,
+            filters: {
+              publishedAt: {
+              $null: true,
+            },
+            },
+           // publicationState: "preview",
           },
         },
-        publicationState: "preview",
       });
-      let papelera = response.carpetasCreadas
-        .filter((v, i, a) => a.findIndex((x) => x.id == v.id) == i)
+      let papelera = response.carpetasPropietario
       return { papelera };
     } catch (e) {
       console.error(e);

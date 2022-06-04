@@ -64,7 +64,7 @@
                     </div>
                     <template v-if="$strapi.user">
                         <Avatar :user="$strapi.user" :badge="userBadge" class="text-3xl w-8 h-8 cursor-pointer" :to="false"
-                            @click.native="toggleMostrarMenuUsuario" />
+                            @click.native="$emit('usermenu')" />
                     </template>
                     <template v-else>
                         <div class="hidden xl:flex items-center text-sm font-sans">
@@ -164,15 +164,9 @@ export default {
     watch: {
         localValue(newValue) {
             this.updateSoftPath()
-        },
-        mostrarMenuUsuario(newValue) {
-            this.$store.commit('setMenuUsuario', newValue)
-        },
+        }        
     },
     methods: {
-        toggleMostrarMenuUsuario() {
-            this.mostrarMenuUsuario = !this.mostrarMenuUsuario
-        },
         resizeHandler() {
             this.updateSoftPath()
         },

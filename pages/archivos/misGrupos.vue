@@ -2,7 +2,7 @@
   <div class="py-5 px-5 sm:px-10 lg:px-14">
     <div v-if="gruposFiltrados.length">
       <div v-for="grupo of gruposFiltrados" :key="grupo.id">
-        <h4>{{ grupo.nombre }}</h4>
+        <h4 class="px-2">{{ grupo.nombre }}</h4>
         <ListadoCarpetas
           v-if="grupo.carpetas.length"
           :carpetas="grupo.carpetas"
