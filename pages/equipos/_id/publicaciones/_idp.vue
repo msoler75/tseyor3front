@@ -46,7 +46,7 @@ export default {
     mixins: [vercontenido, seo],
     async asyncData({ route, $strapi, $error }) {
         try {
-            console.log('ROUTE ID', route.params)
+            // console.log('ROUTE ID', route.params)
             const response = await $strapi.find('publicaciones', {
                 filters: {
                     id: { $eq: route.params.idp }

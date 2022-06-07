@@ -28,8 +28,8 @@
               @click="onMenu(menu.value)"
               class="
                 px-5
-                lg:px-20
-                xl:pl-32
+                lg:px-10
+                xl:pl-20
                 space-x-3
                 flex-grow
                 items-center
@@ -74,29 +74,71 @@
       </div>
     </div>
     <div class="surface w-full flex flex-col">
-      <Breadcrumb
-        v-if="verBreadcrumb"
-        class="text-sm mt-2 py-2 px-5 sm:px-10 lg:px-14"
-      />
-        <div v-if="!loading" class="w-full flex-grow !border-l-0 !border-r-0">
+      <div class="w-full flex justify-between px-2 sm:px-5 lg:px-10">
+        <Breadcrumb
+          v-if="verBreadcrumb"
+          class="text-sm mt-2"
+        />
+        <div v-else />
+        <div
+          v-if="!loading && !specialFolders.includes($route.path) && escritura"
+          class="flex items-center py-4 px-1 ml-auto"
+        >
+          <div v-if="carpeta&&(carpeta.archivos.length||carpeta.subcarpetas.length)" class="btn btn-mini btn-gray text-sm whitespace-nowrap" @click="seleccionando=!seleccionando">
+            <Check v-model="seleccionando"/>
+            <span class="ml-2 hidden lg:inline">Seleccionar</span>
+          </div>
+        </div>
+        <div
+          v-if="!loading && !specialFolders.includes($route.path) && escritura"
+          class="flex items-center py-4 px-1 sm:px-2 lg:px-4"
+        >
+          <InputFiles
+            :onlyInput="true"
+            classButton="btn-mini text-sm whitespace-nowrap"
+            classButtonText="hidden lg:inline"
+            :multiple="true"
+            icon="fas fa-cloud-upload-alt"
+            textButton="Subir"
+            v-on:change="addFiles"
+          />
+        </div>
+      </div>
+      <div v-if="!loading" class="w-full flex-grow !border-l-0 !border-r-0">
         <nuxt-child
           v-show="!loading"
           :nuxt-child-key="$route.fullPath"
+          :seleccionando="seleccionando"
           @click="onRuta"
-          @borrada="borrada"
+          @borrada="onBorrada"
+          @carpeta="onCarpeta"
+          @seleccion="onSeleccion"
         />
       </div>
-      <div class="w-full overflow-hidden flex-grow !border-l-0 !border-r-0 opacity-50">
-        <Loader class="h-full text-2xl surface"
-        :class="loading?'max-h-[80vh]':'max-h-0 transform translate-x-[9999px]'"
+      <div
+        class="
+          p-2
+          w-full
+          overflow-hidden
+          flex-grow
+          !border-l-0 !border-r-0
+          opacity-50
+        "
+      >
+        <LoaderFolders
+          :items="itemsPrevistos"
+          class="py-5 px-5 sm:px-10 lg:px-14 h-full text-2xl surface"
+          :class="
+            loading ? 'max-h-[80vh]' : 'max-h-0 transform translate-x-[9999px]'
+          "
         />
       </div>
-    
     </div>
   </section>
 </template>
 
 <script>
+import { tengoPermiso, uploadFiles } from "@/assets/js/carpeta";
 import vSelect from "vue-select";
 import "vue-select/dist/vue-select.css";
 export default {
@@ -115,7 +157,7 @@ export default {
       if (!root) root = { id: 0 };
 
       return {
-        idCarpetaActual: route.$path,
+        idcarpetaActual: route.$path,
         idRoot: root.id,
         idRootActual: root.id,
       };
@@ -125,9 +167,24 @@ export default {
     }
   },
   data() {
+    let specialFolders = [
+      "",
+      "/misCarpetas",
+      "/recientes",
+      "/papelera",
+      "/compartidas",
+      "/misEquipos",
+      "/misGrupos",
+    ];
+    specialFolders = specialFolders.map((x) => this.$config.archivosRuta + x);
     return {
-      menuActual: this.$route.path.substr(this.$route.path.lastIndexOf('/')+1),
+      carpeta: {},
+      menuActual: this.$route.path.substr(
+        this.$route.path.lastIndexOf("/") + 1
+      ),
+      seleccionando: false,
       viewMenu: false,
+      itemsPrevistos: Math.round(Math.random() * 4),
       options: [
         {
           label: "Base",
@@ -173,7 +230,7 @@ export default {
         },
       ],
       ultimoClick: "",
-      loadingDelay: false,
+      specialFolders,
     };
   },
   computed: {
@@ -181,39 +238,37 @@ export default {
       return this.$store.getters.loading;
     },
     verBreadcrumb() {
-      const specialFolders = [
-        "",
-        "/misCarpetas",
-        "/recientes",
-        "/papelera",
-        "/compartidas",
-        "/misEquipos",
-        "/misGrupos",
-      ].map((x) => this.$config.archivosRuta + x);
       return (
-        !specialFolders.includes(this.$route.path) &&
-        !specialFolders.includes(this.ultimoClick)
+        !this.specialFolders.includes(this.$route.path) &&
+        !this.specialFolders.includes(this.ultimoClick)
       );
+    },
+    escritura() {
+      if (!this.carpeta) return false;
+      const r = tengoPermiso(this.carpeta, this.$strapi.user, "escritura");
+      console.warn("escritura", r);
+      return r;
+    },
+    administracion() {
+      if (!this.carpeta) return false;
+      return tengoPermiso(this.carpeta, this.$strapi.user, "escritura");
     },
   },
   watch: {
     loading(newValue) {
-      if (newValue) this.loadingDelay = true;
-      else this.loadingDelay = false;
-      /*this.$nextTick(() => {
-          this.$nextTick(() => {
-            this.$nextTick(() => {
-              this.loadingDelay = false;
-            });
-          });
-        });*/
+      if (newValue) this.$set(this, "carpeta", {});
     },
   },
   mounted() {
-    if(!this.options.find(x=>x.value===this.menuActual))
-    this.menuActual = 'archivos'
+    if (!this.options.find((x) => x.value === this.menuActual))
+      this.menuActual = "archivos";
   },
   methods: {
+    addFiles(files) {
+      console.log("addFiles", files);
+      if (this.carpeta)
+        uploadFiles(this.carpeta, files, this.$strapi, this.$toast);
+    },
     onMenu(value) {
       this.menuActual = value;
       const ruta =
@@ -227,27 +282,37 @@ export default {
       console.log("onRuta", obj);
       this.ultimoClick = null;
       const ruta = typeof obj === "object" ? obj.ruta : obj;
+      this.itemsPrevistos =
+        typeof obj === "object" && "archivos" in obj
+          ? obj.archivos.length + obj.subcarpetas.length
+          : Math.floor(Math.random(3)) + 1;
       this.$router.push(ruta);
       this._updateBreadcrumb(ruta);
     },
-    async borrada(rutaBorrada) {
-      console.log('CARPETA BORRADA', rutaBorrada)
-      console.log('ruta Actual', this.$route.path)
+    async onBorrada(rutaBorrada) {
+      console.log("CARPETA BORRADA", rutaBorrada);
+      console.log("ruta Actual", this.$route.path);
       if (rutaBorrada == this.$route.path) {
         let ruta = this.$route.path.substr(
           0,
           this.$route.path.lastIndexOf("/")
         );
-        const response = await this.$strapi.find('carpetas', {
+        const response = await this.$strapi.find("carpetas", {
           ruta: {
-            $eq: ruta
-          }
-        })
-        if(response.error)
-          ruta = this.$config.archivosRuta
+            $eq: ruta,
+          },
+        });
+        if (response.error) ruta = this.$config.archivosRuta;
         this.$router.replace({ path: ruta });
         this._updateBreadcrumb(ruta);
       }
+    },
+    onCarpeta(carpeta) {
+      console.warn("onCarpeta!!", carpeta);
+      for (const key in carpeta) this.$set(this.carpeta, key, carpeta[key]);
+    },
+    onSeleccion(lista) {
+      console.log('onSeleccion', lista)
     },
     _updateBreadcrumb(ruta) {
       console.log("archivos._updateBreadcrumb", ruta);

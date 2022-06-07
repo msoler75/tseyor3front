@@ -280,6 +280,7 @@ export default ({
             this.token = res.jwt
             this.setCookie('jwt', this.token)
           }
+          this.fetchUser()
           return res
         })
     }
@@ -302,7 +303,7 @@ export default ({
           return r.data
         }) */
       return this.find('users/me').then(user => {
-        console.warn('RET USER', user)
+        // console.warn('RET USER', user)
         if(!user.error)
         {
           this.user = user

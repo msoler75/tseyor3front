@@ -47,6 +47,7 @@ export default {
         .replace('Policy Failed', 'Permiso denegado')
         .replace('Invalid identifier or password', 'Identificador o contraseña no válidos')
         .replace('Forbidden', 'No tienes permisos')        
+        .replace('Failed to fetch', 'Servicio temporalmente no disponible')        
     },
     inputClassError(field) {
       return this.errors[field] ? 'border-4 border-red' : ''

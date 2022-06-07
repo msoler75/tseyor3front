@@ -1,10 +1,12 @@
 <template>
-    <div v-show="localValue">
-        <slot />
-    </div>
+  <div v-show="localValue">
+    <slot />
+  </div>
 </template>
 
 <script>
+let mc_counter = 1;
+let last_click_id = null;
 import vmodel from "~/mixins/vmodel.js";
 export default {
   mixins: [vmodel],
@@ -15,31 +17,28 @@ export default {
     localValue(newValue) {
       console.log("poppable localValue changed", newValue);
       if (newValue) {
-        setTimeout(() => {
-          document.body.addEventListener("click", this.handleOutclick);
-          document.body.addEventListener("touch", this.handleOutclick);
-        }, 200);
-      } else {
-          document.body.removeEventListener("click", this.handleOutclick)
-          document.body.removeEventListener("touch", this.handleOutclick);
+        last_click_id = this.$el.id;
+      } else if (this.$el.id != last_click_id) {
+        last_click_id = 0;
       }
     },
   },
   mounted() {
-    // if(!this.$el.id)
-    // this.$el.id = ("mc-"+Math.random()).replace(".", "-")
+    if (!this.$el.id) this.$el.id = "poppable---" + mc_counter++;
+    document.body.addEventListener("click", this.handleOutclick);
+    document.body.addEventListener("contextmenu", this.handleOutclick);
+  },
+  destroy() {
+    document.body.removeEventListener("click", this.handleOutclick);
+    document.body.removeEventListener("contextmenu", this.handleOutclick);
   },
   methods: {
     // comprueba si se ha pulsado fuera de este menú
     handleOutclick(ev) {
       console.log("handleOutclick");
-      let elem = ev.target;
-      for (; elem && elem != this.$el; elem = elem.parentNode);
-      if (!elem) {
-        console.log("clicked outside");
-        this.localValue = false;
-      }
+      if (this.$el.id == last_click_id) last_click_id = 0;
+      else this.localValue = false;
     },
-  }
-}
+  },
+};
 </script>

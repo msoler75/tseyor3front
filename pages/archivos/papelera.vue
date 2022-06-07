@@ -12,7 +12,7 @@
 </template>
 
 <script>
-import { populateCarpetaPermisos } from "@/assets/js/carpeta";
+import { populateCarpeta } from "@/assets/js/carpeta";
 export default {
   middleware: ["logged"],
   async asyncData({ $strapi, $error }) {
@@ -21,7 +21,7 @@ export default {
         fields: ["id"],
         populate: {
           carpetasPropietario: {
-            populate: populateCarpetaPermisos,
+            populate: populateCarpeta,
             filters: {
               publishedAt: {
               $null: true,

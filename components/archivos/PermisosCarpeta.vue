@@ -37,9 +37,12 @@
             <option value="Muul">Muul</option>
             <option value="Nadie">Sólo propietario</option>
           </select>
-          <PermisosListado v-else
-                :value="[{nombre: localValue.lecturaAcceso.replace('Todos', 'Público')}]"
-              />          
+          <PermisosListado
+            v-else
+            :value="[
+              { nombre: localValue.lecturaAcceso.replace('Todos', 'Público') },
+            ]"
+          />
         </div>
         <div class="text-sm space-y-1">
           <div
@@ -157,9 +160,14 @@
             <option value="Muul">Muul</option>
             <option value="Nadie">Solo propietario</option>
           </select>
-          <PermisosListado v-else
-                :value="[{nombre: localValue.escrituraAcceso.replace('Todos', 'Público')}]"
-              />
+          <PermisosListado
+            v-else
+            :value="[
+              {
+                nombre: localValue.escrituraAcceso.replace('Todos', 'Público'),
+              },
+            ]"
+          />
         </div>
         <div class="text-sm space-y-1">
           <div
@@ -285,13 +293,13 @@ export default {
     escrituraHereda() {
       return this.localValue.escrituraHereda;
     },
-    localValueJSON(){
-        return JSON.stringify(this.localValue)
-    }
+    localValueJSON() {
+      return JSON.stringify(this.localValue);
+    },
   },
   watch: {
     localValueJSON(value) {
-      this.$emit("input", {...this.localValue});
+      this.$emit("input", { ...this.localValue });
     },
     value(value) {
       this.localValue = value;
@@ -300,20 +308,24 @@ export default {
       if (newValue) {
         const carpeta = this.localValue;
         const padre = carpeta.padre;
-        carpeta.lecturaAcceso = padre.lecturaAcceso;
-        carpeta.lecturaUsuarios = padre.lecturaUsuarios;
-        carpeta.lecturaEquipos = padre.lecturaEquipos;
-        carpeta.lecturaGrupos = padre.lecturaGrupos;
+        if (padre) {
+          carpeta.lecturaAcceso = padre.lecturaAcceso;
+          carpeta.lecturaUsuarios = padre.lecturaUsuarios;
+          carpeta.lecturaEquipos = padre.lecturaEquipos;
+          carpeta.lecturaGrupos = padre.lecturaGrupos;
+        }
       }
     },
     escrituraHereda(newValue) {
       if (newValue) {
         const carpeta = this.localValue;
         const padre = carpeta.padre;
-        carpeta.escrituraAcceso = padre.escrituraAcceso;
-        carpeta.escrituraUsuarios = padre.escrituraUsuarios;
-        carpeta.escriturEquipos = padre.escrituraEquipos;
-        carpeta.escrituraGrupos = padre.escrituraGrupos;
+        if (padre) {
+          carpeta.escrituraAcceso = padre.escrituraAcceso;
+          carpeta.escrituraUsuarios = padre.escrituraUsuarios;
+          carpeta.escriturEquipos = padre.escrituraEquipos;
+          carpeta.escrituraGrupos = padre.escrituraGrupos;
+        }
       }
     },
   },
@@ -403,14 +415,14 @@ export default {
     },
     seleccionado(value) {
       console.warn("INPUT", value);
-      console.log('coleccion', this.coleccion)
-      console.log('modo', this.modo)
+      console.log("coleccion", this.coleccion);
+      console.log("modo", this.modo);
       const item = this.options.find((x) => x.value === value);
       const toInsert = { id: item.value, nombre: item.label };
-      const key = this.modo + this.$ucFirst(this.coleccion.replace('users', 'usuarios'))
-      if(!(key in this.localValue))
-        this.localValue[key] = []
-      if(!this.localValue[key].find((x) => x.id === toInsert.id))
+      const key =
+        this.modo + this.$ucFirst(this.coleccion.replace("users", "usuarios"));
+      if (!(key in this.localValue)) this.localValue[key] = [];
+      if (!this.localValue[key].find((x) => x.id === toInsert.id))
         this.localValue[key].push(toInsert);
       this.options = [];
       this.mostrarModalEscritura = false;

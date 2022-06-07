@@ -335,6 +335,8 @@ methods:{
         e.preventDefault()
         this.onBuscar()
       }
+      if(e.key==='l')
+      this.$store.commit('setLoading', true)
     },
     showSideMenu() {
       this.showSidebar = true;

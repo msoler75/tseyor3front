@@ -18,7 +18,7 @@
 </template>
 
 <script>
-import {populateCarpetaPermisos} from '@/assets/js/carpeta'
+import {populateCarpeta} from '@/assets/js/carpeta'
 export default {
   middleware: ["logged"],
   async asyncData({ $strapi, $error }) {
@@ -29,10 +29,10 @@ export default {
           grupos: {
             populate: {
               carpetasLectura: {
-                populate: populateCarpetaPermisos,
+                populate: populateCarpeta,
               },
               carpetasEscritura: {
-                populate: populateCarpetaPermisos,
+                populate: populateCarpeta,
               },
             },
           },
