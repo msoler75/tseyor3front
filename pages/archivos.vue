@@ -11,7 +11,6 @@
       v-if="$strapi.user"
       class="
         surface
-        flex-grow
         !bg-gray-100
         dark:!bg-gray-900
         !border-l-0 !border-r-0 !border-b-0
@@ -19,7 +18,7 @@
         whitespace-nowrap
       "
     >
-      <div class="flex justify-between items-start">
+      <div class="flex justify-between items-start sticky top-[60px] md:top-[80px] xl:top-[85px]">
         <div class="w-full overflow-y-auto">
           <template v-for="(menu, index) of options">
             <section
