@@ -1,6 +1,6 @@
 <template>
   <section
-    class="archivos flex flex-col sm:flex-row justify-start"
+    class="archivos h-expand flex flex-col sm:flex-row justify-start"
     contained="no"
     background="no"
     breadcrumb="no"
@@ -53,8 +53,8 @@
               :key="index"
               class="
                 px-5
-                lg:px-20
-                xl:pl-32
+                lg:px-10
+                xl:pl-22
                 pt-3
                 pb-1
                 sm:pt-4
