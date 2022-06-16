@@ -1,6 +1,6 @@
 <template>
   <Droppable
-    class="w-full flex select-none relative"
+    class="flex select-none relative"
     v-model="dragging"
     :dropAllowed="escritura"
     :class="
@@ -19,15 +19,15 @@
     "
     @click.native="seleccionar"
   >
-    <div v-if="explorando">
+    <div v-if="explorando" :class="vista=='listado'?'':'w-full'">
       <div
         v-if="thereErrors"
-        class="flex w-full h-full text-3xl justify-center items-center"
+        class="flex h-full text-3xl justify-center items-center"
       >
         <span>{{ errors.message }}</span>
       </div>
       <LoaderFolders v-else-if="cargando" />
-      <div v-else-if="carpeta" class="w-full flex flex-col justify-between">
+      <div v-else-if="carpeta" class="flex w-full flex-col justify-between">
         <div class="px-2 flex justify-between relative z-10">
           <h1
             v-if="mostrarTitulo && (carpeta.nombreOriginal || carpeta.nombre)"
@@ -55,7 +55,7 @@
               &vellip;</span
             >
           </div>
-        </div>
+        </div>        
         <div
           v-if="
             !carpetas.length &&
@@ -64,27 +64,30 @@
         >
           {{ placeholder }}
         </div>
+        <div v-else class="w-full" :class="vista=='listado'?'flex flex-col':'mygrid'">
         <Carpeta
           v-for="(subcarpeta, index) of carpetas"
+          ref="carpetas"
           :id="'carpeta-' + subcarpeta.id"
           :key="'carpeta-' + subcarpeta.id"
           v-model="carpetas[index]"
           :boxClass="boxClass"
-          :iconClass="'text-6xl ' + iconClass"
+          :iconClass="iconClass"
           :textClass="textClass"
           :subtextClass="subtextClass"
           :mostrarFecha="mostrarFecha"
           :mostrarTamano="mostrarTamano"
           :mostrarControles="mostrarControles"
           :seleccionando="seleccionando"
+          :vista="vista"
           @click="$emit('click', $event)"
           @dragenter="dragging = false"
           @dragleave="dragging = true"
           @borrada="carpeta.subcarpetas.splice(index, 1)"
           @seleccionada="onCarpetaSeleccionada(subcarpeta.id)"
-          @deseleccionada="onCarpetaDeseleccionada(subcarpeta.id)"
+          @deseleccionada="onCarpetaDeseleccionada(subcarpeta.id)"          
           class="
-            w-full
+            justify-center            
             lg:text-lg
             px-2
             py-1
@@ -97,6 +100,7 @@
         <template v-if="mostrarArchivos">
           <Archivo
             v-for="(archivo, index) of archivos"
+            ref="archivos"
             :key="'archivo-' + archivo.id"
             v-model="archivos[index]"
             :boxClass="boxClass"
@@ -107,10 +111,10 @@
             :mostrarTamano="mostrarTamano"
             :mostrarControles="mostrarControles"
             :seleccionando="seleccionando"
+            :vista="vista"
             @seleccionado="onArchivoSeleccionado(archivo.id)"
-            @deseleccionado="onArchivoDeseleccionado(archivo.id)"          
-            class="
-              w-full
+            @deseleccionado="onArchivoDeseleccionado(archivo.id)"
+            class="              
               lg:text-lg
               px-2
               py-1
@@ -121,30 +125,42 @@
             "
           />
         </template>
+        </div>
       </div>
     </div>
-    <div v-else class="relative">
-      <div class="flex items-center w-full overflow-hidden group">
-        <Check
-          v-if="seleccionando"
-          v-model="seleccionada"
-          class="w-8"
-          :class="
-            !carpeta || carpeta.nombreMostrar == '..'
-              ? 'opacity-0 pointer-events-none'
-              : ''
-          "
-        />
-        <div
-          class="flex flex-shrink-0 justify-center items-center"
-          :class="boxClass"
-        >
+    <CarpetaElemento
+    v-else-if="carpeta"
+    :vista="vista"
+    :seleccionando="seleccionando"
+    :iconClass="iconClass"
+    :boxClass="boxClass"
+    :textClass="textClass"
+    :subtextClass="subtextClass"
+    :mostrarTitulo="mostrarTitulo"
+    :mostrarControles="mostrarControles&&carpeta.nombreMostrar != '..'"
+    :mostrarTamano="mostrarTamano"
+    :mostrarFecha="mostrarFecha"
+    :mostrarDescripcion="mostrarDescripcion"
+    :uploading="carpeta.uploading"
+    :publishedAt="carpeta.publishedAt"
+    :nombre="carpeta.nombreMostrar || carpeta.nombre"    
+    :checkable = "carpeta && carpeta.nombreMostrar != '..'"
+    :procesando="procesando"
+    @click="flexNavigateTo(carpeta)"
+    @propiedades="mostrarMenu = $event"
+     >
+     <template v-slot:icon> 
           <div
             class="flex items-center justify-center"
             :class="
-              !seleccionando && localValue.publishedAt
-                ? 'cursor-pointer'
-                : ' pointer-events-none'
+            (vista=='listado'?'text-6xl ':'text-8xl ') + ( 
+              !carpeta.publishedAt
+                ? 'pointer-events-none'
+                : seleccionando && carpeta.nombreMostrar == '..'
+                ? 'opacity-50 pointer-events-none'
+                : seleccionando
+                ? 'pointer-events-none'
+                : 'cursor-pointer')
             "
             @click="flexNavigateTo(carpeta)"
           >
@@ -153,67 +169,36 @@
               class="absolute"
               :class="
                 iconClass +
-                (localValue.nombreMostrar != '..' &&
+                (carpeta.nombreMostrar != '..' &&
                 !seleccionando &&
-                localValue.publishedAt
+                carpeta.publishedAt
                   ? ' group-hover:hidden'
                   : '') +
-                (localValue.publishedAt ? ' text-orange-200' : ' text-gray-500')
+                (carpeta.publishedAt ? ' text-orange-200' : ' text-gray-500')
               "
             />
             <icon
-              v-if="!localValue.publishedAt"
+              v-if="!carpeta.publishedAt"
               icon="far fa-trash-alt"
               class="absolute translate-y-1 scale-90 text-gray-100"
+              :class="iconClass"
             />
             <icon
-              v-if="!seleccionando && localValue.nombreMostrar === '..'"
+              v-if="!seleccionando && carpeta.nombreMostrar === '..'"
               icon="fas fa-arrow-left"
-              class="group-hover:-translate-x-1 text-xs text-black absolute"
+              class="group-hover:-translate-x-1 scale-[25%] text-black absolute"
             />
             <icon
-              v-else-if="!seleccionando && localValue.publishedAt"
+              v-else-if="!seleccionando && carpeta.publishedAt"
               icon="folder-open"
               class="absolute hidden group-hover:block text-orange-200"
               :class="iconClass"
               style="transform: translate(2.5px, -1px)"
             />
           </div>
-        </div>
-        <div
-          class="w-full flex flex-col justify-center items-start"
-          :class="
-            !seleccionando && localValue.publishedAt
-              ? 'cursor-pointer'
-              : ' pointer-events-none'
-          "
-          @click="flexNavigateTo(carpeta)"
-        >
-          <span
-            :title="localValue.nombreMostrar || localValue.nombre"
-            class="
-              w-40
-              xm:w-48
-              lg:w-64
-              max-w-full
-              overflow-hidden overflow-ellipsis
-              whitespace-nowrap
-              font-bold
-              text-gray-dark-900
-              dark:text-gray-50
-            "
-            :class="
-              textClass +
-              (localValue.publishedAt
-                ? ' cursor-pointer'
-                : ' pointer-events-none')
-            "
-            >{{ localValue.nombreMostrar || localValue.nombre }}</span
-          >
-          <div
-            class="flex w-full justify-start text-xs text-diminished"
-            :class="subtextClass"
-          >
+        </template>
+
+        <template v-slot:description>        
             <span
               v-if="mostrarTamano"
               class="capitalize"
@@ -224,33 +209,14 @@
               {{ numItems }} elem.&nbsp;
             </span>
             <span v-if="mostrarFecha" class="capitalize">{{
-              $dayjs(localValue.createdAt).format("DD MMM YYYY, HH:mm")
+              $dayjs(carpeta.createdAt).format("DD MMM YYYY, HH:mm")
             }}</span>
-          </div>
-        </div>
-        <div v-if="!seleccionando" class="flex">
-          <Loader v-if="procesando" class="pl-1 flex self-center w-5 h-5" />
-          <span
-            v-else-if="
-              carpeta && mostrarControles && carpeta.nombreMostrar != '..'
-            "
-            class="
-              self-center
-              cursor-pointer
-              text-gray text-xl
-              ml-2
-              pl-2
-              pr-1
-              pointer-events-auto
-            "
-            @click="mostrarMenu = $event"
-          >
-            &vellip;</span
-          >
-        </div>
-      </div>
-    </div>
+          </template>
+
+    </CarpetaElemento>
+
     <MenuContextual v-if="carpeta" v-model="mostrarMenu" :items="menuItems" />
+    
     <PropiedadesCarpeta
       v-if="carpeta && mostrarTitulo && mostrarControles"
       textAccept="Guardar"
@@ -279,6 +245,7 @@ export default {
       required: false,
       default: false,
     },
+    vista: { type: String, required: false, default: "listado" },
     seleccionando: { type: Boolean, required: false, default: false },
     padre: {},
     borrarDefinitivo: { type: Boolean, required: false, default: false },
@@ -294,31 +261,32 @@ export default {
     updateBreadcrumb: { type: Boolean, required: false, default: false },
     textClass: {},
     subtextClass: {},
-    iconClass: { type: String, required: false, default: "text-6xl" },
-    boxClass: { type: String, required: false, default: "w-16 mr-3" },
+    iconClass: { type: String, required: false, default: "" },
+    boxClass: { type: String, required: false, default: "" },
     mostrarTitulo: { default: true },
     mostrarControles: {
       type: Boolean,
       required: false,
       default: true,
     },
-    mostrarArchivos: {
-      type: Boolean,
-      required: false,
-      default: true,
-    },
-    mostrarUploader: {},
     mostrarTamano: {
       type: Boolean,
       required: false,
       default: true,
     },
+    mostrarUploader: {},
     mostrarFecha: {
       type: Boolean,
       required: false,
       default: true,
     },
-    mostrarDescripcion: {},
+    mostrarDescripcion: { type: Boolean, required: false, default: true },
+    // de carpeta
+    mostrarArchivos: {
+      type: Boolean,
+      required: false,
+      default: true,
+    },
     placeholder: {
       type: String,
       required: false,
@@ -451,6 +419,19 @@ export default {
     seleccionando(newValue) {
       this.carpetasSeleccionadas = [];
       this.archivosSeleccionados = [];
+      console.warn("seleccionando", newValue, this.$refs.carpetas);
+      if (this.$refs.carpetas)
+        for (let idx = 0; idx < this.carpetas.length; idx++) {
+          const c = this.$refs.carpetas[idx];
+          if ((newValue && !c.seleccionada) || (!newValue && c.seleccionada))
+            c.seleccionar();
+        }
+      if (this.$refs.archivos)
+        for (let idx = 0; idx < this.archivos.length; idx++) {
+          const a = this.$refs.archivos[idx];
+          if ((newValue && !a.seleccionado) || (!newValue && a.seleccionado))
+            a.seleccionar();
+        }
     },
     seleccionada(newValue) {
       if (newValue) this.$emit("seleccionada");
@@ -731,7 +712,7 @@ export default {
           if (response.error)
             if (response.error) throw new Error(response.error.message);
           this.carpeta.publishedAt = date;
-          this.procesando = false;
+          //this.procesando = false;
         })
         .catch((error) => {
           let msg =
@@ -853,3 +834,16 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+.mygrid {
+  display: grid;
+  grid-gap: 10px;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  grid-template-rows: repeat(auto-fill, minmax(150px, 1fr));
+  grid-auto-columns: minmax(150px, 200px);
+  grid-auto-rows: minmax(150px, 200px);
+  grid-auto-flow: dense;
+  place-items: stretch stretch;
+}
+</style>

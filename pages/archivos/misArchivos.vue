@@ -1,12 +1,24 @@
 <template>
-  <div class="py-5 px-5 sm:px-10 lg:px-14">
+  <div class="py-5 px-4 sm:px-8 lg:px-10 xl:px-12">
     <h3>Mis carpetas</h3>
     <ListadoCarpetas
-      :carpetas="misCarpetas"
+      :carpetas="misArchivos"
       @click="$emit('click', $event)"
       placeholder="No tienes ninguna carpeta"
       :padre="{ ruta: $route.path+'', publishedAt: 1 }"
     />
+
+    <divider />
+
+    <h3>Mis archivos</h3>
+    <!-- <ListadoCarpetas
+      :carpetas="misArchivos"
+      @click="$emit('click', $event)"
+      placeholder="No tienes ninguna carpeta"
+      :padre="{ ruta: $route.path+'', publishedAt: 1 }"
+    />
+    -->
+
   </div>
 </template>
 
@@ -28,13 +40,13 @@ export default {
           },
         },
       });
-      let misCarpetas = [];
-      if (response.carpeta) misCarpetas.push(response.carpeta);
-      misCarpetas = misCarpetas
+      let misArchivos = [];
+      if (response.carpeta) misArchivos.push(response.carpeta);
+      misArchivos = misArchivos
         .concat(response.carpetasPropietario)
         .filter((v, i, a) => a.findIndex((x) => x.id == v.id) == i)
         .filter((x) => x.publishedAt);
-      return { misCarpetas };
+      return { misArchivos };
     } catch (e) {
       console.error(e);
       $error(503);

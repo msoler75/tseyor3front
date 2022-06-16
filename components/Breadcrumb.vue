@@ -1,6 +1,6 @@
 <template>
   <ul
-    class="breadcrumb list-none flex flex-wrap select-none"
+    class="breadcrumb list-none flex select-none"
     vocab="http://schema.org/"
     typeof="BreadcrumbList"
     :class="
@@ -50,7 +50,7 @@
       <icon
         v-if="index < crumbs.length - 1"
         icon="caret-right"
-        class="mx-1 opacity-30"
+        class="mx-0.5 sm:mx-1 opacity-30"
       />
     </li>
   </ul>

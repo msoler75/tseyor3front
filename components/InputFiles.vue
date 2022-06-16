@@ -3,12 +3,12 @@
     <div>
       <span
         :disabled="disabled"
-        class="btn btn-gray text-sm"
+        class="btn btn-gray text-sm w-full"
         @click="onClick"
         :class="classButton"
       >
-        <icon v-if="icon" :icon="icon" />
-        <span :class="classButtonText" class="ml-2">{{ textButton }}</span>
+        <icon v-if="icon" :icon="icon" class="w-6"/>
+        <span :class="classButtonText">{{ textButton }}</span>
       </span>
       <input
         v-if="onlyInput"

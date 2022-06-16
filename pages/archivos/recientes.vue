@@ -1,5 +1,5 @@
 <template>
-  <div class="py-5 px-5 sm:px-10 lg:px-14">
+  <div class="py-5 px-4 sm:px-8 lg:px-10 xl:px-12">
     <h3>Recientes</h3>
     <ListadoCarpetas
       :carpetas="recientes"

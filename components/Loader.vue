@@ -1,14 +1,14 @@
 <template>
-  <div class="!border-0 flex w-full box-content justify-center items-center">
-    <div class="loader-spinner" />
+  <div class="!border-0 flex box-content justify-center items-center w-[24px]">
+    <div class="loader-spinner flex-shrink-0" />
   </div>
 </template>
 
 <style scoped>
 .loader-spinner {
-  box-sizing: content-box;
-  width: 24px;
-  height: 24px;
+  box-sizing: border-box;
+  width: 22px;
+  height: 22px;
   border-radius: 50%;
   position: relative;
   animation: rotate 1s linear infinite;
@@ -20,6 +20,7 @@
   inset: 0px;
   border-radius: 50%;
   border: 2px solid #000;
+  @apply border-sello-fuerte;
   animation: prixClipFix 1.6s linear infinite;
 }
 .dark .loader-spinner::before {

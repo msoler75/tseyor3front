@@ -18,17 +18,26 @@
         whitespace-nowrap
       "
     >
-      <div class="flex justify-between items-start sticky top-[60px] md:top-[80px] xl:top-[85px]">
+      <div
+        class="
+          flex
+          justify-between
+          items-start
+          sticky
+          top-[60px]
+          md:top-[80px]
+          xl:top-[85px]
+        "
+      >
         <div class="w-full overflow-y-auto">
-          <template v-for="(menu, index) of options">
+          <template v-for="(menu, index) of menuItems">
             <section
               :key="index"
               v-if="menu.value"
               @click="onMenu(menu.value)"
               class="
                 px-5
-                lg:px-10
-                xl:pl-20
+                2xl:pl-16
                 space-x-3
                 flex-grow
                 items-center
@@ -50,16 +59,7 @@
               v-else
               :class="viewMenu ? '' : 'hidden sm:block'"
               :key="index"
-              class="
-                px-5
-                lg:px-10
-                xl:pl-22
-                pt-3
-                pb-1
-                sm:pt-4
-                text-diminished
-                font-bold
-              "
+              class="px-5 pt-3 pb-1 sm:pt-4 text-diminished font-bold"
             >
               {{ menu.label }}
             </div>
@@ -72,38 +72,180 @@
         />
       </div>
     </div>
-    <div class="surface w-full flex flex-col">
-      <div class="w-full flex justify-between px-2 sm:px-5 lg:px-10">
-        <Breadcrumb
-          v-if="verBreadcrumb"
+    <div
+      class="right-panel flex-grow surface w-full"
+      :class="modoExplorador ? 'explorador' : ''"
+    >
+      <div
+        class="
+          w-full
+          px-4
+          sm:px-8
+          lg:px-10
+          xl:px-12
+          py-4
+          order-0
+
+        "        
+      >
+        <Breadcrumb        
+        v-if="modoExplorador"
           class="text-sm mt-2"
+          :class="seleccionando ? 'pointer-events-none opacity-50' : ''"
         />
-        <div v-else />
-        <div
-          v-if="!loading && !specialFolders.includes($route.path) && escritura"
-          class="flex items-center py-4 px-1 ml-auto"
-        >
-          <div v-if="carpeta&&(carpeta.archivos.length||carpeta.subcarpetas.length)" class="btn btn-mini btn-gray text-sm whitespace-nowrap" @click="seleccionando=!seleccionando">
-            <Check v-model="seleccionando"/>
-            <span class="ml-2 hidden lg:inline">Seleccionar</span>
-          </div>
-        </div>
-        <div
-          v-if="!loading && !specialFolders.includes($route.path) && escritura"
-          class="flex items-center py-4 px-1 sm:px-2 lg:px-4"
-        >
-          <InputFiles
-            :onlyInput="true"
-            classButton="btn-mini text-sm whitespace-nowrap"
-            classButtonText="hidden lg:inline"
-            :multiple="true"
-            icon="fas fa-cloud-upload-alt"
-            textButton="Subir"
-            v-on:change="addFiles"
-          />
-        </div>
       </div>
-      <div v-if="!loading" class="w-full flex-grow !border-l-0 !border-r-0">
+      <div
+        class="
+          surface
+          !border-0
+          options
+          overflow-x-auto
+          order-3
+          lg:order-1 lg:row-span-2 lg:bg-gray-100 lg:dark:bg-gray-900          
+          sticky
+          lg:static
+          lg:overflow-visible
+          bottom-0          
+          lg:top-[72px] xl:top-[76px]
+          z-30          
+          select-none
+          whitespace-nowrap          
+          px-2
+          sm:px-5
+          py-4
+          lg:py-6
+        "
+      >
+      <div
+      class="sticky
+          top-[115px]
+          flex
+          justify-start
+          space-x-2
+          lg:space-y-4 lg:space-x-0
+          lg:flex-col
+          ">
+        <div v-if="seleccionando" class="hidden lg:block">
+          Selecciona los elementos...
+        </div>
+        <div v-else-if="copiados.length">Elige la carpeta destino...</div>
+
+        <Btn
+          v-if="seleccionados.length"
+          class="btn-mini btn-gray text-sm"
+          icon="copy"
+          label="Copiar Seleccionados"
+          @click="copiar"
+        />
+        <Btn
+          v-if="seleccionados.length && seleccionadosMovibles"
+          class="btn-mini btn-gray text-sm"
+          icon="cut"
+          label="Mover Seleccionados"
+          @click="cortar"
+        />
+        <Btn
+          v-if="seleccionados.length && seleccionadosAdministrables"
+          class="btn-mini btn-gray text-sm"
+          icon="far fa-trash-alt"
+          label="Borrar Seleccionados"
+          @click="borrar"
+        />
+
+        <Btn
+          v-if="copiados.length"
+          class="btn-mini btn-gray text-sm"
+          icon="paste"
+          :label="
+            esCortar
+              ? 'Mover Aquí'
+              : $route.path == rutaCopia
+              ? 'Duplicar Aquí'
+              : 'Copiar Aquí'
+          "
+          :disabled="!permisoEscritura"
+          @click="pegar"
+        />
+
+        <Btn
+          v-if="copiados.length"
+          class="btn-mini btn-gray text-sm"
+          icon="times"
+          label="Cancelar"
+          @click="cancelar"
+        />
+
+        <Btn
+          v-if="$route.path!=urlPapelera && !seleccionando && !copiando && !copiados.length"
+          class="btn-mini btn-gray text-sm"
+          icon="search"
+          label="Buscar Archivos"
+          @click="buscar"
+        />
+
+        <Btn
+          v-if="carpeta &&
+            carpeta.archivos &&
+            (carpeta.archivos.length || carpeta.subcarpetas.length) &&
+            !copiando"
+          class="btn-mini btn-gray text-sm"
+          :icon="modoLista ? 'list' : 'th-large'"
+          label="Cambiar Vista"
+          @click="modoLista = !modoLista"
+        />
+
+        <Btn
+          v-if="
+            permisoEscritura && !seleccionando && !copiados.length && !copiando
+          "
+          class="btn-mini btn-gray text-sm"
+          icon="folder-plus"
+          label="Nueva Carpeta"
+          @click="modoLista = !modoLista"
+        />
+
+        <InputFiles
+          v-if="
+            !loading &&
+            !specialFolders.includes($route.path) &&
+            permisoEscritura &&
+            !seleccionando &&
+            !copiados.length &&
+            !copiando
+          "
+          class="lg:w-full"
+          :onlyInput="true"
+          classButton="btn-mini text-sm whitespace-nowrap"
+          :multiple="true"
+          icon="fas fa-cloud-upload-alt"
+          textButton="Subir Archivos"
+          v-on:change="addFiles"
+        />
+
+        <Btn
+          v-if="
+            !loading &&
+            !specialFolders.includes($route.path) &&
+            carpeta &&
+            carpeta.archivos &&
+            (carpeta.archivos.length || carpeta.subcarpetas.length) &&
+            !copiados.length &&
+            !copiando
+          "
+          class="btn-mini btn-gray text-sm flex"
+          @click="seleccionando = !seleccionando"
+        >
+          <Check v-model="seleccionando" class="w-6" />
+          <span>{{
+            !seleccionando ? "Seleccionar" : "Cancelar Selección"
+          }}</span>
+        </Btn>
+      </div>
+      </div>
+      <div
+        v-if="!loading"
+        class="child order-2 w-full flex-grow !border-l-0 !border-r-0"
+      >
         <nuxt-child
           v-show="!loading"
           :nuxt-child-key="$route.fullPath"
@@ -112,9 +254,12 @@
           @borrada="onBorrada"
           @carpeta="onCarpeta"
           @seleccion="onSeleccion"
+          :mostrarArchivos="!copiados.length"
+          :vista="modoLista?'listado':'miniaturas'"
         />
       </div>
       <div
+        v-show="loading"
         class="
           p-2
           w-full
@@ -122,11 +267,12 @@
           flex-grow
           !border-l-0 !border-r-0
           opacity-50
+          order-2
         "
       >
         <LoaderFolders
           :items="itemsPrevistos"
-          class="py-5 px-5 sm:px-10 lg:px-14 h-full text-2xl surface"
+          class="py-5 px-4 sm:px-8 lg:px-10 xl:px-12 h-full text-2xl surface"
           :class="
             loading ? 'max-h-[80vh]' : 'max-h-0 transform translate-x-[9999px]'
           "
@@ -137,7 +283,7 @@
 </template>
 
 <script>
-import { tengoPermiso, uploadFiles } from "@/assets/js/carpeta";
+import { tengoPermiso, soyPropietario, uploadFiles } from "@/assets/js/carpeta";
 import vSelect from "vue-select";
 import "vue-select/dist/vue-select.css";
 export default {
@@ -167,35 +313,41 @@ export default {
   },
   data() {
     let specialFolders = [
-      "",
-      "/misCarpetas",
+      "/misArchivos",
       "/recientes",
       "/papelera",
-      "/compartidas",
+      "/compartidos",
       "/misEquipos",
       "/misGrupos",
     ];
     specialFolders = specialFolders.map((x) => this.$config.archivosRuta + x);
     return {
       carpeta: {},
+      urlPapelera: this.$config.archivosRuta + '/papelera',
       menuActual: this.$route.path.substr(
         this.$route.path.lastIndexOf("/") + 1
       ),
+      modoLista: true, //vista de los contenids en modo lista o grid
       seleccionando: false,
+      seleccionados: [],
+      copiados: [],
+      esCortar: false,
+      rutaCopia: null,
+      copiando: false,
       viewMenu: false,
       itemsPrevistos: Math.round(Math.random() * 4),
-      options: [
+      menuItems: [
         {
           label: "Base",
         },
         {
-          label: "Archivos",
+          label: "Todos los archivos",
           value: "archivos",
           icon: "folder-open",
         },
         {
-          label: "Mis carpetas",
-          value: "misCarpetas",
+          label: "Mis archivos",
+          value: "misArchivos",
           icon: "far fa-user",
         },
         {
@@ -212,8 +364,8 @@ export default {
           label: "Colaboración",
         },
         {
-          label: "Carpetas Compartidas",
-          value: "compartidas",
+          label: "Compartidos",
+          value: "compartidos",
           icon: "link",
         },
 
@@ -236,30 +388,72 @@ export default {
     loading() {
       return this.$store.getters.loading;
     },
-    verBreadcrumb() {
+    modoExplorador() {
       return (
         !this.specialFolders.includes(this.$route.path) &&
         !this.specialFolders.includes(this.ultimoClick)
       );
     },
-    escritura() {
+    permisoEscritura() {
       if (!this.carpeta) return false;
       const r = tengoPermiso(this.carpeta, this.$strapi.user, "escritura");
-      console.warn("escritura", r);
+      console.warn("permisoEscritura", r);
       return r;
     },
-    administracion() {
+    permisoAdministracion() {
       if (!this.carpeta) return false;
       return tengoPermiso(this.carpeta, this.$strapi.user, "escritura");
+    },
+    seleccionadosMovibles() {
+      for (const s of this.seleccionados) {
+        if (s.tipo == "archivo") {
+          const archivo = this.carpeta.archivos.find((x) => x.id == s.id);
+          if (!archivo) return false;
+          if (
+            !this.permisoAdministracion &&
+            !soyPropietario(archivo, this.$strapi.user)
+          )
+            return false;
+        } else {
+          const carpeta = this.carpeta.subcarpetas.find((x) => x.id == s.id);
+          if (!carpeta) return false;
+          if (carpeta.inamovible) return false;
+          if (!tengoPermiso(carpeta, this.$strapi.user, "administracion"))
+            return false;
+        }
+      }
+      return true;
+    },
+    seleccionadosAdministrables() {
+      for (const s of this.seleccionados) {
+        if (s.tipo == "archivo") {
+          const archivo = this.carpeta.archivos.find((x) => x.id == s.id);
+          if (!archivo) return false;
+          if (
+            !this.permisoAdministracion &&
+            !soyPropietario(archivo, this.$strapi.user)
+          )
+            return false;
+        } else {
+          const carpeta = this.carpeta.subcarpetas.find((x) => x.id == s.id);
+          if (!carpeta) return false;
+          if (!tengoPermiso(carpeta, this.$strapi.user, "administracion"))
+            return false;
+        }
+      }
+      return true;
     },
   },
   watch: {
     loading(newValue) {
       if (newValue) this.$set(this, "carpeta", {});
     },
+    seleccionando(newValue) {
+      this.seleccionados.splice(0, this.seleccionados.length);
+    },
   },
   mounted() {
-    if (!this.options.find((x) => x.value === this.menuActual))
+    if (!this.menuItems.find((x) => x.value === this.menuActual))
       this.menuActual = "archivos";
   },
   methods: {
@@ -269,6 +463,10 @@ export default {
         uploadFiles(this.carpeta, files, this.$strapi, this.$toast);
     },
     onMenu(value) {
+      if (screen.width < 640 && !this.viewMenu) {
+        this.viewMenu = true;
+        return;
+      }
       this.menuActual = value;
       const ruta =
         value === "archivos"
@@ -276,10 +474,12 @@ export default {
           : this.$config.archivosRuta + "/" + value;
       this.ultimoClick = ruta;
       this.$router.push(ruta);
+      if (screen.width < 640) this.viewMenu = false;
     },
     onRuta(obj) {
       console.log("onRuta", obj);
       this.ultimoClick = null;
+      this.seleccionando = false
       const ruta = typeof obj === "object" ? obj.ruta : obj;
       this.itemsPrevistos =
         typeof obj === "object" && "archivos" in obj
@@ -311,7 +511,76 @@ export default {
       for (const key in carpeta) this.$set(this.carpeta, key, carpeta[key]);
     },
     onSeleccion(lista) {
-      console.log('onSeleccion', lista)
+      console.log("onSeleccion", lista);
+      this.seleccionados.splice(0, this.seleccionados.length);
+      for (const item of lista.carpetas)
+        this.seleccionados.push({ tipo: "carpeta", id: item });
+      for (const item of lista.archivos)
+        this.seleccionados.push({ tipo: "archivo", id: item });
+    },
+    buscar() {
+
+    },
+    borrar() {
+      
+    },
+    copiar() {
+      this.copiados.splice(0, this.copiados.length);
+      for (const item of this.seleccionados) {
+        this.copiados.push(item);
+      }
+      this.seleccionados.splice(0, this.seleccionados.length);
+      this.esCortar = false;
+      this.rutaCopia = this.$route.path;
+      this.seleccionando = false;
+    },
+    cortar() {
+      this.copiar();
+      this.esCortar = true;
+    },
+    cancelar() {
+      this.copiando = false;
+      this.copiados.splice(0, this.copiados.length);
+    },
+    async pegar() {
+      if (this.rutaCopia != this.$route.path) {
+        this.copiando = true;
+        return new Promise(async (resolve, reject) => {
+          for (const item of this.copiados) {
+            if (this.esCortar) {
+              await this.$strapi
+                .update(item.tipo + "s", item.id, {
+                  data: {
+                    padre: this.carpeta.id,
+                  },
+                })
+                .catch((e) => {
+                  reject(e);
+                });
+            } else {
+              const entry = await this.$strapi
+                .findOne(item.tipo, item.id)
+                .update(item.tipo + "s", item.id, {
+                  data: {
+                    padre: this.carpeta.id,
+                  },
+                })
+                .catch((e) => {
+                  reject(e);
+                });
+            }
+          }
+          resolve("ok");
+        })
+          .then((result) => {
+            this.copiando = false;
+            this.copiados.splice(0, this.copiados.length);
+          })
+          .catch((e) => {
+            this.copiando = false;
+            this.$toast.error("Ha habido un error");
+          });
+      }
     },
     _updateBreadcrumb(ruta) {
       console.log("archivos._updateBreadcrumb", ruta);
@@ -348,5 +617,26 @@ export default {
 }
 .item-selected {
   @apply text-sello-centro dark:text-orange;
+}
+
+.right-panel {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: 0rem 1fr;
+}
+
+.right-panel.explorador {
+  grid-template-rows: 4rem 1fr;
+}
+
+
+@screen lg {
+  .right-panel {
+    grid-template-columns: 1fr 270px;
+  }
+
+  .options .btn {
+    width: 100%;
+  }
 }
 </style>

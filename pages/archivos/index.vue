@@ -1,6 +1,6 @@
 <template>
   <Carpeta
-    class="w-full py-5 px-5 sm:px-10 lg:px-14"
+    class="w-full py-5 px-4 sm:px-8 lg:px-10 xl:px-12"
     :value="carpeta"
     modoNavegacion="Click"
     @click="$emit('click', $event)"
@@ -10,6 +10,8 @@
     :padre="carpetaPadreActual"
     @borrada="$emit('borrada', $event)"
     @carpeta="$emit('carpeta', $event)"
+    :seleccionando="seleccionando"
+    @seleccion="$emit('seleccion', $event)"
   />
 </template>
 
@@ -21,6 +23,7 @@ export default {
     idRoot: {},
     idRootActual: { default: 0 },
     carpetaPadreActual: {},
+    seleccionando: {type: Boolean, required: false, default: false}
   },
   async asyncData({ route, $strapi, $error }) {
     try {

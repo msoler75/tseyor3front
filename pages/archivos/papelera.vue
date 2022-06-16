@@ -1,10 +1,10 @@
 <template>
-  <div class="py-5 px-5 sm:px-10 lg:px-14">
+  <div class="py-5 px-4 sm:px-8 lg:px-10 xl:px-12">
     <h3>Papelera</h3>
     <ListadoCarpetas
       :carpetas="papelera"
       @click="$emit('click', $event)"
-      placeholder="No tienes ninguna carpeta"
+      placeholder="Tu papelera está vacía"
       :padre="{ ruta: $route.path + '', publishedAt: 1 }"
       :borrarDefinitivo="true"
     />

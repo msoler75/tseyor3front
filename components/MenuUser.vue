@@ -2,7 +2,7 @@
   <Poppable v-model="localValue">
     <Card
       class="py-3 px-5 w-52 fixed right-0 top-[48px] sm:top-[51px] md:top-[68px] lg:top-[72px] xl:top-[76px] z-40
-      rounded-t-none"
+      rounded-t-none shadow-md"
     >
       <ul class="list-none">
         <li v-for="item of items" :key="item.href">

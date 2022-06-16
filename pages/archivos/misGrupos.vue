@@ -1,5 +1,5 @@
 <template>
-  <div class="py-5 px-5 sm:px-10 lg:px-14">
+  <div class="py-5 px-4 sm:px-8 lg:px-10 xl:px-12">
     <div v-if="gruposFiltrados.length">
       <div v-for="grupo of gruposFiltrados" :key="grupo.id">
         <h4 class="px-2">{{ grupo.nombre }}</h4>

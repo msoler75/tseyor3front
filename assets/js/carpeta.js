@@ -21,15 +21,13 @@ const populateArchivo = {
 }
 
 const populateCarpeta = {
+  ...populateCarpetaPermisos,
   padre: {
     populate: {
       subcarpetas: '*',
       archivos: '*',
       ...populateCarpetaPermisos
     }
-  },
-  archivos: {
-    populate: populateArchivo
   },
   subcarpetas: {
     populate: {
@@ -38,7 +36,9 @@ const populateCarpeta = {
       ...populateCarpetaPermisos
     }
   },
-  ...populateCarpetaPermisos
+  archivos: {
+    populate: populateArchivo
+  }  
 }
 
 
