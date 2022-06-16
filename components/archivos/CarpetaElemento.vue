@@ -1,17 +1,25 @@
 <template>
   <component
     :is="tag"
-    class="elem-grid grid gap-x-4 gap-y-1"
+    class="elem-grid grid gap-x-4 gap-y-1
+    lg:text-lg
+                px-2
+                py-1
+                md:py-2
+                rounded-lg
+                hover:bg-gray-100
+                dark:hover:bg-gray-900
+    "
     :vista="vista"
     :seleccionando="seleccionando"
     :class="
       (vista == 'listado'
         ? 'flex-row'
         : 'flex-col justify-center items-center') +
-      ' ' +
-      (!publishedAt || uploading ? 'pointer-events-none' : '') +
-      (seleccionando && seleccionado ? ' !bg-yellow-200' : '') +
-      (seleccionando ? ' pointer-events-auto cursor-pointer' : '')
+      (!publishedAt || procesando ? ' pointer-events-none' : 
+      seleccionando && seleccionado ? ' !bg-yellow-100 dark:!bg-brown-700' : 
+      seleccionando ? ' pointer-events-auto' : 
+      ' cursor-pointer' )
     "
     @click="seleccionar"
   >
@@ -39,7 +47,7 @@
         dark:text-gray-50
       "
       :class="
-      vista=='listado'?'w-40 xm:w-48 lg:w-64 ':'text-center ' + 
+      vista=='listado'?'text-base w-40 xm:w-48 lg:w-64 ':'text-sm text-center ' + 
         textClass + (publishedAt ? ' cursor-pointer' : ' pointer-events-none')
       "
     >
@@ -47,7 +55,7 @@
     </div>
 
     <div
-      class="flex w-full justify-start text-xs text-diminished"
+      class="flex w-full justify-start text-xs text-diminished whitespace-nowrap"
       :class="
         (vista == 'listado' ? '' : 'text-center scale-75') + ' ' + subtextClass
       "
@@ -59,15 +67,17 @@
     </div>
 
     <span      
-      class="inline-block cursor-pointer text-gray text-xl w-5 h-5 group"
-      :class="!seleccionando ? '' : 'opacity-0 pointer-events-none'"
-      @click="onControls"
+      class="inline-flex justify-center items-center cursor-pointer text-gray text-xl group w-full"
+      :class="!seleccionando ? 'pointer-events-auto' : 'opacity-0 pointer-events-none'"
+      @click.stop.prevent="onControls"
     >
       <Loader
         v-if="procesando"
         class="flex flex-shrink-0 self-center"
       />
-      <span v-else-if="mostrarControles && !uploading" class="opacity-75 group-hover:opacity-100">
+      <span v-else-if="mostrarControles && !procesando" class="opacity-75 group-hover:opacity-100 w-full inline-block"
+        :class="vista == 'listado' ? '':'text-center'"
+      >
         {{ vista == "listado" ? "&vellip;" : "&hellip;" }}
       </span>
       <span v-else>&nbsp;</span>
@@ -110,7 +120,6 @@ export default {
     },
     mostrarDescripcion: { type: Boolean, required: false, default: true },
     // estados:
-    uploading: {},
     publishedAt: {},
     checkable: { type: Boolean, required: false, default: true },
     procesando: {},
@@ -129,13 +138,21 @@ export default {
       else this.$emit("deseleccionado");
     },
   },
-  methods: {
-    seleccionar() {
-      if (this.seleccionando &&this.publishedAt)
-        this.seleccionado = !this.seleccionado;
+  methods: {    
+    seleccionar(ev) {
+      if (this.seleccionando) 
+      {
+        if(this.publishedAt && this.checkable)
+        this.seleccionado = !this.seleccionado
+      }
+      else
+        this.$emit('click', ev)
+    },
+    reset(){
+      this.seleccionado = false
     },
     onControls(ev) {
-        if(!this.procesando&&!this.uploading)
+        if(!this.procesando)
         this.$emit('propiedades', ev)
     }
   },
@@ -148,7 +165,7 @@ export default {
   grid-template-rows: 1.1fr .9fr;
 }
 
-[seleccionando='true'] .elem-grid[vista="listado"] { 
+.elem-grid[seleccionando='true'][vista="listado"] { 
     grid-template-columns: 30px 72px 1fr 0;
 }
 
@@ -163,10 +180,13 @@ export default {
 }
 
 .elem-grid[vista="miniaturas"] {
-  /*display: flex;
-  flex-direction: column;
-  align-items: center;*/
   grid-template-columns: 1fr;
-  grid-template-rows: 0 120px 1fr 1fr 12px;
+  grid-template-rows: 0 120px 1fr .8fr 20px;
 }
+
+.elem-grid[seleccionando='true'][vista="miniaturas"] { 
+    grid-template-rows: 30px 120px 1fr .8fr 0;
+}
+
+
 </style>

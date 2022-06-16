@@ -82,6 +82,10 @@ export default {
     state.loading = payload
   },
 
+  setVistaArchivos(state, payload)  {
+    state.vistaArchivos = payload
+  },
+
   setTravelling(state, payload) {
     // console.log('travelling=', payload)
     state.travelling = payload

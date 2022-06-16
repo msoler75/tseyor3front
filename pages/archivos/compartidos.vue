@@ -6,6 +6,7 @@
       :carpetas="compartidasContigo"
       placeholder="Ninguna carpeta compartida"
       :padre="{ ruta: $route.path + '', publishedAt: 1 }"
+      :vista="vista"
     />
 
     <divider />
@@ -16,6 +17,7 @@
       :carpetas="carpetasQueCompartes"
       placeholder="Ninguna carpeta compartida"
       :padre="{ ruta: $route.path + '', publishedAt: 1 }"
+      :vista="vista"
     />
   </div>
 </template>
@@ -24,6 +26,9 @@
 import {populateCarpeta} from '@/assets/js/carpeta'
 export default {
   middleware: ["logged"],
+  props: {
+    vista: {}
+  },  
   async asyncData({ $strapi, $error }) {
     try {
       const response = await $strapi.find("users/me", {

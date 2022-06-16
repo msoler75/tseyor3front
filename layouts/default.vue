@@ -378,7 +378,7 @@ export default {
         e.preventDefault();
         this.onBuscar();
       }
-      if (e.key === "l") this.$store.commit("setLoading", true);
+      if (e.key === "l") this.$store.commit("setLoading", !this.$store.state.loading);
     },
     showSideMenu() {
       this.showSidebar = true;

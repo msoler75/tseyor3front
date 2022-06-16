@@ -40,6 +40,8 @@ export default () => ({
   travelling: true,
   // estamos cargando una página
   loading: false,
+  // modo de vista de archivos
+  vistaArchivos: 'listado',
   // se activa al hacer click en breadcrumb
   breadcrumbHandler: null,
   // próximo path en la transición de cambio de página

@@ -10,7 +10,7 @@
       @submit.stop.prevent="accept"
     >
       <div v-if="administracion" class="space-y-2">
-        <label for="nombre" class="font-bold">Nombre de la carpetaLocal:</label>
+        <label for="nombre" class="font-bold">Nombre de la carpeta:</label>
         <input
           id="nombre"
           type="text"
@@ -20,7 +20,7 @@
         />
       </div>
 
-      <div class="space-y-2 text-sm">
+      <div class="space-y-2 text-sm lg:text-base">
         <table>
           <tr v-if="!administracion">
             <td><label class="text-diminished mr-4">Nombre: </label></td>

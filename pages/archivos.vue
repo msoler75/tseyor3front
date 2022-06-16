@@ -76,20 +76,9 @@
       class="right-panel flex-grow surface w-full"
       :class="modoExplorador ? 'explorador' : ''"
     >
-      <div
-        class="
-          w-full
-          px-4
-          sm:px-8
-          lg:px-10
-          xl:px-12
-          py-4
-          order-0
-
-        "        
-      >
-        <Breadcrumb        
-        v-if="modoExplorador"
+      <div class="w-full px-4 sm:px-8 lg:px-10 xl:px-12 py-4 order-0">
+        <Breadcrumb
+          v-if="modoExplorador"
           class="text-sm mt-2"
           :class="seleccionando ? 'pointer-events-none opacity-50' : ''"
         />
@@ -101,150 +90,165 @@
           options
           overflow-x-auto
           order-3
-          lg:order-1 lg:row-span-2 lg:bg-gray-100 lg:dark:bg-gray-900          
+          lg:order-1 lg:row-span-2 lg:bg-gray-100 lg:dark:bg-gray-900
           sticky
-          lg:static
-          lg:overflow-visible
-          bottom-0          
-          lg:top-[72px] xl:top-[76px]
-          z-30          
+          lg:static lg:overflow-visible
+          bottom-0
+          lg:top-[72px]
+          xl:top-[76px]
+          z-30
           select-none
-          whitespace-nowrap          
+          whitespace-nowrap
           px-2
           sm:px-5
           py-4
           lg:py-6
         "
       >
-      <div
-      class="sticky
-          top-[115px]
-          flex
-          justify-start
-          space-x-2
-          lg:space-y-4 lg:space-x-0
-          lg:flex-col
-          ">
-        <div v-if="seleccionando" class="hidden lg:block">
-          Selecciona los elementos...
-        </div>
-        <div v-else-if="copiados.length">Elige la carpeta destino...</div>
-
-        <Btn
-          v-if="seleccionados.length"
-          class="btn-mini btn-gray text-sm"
-          icon="copy"
-          label="Copiar Seleccionados"
-          @click="copiar"
-        />
-        <Btn
-          v-if="seleccionados.length && seleccionadosMovibles"
-          class="btn-mini btn-gray text-sm"
-          icon="cut"
-          label="Mover Seleccionados"
-          @click="cortar"
-        />
-        <Btn
-          v-if="seleccionados.length && seleccionadosAdministrables"
-          class="btn-mini btn-gray text-sm"
-          icon="far fa-trash-alt"
-          label="Borrar Seleccionados"
-          @click="borrar"
-        />
-
-        <Btn
-          v-if="copiados.length"
-          class="btn-mini btn-gray text-sm"
-          icon="paste"
-          :label="
-            esCortar
-              ? 'Mover Aquí'
-              : $route.path == rutaCopia
-              ? 'Duplicar Aquí'
-              : 'Copiar Aquí'
+        <div
+          class="
+            sticky
+            top-[115px]
+            flex
+            justify-start
+            space-x-2
+            lg:space-y-4 lg:space-x-0 lg:flex-col
           "
-          :disabled="!permisoEscritura"
-          @click="pegar"
-        />
-
-        <Btn
-          v-if="copiados.length"
-          class="btn-mini btn-gray text-sm"
-          icon="times"
-          label="Cancelar"
-          @click="cancelar"
-        />
-
-        <Btn
-          v-if="$route.path!=urlPapelera && !seleccionando && !copiando && !copiados.length"
-          class="btn-mini btn-gray text-sm"
-          icon="search"
-          label="Buscar Archivos"
-          @click="buscar"
-        />
-
-        <Btn
-          v-if="carpeta &&
-            carpeta.archivos &&
-            (carpeta.archivos.length || carpeta.subcarpetas.length) &&
-            !copiando"
-          class="btn-mini btn-gray text-sm"
-          :icon="modoLista ? 'list' : 'th-large'"
-          label="Cambiar Vista"
-          @click="modoLista = !modoLista"
-        />
-
-        <Btn
-          v-if="
-            permisoEscritura && !seleccionando && !copiados.length && !copiando
-          "
-          class="btn-mini btn-gray text-sm"
-          icon="folder-plus"
-          label="Nueva Carpeta"
-          @click="modoLista = !modoLista"
-        />
-
-        <InputFiles
-          v-if="
-            !loading &&
-            !specialFolders.includes($route.path) &&
-            permisoEscritura &&
-            !seleccionando &&
-            !copiados.length &&
-            !copiando
-          "
-          class="lg:w-full"
-          :onlyInput="true"
-          classButton="btn-mini text-sm whitespace-nowrap"
-          :multiple="true"
-          icon="fas fa-cloud-upload-alt"
-          textButton="Subir Archivos"
-          v-on:change="addFiles"
-        />
-
-        <Btn
-          v-if="
-            !loading &&
-            !specialFolders.includes($route.path) &&
-            carpeta &&
-            carpeta.archivos &&
-            (carpeta.archivos.length || carpeta.subcarpetas.length) &&
-            !copiados.length &&
-            !copiando
-          "
-          class="btn-mini btn-gray text-sm flex"
-          @click="seleccionando = !seleccionando"
         >
-          <Check v-model="seleccionando" class="w-6" />
-          <span>{{
-            !seleccionando ? "Seleccionar" : "Cancelar Selección"
-          }}</span>
-        </Btn>
-      </div>
+          <div v-if="seleccionando" class="hidden lg:block">
+            Selecciona los elementos...
+          </div>
+          <div v-else-if="copiados.length">Elige la carpeta destino...</div>
+
+          <Btn
+            v-if="seleccionados.length"
+            class="btn-mini btn-gray text-sm"
+            icon="copy"
+            label="Copiar Seleccionados"
+            @click="copiar"
+          />
+          <Btn
+            v-if="seleccionados.length && seleccionadosMovibles"
+            class="btn-mini btn-gray text-sm"
+            icon="cut"
+            label="Mover Seleccionados"
+            @click="cortar"
+          />
+          <Btn
+            v-if="seleccionados.length && seleccionadosAdministrables"
+            class="btn-mini btn-gray text-sm"
+            icon="far fa-trash-alt"
+            label="Borrar Seleccionados"
+            @click="borrar"
+          />
+
+          <Btn
+            v-if="copiados.length"
+            class="btn-mini btn-gray text-sm"
+            icon="paste"
+            :label="
+              esCortar
+                ? 'Mover Aquí'
+                : $route.path == rutaCopia
+                ? 'Duplicar Aquí'
+                : 'Copiar Aquí'
+            "
+            :disabled="!permisoEscritura"
+            @click="pegar"
+          />
+
+          <Btn
+            v-if="copiados.length"
+            class="btn-mini btn-gray text-sm"
+            icon="times"
+            label="Cancelar"
+            @click="cancelar"
+          />
+
+          <Btn
+            v-if="
+              $route.path != urlPapelera &&
+              !seleccionando &&
+              !copiando &&
+              !copiados.length
+            "
+            class="btn-mini btn-gray text-sm"
+            icon="search"
+            label="Buscar Archivos"
+            @click="buscar"
+          />
+
+          <Btn
+            v-if="              
+              !copiando
+            "
+            class="btn-mini btn-gray text-sm"
+            :icon="modoLista ? 'list' : 'th-large'"
+            label="Cambiar Vista"
+            @click="modoLista = !modoLista"
+          />
+
+          <Btn
+            v-if="
+              permisoEscritura &&
+              !seleccionando &&
+              !copiados.length &&
+              !copiando
+            "
+            class="btn-mini btn-gray text-sm"
+            icon="folder-plus"
+            label="Nueva Carpeta"
+            @click="modoLista = !modoLista"
+          />
+
+          <InputFiles
+            v-if="
+              !loading &&
+              !specialFolders.includes($route.path) &&
+              permisoEscritura &&
+              !seleccionando &&
+              !copiados.length &&
+              !copiando
+            "
+            class="lg:w-full"
+            :onlyInput="true"
+            classButton="btn-mini text-sm whitespace-nowrap"
+            :multiple="true"
+            icon="fas fa-cloud-upload-alt"
+            textButton="Subir Archivos"
+            v-on:change="addFiles"
+          />
+
+          <Btn
+            v-if="
+              !loading &&
+              !specialFolders.includes($route.path) &&
+              carpeta &&
+              carpeta.archivos &&
+              (carpeta.archivos.length || carpeta.subcarpetas.length) &&
+              !copiados.length &&
+              !copiando
+            "
+            class="btn-mini btn-gray text-sm flex"
+            @click="seleccionando = !seleccionando"
+          >
+            <Check v-model="seleccionando" class="w-6" />
+            <span>{{
+              !seleccionando ? "Seleccionar" : "Cancelar Selección"
+            }}</span>
+          </Btn>
+        </div>
       </div>
       <div
         v-if="!loading"
-        class="child order-2 w-full flex-grow !border-l-0 !border-r-0"
+        class="
+          child
+          order-2
+          w-full
+          flex-grow flex flex-col
+          !border-l-0 !border-r-0
+        "
+        :class="copiados.length ? 'border-4 border-orange' : ''"
       >
         <nuxt-child
           v-show="!loading"
@@ -255,7 +259,7 @@
           @carpeta="onCarpeta"
           @seleccion="onSeleccion"
           :mostrarArchivos="!copiados.length"
-          :vista="modoLista?'listado':'miniaturas'"
+          :vista="modoLista ? 'listado' : 'miniaturas'"
         />
       </div>
       <div
@@ -272,7 +276,8 @@
       >
         <LoaderFolders
           :items="itemsPrevistos"
-          class="py-5 px-4 sm:px-8 lg:px-10 xl:px-12 h-full text-2xl surface"
+          :vista="modoLista ? 'listado' : 'miniaturas'"
+          class="w-full py-5 px-4 sm:px-8 lg:px-10 xl:px-12 h-full text-2xl surface"
           :class="
             loading ? 'max-h-[80vh]' : 'max-h-0 transform translate-x-[9999px]'
           "
@@ -323,11 +328,11 @@ export default {
     specialFolders = specialFolders.map((x) => this.$config.archivosRuta + x);
     return {
       carpeta: {},
-      urlPapelera: this.$config.archivosRuta + '/papelera',
+      urlPapelera: this.$config.archivosRuta + "/papelera",
       menuActual: this.$route.path.substr(
         this.$route.path.lastIndexOf("/") + 1
       ),
-      modoLista: true, //vista de los contenids en modo lista o grid
+      modoLista: true, //vista de los contenidos en modo lista o grid
       seleccionando: false,
       seleccionados: [],
       copiados: [],
@@ -451,10 +456,17 @@ export default {
     seleccionando(newValue) {
       this.seleccionados.splice(0, this.seleccionados.length);
     },
+    modoLista(newValue) {
+      this.$store.commit(
+        "setVistaArchivos",
+        newValue ? "listado" : "miniaturas"
+      );
+    },
   },
   mounted() {
     if (!this.menuItems.find((x) => x.value === this.menuActual))
       this.menuActual = "archivos";
+    this.modoLista = this.$store.state.vistaArchivos == "listado";
   },
   methods: {
     addFiles(files) {
@@ -479,7 +491,7 @@ export default {
     onRuta(obj) {
       console.log("onRuta", obj);
       this.ultimoClick = null;
-      this.seleccionando = false
+      this.seleccionando = false;
       const ruta = typeof obj === "object" ? obj.ruta : obj;
       this.itemsPrevistos =
         typeof obj === "object" && "archivos" in obj
@@ -518,12 +530,8 @@ export default {
       for (const item of lista.archivos)
         this.seleccionados.push({ tipo: "archivo", id: item });
     },
-    buscar() {
-
-    },
-    borrar() {
-      
-    },
+    buscar() {},
+    borrar() {},
     copiar() {
       this.copiados.splice(0, this.copiados.length);
       for (const item of this.seleccionados) {
@@ -628,7 +636,6 @@ export default {
 .right-panel.explorador {
   grid-template-rows: 4rem 1fr;
 }
-
 
 @screen lg {
   .right-panel {

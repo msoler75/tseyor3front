@@ -3,27 +3,32 @@
     <div v-if="!carpetas.length" class="flex w-full h-32 text-lg justify-center items-center">
       <span>{{placeholder}}</span>
     </div>
-    <Carpeta
+    <div 
+      class="w-full"
+          :class="vista == 'listado' ? 'flex flex-col' : 'mygrid'"
       v-else
+    >
+    <Carpeta
       v-for="(carpeta, index) of carpetas"
       :id="'carpeta-' + carpeta.id"
       :key="'carpeta-' + carpeta.id"
       v-model="carpetas[index]"
       :boxClass="boxClass"
-      :iconClass="'text-6xl ' + iconClass"
+      :iconClass="iconClass"
       :textClass="textClass"
       :subtextClass="subtextClass"
       :mostrarFecha="mostrarFecha"
       :mostrarTamano="mostrarTamano"
       :mostrarControles="mostrarControles"
-      :borrarDefinitivo="borrarDefinitivo"
-      class="w-full lg:text-lg px-2 py-1 md:py-2"
+      :borrarDefinitivo="borrarDefinitivo"      
       @dragenter="dragging = false"
       @dragleave="dragging = true"
       @click="$emit('click', {...$event, forzarPadre:padre})"
       @borrada="borrada"
+      :vista="vista"
       :padre="padre"
     />
+    </div>
   </div>
 </template>
 
@@ -32,11 +37,12 @@ export default {
   props: {
     carpetas: { type: Array, required: true },
     padre: {},
+    vista:{},
     borrarDefinitivo:{type: Boolean, required: false, default: false},
     textClass: {},
     subtextClass: {},
-    iconClass: { type: String, required: false, default: "text-6xl" },
-    boxClass: { type: String, required: false, default: "w-16 mr-3" },
+    iconClass: { type: String, required: false, default: "" },
+    boxClass: { type: String, required: false, default: "" },
     placeholder:{},
     mostrarTitulo: { default: true },
     mostrarControles: {
@@ -72,3 +78,16 @@ export default {
   }
 };
 </script>
+
+<style scoped>
+.mygrid {
+  display: grid;
+  grid-gap: 10px;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  grid-template-rows: repeat(auto-fill, minmax(200px, 1fr));
+  grid-auto-columns: minmax(150px, 200px);
+  grid-auto-rows: minmax(200px, 210px);
+  grid-auto-flow: dense;
+  place-items: stretch stretch;
+}
+</style>

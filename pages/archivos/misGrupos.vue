@@ -8,6 +8,7 @@
           :carpetas="grupo.carpetas"
           @click="$emit('click', $event)"
           :padre="{ ruta: $route.path + '', publishedAt: 1 }"
+          :vista="vista"
         />
       </div>
     </div>
@@ -21,6 +22,9 @@
 import {populateCarpeta} from '@/assets/js/carpeta'
 export default {
   middleware: ["logged"],
+  props: {
+    vista: {}
+  },
   async asyncData({ $strapi, $error }) {
     try {
       const response = await $strapi.find("users/me", {

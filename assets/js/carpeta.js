@@ -1,3 +1,4 @@
+import Vue from 'vue'
 import loadImage from "blueimp-load-image";
 
 const populateCarpetaPermisos = {
@@ -141,14 +142,17 @@ const uploadFiles = async (carpeta, files, $strapi, $toast) => {
       };
     }
 
-    if ("archivos" in carpeta)
-      carpeta.archivos.push({
-        id: 0,
+    if ("archivos" in carpeta) {
+      const a = {
+        id: 0,        
         nombre: file.name,
         uploading: true,
         carpeta: carpeta.id,
         media,
-      });
+      }
+      console.log('subiendo', a)
+      carpeta.archivos.push(a);
+    }
     formData.append("files", file);
   }
 
@@ -196,10 +200,13 @@ const uploadFiles = async (carpeta, files, $strapi, $toast) => {
               const a = carpeta.archivos.find(
                 (x) => x.uploading && x.nombre == file.name
               );
+              console.log('subido archivo', a, res.data)
               if (a) {
-                a.id = res.data.id;
-                // a.media = res.data.media
-                delete a.uploading;
+                a.id=res.data.id
+                a.publishedAt = res.data.publishedAt
+                Vue.set(a, 'propietario', res.data.propietario)
+                Vue.set(a, 'padre', res.data.padre)
+                a.uploading= false
               }
             }
           });
