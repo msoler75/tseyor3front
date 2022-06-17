@@ -4,8 +4,7 @@
     class="elem-grid grid gap-x-4 gap-y-1
     lg:text-lg
                 px-2
-                py-1
-                md:py-2
+                py-2
                 rounded-lg
                 hover:bg-gray-100
                 dark:hover:bg-gray-900
@@ -55,9 +54,9 @@
     </div>
 
     <div
-      class="flex w-full justify-start text-xs text-diminished whitespace-nowrap"
+      class="flex w-full text-xs text-diminished whitespace-nowrap"
       :class="
-        (vista == 'listado' ? '' : 'text-center scale-75') + ' ' + subtextClass
+        (vista == 'listado' ? ' justify-start' : 'justify-center text-center scale-75') + ' ' + subtextClass
       "
     >
       <slot v-if="mostrarDescripcion" name="description"
@@ -66,24 +65,13 @@
       </slot>
     </div>
 
-    <span      
-      class="inline-flex justify-center items-center cursor-pointer text-gray text-xl group w-full"
-      :class="!seleccionando ? 'pointer-events-auto' : 'opacity-0 pointer-events-none'"
-      @click.stop.prevent="onControls"
-    >
-      <Loader
-        v-if="procesando"
-        class="flex flex-shrink-0 self-center"
-      />
-      <span v-else-if="mostrarControles && !procesando" class="opacity-75 group-hover:opacity-100 w-full inline-block"
-        :class="vista == 'listado' ? '':'text-center'"
-      >
-        {{ vista == "listado" ? "&vellip;" : "&hellip;" }}
-      </span>
-      <span v-else>&nbsp;</span>
-
-      
-    </span>
+    <SettingsLoader
+    :class="vista=='listado'?'':'mx-auto'"
+            :vertical="vista=='listado'"
+            :loader="procesando"
+            :controls="mostrarControles&&!seleccionando"
+            @click.stop.prevent="$emit('propiedades', $event)"            
+          />
 
 
     <slot/>
@@ -99,8 +87,8 @@ export default {
     seleccionando: { type: Boolean, required: false, default: false },
     iconClass: { type: String, required: false, default: "" },
     boxClass: { type: String, required: false, default: "" },
-    textClass: {},
-    subtextClass: {},
+    textClass: { type: String, required: false, default: "" },
+    subtextClass: { type: String, required: false, default: "" },
     mostrarTitulo: { default: true },
     mostrarControles: {
       type: Boolean,
@@ -150,10 +138,6 @@ export default {
     },
     reset(){
       this.seleccionado = false
-    },
-    onControls(ev) {
-        if(!this.procesando)
-        this.$emit('propiedades', ev)
     }
   },
 };
@@ -161,7 +145,7 @@ export default {
 
 <style scoped>
 .elem-grid[vista="listado"] {
-  grid-template-columns: 0 72px 1fr 16px;
+  grid-template-columns: 0 72px 1fr 30px;
   grid-template-rows: 1.1fr .9fr;
 }
 

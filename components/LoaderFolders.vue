@@ -19,15 +19,15 @@ export default {
 <style scoped>
 .loader-folders {
   position: relative;
-  padding-top: 50px;  
+  padding-top: 40px;  
   min-width: 264px;
   height: fit-content;
   display: block;
   mix-blend-mode: difference;
-  background-image: linear-gradient(#FFF 33px, transparent 0);
+  background-image: linear-gradient(#FFF 20px, transparent 0);
   background-repeat: no-repeat;
   background-position: 0 0px;
-  background-size: 190px, 33px;
+  background-size: 190px, 20px;
   box-sizing: border-box;
 }
 

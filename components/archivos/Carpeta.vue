@@ -21,37 +21,35 @@
       >
         <span>{{ errors.message }}</span>
       </div>
-      <LoaderFolders v-else-if="cargando" 
+      <LoaderFolders v-else-if="cargando"  :vista="modoLista ? 'listado' : 'miniaturas'" 
       class="px-4 sm:px-8 lg:px-10 xl:px-12"
       />
       <div v-else-if="carpeta" class="flex w-full flex-col justify-between">
-        <div class="px-2 flex justify-between relative z-10">
+        <div class="px-2 mb-5 flex items-center justify-start relative z-10">          
+          <span v-if="getpadre && !seleccionando"
+          class="cursor-pointer pr-5 flex items-center"
+          title="Subir un nivel"
+          @click="flexNavigateTo(getpadre)">
+            <icon            
+            icon="chevron-left"
+            class=""
+          />
+          </span>          
           <h1
-            v-if="mostrarTitulo && (carpeta.nombreOriginal || carpeta.nombre)"
-            class="flex justify-between"
+            v-if="mostrarTitulo && carpeta.nombre"
+            class="flex-grow !mb-0"
           >
-            <span>{{ carpeta.nombreOriginal || carpeta.nombre }}</span>
+            <span>{{ carpeta.nombre }}</span>
           </h1>
-          <div v-if="!seleccionando" class="flex">
-            <Loader v-if="procesando" class="pl-1 flex self-center w-5 h-5" />
-            <span
-              v-else-if="
-                carpeta && mostrarControles && carpeta.nombreMostrar != '..'
-              "
-              class="
-                self-center
-                cursor-pointer
-                text-gray text-xl
-                ml-2
-                pl-2
-                pr-1
-                pointer-events-auto
-              "
-              @click="mostrarMenu = $event"
-            >
-              &vellip;</span
-            >
-          </div>
+
+          <SettingsLoader
+            class="ml-auto"
+            :vertical="vista=='listado'"
+            :loader="procesando"
+            :controls="mostrarControles&&!seleccionando"
+            @click="mostrarMenu = $event"
+          />
+
         </div>
         <div
           v-if="
@@ -78,7 +76,7 @@
             :subtextClass="subtextClass"
             :mostrarFecha="mostrarFecha"
             :mostrarTamano="mostrarTamano"
-            :mostrarControles="mostrarControles"
+            :mostrarControles="mostrarControles && !subcarpeta.subirNivel"
             :seleccionando="seleccionando"
             :vista="vista"
             @click="$emit('click', $event)"
@@ -121,13 +119,13 @@
       :textClass="textClass"
       :subtextClass="subtextClass"
       :mostrarTitulo="mostrarTitulo"
-      :mostrarControles="mostrarControles && carpeta.nombreMostrar != '..'"
+      :mostrarControles="mostrarControles && carpeta.subirNivel"
       :mostrarTamano="mostrarTamano"
       :mostrarFecha="mostrarFecha"
       :mostrarDescripcion="mostrarDescripcion"
       :publishedAt="carpeta.publishedAt"
       :nombre="carpeta.nombreMostrar || carpeta.nombre"
-      :checkable="carpeta && carpeta.nombreMostrar != '..'"
+      :checkable="carpeta && carpeta.subirNivel"
       :procesando="procesando"
       @click="flexNavigateTo(carpeta)"
       @propiedades="mostrarMenu = $event"
@@ -141,7 +139,7 @@
             (vista == 'listado' ? 'text-6xl ' : 'text-8xl ') +
             (!carpeta.publishedAt
               ? 'pointer-events-none'
-              : seleccionando && carpeta.nombreMostrar == '..'
+              : seleccionando && carpeta.subirNivel
               ? 'opacity-50 pointer-events-none'
               : seleccionando
               ? 'pointer-events-none'
@@ -154,7 +152,7 @@
             class="absolute"
             :class="
               iconClass +
-              (carpeta.nombreMostrar != '..' &&
+              (carpeta.subirNivel &&
               !seleccionando &&
               carpeta.publishedAt
                 ? ' group-hover:hidden'
@@ -169,8 +167,8 @@
             :class="iconClass"
           />
           <icon
-            v-if="!seleccionando && carpeta.nombreMostrar === '..'"
-            icon="fas fa-arrow-left"
+            v-if="!seleccionando && carpeta.subirNivel"
+            icon="reply"
             class="group-hover:-translate-x-1 scale-[25%] text-black absolute"
           />
           <icon
@@ -280,7 +278,7 @@ export default {
   data() {
     return {
       /* ESTA VARIABLE SE TIENE QUE ASIGNAR LOS DATOS DE LA CARPETA */
-      carpeta: {},      
+      carpeta: {},
       seleccionada: false,
       carpetasSeleccionadas: [],
       archivosSeleccionados: [],
@@ -302,7 +300,7 @@ export default {
       const items = [];
       if (!this.carpeta) return items;
 
-      if (this.carpeta.nombreMostrar == "..") return items;
+      if (this.carpeta.subirNivel) return items;
 
       if (
         this.carpeta.publishedAt &&
@@ -446,8 +444,10 @@ export default {
           : Array.isArray(this.carpeta)
           ? { ...this.carpeta }
           : [this.carpeta];
-      if (this.getpadre && this.carpeta.id !== this.idRootFolder)
-        r.unshift({ ...this.getpadre, nombreMostrar: ".." });
+
+      //const padre = this.getpadre
+      //if (padre && this.carpeta.id !== this.idRootFolder)
+        //r.unshift({ ...padre, subirNivel:true, nombreMostrar:' ' });
       console.warn("R", r);
       this.carpetas = r;
     },

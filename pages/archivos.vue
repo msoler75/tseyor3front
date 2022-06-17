@@ -221,6 +221,7 @@
 
           <Btn
             v-if="
+              $strapi.user &&
               !loading &&
               !specialFolders.includes($route.path) &&
               carpeta &&
@@ -343,10 +344,10 @@ export default {
       itemsPrevistos: Math.round(Math.random() * 4),
       menuItems: [
         {
-          label: "Base",
+          label: "Zona de archivos",
         },
         {
-          label: "Todos los archivos",
+          label: "Todos",
           value: "archivos",
           icon: "folder-open",
         },
