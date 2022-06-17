@@ -5,7 +5,7 @@
     background="no"
     breadcrumb="no"
     footer="no"
-    style="font-family: 'Trebuchet MS'"
+    style="font-family: 'Trebuchet MS'"    
   >
     <div
       v-if="$strapi.user"
@@ -29,7 +29,9 @@
           xl:top-[85px]
         "
       >
-        <div class="w-full overflow-y-auto">
+        <div class="w-full overflow-y-auto"
+        :class="borrando?'activar-papelera':''"
+        >
           <template v-for="(menu, index) of menuItems">
             <section
               :key="index"
@@ -329,6 +331,7 @@ export default {
     specialFolders = specialFolders.map((x) => this.$config.archivosRuta + x);
     return {
       carpeta: {},
+      borrando: false,
       urlPapelera: this.$config.archivosRuta + "/papelera",
       menuActual: this.$route.path.substr(
         this.$route.path.lastIndexOf("/") + 1
@@ -504,6 +507,11 @@ export default {
     async onBorrada(rutaBorrada) {
       console.log("CARPETA BORRADA", rutaBorrada);
       console.log("ruta Actual", this.$route.path);
+      this.borrando = true
+      const that = this
+      setTimeout(()=>{
+        that.borrando = false
+      }, 1500)
       if (rutaBorrada == this.$route.path) {
         let ruta = this.$route.path.substr(
           0,
@@ -647,4 +655,28 @@ export default {
     width: 100%;
   }
 }
+
+.activar-papelera .fa-trash-alt {
+  animation: 1s shake cubic-bezier(.36,.07,.19,.97) both;
+}
+
+@keyframes shake {
+  10%, 90% {
+    transform: translate3d(-1px, 0, 0);
+  }
+  
+  20%, 80% {
+    transform: translate3d(2px, 0, 0);
+  }
+
+  30%, 50%, 70% {
+    transform: translate3d(-4px, 0, 0);
+  }
+
+  40%, 60% {
+    transform: translate3d(4px, 0, 0);
+  }
+}
+
+
 </style>

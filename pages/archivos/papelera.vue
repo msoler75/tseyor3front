@@ -8,6 +8,7 @@
       :padre="{ ruta: $route.path + '', publishedAt: 1 }"
       :borrarDefinitivo="true"
       :vista="vista"
+      @borrada="$emit('borrada', $event)"
     />
   </div>
 </template>

@@ -5,15 +5,15 @@
     :dropAllowed="permisoEscritura"
     :class="
       (dragging ? 'bg-green' : '') +
-      (cargando || thereErrors ? ' max-h-[70vh] justify-center' : '')      
-    "    
+      (cargando || thereErrors ? ' max-h-[70vh] justify-center' : '')
+    "
     @dragstart.prevent=""
     @drop.prevent.stop="drop"
     @contextmenu.native.prevent="mostrarMenu = $event"
     :title="
       carpeta && !carpeta.publishedAt ? 'Esta carpeta está en la papelera' : ''
     "
-  >  
+  >
     <div v-if="explorando" :class="vista == 'listado' ? '' : 'w-full'">
       <div
         v-if="thereErrors"
@@ -21,35 +21,32 @@
       >
         <span>{{ errors.message }}</span>
       </div>
-      <LoaderFolders v-else-if="cargando"  :vista="modoLista ? 'listado' : 'miniaturas'" 
-      class="px-4 sm:px-8 lg:px-10 xl:px-12"
+      <LoaderFolders
+        v-else-if="cargando"
+        :vista="modoLista ? 'listado' : 'miniaturas'"
+        class="px-4 sm:px-8 lg:px-10 xl:px-12"
       />
       <div v-else-if="carpeta" class="flex w-full flex-col justify-between">
-        <div class="px-2 mb-5 flex items-center justify-start relative z-10">          
-          <span v-if="getpadre && !seleccionando"
-          class="cursor-pointer pr-5 flex items-center"
-          title="Subir un nivel"
-          @click="flexNavigateTo(getpadre)">
-            <icon            
-            icon="chevron-left"
-            class=""
-          />
-          </span>          
-          <h1
-            v-if="mostrarTitulo && carpeta.nombre"
-            class="flex-grow !mb-0"
+        <div class="px-2 mb-5 flex items-center justify-start relative z-10">
+          <span
+            v-if="getpadre && !seleccionando"
+            class="cursor-pointer pr-5 flex items-center"
+            title="Subir un nivel"
+            @click="flexNavigateTo(getpadre)"
           >
+            <icon icon="chevron-left" class="" />
+          </span>
+          <h1 v-if="mostrarTitulo && carpeta.nombre" class="flex-grow !mb-0">
             <span>{{ carpeta.nombre }}</span>
           </h1>
 
-          <SettingsLoader
+          <EllipBtnLoader
             class="ml-auto"
-            :vertical="vista=='listado'"
+            :vertical="vista == 'listado'"
             :loader="procesando"
-            :controls="mostrarControles&&!seleccionando"
+            :controls="mostrarControles && !seleccionando"
             @click="mostrarMenu = $event"
           />
-
         </div>
         <div
           v-if="
@@ -82,7 +79,7 @@
             @click="$emit('click', $event)"
             @dragenter="dragging = false"
             @dragleave="dragging = true"
-            @borrada="carpeta.subcarpetas.splice(index, 1)"
+            @borrada="onCarpetaBorrada"
             @seleccionado="onCarpetaSeleccionada(subcarpeta.id)"
             @deseleccionado="onCarpetaDeseleccionada(subcarpeta.id)"
           />
@@ -90,7 +87,7 @@
             <Archivo
               v-for="(archivo, index) of archivos"
               ref="archivos"
-              :key="'archivo-' + archivo.id"
+              :key="'archivo-' + archivo.id + '-' + archivo.nombre"
               v-model="archivos[index]"
               :boxClass="boxClass"
               :iconClass="'text-5xl ' + iconClass"
@@ -152,9 +149,7 @@
             class="absolute"
             :class="
               iconClass +
-              (carpeta.subirNivel &&
-              !seleccionando &&
-              carpeta.publishedAt
+              (carpeta.subirNivel && !seleccionando && carpeta.publishedAt
                 ? ' group-hover:hidden'
                 : '') +
               (carpeta.publishedAt ? ' text-orange-200' : ' text-gray-500')
@@ -355,9 +350,10 @@ export default {
       if (this.permisoAdministracion)
         if (this.carpeta.publishedAt || this.borrarDefinitivo)
           items.push({
-            label: this.borrarDefinitivo
-              ? "Eliminar Definitivamente"
-              : "Eliminar",
+            label:
+              !this.carpeta.publishedAt && this.borrarDefinitivo
+                ? "Eliminar Definitivamente"
+                : "Eliminar",
             icon: "far fa-trash-alt",
             click: this.eliminar,
           });
@@ -447,7 +443,7 @@ export default {
 
       //const padre = this.getpadre
       //if (padre && this.carpeta.id !== this.idRootFolder)
-        //r.unshift({ ...padre, subirNivel:true, nombreMostrar:' ' });
+      //r.unshift({ ...padre, subirNivel:true, nombreMostrar:' ' });
       console.warn("R", r);
       this.carpetas = r;
     },
@@ -529,6 +525,16 @@ export default {
     if (this.carpeta) this.$emit("carpeta", this.carpeta);
   },
   methods: {
+    onCarpetaBorrada(ruta) {      
+      console.warn('carpeta.onCarpetaBorrada')
+      const that = this;
+      setTimeout(() => {
+        if (!that.carpeta) return;
+        const idx = that.carpeta.subcarpetas.findIndex(x=>x.ruta==ruta);
+        if (idx >= 0) that.carpeta.subcarpetas.splice(idx, 1);
+      }, 1500);
+      this.$emit('borrada', ruta)
+    },
     onCarpetaSeleccionada(id) {
       this.carpetasSeleccionadas.push(id);
       this.emitSeleccion();
@@ -613,7 +619,8 @@ export default {
     },
     compartir() {},
     eliminar() {
-      if (!this.borrarDefinitivo) return this.enviarAPapelera();
+      if (this.carpeta.publishedAt || !this.borrarDefinitivo)
+        return this.enviarAPapelera();
       this.$confirm({
         message: `Esto eliminará permanentemente la carpeta ${this.carpeta.nombre}`,
         yes: `Borrar carpeta`,
@@ -663,6 +670,7 @@ export default {
           console.log("enviarAPapelera response", response);
           if (response.error) throw new Error(response.error.message);
           this.carpeta.publishedAt = null;
+          console.log('borrando', this.carpeta.ruta)
           this.$emit("borrada", this.carpeta.ruta);
           this.procesando = false;
         })

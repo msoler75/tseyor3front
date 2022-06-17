@@ -66,8 +66,17 @@ export default {
       default: true,
     },
   },
+  data() {
+    return {
+      urlPapelera: this.$config.archivosRuta + "/papelera"
+    }
+  },
   methods: {
     borrada(ruta) {
+      console.warn('ListadoCarpetas.borrada', ruta)
+      this.$emit('borrada', ruta)
+    // caso excepcional
+    if (this.$route.path == this.urlPapelera) return;
     const that = this
     setTimeout(()=>{
       const idx = that.carpetas.findIndex(x=>x.ruta===ruta)

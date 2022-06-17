@@ -6,6 +6,7 @@
       @click="$emit('click', $event)"
       placeholder="Sin actividad reciente"
       :padre="{ ruta: $route.path + '', publishedAt: 1 }"
+      @borrada="$emit('borrada', $event)"
     />
   </div>
 </template>

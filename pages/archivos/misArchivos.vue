@@ -7,6 +7,7 @@
       placeholder="No tienes ninguna carpeta"
       :padre="{ ruta: $route.path+'', publishedAt: 1 }"
       :vista="vista"      
+      @borrada="$emit('borrada', $event)"
     />
 
     <divider />

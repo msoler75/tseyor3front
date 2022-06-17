@@ -65,7 +65,7 @@
       </slot>
     </div>
 
-    <SettingsLoader
+    <EllipBtnLoader
     :class="vista=='listado'?'':'mx-auto'"
             :vertical="vista=='listado'"
             :loader="procesando"

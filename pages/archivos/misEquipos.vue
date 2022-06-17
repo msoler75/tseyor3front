@@ -9,6 +9,7 @@
           @click="$emit('click', $event)"
           :padre="{ ruta: $route.path + '', publishedAt: 1 }"
           :vista="vista"
+          @borrada="$emit('borrada', $event)"
         />
       </div>
     </div>

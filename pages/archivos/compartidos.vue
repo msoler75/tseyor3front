@@ -7,6 +7,7 @@
       placeholder="Ninguna carpeta compartida"
       :padre="{ ruta: $route.path + '', publishedAt: 1 }"
       :vista="vista"
+      @borrada="$emit('borrada', $event)"
     />
 
     <divider />
@@ -18,6 +19,7 @@
       placeholder="Ninguna carpeta compartida"
       :padre="{ ruta: $route.path + '', publishedAt: 1 }"
       :vista="vista"
+      @borrada="$emit('borrada', $event)"
     />
   </div>
 </template>
