@@ -29,7 +29,7 @@
     />
 
     <div
-      class="flex flex-shrink-0 justify-center items-center"
+      class="flex flex-shrink-0 justify-center items-center max-h-[120px] overflow-hidden"
       :class="boxClass"
     >
       <slot name="icon" />
@@ -46,7 +46,7 @@
         dark:text-gray-50
       "
       :class="
-      vista=='listado'?'text-base w-40 xm:w-48 lg:w-64 ':'text-sm text-center ' + 
+      vista=='listado'?'text-base zw-40 zxm:w-48 zlg:w-64 ':'text-sm text-center ' + 
         textClass + (publishedAt ? ' cursor-pointer' : ' pointer-events-none')
       "
     >
@@ -70,7 +70,7 @@
             :vertical="vista=='listado'"
             :loader="procesando"
             :controls="mostrarControles&&!seleccionando"
-            @click.stop.prevent="$emit('propiedades', $event)"            
+            @click.stop.prevent="$emit('opciones', $event)"            
           />
 
 

@@ -32,7 +32,7 @@ export default {
       for (const e in this.errors)
         this.errors[e] = ''
     },
-    translate(msg) {
+    translateError(msg) {
       if(!msg||typeof msg!=='string') return msg
       if(msg.match('Error occured while trying to proxy'))
       return 'Servicio no disponible'
@@ -45,6 +45,7 @@ export default {
         .replace('must be at least', 'debe ser de al menos')
         .replace('characters', 'caracteres')
         .replace('Policy Failed', 'Permiso denegado')
+        .replace('Not Found', 'Contenido no encontrado')
         .replace('Invalid identifier or password', 'Identificador o contraseña no válidos')
         .replace('Forbidden', 'No tienes permisos')        
         .replace('Failed to fetch', 'Servicio temporalmente no disponible')        
@@ -54,11 +55,11 @@ export default {
     },
     setErr(error) {
       console.log('setErr', JSON.stringify(error))
-      console.log('errmess', error.message, this.translate(error.message))
+      console.log('errmess', error.message, this.translateError(error.message))
       let firstEl = null
       //if(response.error)
       console.log('1')
-      this.$set(this.errors, 'message', this.translate(error.message))
+      this.$set(this.errors, 'message', this.translateError(error.message))
       console.log('this.errors', this.errors)
       console.log('status', error.status)
       switch (error.status) {
@@ -69,7 +70,7 @@ export default {
               console.log(specific)
               const field = specific.path[0]
               console.log('field', field)
-              this.$set(this.errors, field, this.translate(specific.message))
+              this.$set(this.errors, field, this.translateError(specific.message))
               if (!firstEl)
                 firstEl = document.querySelector("#" + field)
             }

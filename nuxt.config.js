@@ -139,7 +139,7 @@ export default {
     dirs: [
       '~/components',
       '~/components/principales',
-      '~/components/archivos',
+      '~/components/explorador',
     ]
   },
 

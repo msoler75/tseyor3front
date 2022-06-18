@@ -17,7 +17,7 @@
         :multiple="multiple"
         @change="onFileSelect"
         :accept="accept"
-        class="absolute left-0 opacity-0 pointer-events-none"
+        class="absolute left-0 opacity-0 pointer-events-none max-w-full overflow-hidden"
       />
       <input
         :required="required"

@@ -1,6 +1,7 @@
 <template>
-  <CarpetaElemento
-    ref="elm"
+<div>
+  <ExploradorElemento
+    ref="archivo"
     v-if="localValue"
     :tag="seleccionando ? 'div' : 'a'"
     :vista="vista"
@@ -16,19 +17,36 @@
     :mostrarDescripcion="mostrarDescripcion"
     :publishedAt="localValue.publishedAt"
     :nombre="localValue.nombre"
-    :procesando="procesando||localValue.uploading"
+    :procesando="procesando || localValue.uploading"
     target="_blank"
     :href="
       localValue.media && localValue.media.url ? localValue.media.url : '#'
     "
-    @propiedades="mostrarMenu = $event"
+    @opciones="mostrarMenu = $event"
     @seleccionado="$emit('seleccionado', $event)"
     @deseleccionado="$emit('deseleccionado', $event)"
-    download    
-  >
+    class="select-none relative"
+    download
+  >  
     <template v-slot:icon>
+      <div
+        v-if="!localValue.uploading && !localValue.publishedAt"
+        class="relative flex justify-center items-center"
+        :class="vista == 'listado' ? 'text-5xl w-12 h-12' : 'text-7xl w-16 h-16'"
+      >
+        <icon
+          icon="file"
+          class="absolute text-gray"
+          :class="iconClass"
+        />
+        <icon
+          icon="far fa-trash-alt"
+          class="absolute scale-[30%] text-gray-100"
+          :class="iconClass"
+        />
+      </div>
       <nuxt-img
-        v-if="
+        v-else-if="
           localValue.media &&
           localValue.media.url &&
           localValue.media.url.match(/^data:image\/|\.(png|jpe?g|webp|svg|)$/i)
@@ -41,14 +59,14 @@
       />
       <icon
         v-else
-        class="text-gray"
+        class="text-blue-500"
         :icon="
           localValue.media && localValue.media.ext
             ? iconFromExt(localValue.media.ext)
             : 'file'
         "
         :class="
-          (vista == 'listado' ? 'text-4xl' : 'text-7xl py-1') + ' ' + iconClass
+          (vista == 'listado' ? 'text-5xl' : 'text-7xl py-1') + ' ' + iconClass
         "
       />
     </template>
@@ -65,16 +83,16 @@
       }}</span>
     </template>
 
-    <MenuContextual v-if="localValue" v-model="mostrarMenu" :items="menuItems" />
-
-    <PropiedadesArchivo
-      v-if="localValue && mostrarTitulo && mostrarControles"
-      v-model="mostrarPropiedades"
-      :archivo="localValue"
-      :carpeta="carpeta"
+    <MenuContextual
+      v-if="localValue"
+      v-model="mostrarMenu"
+      :items="menuItems"
+      class="pointer-events-auto"
     />
 
-  </CarpetaElemento>
+    <PropiedadesArchivo v-model="mostrarPropiedades" :archivo="localValue" />
+  </ExploradorElemento>
+  </div>
 </template>
 
 
@@ -93,6 +111,7 @@ export default {
     carpeta: {},
     vista: { type: String, required: false, default: "listado" },
     seleccionando: { type: Boolean, required: false, default: false },
+    borrarDefinitivo: { type: Boolean, required: false, default: false },
     textClass: {},
     subtextClass: {},
     iconClass: { type: String, required: false, default: "" },
@@ -102,7 +121,7 @@ export default {
       type: Boolean,
       required: false,
       default: false,
-    },    
+    },
     mostrarTamano: {
       type: Boolean,
       required: false,
@@ -119,8 +138,8 @@ export default {
     return {
       mostrarMenu: false,
       mostrarPropiedades: false,
-      procesando: false
-    }
+      procesando: false,
+    };
   },
   computed: {
     puedoCambiarlo() {
@@ -128,7 +147,7 @@ export default {
     },
     puedoBorrarlo() {
       return this.tengoPermiso("administracion");
-    },    
+    },
     menuItems() {
       const items = [];
       if (!this.localValue) return items;
@@ -153,22 +172,22 @@ export default {
           });
         }
       }
-      
-        if (this.localValue.publishedAt) {
+
+      if (this.localValue.publishedAt) {
+        items.push({
+          label: "Copiar",
+          icon: "copy",
+          click: this.copiar,
+        });
+        if (this.puedoBorrarlo)
           items.push({
-            label: "Copiar",
-            icon: "copy",
-            click: this.copiar,
+            label: "Cortar",
+            icon: "cut",
+            click: this.cortar,
           });
-          if (this.puedoBorrarlo)
-            items.push({
-              label: "Cortar",
-              icon: "cut",
-              click: this.cortar,
-            });          
-        }
-      
-      if (this.pueboBorrarlo)
+      }
+
+      if (this.puedoBorrarlo)
         if (this.localValue.publishedAt || this.borrarDefinitivo)
           items.push({
             label: this.borrarDefinitivo
@@ -190,21 +209,28 @@ export default {
   },
   methods: {
     seleccionar() {
-      this.$refs.elm.seleccionar()
+      this.$refs.archivo.seleccionar();
     },
     reset() {
-      this.$refs.elm.reset()
+      this.$refs.archivo.reset();
     },
     tengoPermiso(modo) {
-      if(!this.localValue) return false
-      if(this.soyPropietario()) return true
-      if(!this.carpeta) return false
-      if(tengoPermiso(this.carpeta, this.$strapi.user, 'administracion')) return true
-      return modo=='lectura'
+      if (!this.localValue) return false;
+      if (this.soyPropietario()) return true;
+      if (!this.carpeta) return false;
+      if (tengoPermiso(this.carpeta, this.$strapi.user, "administracion"))
+        return true;
+      return modo == "lectura";
     },
     soyPropietario() {
-      if(!this.localValue) return false
+      if (!this.localValue) return false;
       return soyPropietario(this.localValue, this.$strapi.user);
+    },
+    copiar() {
+      this.$emit('copiado', {tipo: 'archivo', id: this.localValue.id})
+    },
+    cortar() {
+      this.$emit('cortado', {tipo: 'archivo', id: this.localValue.id})
     },
     renombrar() {
       this.$prompt({
@@ -215,15 +241,100 @@ export default {
           //this.carpeta.ruta = this.carpeta.ruta.replace(regex, "");
           //this.carpeta.ruta += "/" + response;
           //this.carpeta.nombre = response;
-          console.log("antes de guardar", this.carpeta);
+          console.log("antes de guardar", this.localValue);
           await this.guardar(response);
-          console.log("despues de guardar", this.carpeta);          
+          console.log("despues de guardar", this.localValue);
         },
       });
     },
+    eliminar() {
+      if (this.localValue.publishedAt || !this.borrarDefinitivo)
+        return this.enviarAPapelera();
+      this.$confirm({
+        message: `Esto eliminará permanentemente el archivo <br> ${this.localValue.nombre} <br>¿Deseas continuar?`,
+        yes: `Borrar archivo`,
+        no: "Cancelar",
+        confirmed: async () => {
+          this.eliminarDefinitivamente();
+        },
+      });
+    },
+    enviarAPapelera() {
+      this.procesando = true;
+      this.$strapi
+        .update("archivos", this.localValue.id, {
+          publishedAt: null,
+          eliminadoPor: this.$strapi.user ? this.$strapi.user.id : null,
+          eliminadoEn: new Date().toISOString(),
+        })
+        .then((response) => {
+          console.log("enviarAPapelera response", response);
+          if (response.error) throw new Error(response.error.message);
+          this.localValue.publishedAt = null;
+          this.$emit("papelera", { archivo: { ...this.localValue } });
+          this.procesando = false;
+        })
+        .catch((error) => {
+          console.warn("err", error);
+          let msg =
+            error && error.message
+              ? error.message
+              : "No se pudo enviar a la papelera";
+          this.$toast.error(this.translateError(msg));
+          this.procesando = false;
+        });
+    },
+    eliminarDefinitivamente() {
+      this.procesando = true;
+      this.$strapi
+        .delete("archivos", this.localValue.id)
+        .then((response) => {
+          if (response.error)
+            if (response.error) throw new Error(response.error.message);
+          // this.$emit("papelera", {archivo: });
+          this.$set(this.localValue, "borrado", true);
+          this.procesando = false;
+        })
+        .catch((error) => {
+          let msg =
+            error && error.message ? error.message : "No se pudo eliminar";
+          this.$toast.error(this.translateError(msg));
+          this.procesando = false;
+        });
+    },
+    restaurar() {
+      const date = new Date().toISOString();
+      this.procesando = true;
+      this.$strapi
+        .update(
+          "archivos",
+          this.localValue.id,
+          {
+            publishedAt: date,
+            eliminadoPor: null,
+            eliminadoEn: null,
+          },
+          { populate: populateArchivo }
+        )
+        .then((response) => {
+          console.log("restaurar response", response);
+          if (response.error)
+            if (response.error) throw new Error(response.error.message);
+          this.localValue.publishedAt = date;
+          this.localValue.eliminadoPor = null;
+          this.localValue.eliminadoEn = null;
+          this.procesando = false;
+        })
+        .catch((error) => {
+          let msg =
+            error && error.message ? error.message : "No se pudo restaurar";
+          this.$toast.error(this.translateError(msg));
+          this.procesando = false;
+        });
+    },
     async guardar(nuevoNombre) {
       this.procesando = true;
-      console.log("guardar archivo");      
+      console.log("guardar archivo");
       return this.$strapi
         .update(
           "archivos",
@@ -235,16 +346,16 @@ export default {
           console.log("response", response);
           if (response.error) throw new Error(response.error.message);
           const archivo = response.data;
-          this.localValue.nombre=archivo.nombre
+          this.localValue.nombre = archivo.nombre;
           this.procesando = false;
         })
         .catch((error) => {
           let msg =
             error && error.message ? error.message : "No se pudo guardar";
-          this.$toast.error(msg);
+          this.$toast.error(this.translateError(msg));
           this.procesando = false;
         });
     },
-  }
+  },
 };
 </script>

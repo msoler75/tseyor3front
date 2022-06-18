@@ -1,6 +1,6 @@
 <template>
   <Droppable
-    class="flex select-none relative"
+    class="select-none relative"
     v-model="dragging"
     :dropAllowed="permisoEscritura"
     :class="
@@ -41,31 +41,44 @@
           </h1>
 
           <EllipBtnLoader
+          v-if="!seleccionandoCarpeta"
             class="ml-auto"
-            :vertical="vista == 'listado'"
             :loader="procesando"
             :controls="mostrarControles && !seleccionando"
             @click="mostrarMenu = $event"
           />
         </div>
-        <div
+          <div
           v-if="
-            !carpetas.length &&
-            (!mostrarArchivos || !archivos || !archivos.length)
+            seleccionandoCarpeta &&
+            (!carpetas || !carpetas.length)            
           "
+          class="w-full min-h-[30vh] flex flex-col space-y-4 justify-center items-center text-diminished"
         >
-          {{ placeholder }}
+          <icon icon="folder-open" class="text-6xl opacity-25"/>
         </div>
         <div
+          v-else-if="
+            !seleccionandoCarpeta &&
+            (!carpetas || !carpetas.length) &&
+            (!mostrarArchivos || !archivos || !archivos.length)
+          "
+          class="w-full min-h-[30vh] flex flex-col space-y-4 justify-center items-center text-diminished"
+        >
+          <icon icon="folder-open" class="text-6xl opacity-25"/>
+          <span>{{ placeholder }}</span>
+        </div>
+        <list-transition group :duration="300"
+          :isFlexGrid="vista != 'listado'"
           v-else
           class="w-full"
-          :class="vista == 'listado' ? 'flex flex-col' : 'mygrid'"
+          :class="vista == 'listado' ? 'block' : 'mygrid'"
         >
           <Carpeta
             v-for="(subcarpeta, index) of carpetas"
+            class="list-item"
             ref="carpetas"
-            :id="'carpeta-' + subcarpeta.id"
-            :key="'carpeta-' + subcarpeta.id"
+            :key="'carpeta-'+subcarpeta.id"
             v-model="carpetas[index]"
             :boxClass="boxClass"
             :iconClass="iconClass"
@@ -79,18 +92,20 @@
             @click="$emit('click', $event)"
             @dragenter="dragging = false"
             @dragleave="dragging = true"
-            @borrada="onCarpetaBorrada"
+            @papelera="onPapelera"
+            @copiado="$emit('copiado', {...$event, ruta: carpeta.ruta})"
+            @cortado="$emit('cortado', {...$event, ruta: carpeta.ruta})"            
             @seleccionado="onCarpetaSeleccionada(subcarpeta.id)"
             @deseleccionado="onCarpetaDeseleccionada(subcarpeta.id)"
-          />
-          <template v-if="mostrarArchivos">
+          />          
             <Archivo
-              v-for="(archivo, index) of archivos"
+              v-for="(archivo, index) of archivosFiltrados"
+              class="list-item"
               ref="archivos"
-              :key="'archivo-' + archivo.id + '-' + archivo.nombre"
+              :key="'archivo-'+ (archivo.uploadId || archivo.id)"
               v-model="archivos[index]"
               :boxClass="boxClass"
-              :iconClass="'text-5xl ' + iconClass"
+              :iconClass="iconClass"
               :textClass="textClass"
               :subtextClass="subtextClass"
               :mostrarFecha="mostrarFecha"
@@ -101,12 +116,14 @@
               :carpeta="carpeta"
               @seleccionado="onArchivoSeleccionado(archivo.id)"
               @deseleccionado="onArchivoDeseleccionado(archivo.id)"
-            />
-          </template>
-        </div>
+              @papelera="onPapelera"
+              @copiado="$emit('copiado', {...$event, ruta: carpeta.ruta})"
+              @cortado="$emit('cortado', {...$event, ruta: carpeta.ruta})"
+            />          
+        </list-transition>
       </div>
     </div>
-    <CarpetaElemento
+    <ExploradorElemento
       ref="elm"
       v-else-if="carpeta"
       :vista="vista"
@@ -125,7 +142,7 @@
       :checkable="carpeta && carpeta.subirNivel"
       :procesando="procesando"
       @click="flexNavigateTo(carpeta)"
-      @propiedades="mostrarMenu = $event"
+      @opciones="mostrarMenu = $event"
       @seleccionado="$emit('seleccionado', $event)"
       @deseleccionado="$emit('deseleccionado', $event)"
     >
@@ -190,7 +207,7 @@
           $dayjs(carpeta.createdAt).format("DD MMM YYYY, HH:mm")
         }}</span>
       </template>
-    </CarpetaElemento>
+    </ExploradorElemento>
 
     <MenuContextual v-if="carpeta" v-model="mostrarMenu" :items="menuItems" />
 
@@ -264,10 +281,15 @@ export default {
       required: false,
       default: true,
     },
+    seleccionandoCarpeta: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
     placeholder: {
       type: String,
       required: false,
-      default: "No hay nada que mostrar",
+      default: "Carpeta vacía",
     },
   },
   data() {
@@ -280,8 +302,8 @@ export default {
       dragging: false,
       cargando: true,
       procesando: false,
-      carpetas: [],
-      archivos: [],
+      //carpetas: [],
+      //archivos: [],
       mostrarMenu: false,
       mostrarPropiedades: false,
     };
@@ -290,6 +312,15 @@ export default {
   computed: {
     getpadre() {
       return this.padre ? this.padre : this.carpeta ? this.carpeta.padre : null;
+    },
+    carpetas() {
+      return this.carpeta && typeof this.carpeta == 'object' && ('subcarpetas' in this.carpeta)?this.carpeta.subcarpetas:[]
+    },
+    archivos() {
+      return this.carpeta && typeof this.carpeta == 'object' && ('archivos' in this.carpeta)?this.carpeta.archivos:[]
+    },
+    archivosFiltrados(){
+      return this.mostrarArchivos&&!this.seleccionandoCarpeta?this.archivos:[]
     },
     menuItems() {
       const items = [];
@@ -340,11 +371,11 @@ export default {
               icon: "cut",
               click: this.cortar,
             });
-          items.push({
+          /*items.push({
             label: "Pegar",
             icon: "paste",
             click: this.pegar,
-          });
+          });*/
         }
       }
       if (this.permisoAdministracion)
@@ -367,10 +398,10 @@ export default {
       });
       return items;
     },
-    carpetaJSON() {
+    /*carpetaJSON() {
       console.warn("CARPETA ACTUAL", this.carpeta);
       return JSON.stringify(this.carpeta);
-    },
+    },*/
     permisoEscritura() {
       return this.tengoPermiso("escritura");
     },
@@ -416,37 +447,10 @@ export default {
     cargando(newValue) {
       console.warn("CARGANDO", newValue);
     },
-    carpetaJSON() {
+    /*carpetaJSON() {
       console.log("watch carpetaJSNO", this.padre);
-
-      if (!this.carpeta || !("subcarpetas" in this.carpeta)) return;
-
-      // if (this.padre) this.carpeta.padre = this.padre;
-
-      console.warn("carpeta.WATCH", this.localValue);
-
-      this.carpetas = [];
-      this.archivos = [];
-      //      if (this.updateBreadcrumb && this.carpeta.ruta) this.updateBreadcrumb();
-
-      if (!Array.isArray(this.carpeta) && this.explorando)
-        this.archivos = this.carpeta.archivos;
-
-      console.warn("explorando", this.explorando);
-      console.warn("carpeta", this.carpeta);
-      const r =
-        !Array.isArray(this.carpeta) && this.explorando
-          ? [...this.carpeta.subcarpetas]
-          : Array.isArray(this.carpeta)
-          ? { ...this.carpeta }
-          : [this.carpeta];
-
-      //const padre = this.getpadre
-      //if (padre && this.carpeta.id !== this.idRootFolder)
-      //r.unshift({ ...padre, subirNivel:true, nombreMostrar:' ' });
-      console.warn("R", r);
-      this.carpetas = r;
-    },
+      //this.actualizarListado()
+    },*/
     dragging(newValue) {
       // if (newValue) this.$emit("dragenter");
       // else this.$emit("dragleave");
@@ -468,6 +472,7 @@ export default {
       //toFetch = this.carpeta.id;
       if (this.updateBreadcrumb) this._updateBreadcrumb(this.carpeta.ruta);
       this.$emit("carpeta", this.carpeta);
+      //this.actualizarListado()
       return;
     }
 
@@ -499,12 +504,14 @@ export default {
               subcarpetas: [],
               archivos: [],
             };
+            //this.actualizarListado()
         } else {
           const carpeta = res.data[0];
           console.log("fetch result", carpeta);
           if (carpeta) {
             // this.$set(this, 'carpeta', carpeta)
             this.carpeta = carpeta;
+            //this.actualizarListado()
             // for(const k in carpeta)
             // this.$set(this.carpeta, k, carpeta[k])
             this.$emit("carpeta", this.carpeta);
@@ -522,18 +529,44 @@ export default {
       });
   },
   mounted() {
-    if (this.carpeta) this.$emit("carpeta", this.carpeta);
+    if (this.carpeta) 
+      this.$emit("carpeta", this.carpeta);       
   },
   methods: {
-    onCarpetaBorrada(ruta) {      
-      console.warn('carpeta.onCarpetaBorrada')
+    /*actualizarListado(){
+      if (!this.carpeta || !("subcarpetas" in this.carpeta)) return;
+      // if (this.padre) this.carpeta.padre = this.padre;      
+
+      this.carpetas = [];
+      this.archivos = [];
+      //      if (this.updateBreadcrumb && this.carpeta.ruta) this.updateBreadcrumb();
+
+      if (!Array.isArray(this.carpeta) && this.explorando)
+        this.archivos = this.carpeta.archivos;
+
+      console.warn("explorando", this.explorando);
+      console.warn("carpeta", this.carpeta);      
+       this.carpetas = this.carpeta.subcarpetas
+    },*/
+    onPapelera(elem) {
+      console.warn("carpeta.onPapelera");
       const that = this;
       setTimeout(() => {
         if (!that.carpeta) return;
-        const idx = that.carpeta.subcarpetas.findIndex(x=>x.ruta==ruta);
-        if (idx >= 0) that.carpeta.subcarpetas.splice(idx, 1);
+        if (elem.carpeta) {
+          const idx = that.carpeta.subcarpetas.findIndex(
+            (x) => x.id == elem.carpeta.id
+          );
+          if (idx >= 0) that.carpeta.subcarpetas.splice(idx, 1);
+        } else {
+          const idx = that.carpeta.archivos.findIndex(
+            (x) => x.id == elem.archivo.id
+          );
+          if (idx >= 0) that.carpeta.archivos.splice(idx, 1);
+        }
+        //this.actualizarListado()
+        this.$emit("papelera", elem);
       }, 1500);
-      this.$emit('borrada', ruta)
     },
     onCarpetaSeleccionada(id) {
       this.carpetasSeleccionadas.push(id);
@@ -587,14 +620,14 @@ export default {
             .then((response) => {
               console.log("response", response);
               if (response.error) throw new Error(response.error.message);
-              const carpeta = response.data;
-              this.carpeta.subcarpetas.push(carpeta);
+              this.carpeta.subcarpetas.push(response.data);
+              //this.actualizarListado()
               this.procesando = false;
             })
             .catch((error) => {
               let msg =
                 error && error.message ? error.message : "No se pudo crear";
-              this.$toast.error(msg);
+              this.$toast.error(this.translateError(msg));
               this.procesando = false;
             });
         },
@@ -617,6 +650,12 @@ export default {
         },
       });
     },
+    copiar() {
+      this.$emit('copiado', {tipo: 'carpeta', id: this.carpeta.id})
+    },
+    cortar() {
+      this.$emit('cortado', {tipo: 'carpeta', id: this.carpeta.id})
+    },
     compartir() {},
     eliminar() {
       if (this.carpeta.publishedAt || !this.borrarDefinitivo)
@@ -626,37 +665,7 @@ export default {
         yes: `Borrar carpeta`,
         no: "Cancelar",
         confirmed: async () => {
-          console.log("ruta actual", this.carpeta.ruta);
-          let proximaRuta =
-            this.modoNavegacion == "Route" &&
-            this.carpeta.ruta == this.$route.path
-              ? this.carpeta.ruta.substr(0, this.carpeta.ruta.lastIndexOf("/"))
-              : null;
-          console.log("proximaRuta", proximaRuta);
-          this.procesando = true;
-          this.$strapi
-            .delete("carpetas", this.carpeta.id)
-            .then((response) => {
-              if (response.error)
-                if (response.error) throw new Error(response.error.message);
-              if (proximaRuta) {
-                this.$router.replace({ path: proximaRuta });
-                if (this.updateBreadcrumb) this._updateBreadcrumb(proximaRuta);
-              } else {
-                this.$emit("borrada", this.carpeta.ruta);
-                // this.carpeta = null
-                //if(this.carpeta&&this.carpeta.subcarpetas) {
-                //let idx = this.carpeta.subcarpetas.findIndex(x=>x.id===)
-                //}
-              }
-              this.procesando = false;
-            })
-            .catch((error) => {
-              let msg =
-                error && error.message ? error.message : "No se pudo eliminar";
-              this.$toast.error(msg);
-              this.procesando = false;
-            });
+          this.eliminarDefinitivamente();
         },
       });
     },
@@ -665,19 +674,52 @@ export default {
       this.$strapi
         .update("carpetas", this.carpeta.id, {
           publishedAt: null,
+          eliminadaPor: this.$strapi.user ? this.$strapi.user.id : null,
+          eliminadaEn: new Date().toISOString(),
         })
         .then((response) => {
           console.log("enviarAPapelera response", response);
           if (response.error) throw new Error(response.error.message);
           this.carpeta.publishedAt = null;
-          console.log('borrando', this.carpeta.ruta)
-          this.$emit("borrada", this.carpeta.ruta);
+          console.log("borrando", this.carpeta.ruta);
+          this.$emit("papelera", { carpeta: { ...this.carpeta } });
           this.procesando = false;
         })
         .catch((error) => {
           let msg =
+            error && error.message
+              ? error.message
+              : "No se pudo enviar a la papelera";
+          this.$toast.error(this.translateError(msg));
+          this.procesando = false;
+        });
+    },
+    eliminarDefinitivamente() {
+      console.log("ruta actual", this.carpeta.ruta);
+      let proximaRuta =
+        this.modoNavegacion == "Route" && this.carpeta.ruta == this.$route.path
+          ? this.carpeta.ruta.substr(0, this.carpeta.ruta.lastIndexOf("/"))
+          : null;
+      console.log("proximaRuta", proximaRuta);
+      this.procesando = true;
+      this.$strapi
+        .delete("carpetas", this.carpeta.id)
+        .then((response) => {
+          if (response.error)
+            if (response.error) throw new Error(response.error.message);
+          this.$set(this.carpeta, "borrada", true);
+          if (proximaRuta) {
+            this.$router.replace({ path: proximaRuta });
+            if (this.updateBreadcrumb) this._updateBreadcrumb(proximaRuta);
+          } else {
+            // this.$emit("papelera", {carpeta: {...this.carpeta}});
+            this.procesando = false;
+          }
+        })
+        .catch((error) => {
+          let msg =
             error && error.message ? error.message : "No se pudo eliminar";
-          this.$toast.error(msg);
+          this.$toast.error(this.translateError(msg));
           this.procesando = false;
         });
     },
@@ -690,6 +732,8 @@ export default {
           this.carpeta.id,
           {
             publishedAt: date,
+            eliminadaPor: null,
+            eliminadaEn: null,
           },
           { populate: populateCarpeta }
         )
@@ -698,12 +742,14 @@ export default {
           if (response.error)
             if (response.error) throw new Error(response.error.message);
           this.carpeta.publishedAt = date;
+          this.carpeta.eliminadaPor = null;
+          this.carpeta.eliminadaEn = null;
           this.procesando = false;
         })
         .catch((error) => {
           let msg =
             error && error.message ? error.message : "No se pudo restaurar";
-          this.$toast.error(msg);
+          this.$toast.error(this.translateError(msg));
           this.procesando = false;
         });
     },
@@ -781,7 +827,7 @@ export default {
         .catch((error) => {
           let msg =
             error && error.message ? error.message : "No se pudo guardar";
-          this.$toast.error(msg);
+          this.$toast.error(this.translateError(msg));
           this.procesando = false;
         });
     },
@@ -832,4 +878,41 @@ export default {
   grid-auto-flow: dense;
   place-items: stretch stretch;
 }
+
+/*.archivo-move {
+  transition: transform .5s cubic-bezier(.55,0,.1,1);
+}
+*/
+
+.list-item {
+  list-style-type: none
+}
+/*.list-item{
+   display:inline-block;
+   margin-right: 10px;
+   background: green;  
+   height: auto;
+   overflow:unset;
+   transition: height 1s;
+}
+.list-enter-from {
+  height: 0;
+  overflow:hidden;
+}
+.list-enter-to {
+  height: 200px;
+  overflow:hidden;
+}
+.list-enter-active {
+  
+}
+*/
+/*.list-enter-active, .list-leave-active{
+   transition: all 1s;
+   height: 0;
+}
+.list-enter, .list-leave-to{
+   opacity: 0;
+   height: 0;
+}*/
 </style>

@@ -1,5 +1,6 @@
 <template>
   <Carpeta
+    ref="carpeta"
     class="w-full flex-grow py-5 px-4 sm:px-8 lg:px-10 xl:px-12"
     :value="carpeta"
     modoNavegacion="Click"
@@ -8,12 +9,13 @@
     :explorando="true"
     :idRootFolder="idRootActual"
     :padre="carpetaPadreActual"
-    @borrada="$emit('borrada', $event)"
+    @papelera="$emit('papelera', $event)"
     @carpeta="$emit('carpeta', $event)"
     :seleccionando="seleccionando"
     @seleccion="$emit('seleccion', $event)"
     :vista="vista"
     :mostrarArchivos="mostrarArchivos"    
+    :seleccionandoCarpeta="seleccionandoCarpeta"
   />
 </template>
 
@@ -45,6 +47,13 @@ export default {
     } catch (e) {
       console.warn("error", e);
       $error(307);
+    }
+  },
+  computed: {
+    numElements() {
+      return this.carpeta?
+      (this.carpeta.subcarpetas?this.carpeta.subcarpetas.length:0) + 
+      (this.carpeta.archivos?this.carpeta.archivos.length:0) : 0
     }
   }
 };

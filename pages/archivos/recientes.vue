@@ -1,12 +1,12 @@
 <template>
   <div class="py-5 px-4 sm:px-8 lg:px-10 xl:px-12">
     <h3>Recientes</h3>
-    <ListadoCarpetas
+    <ExploradorListado
       :carpetas="recientes"
       @click="$emit('click', $event)"
       placeholder="Sin actividad reciente"
       :padre="{ ruta: $route.path + '', publishedAt: 1 }"
-      @borrada="$emit('borrada', $event)"
+      @papelera="$emit('papelera', $event)"
     />
   </div>
 </template>

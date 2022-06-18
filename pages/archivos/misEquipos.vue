@@ -3,18 +3,20 @@
     <div v-if="equiposFiltrados.length">
       <div v-for="equipo of equiposFiltrados" :key="equipo.id">
         <h4 class="px-2">{{ equipo.nombre }}</h4>
-        <ListadoCarpetas
+        <ExploradorListado
           v-if="equipo.carpetas.length"
           :carpetas="equipo.carpetas"
           @click="$emit('click', $event)"
           :padre="{ ruta: $route.path + '', publishedAt: 1 }"
           :vista="vista"
-          @borrada="$emit('borrada', $event)"
+          @papelera="$emit('papelera', $event)"
+          @copiado="$emit('copiado', $event)"
+          @cortado="$emit('cortado', $event)"        
         />
       </div>
     </div>
     <div v-else>
-      <ListadoCarpetas :carpetas="[]" placeholder="No hay nada que mostrar" />
+      <ExploradorListado :carpetas="[]" placeholder="No hay nada que mostrar" />
     </div>
   </div>
 </template>
@@ -63,6 +65,9 @@ export default {
     equiposFiltrados() {
       return this.equipos.filter((x) => x.carpetas.length);
     },
+    numElements() {
+      return this.equiposFiltrados.length
+    }
   },
 };
 </script>

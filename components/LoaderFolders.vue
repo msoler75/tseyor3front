@@ -2,7 +2,7 @@
   <div class="!border-0 flex w-full box-content">      <span />    
     <div class="loader-folders"
     :class="vista=='listado'?'':'mygrid w-full'">
-      <span v-for="index in Math.min(4,items)+1" :key="index"/>
+      <span v-for="index in Math.min(4,items)" :key="index"/>
     </div>
   </div>
 </template>
@@ -68,7 +68,7 @@ export default {
   linear-gradient(#FFF 19px, transparent 0);  
   background-repeat: no-repeat;
   background-position: 0 2px, 95px 3px, 95px 33px;
-  background-size: 71px 50px, 180px 20px, 180px 19px;
+  background-size: 71px 50px, 240px 20px, 154px 19px;
   box-sizing: border-box;
 }
 

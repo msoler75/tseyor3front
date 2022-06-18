@@ -17,8 +17,9 @@ const populateArchivoPermisos = {
 }
 
 const populateArchivo = {
+  ...populateArchivoPermisos,  
   media: "*",
-  ...populateArchivoPermisos
+  eliminadoPor: "*"
 }
 
 const populateCarpeta = {
@@ -39,7 +40,8 @@ const populateCarpeta = {
   },
   archivos: {
     populate: populateArchivo
-  }  
+  },
+  eliminadaPor: "*"
 }
 
 
@@ -102,6 +104,7 @@ const soyPropietario = (carpeta, user) => {
   return aid === user.id || parseInt(aid) === user.id;
 }
 
+let upid = 9999999
 
 const uploadFiles = async (carpeta, files, $strapi, $toast) => {
 
@@ -145,6 +148,7 @@ const uploadFiles = async (carpeta, files, $strapi, $toast) => {
     if ("archivos" in carpeta) {
       const a = {
         id: 0,        
+        uploadId: 'upload-'+upid++,
         nombre: file.name,
         uploading: true,
         carpeta: carpeta.id,
@@ -205,7 +209,7 @@ const uploadFiles = async (carpeta, files, $strapi, $toast) => {
                 a.id=res.data.id
                 a.publishedAt = res.data.publishedAt
                 Vue.set(a, 'propietario', res.data.propietario)
-                Vue.set(a, 'padre', res.data.padre)
+                Vue.set(a, 'carpeta', {id:carpeta.id, nombre: carpeta.nombre, ruta: carpeta.ruta})
                 a.uploading= false
               }
             }

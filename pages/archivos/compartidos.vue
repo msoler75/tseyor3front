@@ -1,25 +1,29 @@
 <template>
   <div class="py-5 px-4 sm:px-8 lg:px-10 xl:px-12">
     <h3>Te dieron acceso</h3>
-    <ListadoCarpetas
+    <ExploradorListado
       @click="$emit('click', $event)"
       :carpetas="compartidasContigo"
       placeholder="Ninguna carpeta compartida"
       :padre="{ ruta: $route.path + '', publishedAt: 1 }"
       :vista="vista"
-      @borrada="$emit('borrada', $event)"
+      @papelera="$emit('papelera', $event)"
+      @copiado="$emit('copiado', $event)"
+      @cortado="$emit('cortado', $event)"        
     />
 
     <divider />
 
     <h3>Compartes con los demás</h3>
-    <ListadoCarpetas
+    <ExploradorListado
       @click="$emit('click', $event)"
       :carpetas="carpetasQueCompartes"
       placeholder="Ninguna carpeta compartida"
       :padre="{ ruta: $route.path + '', publishedAt: 1 }"
       :vista="vista"
-      @borrada="$emit('borrada', $event)"
+      @papelera="$emit('papelera', $event)"
+      @copiado="$emit('copiado', $event)"
+      @cortado="$emit('cortado', $event)"        
     />
   </div>
 </template>
@@ -67,6 +71,7 @@ export default {
       let compartidasContigo = response.carpetasLectura
         .concat(response.carpetasEscritura)
         .filter((x) => x.publishedAt)
+        //unique
         .filter((v, i, a) => a.findIndex((x) => x.id == v.id) == i)
         .filter((x) => !carpetasQueCompartes.find((z) => z.id == x.id));
 
@@ -76,5 +81,11 @@ export default {
       $error(503);
     }
   },
+  computed: {
+        numElements() {
+          return this.carpetasQueCompartes.length + this.compartidasContigo.length
+    }
+
+  }
 };
 </script>

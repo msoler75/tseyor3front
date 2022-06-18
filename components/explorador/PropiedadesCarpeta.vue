@@ -55,6 +55,29 @@
               }}</span>
             </td>
           </tr>
+          <tr v-if="!carpetaLocal.publishedAt">
+            <td><label class="text-diminished mr-4">Eliminada en: </label></td>
+            <td>
+              <span>{{
+                carpetaLocal.eliminadaEn
+                  ? $dayjs(carpetaLocal.eliminadaEn)
+                      .utc()
+                      .format("DD-MMM-YYYY hh:mm:ss")
+                  : "No registrado"
+              }}</span>
+            </td>
+          </tr>
+          <tr v-if="!carpetaLocal.publishedAt">
+            <td><label class="text-diminished mr-4">Eliminada por: </label></td>
+            <td>
+              <span>{{
+                carpetaLocal.eliminadaPor
+                  ? carpetaLocal.eliminadaPor.nombreSimbolico ||
+                    carpetaLocal.eliminadaPor.username
+                  : "Administradores"
+              }}</span>
+            </td>
+          </tr>
         </table>
       </div>
 
@@ -70,11 +93,7 @@
           <icon icon="check" class="mr-2" />
           Guardar
         </button>
-        <button
-          class="btn btn-error"
-          type="cancel"
-          @click.prevent="cancel"
-        >
+        <button class="btn btn-error" type="cancel" @click.prevent="cancel">
           <icon icon="fas fa-times" class="mr-2" />
           Cancelar
         </button>

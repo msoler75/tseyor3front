@@ -76,11 +76,11 @@
     </div>
     <div
       class="right-panel flex-grow surface w-full"
-      :class="modoExplorador ? 'explorador' : ''"
+      :class="explorandoCarpeta ? 'explorador' : ''"
     >
       <div class="w-full px-4 sm:px-8 lg:px-10 xl:px-12 py-4 order-0">
         <Breadcrumb
-          v-if="modoExplorador"
+          v-if="explorandoCarpeta"
           class="text-sm mt-2"
           :class="seleccionando ? 'pointer-events-none opacity-50' : ''"
         />
@@ -92,7 +92,7 @@
           options
           overflow-x-auto
           order-3
-          lg:order-1 lg:row-span-2 lg:bg-gray-100 lg:dark:bg-gray-900
+          lg:order-1 lg:row-span-2 
           sticky
           lg:static lg:overflow-visible
           bottom-0
@@ -106,8 +106,10 @@
           py-4
           lg:py-6
         "
+        :class="estaVacio&&!explorandoCarpeta?'':'lg:bg-gray-100 lg:dark:bg-gray-900'"
       >
         <div
+          v-if="!estaVacio||explorandoCarpeta||copiados.length"
           class="
             sticky
             top-[115px]
@@ -146,7 +148,7 @@
 
           <Btn
             v-if="copiados.length"
-            class="btn-mini btn-gray text-sm"
+            class="btn-mini btn-success text-sm"
             icon="paste"
             :label="
               esCortar
@@ -161,18 +163,19 @@
 
           <Btn
             v-if="copiados.length"
-            class="btn-mini btn-gray text-sm"
+            class="btn-mini btn-error text-sm"
             icon="times"
-            label="Cancelar"
+            label="Cancelar operación"
             @click="cancelar"
           />
 
           <Btn
             v-if="
+              !estaVacio &&
               $route.path != urlPapelera &&
               !seleccionando &&
               !copiando &&
-              !copiados.length
+              !copiados.length              
             "
             class="btn-mini btn-gray text-sm"
             icon="search"
@@ -181,7 +184,19 @@
           />
 
           <Btn
+            v-if="             
+              $route.path == urlPapelera              
+              && !estaVacio            
+            "
+            class="btn-mini btn-gray text-sm"
+            icon="trash"
+            label="Vaciar Papelera"
+            @click="vaciarPapelera"
+          />
+
+          <Btn
             v-if="              
+              !estaVacio &&
               !copiando
             "
             class="btn-mini btn-gray text-sm"
@@ -200,7 +215,7 @@
             class="btn-mini btn-gray text-sm"
             icon="folder-plus"
             label="Nueva Carpeta"
-            @click="modoLista = !modoLista"
+            @click="nuevaCarpeta"
           />
 
           <InputFiles
@@ -251,17 +266,21 @@
           flex-grow flex flex-col
           !border-l-0 !border-r-0
         "
-        :class="copiados.length ? 'border-4 border-orange' : ''"
+        :class="copiados.length ? 'border-4 !border-r-4 !border-l-4 border-orange-500' : ''"
       >
         <nuxt-child
+          ref="child"
           v-show="!loading"
           :nuxt-child-key="$route.fullPath"
           :seleccionando="seleccionando"
           @click="onRuta"
-          @borrada="onBorrada"
+          @papelera="onPapelera"
           @carpeta="onCarpeta"
           @seleccion="onSeleccion"
+          @copiado="onCopiado"
+          @cortado="onCortado"
           :mostrarArchivos="!copiados.length"
+          :seleccionandoCarpeta="!!copiados.length"
           :vista="modoLista ? 'listado' : 'miniaturas'"
         />
       </div>
@@ -330,7 +349,8 @@ export default {
     ];
     specialFolders = specialFolders.map((x) => this.$config.archivosRuta + x);
     return {
-      carpeta: {},
+      carpeta: {},      
+      currentChild: null,
       borrando: false,
       urlPapelera: this.$config.archivosRuta + "/papelera",
       menuActual: this.$route.path.substr(
@@ -393,11 +413,15 @@ export default {
       specialFolders,
     };
   },
-  computed: {
+  computed: {   
+    estaVacio() {
+      if(!this.currentChild) return true
+      return this.currentChild.numElements==0
+    },
     loading() {
       return this.$store.getters.loading;
     },
-    modoExplorador() {
+    explorandoCarpeta() {
       return (
         !this.specialFolders.includes(this.$route.path) &&
         !this.specialFolders.includes(this.ultimoClick)
@@ -456,6 +480,10 @@ export default {
   watch: {
     loading(newValue) {
       if (newValue) this.$set(this, "carpeta", {});
+      else 
+      this.$nextTick(()=> {
+        this.currentChild = this.$refs.child
+      })
     },
     seleccionando(newValue) {
       this.seleccionados.splice(0, this.seleccionados.length);
@@ -471,6 +499,7 @@ export default {
     if (!this.menuItems.find((x) => x.value === this.menuActual))
       this.menuActual = "archivos";
     this.modoLista = this.$store.state.vistaArchivos == "listado";
+    this.currentChild = this.$refs.child
   },
   methods: {
     addFiles(files) {
@@ -504,15 +533,14 @@ export default {
       this.$router.push(ruta);
       this._updateBreadcrumb(ruta);
     },
-    async onBorrada(rutaBorrada) {
-      console.log("CARPETA BORRADA", rutaBorrada);
+    async onPapelera(elem) {
       console.log("ruta Actual", this.$route.path);
       this.borrando = true
       const that = this
       setTimeout(()=>{
         that.borrando = false
       }, 1500)
-      if (rutaBorrada == this.$route.path) {
+      if (elem.carpeta && elem.carpeta.ruta == this.$route.path) {
         let ruta = this.$route.path.substr(
           0,
           this.$route.path.lastIndexOf("/")
@@ -534,13 +562,47 @@ export default {
     onSeleccion(lista) {
       console.log("onSeleccion", lista);
       this.seleccionados.splice(0, this.seleccionados.length);
-      for (const item of lista.carpetas)
-        this.seleccionados.push({ tipo: "carpeta", id: item });
-      for (const item of lista.archivos)
-        this.seleccionados.push({ tipo: "archivo", id: item });
+      for (const id of lista.carpetas)
+        this.seleccionados.push({ tipo: "carpeta", id });
+      for (const id of lista.archivos)
+        this.seleccionados.push({ tipo: "archivo", id });
     },
-    buscar() {},
-    borrar() {},
+    buscar() {},    
+    borrar() {
+      console.log('BORRAR SELECCIONADOS')
+      for(const item of this.seleccionados) {
+        console.log('carpetas', this.$refs.child.$refs.carpeta.$refs.carpetas)
+        console.log('archivos', this.$refs.child.$refs.carpeta.$refs.archivos)
+        if(item.tipo=='carpeta')
+        {
+          const comp = this.$refs.child.$refs.carpeta.$refs.carpetas.find(x=>x.carpeta.id==item.id)
+          console.log('found', comp)
+          if(comp)
+          comp.enviarAPapelera()
+        }
+        else {
+          const comp = this.$refs.child.$refs.carpeta.$refs.archivos.find(x=>x.localValue.id==item.id)
+          console.log('found', comp)
+          if(comp)
+          comp.enviarAPapelera()
+        }
+      }
+      this.seleccionando = false
+      console.log('FIN BORRAR S')
+    },
+    vaciarPapelera() {
+      this.$confirm({
+        message: `Esto eliminará permanentemente todos los archivos y carpetas en la papelera.<br> Esta operación es irreversible.<br>¿Desea continuar?`,
+        yes: `Vaciar Papelera`,
+        no: "Cancelar",
+        confirmed: async () => {
+          this.$refs.child.vaciarPapelera()
+        },
+      })      
+    },
+    nuevaCarpeta() {
+      this.$refs.child.$refs.carpeta.nueva()
+    },
     copiar() {
       this.copiados.splice(0, this.copiados.length);
       for (const item of this.seleccionados) {
@@ -554,6 +616,18 @@ export default {
     cortar() {
       this.copiar();
       this.esCortar = true;
+    },    
+    onCopiado(elem) {
+      console.log('onCopiado', elem)
+      this.copiados.push(elem)
+      this.esCortar = false;
+      this.rutaCopia = elem.ruta
+    },
+    onCortado(elem) {
+      console.log('onCortado', elem)
+      this.copiados.push(elem)
+      this.esCortar = true;
+      this.rutaCopia = elem.ruta
     },
     cancelar() {
       this.copiando = false;

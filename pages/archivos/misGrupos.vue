@@ -3,18 +3,20 @@
     <div v-if="gruposFiltrados.length">
       <div v-for="grupo of gruposFiltrados" :key="grupo.id">
         <h4 class="px-2">{{ grupo.nombre }}</h4>
-        <ListadoCarpetas
+        <ExploradorListado
           v-if="grupo.carpetas.length"
           :carpetas="grupo.carpetas"
           @click="$emit('click', $event)"
           :padre="{ ruta: $route.path + '', publishedAt: 1 }"
           :vista="vista"
-          @borrada="$emit('borrada', $event)"
+          @papelera="$emit('papelera', $event)"
+          @copiado="$emit('copiado', $event)"
+          @cortado="$emit('cortado', $event)"        
         />
       </div>
     </div>
     <div v-else>
-      <ListadoCarpetas :carpetas="[]" placeholder="No hay nada que mostrar" />
+      <ExploradorListado :carpetas="[]" placeholder="No hay nada que mostrar" />
     </div>
   </div>
 </template>
@@ -59,6 +61,9 @@ export default {
     gruposFiltrados() {
       return this.grupos.filter((x) => x.carpetas.length);
     },
+    numElements() {
+      return this.gruposFiltrados.length
+    }
   },
 };
 </script>
