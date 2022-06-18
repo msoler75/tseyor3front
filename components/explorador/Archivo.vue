@@ -4,6 +4,9 @@
     ref="archivo"
     v-if="localValue"
     :tag="seleccionando ? 'div' : 'a'"
+    target="_blank"
+    :href="localValue.media?localValue.media.url:'#'"
+    :download="localValue.nombre"    
     :vista="vista"
     :seleccionando="seleccionando"
     :iconClass="iconClass"
@@ -18,15 +21,10 @@
     :publishedAt="localValue.publishedAt"
     :nombre="localValue.nombre"
     :procesando="procesando || localValue.uploading"
-    target="_blank"
-    :href="
-      localValue.media && localValue.media.url ? localValue.media.url : '#'
-    "
     @opciones="mostrarMenu = $event"
     @seleccionado="$emit('seleccionado', $event)"
     @deseleccionado="$emit('deseleccionado', $event)"
     class="select-none relative"
-    download
   >  
     <template v-slot:icon>
       <div
@@ -90,7 +88,7 @@
       class="pointer-events-auto"
     />
 
-    <PropiedadesArchivo v-model="mostrarPropiedades" :archivo="localValue" />
+    <PropiedadesArchivo v-model="mostrarPropiedades" :archivo="localValue" :carpeta="getCarpeta" />
   </ExploradorElemento>
   </div>
 </template>
@@ -142,6 +140,9 @@ export default {
     };
   },
   computed: {
+    getCarpeta(){
+      return this.carpeta?this.carpeta:this.localValue?this.localValue.carpeta:null
+    },
     puedoCambiarlo() {
       return this.tengoPermiso("administracion");
     },
@@ -172,6 +173,14 @@ export default {
           });
         }
       }
+
+        if(this.getCarpeta&&this.$route.path!=this.getCarpeta.ruta)
+       items.push({
+          label: "Ir a carpeta",
+          icon: "folder",
+          click: ()=>this.$router.push(this.getCarpeta.ruta),
+        });
+       
 
       if (this.localValue.publishedAt) {
         items.push({

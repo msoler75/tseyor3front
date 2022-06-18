@@ -16,7 +16,7 @@
         <tr>
           <td><label class="text-diminished mr-4">Ubicado en: </label></td>
           <td>
-            <span>{{ archivo.carpeta?archivo.carpeta.ruta:'(desconocido)' }}</span>
+            <span>{{ carpeta?carpeta.ruta:archivo.carpeta?archivo.carpeta.ruta:'(desconocido)' }}</span>
           </td>
         </tr>
         <tr>
@@ -78,6 +78,7 @@ export default {
       required: false,
       default: "Propiedades de archivo",
     },
+    carpeta: {}
   },
 };
 </script>

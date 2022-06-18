@@ -13,6 +13,8 @@
     @carpeta="$emit('carpeta', $event)"
     :seleccionando="seleccionando"
     @seleccion="$emit('seleccion', $event)"
+    @copiado="$emit('copiado', $event)"
+    @cortado="$emit('cortado', $event)"
     :vista="vista"
     :mostrarArchivos="mostrarArchivos"    
     :seleccionandoCarpeta="seleccionandoCarpeta"
@@ -28,6 +30,7 @@ export default {
     idRootActual: { default: 0 },
     carpetaPadreActual: {},
     seleccionando: {type: Boolean, required: false, default: false},
+    seleccionandoCarpeta: {type: Boolean, required: false, default: false},
     vista: {type: String, required: false, default: 'listado'},
     mostrarArchivos: {}    
   },

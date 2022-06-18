@@ -266,7 +266,7 @@
           flex-grow flex flex-col
           !border-l-0 !border-r-0
         "
-        :class="copiados.length ? 'border-4 !border-r-4 !border-l-4 border-orange-500' : ''"
+        :class="copiados.length ? '' : ''"
       >
         <nuxt-child
           ref="child"
@@ -279,7 +279,7 @@
           @seleccion="onSeleccion"
           @copiado="onCopiado"
           @cortado="onCortado"
-          :mostrarArchivos="!copiados.length"
+          :mostrarArchivos="true"
           :seleccionandoCarpeta="!!copiados.length"
           :vista="modoLista ? 'listado' : 'miniaturas'"
         />

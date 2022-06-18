@@ -86,7 +86,7 @@
             :subtextClass="subtextClass"
             :mostrarFecha="mostrarFecha"
             :mostrarTamano="mostrarTamano"
-            :mostrarControles="mostrarControles && !subcarpeta.subirNivel"
+            :mostrarControles="mostrarControles && !seleccionandoCarpeta && !subcarpeta.subirNivel"
             :seleccionando="seleccionando"
             :vista="vista"
             @click="$emit('click', $event)"
@@ -110,7 +110,7 @@
               :subtextClass="subtextClass"
               :mostrarFecha="mostrarFecha"
               :mostrarTamano="mostrarTamano"
-              :mostrarControles="mostrarControles"
+              :mostrarControles="mostrarControles && !seleccionandoCarpeta"
               :seleccionando="seleccionando"
               :vista="vista"
               :carpeta="carpeta"
@@ -320,7 +320,7 @@ export default {
       return this.carpeta && typeof this.carpeta == 'object' && ('archivos' in this.carpeta)?this.carpeta.archivos:[]
     },
     archivosFiltrados(){
-      return this.mostrarArchivos&&!this.seleccionandoCarpeta?this.archivos:[]
+      return this.mostrarArchivos/*&&!this.seleccionandoCarpeta*/?this.archivos:[]
     },
     menuItems() {
       const items = [];

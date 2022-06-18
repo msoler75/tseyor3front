@@ -5,11 +5,11 @@
       :carpetas="carpetas"
       @click="$emit('click', $event)"
       placeholder="No tienes ninguna carpeta"
-      :padre="{ ruta: $route.path+'', publishedAt: 1 }"
-      :vista="vista"      
+      :padre="{ ruta: $route.path + '', publishedAt: 1 }"
+      :vista="vista"
       @papelera="$emit('papelera', $event)"
       @copiado="$emit('copiado', $event)"
-      @cortado="$emit('cortado', $event)"        
+      @cortado="$emit('cortado', $event)"
     />
 
     <divider />
@@ -19,23 +19,22 @@
       :archivos="archivos"
       @click="$emit('click', $event)"
       placeholder="No tienes ningún archivo"
-      :padre="{ ruta: $route.path+'', publishedAt: 1 }"
-      :vista="vista"      
+      :padre="{ ruta: $route.path + '', publishedAt: 1 }"
+      :vista="vista"
       @papelera="$emit('papelera', $event)"
       @copiado="$emit('copiado', $event)"
-      @cortado="$emit('cortado', $event)"        
+      @cortado="$emit('cortado', $event)"
     />
-
   </div>
 </template>
 
 <script>
-import {populateCarpeta, populateArchivo} from '@/assets/js/carpeta'
+import { populateCarpeta, populateArchivo } from "@/assets/js/carpeta";
 export default {
   middleware: ["logged"],
   props: {
-    vista: {}
-  },  
+    vista: {},
+  },
   async asyncData({ $strapi, $error }) {
     try {
       const response = await $strapi.find("users/me", {
@@ -46,12 +45,26 @@ export default {
           },
           carpetasPropietario: {
             populate: populateCarpeta,
-            publicationState: "preview",            
+            publicationState: "preview",
           },
           archivosPropietario: {
-            populate: {...populateArchivo, carpeta:'*'},
-            publicationState: "preview"
-          }
+            populate: {
+              ...populateArchivo,
+              carpeta: {
+                populate: populateCarpeta                
+              },
+            },
+            filters: {
+              carpeta:{
+                  propietario: {
+                    id: {
+                      $ne: $strapi.user.id,
+                    },
+                  },
+                },
+            },
+            publicationState: "preview",
+          },
         },
       });
       let carpetas = [];
@@ -61,7 +74,18 @@ export default {
         .filter((v, i, a) => a.findIndex((x) => x.id == v.id) == i)
         .filter((x) => x.publishedAt);
 
-      let archivos = response.archivosPropietario
+      // removemos los archivos que ya estén ubicados en carpetas y que han 'escapado' del filters
+      const rutas = carpetas.map((carpeta) => carpeta.ruta);
+      let archivos = response.archivosPropietario.filter((archivo) => {
+        for (const ruta of rutas)
+          if (
+            archivo.carpeta &&
+            archivo.carpeta.ruta &&
+            archivo.carpeta.ruta.startsWith(ruta)
+          )
+            return false;
+        return true;
+      });
       return { carpetas, archivos };
     } catch (e) {
       console.error(e);

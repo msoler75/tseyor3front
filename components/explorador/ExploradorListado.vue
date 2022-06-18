@@ -1,7 +1,7 @@
 <template>
   <div class="w-full">
     <div
-      v-if="!carpetas.length&&!archivos.length"
+      v-if="!carpetasLocal.length&&!archivosLocal.length"
       class="flex w-full h-32 text-lg justify-center items-center"
     >
       <span>{{ placeholder }}</span>
@@ -12,10 +12,10 @@
       :class="vista == 'listado' ? 'block' : 'mygrid'"
       v-else
     >
-    <template v-if="carpetas">
+    <template v-if="carpetasLocal">
       <Carpeta        
         ref="carpetas"
-        v-for="(carpeta, index) of carpetas"
+        v-for="(carpeta, index) of carpetasLocal"
         :id="'carpeta-' + carpeta.id"
         :key="'carpeta-' + carpeta.id"
         v-model="carpetas[index]"
@@ -40,7 +40,7 @@
     <template v-if="archivos">
     <Archivo
         ref="archivos"
-        v-for="(archivo, index) of archivos"
+        v-for="(archivo, index) of archivosLocal"
         :id="'archivo-' + archivo.id"
         :key="'archivo-' + archivo.id"
         v-model="archivos[index]"
@@ -102,7 +102,19 @@ export default {
   data() {
     return {
       urlPapelera: this.$config.archivosRuta + "/papelera",
+      carpetasLocal: [...this.carpetas],
+      archivosLocal: [...this.archivos]
     };
+  },
+  watch: {
+    carpetas(newValue)
+    {
+      this.carpetasLocal = [...newValue]
+    },
+    archivos(newValue)
+    {
+      this.archivosLocal = [...newValue]
+    }
   },
   methods: {
     onPapelera(elem) {
@@ -112,13 +124,13 @@ export default {
         // caso excepcional
         if (this.$route.path == this.urlPapelera) return;
         setTimeout(() => {
-          const idx = that.carpetas.findIndex((x) => x.id === elem.carpeta.id);
-          if (idx >= 0) that.carpetas.splice(idx, 1);
+          const idx = that.carpetasLocal.findIndex((x) => x.id === elem.carpeta.id);
+          if (idx >= 0) that.carpetasLocal.splice(idx, 1);
         }, 1500);
       } else {
         setTimeout(() => {
-          const idx = that.archivos.findIndex((x) => x.id === elem.archivo.id);
-          if (idx >= 0) that.archivos.splice(idx, 1);
+          const idx = that.archivosLocal.findIndex((x) => x.id === elem.archivo.id);
+          if (idx >= 0) that.archivosLocal.splice(idx, 1);
         }, 1500);
       }
     },

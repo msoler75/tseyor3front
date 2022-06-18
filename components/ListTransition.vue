@@ -1,7 +1,8 @@
 <template>
   <component
     :is="type"
-    :tag="tag"    
+    :tag="tag"
+    :class="isFlexGrid ? 'relative' : ''"
     enter-active-class="fadeIn"
     :leave-active-class="
       destinationX && destinationY ? 'moveTarget' : 'fadeOut'
@@ -17,7 +18,8 @@
 
 
 <script>
-// https://codesandbox.io/s/pk9r5j2257?from-embed=&file=/src/App.vue:676-682
+// original: https://codesandbox.io/s/pk9r5j2257?from-embed=&file=/src/App.vue:676-682
+// forked:   https://codesandbox.io/s/group-transition-forked-r8pl27?file=/src/FadeTransition.vue
 export default {
   props: {
     duration: {
@@ -33,8 +35,8 @@ export default {
       default: "div",
     },
     isFlexGrid: {
-        type: Boolean,
-        default: false
+      type: Boolean,
+      default: false,
     },
     destinationX: {
       type: Number,
@@ -56,7 +58,7 @@ export default {
         leave: this.setAbsolutePosition,
         ...this.$listeners,
       };
-    },    
+    },
     cssVars() {
       return {
         "--offsetX": this.destinationX + "px",
@@ -72,15 +74,16 @@ export default {
       el.style.animationDuration = "";
     },
     setAbsolutePosition(el) {
-      if (this.group) { // &&this.destinationX&&this.destinationY) {
+      if (this.group) {
+        // &&this.destinationX&&this.destinationY) {
         //if(this.$el.style.display)
-        if(this.isFlexGrid) {
-            const r0 = this.$el.getBoundingClientRect();
-            const rect = el.getBoundingClientRect();
-            el.style.left = (rect.left - r0.left) + "px";
-            el.style.top = (rect.top - r0.top) + "px";
-            el.style.width = (rect.width) + "px";
-            el.style.height = (rect.height) + "px";
+        if (this.isFlexGrid) {
+          const r0 = this.$el.getBoundingClientRect();
+          const rect = el.getBoundingClientRect();
+          el.style.left = rect.left - r0.left + "px";
+          el.style.top = rect.top - r0.top + "px";
+          el.style.width = rect.width + "px";
+          el.style.height = rect.height + "px";
         }
         el.style.position = "absolute";
       }
