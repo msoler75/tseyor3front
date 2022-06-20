@@ -77,6 +77,10 @@ export default {
     state.nextPathBreadcrumb = state.pathBreadcrumb
   },
 
+  setCarpeta(state, payload) {
+    state.carpeta = payload
+  },
+
   setLoading(state, payload) {
   // console.log('loading=', payload)
     state.loading = payload

@@ -23,8 +23,8 @@
       </div>
       <LoaderFolders
         v-else-if="cargando"
-        :vista="modoLista ? 'listado' : 'miniaturas'"
-        class="px-4 sm:px-8 lg:px-10 xl:px-12"
+        :vista="vista"
+        class="w-full py-5 px-4 h-full text-2xl surface"
       />
       <div v-else-if="carpeta" class="flex w-full flex-col justify-between">
         <div class="px-2 mb-5 flex items-center justify-start relative z-10">
@@ -114,6 +114,7 @@
               :seleccionando="seleccionando"
               :vista="vista"
               :carpeta="carpeta"
+              @abrir-carpeta="flexNavigateTo"
               @seleccionado="onArchivoSeleccionado(archivo.id)"
               @deseleccionado="onArchivoDeseleccionado(archivo.id)"
               @papelera="onPapelera"
@@ -467,16 +468,27 @@ export default {
     ) {
       console.warn("ES UN OBJETO DE TIPO CARPETA");
       this.carpeta = this.localValue;
+      toFetch = this.carpeta.id||this.carpeta.ruta
       this.cargando = false;
       //if ("lecturaUsuarios" in this.carpeta) return;
-      //toFetch = this.carpeta.id;
+      
       if (this.updateBreadcrumb) this._updateBreadcrumb(this.carpeta.ruta);
       this.$emit("carpeta", this.carpeta);
       //this.actualizarListado()
+      if(this.carpeta.actualizar) {        
+        if(!('subcarpetas' in this.carpeta)||!('archivos' in this.carpeta))
+          this.cargando = true;
+        if(!('padre' in this.carpeta)) {
+          const ruta = this.carpeta.ruta.substr(0, this.carpeta.ruta.lastIndexOf('/'))
+          if(ruta)
+          this.carpeta.padre = {ruta, publishedAt: 1}
+        }
+      }
+      else
       return;
     }
+    else this.cargando = true
 
-    this.cargando = true;
     if (typeof this.localValue === "string") {
       if (this.updateBreadcrumb) this._updateBreadcrumb(this.localValue);
     }
@@ -511,6 +523,9 @@ export default {
           if (carpeta) {
             // this.$set(this, 'carpeta', carpeta)
             this.carpeta = carpeta;
+            // la carpeta padre de las subcarpetas es la propia carpeta
+            for(const sc of carpeta.subcarpetas)
+              sc.padre = {...this.carpeta}
             //this.actualizarListado()
             // for(const k in carpeta)
             // this.$set(this.carpeta, k, carpeta[k])

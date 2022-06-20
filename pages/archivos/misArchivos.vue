@@ -37,7 +37,7 @@ export default {
   },
   async asyncData({ $strapi, $error }) {
     try {
-      const response = await $strapi.find("users/me", {
+      /*const response = await $strapi.find("users/me", {
         fields: ["id"],
         populate: {
           carpeta: {
@@ -45,7 +45,7 @@ export default {
           },
           carpetasPropietario: {
             populate: populateCarpeta,
-            publicationState: "preview",
+            publicationState: "preview"            
           },
           archivosPropietario: {
             populate: {
@@ -71,9 +71,10 @@ export default {
       if (response.carpeta) carpetas.push(response.carpeta);
       carpetas = carpetas
         .concat(response.carpetasPropietario)
+        .filter((x) => x.publishedAt)
         .filter((v, i, a) => a.findIndex((x) => x.id == v.id) == i)
-        .filter((x) => x.publishedAt);
-
+        .filter((v, i, a) => a.findIndex((x) => x.id!=v.id && v.ruta.startsWith(x.ruta)) == -1)
+        
       // removemos los archivos que ya estén ubicados en carpetas y que han 'escapado' del filters
       const rutas = carpetas.map((carpeta) => carpeta.ruta);
       let archivos = response.archivosPropietario.filter((archivo) => {
@@ -86,7 +87,12 @@ export default {
             return false;
         return true;
       });
-      return { carpetas, archivos };
+      return { carpetas, archivos };*/
+
+      const response =  await $strapi.find("archivos/misArchivos")
+  console.warn('RESSS', response)
+      return response
+
     } catch (e) {
       console.error(e);
       $error(503);

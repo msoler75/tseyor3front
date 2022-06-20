@@ -299,10 +299,7 @@
         <LoaderFolders
           :items="itemsPrevistos"
           :vista="modoLista ? 'listado' : 'miniaturas'"
-          class="w-full py-5 px-4 sm:px-8 lg:px-10 xl:px-12 h-full text-2xl surface"
-          :class="
-            loading ? 'max-h-[80vh]' : 'max-h-0 transform translate-x-[9999px]'
-          "
+          class="w-full py-5 px-4 sm:px-8 lg:px-10 xl:px-12 h-full text-2xl surface"          
         />
       </div>
     </div>
@@ -326,6 +323,7 @@ export default {
           },
         },
       });
+      console.log('response', JSON.stringify(root))
       if (!root) root = { id: 0 };
 
       return {
@@ -500,6 +498,8 @@ export default {
       this.menuActual = "archivos";
     this.modoLista = this.$store.state.vistaArchivos == "listado";
     this.currentChild = this.$refs.child
+    if(!this.specialFolders.includes(this.$route.path))
+      this._updateBreadcrumb(this.$route.path)
   },
   methods: {
     addFiles(files) {
@@ -523,6 +523,9 @@ export default {
     },
     onRuta(obj) {
       console.log("onRuta", obj);
+      this.$scrollTo(0, 500)
+      if(this.menuActual=='recientes')
+        this.menuActual = 'misArchivos'
       this.ultimoClick = null;
       this.seleccionando = false;
       const ruta = typeof obj === "object" ? obj.ruta : obj;
@@ -530,6 +533,7 @@ export default {
         typeof obj === "object" && "archivos" in obj
           ? obj.archivos.length + obj.subcarpetas.length
           : Math.floor(Math.random(3)) + 1;
+      this.$store.commit('setCarpeta', obj)
       this.$router.push(ruta);
       this._updateBreadcrumb(ruta);
     },
@@ -546,9 +550,11 @@ export default {
           this.$route.path.lastIndexOf("/")
         );
         const response = await this.$strapi.find("carpetas", {
-          ruta: {
-            $eq: ruta,
-          },
+          filters: {
+            ruta: {
+              $eq: ruta,
+            },
+          }
         });
         if (response.error) ruta = this.$config.archivosRuta;
         this.$router.replace({ path: ruta });
@@ -558,6 +564,10 @@ export default {
     onCarpeta(carpeta) {
       console.warn("onCarpeta!!", carpeta);
       for (const key in carpeta) this.$set(this.carpeta, key, carpeta[key]);
+      if(this.menuActual=='misArchivos' && !soyPropietario(this.carpeta, this.$strapi.user))
+        this.menuActual = 'archivos'      
+      if(this.menuActual=='archivos' && soyPropietario(this.carpeta, this.$strapi.user))
+        this.menuActual = 'misArchivos'      
     },
     onSeleccion(lista) {
       console.log("onSeleccion", lista);

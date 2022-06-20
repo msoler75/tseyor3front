@@ -2,33 +2,42 @@
   <div class="py-5 px-4 sm:px-8 lg:px-10 xl:px-12">
     <h3>Recientes</h3>
     <ExploradorListado
-      :carpetas="recientes"
+      :carpetas="carpetas"
+      :archivos="archivos"
       @click="$emit('click', $event)"
       placeholder="Sin actividad reciente"
       :padre="{ ruta: $route.path + '', publishedAt: 1 }"
+      :vista="vista"
       @papelera="$emit('papelera', $event)"
+      @copiado="$emit('copiado', $event)"
+      @cortado="$emit('cortado', $event)"
     />
   </div>
 </template>
 
 <script>
-import {populateCarpeta} from '@/assets/js/carpeta'
+import {populateCarpeta, populateArchivo} from '@/assets/js/carpeta'
 export default {
   middleware: ["logged"],
+  props: {
+    vista: {},
+  },
   async asyncData({ $strapi, $error }) {
     try {
       const response = await $strapi.find("users/me", {
         fields: ["id"],
         populate: {
-          carpetasPropietario: {
+          carpetasVisitadas: {
             populate: populateCarpeta,
           },
+          archivosVisitados: {
+            populate: {...populateArchivo, carpeta:'*'},
+          }
         },
         publicationState: "preview",
+        sort:["updatedAt"]
       });
-      let recientes = response.carpetasPropietario
-        .filter((v, i, a) => a.findIndex((x) => x.id == v.id) == i)
-      return { recientes };
+      return { carpetas: response.carpetasVisitadas, archivos: response.archivosVisitados };
     } catch (e) {
       console.error(e);
       $error(503);

@@ -42,6 +42,8 @@ export default () => ({
   loading: false,
   // modo de vista de archivos
   vistaArchivos: 'listado',
+  // carpeta a ver
+  carpeta: null,
   // se activa al hacer click en breadcrumb
   breadcrumbHandler: null,
   // próximo path en la transición de cambio de página

@@ -17,7 +17,7 @@ const populateArchivoPermisos = {
 }
 
 const populateArchivo = {
-  ...populateArchivoPermisos,  
+  ...populateArchivoPermisos,
   media: "*",
   eliminadoPor: "*"
 }
@@ -26,15 +26,23 @@ const populateCarpeta = {
   ...populateCarpetaPermisos,
   padre: {
     populate: {
-      subcarpetas: '*',
-      archivos: '*',
+      subcarpetas: {
+        populate: populateCarpetaPermisos
+      },
+      archivos: {
+        populate: populateArchivo
+      },
       ...populateCarpetaPermisos
     }
   },
   subcarpetas: {
     populate: {
-      subcarpetas: '*',
-      archivos: '*',
+      subcarpetas: {
+        populate: populateCarpetaPermisos
+      },
+      archivos: {
+        populate: populateArchivo
+      },
       ...populateCarpetaPermisos
     }
   },
@@ -147,8 +155,8 @@ const uploadFiles = async (carpeta, files, $strapi, $toast) => {
 
     if ("archivos" in carpeta) {
       const a = {
-        id: 0,        
-        uploadId: 'upload-'+upid++,
+        id: 0,
+        uploadId: 'upload-' + upid++,
         nombre: file.name,
         uploading: true,
         carpeta: carpeta.id,
@@ -180,15 +188,14 @@ const uploadFiles = async (carpeta, files, $strapi, $toast) => {
         content: `Subiendo archivos... ${percent_completed}%`,
       });
     })
-    .then((res) => {
+    .then(async (res) => {
       $toast.update(toastId, {
-        content: "¡Completado!",
-        options: {
-          timeout: 1000,
-        },
+        content: "Preparando archivos...",
       });
+      // var promises = []
       for (const file of res) {
-        $strapi
+        //promises.push(new Promise((resolve, reject) => {
+        await $strapi
           .create(
             "archivos", {
               nombre: file.name,
@@ -206,15 +213,29 @@ const uploadFiles = async (carpeta, files, $strapi, $toast) => {
               );
               console.log('subido archivo', a, res.data)
               if (a) {
-                a.id=res.data.id
+                a.id = res.data.id
                 a.publishedAt = res.data.publishedAt
                 Vue.set(a, 'propietario', res.data.propietario)
-                Vue.set(a, 'carpeta', {id:carpeta.id, nombre: carpeta.nombre, ruta: carpeta.ruta})
-                a.uploading= false
+                Vue.set(a, 'carpeta', {
+                  id: carpeta.id,
+                  nombre: carpeta.nombre,
+                  ruta: carpeta.ruta
+                })
+                a.uploading = false
               }
             }
-          });
+            // resolve()
+          })
+        // }))
       }
+      //Promise.all(promises).then(() =>
+      $toast.update(toastId, {
+        content: "¡Completado!",
+        options: {
+          timeout: 1000,
+        },
+      })
+      // )
     });
 }
 

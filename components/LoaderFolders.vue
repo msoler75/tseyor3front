@@ -2,7 +2,7 @@
   <div class="!border-0 flex w-full box-content">      <span />    
     <div class="loader-folders"
     :class="vista=='listado'?'':'mygrid w-full'">
-      <span v-for="index in Math.min(4,items)" :key="index"/>
+      <span v-for="index in Math.min(12,items)" :key="index"/>
     </div>
   </div>
 </template>

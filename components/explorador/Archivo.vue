@@ -178,7 +178,7 @@ export default {
        items.push({
           label: "Ir a carpeta",
           icon: "folder",
-          click: ()=>this.$router.push(this.getCarpeta.ruta),
+          click: ()=>this.$emit('abrir-carpeta', this.getCarpeta),
         });
        
 

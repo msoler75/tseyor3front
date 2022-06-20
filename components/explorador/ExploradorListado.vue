@@ -52,6 +52,7 @@
         :mostrarTamano="mostrarTamano"
         :mostrarControles="mostrarControles"
         :borrarDefinitivo="borrarDefinitivo"
+        @abrir-carpeta="$emit('click', $event)"
         @papelera="onPapelera"
         @copiado="$emit('copiado', $event)"
         @cortado="$emit('cortado', $event)"

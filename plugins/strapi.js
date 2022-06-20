@@ -48,6 +48,37 @@ export default ({
       }
     }
 
+
+    /* transformField(response) { 
+
+    }, */
+
+    transform(data) {
+      //console.log('transform', data)
+      if (Array.isArray(data)) {
+        for (const key in data)
+          data[key] = this.transform(data[key])
+        return data
+      }
+      if (data && typeof data == 'object' && 'data' in data && 'meta' in data) {
+        //for (const key in data)
+          //data[key] = key == 'data' ? this.transform(data[key]) : data[key]
+        data.data = this.transform(data.data)
+        //console.log('to', data)
+        return data
+      }
+      if (data && typeof data == 'object' && 'attributes' in data) {
+        for (const key in data.attributes)
+          data[key] = this.transform(data.attributes[key])
+        delete data.attributes
+      }
+      if (data && typeof data == 'object' && 'data' in data) { 
+        return this.transform(data.data)
+      }
+      //console.log('to', data)
+      return data
+    }
+
     setCookie(cname, cvalue, exdays) {
       const d = new Date();
       d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
@@ -98,9 +129,9 @@ export default ({
           }
         })
         .then(res => res.json())
-        .then(x=>{
+        .then(x => {
           console.log('FIND RESULT', x)
-          return x
+          return this.transform(x)
         })
     }
 
@@ -123,7 +154,7 @@ export default ({
           }
         })
         .then(res => res.json())
-        .then(res => !res.error?res.data:res)
+        .then(res => !res.error ? this.transform(res.data) : res)
     }
 
 
@@ -154,7 +185,7 @@ export default ({
           }
         })
         .then(res => res.json())
-        .then(r=>r.meta?r.meta.pagination.total:Array.isArray(r)?r.length:r)
+        .then(r => r.meta ? r.meta.pagination.total : Array.isArray(r) ? r.length : r)
     }
 
 
@@ -211,22 +242,22 @@ export default ({
         console.error('Para el upload se requiere un FormData')
         throw new Error('Para el upload se requiere un FormData')
       }
-      if(progress) {
+      if (progress) {
         return new Promise((success, reject) => {
-        let request = new XMLHttpRequest();
-        request.open('POST', `${this.url}/upload`)
-        request.setRequestHeader('Authorization', `Bearer ${this.token}`)
-        // upload progress event
-        request.upload.addEventListener('progress', progress)
-        // request finished event
-        request.addEventListener('load', function(e) {
-          success(JSON.parse(request.response))
-        });
-        request.addEventListener('error', event => { 
-          reject(event)
-        })
-        // send POST request to server
-        request.send(data);
+          let request = new XMLHttpRequest();
+          request.open('POST', `${this.url}/upload`)
+          request.setRequestHeader('Authorization', `Bearer ${this.token}`)
+          // upload progress event
+          request.upload.addEventListener('progress', progress)
+          // request finished event
+          request.addEventListener('load', function (e) {
+            success(JSON.parse(request.response))
+          });
+          request.addEventListener('error', event => {
+            reject(event)
+          })
+          // send POST request to server
+          request.send(data);
         })
       }
       return this.create('upload', data)
@@ -272,10 +303,9 @@ export default ({
           body: JSON.stringify(data)
         })
         .then(response => response.json())
-        .then(res=>{
+        .then(res => {
           console.log('LOGIN RES', res)
-          if(!res.error)
-          {
+          if (!res.error) {
             this.user = res.user
             this.token = res.jwt
             this.setCookie('jwt', this.token)
@@ -303,18 +333,17 @@ export default ({
           return r.data
         }) */
       return this.find('users/me').then(user => {
-        // console.warn('RET USER', user)
-        if(!user.error)
-        {
-          this.user = user
-          return user
-        }
-        return null
-      })
-      .catch(err=>{
-        console.warn(err)
-        return null
-      })
+          // console.warn('RET USER', user)
+          if (!user.error) {
+            this.user = user
+            return user
+          }
+          return null
+        })
+        .catch(err => {
+          console.warn(err)
+          return null
+        })
     }
 
     get user() {
@@ -397,8 +426,8 @@ export default ({
       const collection = this.getCollectionFromRoute(route)
       const response = await this.find(collection, this.filterByIdSlug(route.params.id, params))
       console.log('GETCONTENT RESPONSE', response)
-      let data = response.data?response.data:response
-      return Array.isArray(data)?data[0]:data
+      let data = response.data ? response.data : response
+      return Array.isArray(data) ? data[0] : data
     }
 
     async findList(route, params) {
@@ -411,13 +440,13 @@ export default ({
         encodeValuesOnly: true,
       })
       return fetch(`${this.url}${route}${query}`, {
-        method: "PUT",
-        headers: {
-          Authorization: `Bearer ${this.token}`,
-          "Content-Type": "application/json"
-        },
-        body: data
-      })
+          method: "PUT",
+          headers: {
+            Authorization: `Bearer ${this.token}`,
+            "Content-Type": "application/json"
+          },
+          body: data
+        })
         .then(res => res.json())
     }
 
