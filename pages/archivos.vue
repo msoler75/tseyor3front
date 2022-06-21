@@ -4,8 +4,9 @@
     contained="no"
     background="no"
     breadcrumb="no"
+    floatnav="no"
     footer="no"
-    style="font-family: 'Trebuchet MS'"    
+    style="font-family: 'Trebuchet MS'"
   >
     <div
       v-if="$strapi.user"
@@ -16,6 +17,10 @@
         !border-l-0 !border-r-0 !border-b-0
         select-none
         whitespace-nowrap
+        sticky
+        top-0
+        z-30
+        shadow
       "
     >
       <div
@@ -24,13 +29,12 @@
           justify-between
           items-start
           sticky
-          top-[60px]
-          md:top-[80px]
-          xl:top-[85px]
+          top-0          
         "
       >
-        <div class="w-full overflow-y-auto"
-        :class="borrando?'activar-papelera':''"
+        <div
+          class="w-full overflow-y-auto"
+          :class="borrando ? 'activar-papelera' : ''"
         >
           <template v-for="(menu, index) of menuItems">
             <section
@@ -78,7 +82,7 @@
       class="right-panel flex-grow surface w-full"
       :class="explorandoCarpeta ? 'explorador' : ''"
     >
-      <div class="w-full px-4 sm:px-8 lg:px-10 xl:px-12 py-4 order-0">
+      <div class="w-full px-1 xs:px-2 xm:px-4 sm:px-8 lg:px-10 xl:px-12 py-4 order-0 overflow-x-auto">
         <Breadcrumb
           v-if="explorandoCarpeta"
           class="text-sm mt-2"
@@ -92,7 +96,7 @@
           options
           overflow-x-auto
           order-3
-          lg:order-1 lg:row-span-2 
+          lg:order-1 lg:row-span-2
           sticky
           lg:static lg:overflow-visible
           bottom-0
@@ -106,13 +110,17 @@
           py-4
           lg:py-6
         "
-        :class="estaVacio&&!explorandoCarpeta?'':'lg:bg-gray-100 lg:dark:bg-gray-900'"
+        :class="
+          estaVacio && !explorandoCarpeta
+            ? ''
+            : 'lg:bg-gray-100 lg:dark:bg-gray-900'
+        "
       >
         <div
-          v-if="!estaVacio||explorandoCarpeta||copiados.length"
+          v-if="!estaVacio || explorandoCarpeta || copiados.length"
           class="
             sticky
-            top-[115px]
+            top-5
             flex
             justify-start
             space-x-2
@@ -121,6 +129,9 @@
         >
           <div v-if="seleccionando" class="hidden lg:block">
             Selecciona los elementos...
+          </div>
+          <div v-else-if="copiando">
+            {{ esCortar ? "Moviendo" : "Copiando" }} elementos...
           </div>
           <div v-else-if="copiados.length">Elige la carpeta destino...</div>
 
@@ -147,7 +158,7 @@
           />
 
           <Btn
-            v-if="copiados.length"
+            v-if="!copiando && copiados.length"
             class="btn-mini btn-success text-sm"
             icon="paste"
             :label="
@@ -162,7 +173,7 @@
           />
 
           <Btn
-            v-if="copiados.length"
+            v-if="!copiando && copiados.length"
             class="btn-mini btn-error text-sm"
             icon="times"
             label="Cancelar operación"
@@ -175,7 +186,7 @@
               $route.path != urlPapelera &&
               !seleccionando &&
               !copiando &&
-              !copiados.length              
+              !copiados.length
             "
             class="btn-mini btn-gray text-sm"
             icon="search"
@@ -184,10 +195,7 @@
           />
 
           <Btn
-            v-if="             
-              $route.path == urlPapelera              
-              && !estaVacio            
-            "
+            v-if="$route.path == urlPapelera && !estaVacio"
             class="btn-mini btn-gray text-sm"
             icon="trash"
             label="Vaciar Papelera"
@@ -195,10 +203,7 @@
           />
 
           <Btn
-            v-if="              
-              !estaVacio &&
-              !copiando
-            "
+            v-if="!estaVacio && !copiando"
             class="btn-mini btn-gray text-sm"
             :icon="modoLista ? 'list' : 'th-large'"
             label="Cambiar Vista"
@@ -266,7 +271,6 @@
           flex-grow flex flex-col
           !border-l-0 !border-r-0
         "
-        :class="copiados.length ? '' : ''"
       >
         <nuxt-child
           ref="child"
@@ -299,7 +303,17 @@
         <LoaderFolders
           :items="itemsPrevistos"
           :vista="modoLista ? 'listado' : 'miniaturas'"
-          class="w-full py-5 px-4 sm:px-8 lg:px-10 xl:px-12 h-full text-2xl surface"          
+          class="
+            w-full
+            py-5
+            px-4
+            sm:px-8
+            lg:px-10
+            xl:px-12
+            h-full
+            text-2xl
+            surface
+          "
         />
       </div>
     </div>
@@ -307,10 +321,28 @@
 </template>
 
 <script>
-import { tengoPermiso, soyPropietario, uploadFiles } from "@/assets/js/carpeta";
+import {
+  tengoPermiso,
+  soyPropietario,
+  uploadFiles,
+  populateCarpeta,
+  populateArchivo,
+} from "@/assets/js/carpeta";
+import validation from "@/mixins/validation";
 import vSelect from "vue-select";
 import "vue-select/dist/vue-select.css";
+
+// https://stackoverflow.com/questions/20278095/enums-in-typescript-what-is-the-javascript-code-doing
+var TOAST_TYPE;
+(function (TOAST_TYPE) {
+  TOAST_TYPE[(TOAST_TYPE["success"] = 0)] = "success";
+  TOAST_TYPE[(TOAST_TYPE["error"] = 0)] = "error";
+  TOAST_TYPE[(TOAST_TYPE["warning"] = 0)] = "warning";
+  TOAST_TYPE[(TOAST_TYPE["info"] = 0)] = "info";
+  TOAST_TYPE[(TOAST_TYPE["default"] = 0)] = "default";
+})(TOAST_TYPE || (TOAST_TYPE = {}));
 export default {
+  mixins: [validation],
   components: { vSelect },
   async asyncData({ route, $strapi, $config, $error }) {
     try {
@@ -323,7 +355,7 @@ export default {
           },
         },
       });
-      console.log('response', JSON.stringify(root))
+      console.log("response", JSON.stringify(root));
       if (!root) root = { id: 0 };
 
       return {
@@ -347,9 +379,10 @@ export default {
     ];
     specialFolders = specialFolders.map((x) => this.$config.archivosRuta + x);
     return {
-      carpeta: {},      
+      carpeta: {},
       currentChild: null,
       borrando: false,
+      toastId: null,
       urlPapelera: this.$config.archivosRuta + "/papelera",
       menuActual: this.$route.path.substr(
         this.$route.path.lastIndexOf("/") + 1
@@ -411,10 +444,10 @@ export default {
       specialFolders,
     };
   },
-  computed: {   
+  computed: {
     estaVacio() {
-      if(!this.currentChild) return true
-      return this.currentChild.numElements==0
+      if (!this.currentChild) return true;
+      return this.currentChild.numElements == 0;
     },
     loading() {
       return this.$store.getters.loading;
@@ -436,6 +469,7 @@ export default {
       return tengoPermiso(this.carpeta, this.$strapi.user, "escritura");
     },
     seleccionadosMovibles() {
+      if (!this.seleccionando) return false;
       for (const s of this.seleccionados) {
         if (s.tipo == "archivo") {
           const archivo = this.carpeta.archivos.find((x) => x.id == s.id);
@@ -456,6 +490,7 @@ export default {
       return true;
     },
     seleccionadosAdministrables() {
+      if (!this.seleccionando) return false;
       for (const s of this.seleccionados) {
         if (s.tipo == "archivo") {
           const archivo = this.carpeta.archivos.find((x) => x.id == s.id);
@@ -476,12 +511,15 @@ export default {
     },
   },
   watch: {
+    "$route.path"(newValue) {
+      this._updateBreadcrumb(newValue);
+    },
     loading(newValue) {
       if (newValue) this.$set(this, "carpeta", {});
-      else 
-      this.$nextTick(()=> {
-        this.currentChild = this.$refs.child
-      })
+      else
+        this.$nextTick(() => {
+          this.currentChild = this.$refs.child;
+        });
     },
     seleccionando(newValue) {
       this.seleccionados.splice(0, this.seleccionados.length);
@@ -497,9 +535,9 @@ export default {
     if (!this.menuItems.find((x) => x.value === this.menuActual))
       this.menuActual = "archivos";
     this.modoLista = this.$store.state.vistaArchivos == "listado";
-    this.currentChild = this.$refs.child
-    if(!this.specialFolders.includes(this.$route.path))
-      this._updateBreadcrumb(this.$route.path)
+    this.currentChild = this.$refs.child;
+    if (!this.specialFolders.includes(this.$route.path))
+      this._updateBreadcrumb(this.$route.path);
   },
   methods: {
     addFiles(files) {
@@ -523,9 +561,8 @@ export default {
     },
     onRuta(obj) {
       console.log("onRuta", obj);
-      this.$scrollTo(0, 500)
-      if(this.menuActual=='recientes')
-        this.menuActual = 'misArchivos'
+      this.$scrollTo(0, 500);
+      if (this.menuActual == "recientes") this.menuActual = "misArchivos";
       this.ultimoClick = null;
       this.seleccionando = false;
       const ruta = typeof obj === "object" ? obj.ruta : obj;
@@ -533,17 +570,17 @@ export default {
         typeof obj === "object" && "archivos" in obj
           ? obj.archivos.length + obj.subcarpetas.length
           : Math.floor(Math.random(3)) + 1;
-      this.$store.commit('setCarpeta', obj)
+      this.$store.commit("setCarpeta", obj);
       this.$router.push(ruta);
       this._updateBreadcrumb(ruta);
     },
     async onPapelera(elem) {
       console.log("ruta Actual", this.$route.path);
-      this.borrando = true
-      const that = this
-      setTimeout(()=>{
-        that.borrando = false
-      }, 1500)
+      this.borrando = true;
+      const that = this;
+      setTimeout(() => {
+        that.borrando = false;
+      }, 1500);
       if (elem.carpeta && elem.carpeta.ruta == this.$route.path) {
         let ruta = this.$route.path.substr(
           0,
@@ -554,7 +591,7 @@ export default {
             ruta: {
               $eq: ruta,
             },
-          }
+          },
         });
         if (response.error) ruta = this.$config.archivosRuta;
         this.$router.replace({ path: ruta });
@@ -564,10 +601,16 @@ export default {
     onCarpeta(carpeta) {
       console.warn("onCarpeta!!", carpeta);
       for (const key in carpeta) this.$set(this.carpeta, key, carpeta[key]);
-      if(this.menuActual=='misArchivos' && !soyPropietario(this.carpeta, this.$strapi.user))
-        this.menuActual = 'archivos'      
-      if(this.menuActual=='archivos' && soyPropietario(this.carpeta, this.$strapi.user))
-        this.menuActual = 'misArchivos'      
+      if (
+        this.menuActual == "misArchivos" &&
+        !soyPropietario(this.carpeta, this.$strapi.user)
+      )
+        this.menuActual = "archivos";
+      if (
+        this.menuActual == "archivos" &&
+        soyPropietario(this.carpeta, this.$strapi.user)
+      )
+        this.menuActual = "misArchivos";
     },
     onSeleccion(lista) {
       console.log("onSeleccion", lista);
@@ -577,28 +620,28 @@ export default {
       for (const id of lista.archivos)
         this.seleccionados.push({ tipo: "archivo", id });
     },
-    buscar() {},    
+    buscar() {},
     borrar() {
-      console.log('BORRAR SELECCIONADOS')
-      for(const item of this.seleccionados) {
-        console.log('carpetas', this.$refs.child.$refs.carpeta.$refs.carpetas)
-        console.log('archivos', this.$refs.child.$refs.carpeta.$refs.archivos)
-        if(item.tipo=='carpeta')
-        {
-          const comp = this.$refs.child.$refs.carpeta.$refs.carpetas.find(x=>x.carpeta.id==item.id)
-          console.log('found', comp)
-          if(comp)
-          comp.enviarAPapelera()
-        }
-        else {
-          const comp = this.$refs.child.$refs.carpeta.$refs.archivos.find(x=>x.localValue.id==item.id)
-          console.log('found', comp)
-          if(comp)
-          comp.enviarAPapelera()
+      console.log("BORRAR SELECCIONADOS");
+      for (const item of this.seleccionados) {
+        console.log("carpetas", this.$refs.child.$refs.carpeta.$refs.carpetas);
+        console.log("archivos", this.$refs.child.$refs.carpeta.$refs.archivos);
+        if (item.tipo == "carpeta") {
+          const comp = this.$refs.child.$refs.carpeta.$refs.carpetas.find(
+            (x) => x.carpeta.id == item.id
+          );
+          console.log("found", comp);
+          if (comp) comp.enviarAPapelera();
+        } else {
+          const comp = this.$refs.child.$refs.carpeta.$refs.archivos.find(
+            (x) => x.localValue.id == item.id
+          );
+          console.log("found", comp);
+          if (comp) comp.enviarAPapelera();
         }
       }
-      this.seleccionando = false
-      console.log('FIN BORRAR S')
+      this.seleccionando = false;
+      console.log("FIN BORRAR S");
     },
     vaciarPapelera() {
       this.$confirm({
@@ -606,12 +649,12 @@ export default {
         yes: `Vaciar Papelera`,
         no: "Cancelar",
         confirmed: async () => {
-          this.$refs.child.vaciarPapelera()
+          this.$refs.child.vaciarPapelera();
         },
-      })      
+      });
     },
     nuevaCarpeta() {
-      this.$refs.child.$refs.carpeta.nueva()
+      this.$refs.child.$refs.carpeta.nueva();
     },
     copiar() {
       this.copiados.splice(0, this.copiados.length);
@@ -626,60 +669,132 @@ export default {
     cortar() {
       this.copiar();
       this.esCortar = true;
-    },    
+    },
     onCopiado(elem) {
-      console.log('onCopiado', elem)
-      this.copiados.push(elem)
+      console.log("onCopiado", elem);
+      this.copiados.push(elem);
       this.esCortar = false;
-      this.rutaCopia = elem.ruta
+      this.rutaCopia = elem.ruta;
     },
     onCortado(elem) {
-      console.log('onCortado', elem)
-      this.copiados.push(elem)
+      console.log("onCortado", elem);
+      this.copiados.push(elem);
       this.esCortar = true;
-      this.rutaCopia = elem.ruta
+      this.rutaCopia = elem.ruta;
     },
     cancelar() {
       this.copiando = false;
       this.copiados.splice(0, this.copiados.length);
     },
+    async moverArchivo(id, carpetaId, reject) {
+      await this.$strapi
+        .update(
+          "archivos",
+          id,
+          {
+            carpeta: carpetaId,
+          },
+          {
+            populate: populateArchivo,
+          }
+        )
+        .then((response) => {
+          if (response.error) {
+            this.setErr(response.error);
+            reject();
+          } else {
+            console.log("PUSH", response.data);
+            this.carpeta.archivos.push(response.data);
+          }
+        });
+    },
+    async moverCarpeta(id, carpetaId, reject) {
+      await this.$strapi
+        .update(
+          "carpetas",
+          id,
+          {
+            padre: carpetaId,
+          },
+          {
+            populate: populateCarpeta,
+          }
+        )
+        .then((response) => {
+          console.log("moverCarpeta response", response);
+          if (response.error) {
+            this.setErr(response.error);
+            reject();
+          } else {
+            this.carpeta.subcarpetas.push(response.data);
+          }
+        })
+        .catch((e) => {
+          console.log("ERRORRRR", e);
+        });
+    },
     async pegar() {
+      this.clearErrors();
       if (this.rutaCopia != this.$route.path) {
         this.copiando = true;
+        const verbo = this.esCortar ? "Moviendo" : "Copiando";
+        this.toastId = this.$toast(`${verbo}... 0%`, {
+          icon: "spinner",
+          timeout: 99999999,
+          pauseOnHover: false,
+          closeOnClick: false,
+          draggable: false,
+          showCloseButtonOnHover: false,
+          closeButton: false,
+        });
+
         return new Promise(async (resolve, reject) => {
+          let num = 0;
           for (const item of this.copiados) {
             if (this.esCortar) {
-              await this.$strapi
-                .update(item.tipo + "s", item.id, {
-                  data: {
-                    padre: this.carpeta.id,
-                  },
-                })
-                .catch((e) => {
-                  reject(e);
-                });
+              if (item.tipo == "archivo")
+                await this.moverArchivo(item.id, this.carpeta.id, reject);
+              else await this.moverCarpeta(item.id, this.carpeta.id, reject);
             } else {
-              const entry = await this.$strapi
-                .findOne(item.tipo, item.id)
-                .update(item.tipo + "s", item.id, {
-                  data: {
-                    padre: this.carpeta.id,
-                  },
-                })
-                .catch((e) => {
-                  reject(e);
-                });
+              //...
             }
+            num++;
+            const percent_completed = Math.floor(
+              (100 * num) / this.copiados.length
+            );
+            if(!this.thereErrors)
+            this.$toast.update(this.toastId, {
+              content: `${verbo}... ${percent_completed}%`,
+            });
           }
           resolve("ok");
         })
           .then((result) => {
             this.copiando = false;
             this.copiados.splice(0, this.copiados.length);
+            this.$toast.update(this.toastId, {
+              content: "¡Completado!",
+              options: {
+                type: "success",
+                icon: true,
+                timeout: 2500,
+              },
+            });
           })
           .catch((e) => {
+            //console.error(e);
             this.copiando = false;
-            this.$toast.error("Ha habido un error");
+            this.copiados.splice(0, this.copiados.length);
+            //this.$toast.error("Ha habido un error");
+            this.$toast.update(this.toastId, {
+              content: 'No se pudo completar la operación: '+this.errors.message,
+              options: {
+                type: "error",
+                icon: true,
+                // showCloseButtonOnHover: true,
+                closeButton: "button"                
+              },
+            });
           });
       }
     },
@@ -741,26 +856,29 @@ export default {
 }
 
 .activar-papelera .fa-trash-alt {
-  animation: 1s shake cubic-bezier(.36,.07,.19,.97) both;
+  animation: 1s shake cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
 }
 
 @keyframes shake {
-  10%, 90% {
+  10%,
+  90% {
     transform: translate3d(-1px, 0, 0);
   }
-  
-  20%, 80% {
+
+  20%,
+  80% {
     transform: translate3d(2px, 0, 0);
   }
 
-  30%, 50%, 70% {
+  30%,
+  50%,
+  70% {
     transform: translate3d(-4px, 0, 0);
   }
 
-  40%, 60% {
+  40%,
+  60% {
     transform: translate3d(4px, 0, 0);
   }
 }
-
-
 </style>

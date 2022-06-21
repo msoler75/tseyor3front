@@ -169,13 +169,13 @@ const uploadFiles = async (carpeta, files, $strapi, $toast) => {
   }
 
   const toastId = $toast("Subiendo archivos... 0%", {
+    icon: 'spinner',
     timeout: 99999999,
     pauseOnHover: false,
     closeOnClick: false,
     draggable: false,
     showCloseButtonOnHover: false,
-    closeButton: false,
-    icon: false,
+    closeButton: false
   });
 
   $strapi
@@ -232,7 +232,9 @@ const uploadFiles = async (carpeta, files, $strapi, $toast) => {
       $toast.update(toastId, {
         content: "¡Completado!",
         options: {
-          timeout: 1000,
+          type: "success",
+          icon: true,
+          timeout: 2500,
         },
       })
       // )

@@ -14,9 +14,10 @@
     <NavTop
       v-model="currentTab"
       :rutasMenu="rutasMenu"
+      id="nav-top"
       ref="nav"
       @showSideMenu="showSideMenu"
-      @usermenu="menuUsuario = true"
+      @usermenu="menuUsuario = true"      
     />
 
     <!-- User Menu -->
@@ -26,7 +27,23 @@
     <!-- Navigation ends -->
     <section
       v-if="pageConfig.breadcrumb"
-      class="w-full mt-5 mb-3 lg:mt-6 lg:mb-5 xs:px-1 sm:px-3 md:px-6 mx-auto lg:flex-row items-start lg:items-center justify-between pb-4 border-gray-300 relative"
+      class="
+        w-full
+        mt-5
+        mb-3
+        lg:mt-6 lg:mb-5
+        xs:px-1
+        sm:px-3
+        md:px-6
+        mx-auto
+        lg:flex-row
+        items-start
+        lg:items-center
+        justify-between
+        pb-4
+        border-gray-300
+        relative
+      "
       @click="clickOff"
     >
       <Breadcrumb
@@ -37,12 +54,19 @@
 
       <h4
         v-if="false"
-        class="mt-2 text-2xl font-bold leading-tight text-gray-800 dark:text-gray-200"
+        class="
+          mt-2
+          text-2xl
+          font-bold
+          leading-tight
+          text-gray-800
+          dark:text-gray-200
+        "
       >
         <div>{{ title }}</div>
       </h4>
-    </section>    
-    <div v-else-if="pageConfig.contained" class="h-8"></div>    
+    </section>
+    <div v-else-if="pageConfig.contained" class="h-8"></div>
     <!-- Page title ends -->
 
     <!-- Page Content -->
@@ -353,7 +377,9 @@ export default {
       this.$refs.nav.closeAllMenus();
     },
     handleScroll(event) {
+      return
       const threshold = 120;
+      const yHide = 50;
       var y = window.scrollY;
       const dy = y - this.lastY > 0 ? 1 : -1;
       if (dy !== this.lastDy) {
@@ -361,12 +387,13 @@ export default {
         this.lastChangeY = y;
       }
       const distance = Math.abs(y - this.lastChangeY);
+      //if(this.pageConfig.floatNav) {
       if (this.pageConfig.focused) {
         if (dy > 0) {
-          if (y > 400) {
+          if (y > yHide) {
             this.$store.commit("setNavHidden", true);
           }
-        } else if (distance > threshold) {
+        } else if (y <= yHide || distance > threshold) {
           this.$store.commit("setNavHidden", false);
         }
       }
@@ -378,7 +405,8 @@ export default {
         e.preventDefault();
         this.onBuscar();
       }
-      if (e.key === "l") this.$store.commit("setLoading", !this.$store.state.loading);
+      if (e.key === "l")
+        this.$store.commit("setLoading", !this.$store.state.loading);
     },
     showSideMenu() {
       this.showSidebar = true;
@@ -509,6 +537,11 @@ html:not(.page-background) #__layout {
 
 html.dark:not(.page-background) #__layout {
   background-image: linear-gradient(to bottom, #11151d 0%, #000 100%);
+}
+
+
+.page-floatnav #nav-top {
+  @apply sticky top-0;
 }
 
 #breadcrumb {

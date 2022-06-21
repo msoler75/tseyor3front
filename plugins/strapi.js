@@ -54,10 +54,13 @@ export default ({
     }, */
 
     transform(data) {
-      //console.log('transform', data)
+      // console.log('transform', data)
       if (Array.isArray(data)) {
         for (const key in data)
           data[key] = this.transform(data[key])
+        return data
+      }
+      if (data && typeof data == 'object' && 'data' in data && 'error' in data && data.error) {
         return data
       }
       if (data && typeof data == 'object' && 'data' in data && 'meta' in data) {
@@ -207,7 +210,8 @@ export default ({
             data
           })
         })
-        .then(res => res.json())
+        .then(response => response.json())
+        .then(response=>this.transform(response))
       /*return $axios.put(`/${collection}/${id}`, {
         data
       })*/
@@ -234,6 +238,7 @@ export default ({
           })
         })
         .then(response => response.json())
+        .then(response=>this.transform(response))
     }
 
 
@@ -281,6 +286,7 @@ export default ({
           }
         })
         .then(response => response.json())
+        .then(response=>this.transform(response))
     }
 
     async login(data) {

@@ -22,6 +22,7 @@ export default () => ({
     contained : true,
     background : true,
     breadcrumb: true,
+    floatnav: true,
     focused: false,
     footer: true,
   },

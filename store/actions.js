@@ -40,6 +40,7 @@ export default {
       'background',
       'breadcrumb',
       'contained',
+      'floatnav',
       'focused',
       'footer',
     ]

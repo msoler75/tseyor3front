@@ -20,6 +20,7 @@ export default {
       breadcrumb: true,
       background: true,
       contained: true,
+      floatnav: true,
       focused: false,
       footer: true,
       ...payload
@@ -34,6 +35,7 @@ export default {
         'background',
         'breadcrumb',
         'contained',
+        'floatnav',
         'focused',
         'footer',
       ]

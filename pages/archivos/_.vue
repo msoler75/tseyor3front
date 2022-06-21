@@ -1,7 +1,7 @@
 <template>
   <Carpeta
     ref="carpeta"
-    class="w-full flex-grow py-5 px-4 sm:px-8 lg:px-10 xl:px-12"
+    class="w-full flex-grow xm:px-2 sm:px-8 lg:px-10 xl:px-12"
     :value="carpeta"
     modoNavegacion="Click"
     @click="$emit('click', $event)"
@@ -47,13 +47,17 @@ export default {
         });
         if (response.error) return $error(response.error.status);
         carpeta = response.data[0];
-        if(carpeta)
         // la carpeta padre de las subcarpetas es la propia carpeta
+        if(carpeta)
             for(const sc of carpeta.subcarpetas)
               sc.padre = {...carpeta}
       }
-      else 
-      carpeta.actualizar = true
+      else  {
+        carpeta = {...carpeta}
+        carpeta.actualizar = true
+        // la carpeta guardada en store es de un solo uso
+        store.commit('setCarpeta', null)
+      }
       return {
         carpeta: carpeta ? carpeta : route.path,
       };

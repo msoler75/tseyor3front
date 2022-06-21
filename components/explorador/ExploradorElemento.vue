@@ -1,9 +1,10 @@
 <template>
   <component
     :is="tag"
-    class="elem-grid grid gap-x-4 gap-y-1
-    lg:text-lg
-                px-2
+    class="elem-grid grid gap-x-1 xs:gap-x-2 xm:gap-x-4 gap-y-1
+                lg:text-lg
+                px-0
+                xm:px-2
                 py-2
                 rounded-lg
                 hover:bg-gray-100
@@ -24,8 +25,8 @@
   >
     <Check      
       v-model="seleccionado"
-      class="w-8"
-      :class="seleccionando && checkable ? '' : 'opacity-0 pointer-events-none'"
+      class=""
+      :class="seleccionando && checkable ? 'w-8' : 'opacity-0 pointer-events-none'"
     />
 
     <div

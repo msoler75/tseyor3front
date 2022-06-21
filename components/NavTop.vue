@@ -15,9 +15,7 @@
       text-gray-blue-800
       dark:text-gray-200 dark:hover:text-gray-50
       shadow
-      select-none
-      sticky
-      top-0
+      select-none      
     "
     :class="navHidden ? '-translate-y-20' : ''"
     :submenu="localValue !== ''"

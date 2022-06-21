@@ -404,7 +404,7 @@ export default {
     draggablePercent: 0.6,
     showCloseButtonOnHover: true,
     closeButton: "button",
-    rtl: false,
+    rtl: false    
   }
 
 }

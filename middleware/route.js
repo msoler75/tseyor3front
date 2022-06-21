@@ -13,4 +13,5 @@ export default function ({ res, route, store }) {
     store.commit('setDropAccept', null)
     // res.timing.end('midd')
     store.commit('setBreadcrumbHandler', null)
+    // store.commit("setNavHidden", false);
 }

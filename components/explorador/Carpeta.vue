@@ -27,7 +27,7 @@
         class="w-full py-5 px-4 h-full text-2xl surface"
       />
       <div v-else-if="carpeta" class="flex w-full flex-col justify-between">
-        <div class="px-2 mb-5 flex items-center justify-start relative z-10">
+        <div class="surface pl-5 pr-0 xm:pr-2 sm:pl-2 sm:pr-2 py-3 flex items-center justify-start z-10 sticky top-[54px] sm:top-0">
           <span
             v-if="getpadre && !seleccionando"
             class="cursor-pointer pr-5 flex items-center"
@@ -41,34 +41,34 @@
           </h1>
 
           <EllipBtnLoader
-          v-if="!seleccionandoCarpeta"
+            v-if="!seleccionandoCarpeta"
             class="ml-auto"
             :loader="procesando"
             :controls="mostrarControles && !seleccionando"
             @click="mostrarMenu = $event"
           />
-        </div>
-          <div
-          v-if="
-            seleccionandoCarpeta &&
-            (!carpetas || !carpetas.length)            
-          "
-          class="w-full min-h-[30vh] flex flex-col space-y-4 justify-center items-center text-diminished"
-        >
-          <icon icon="folder-open" class="text-6xl opacity-25"/>
-        </div>
+        </div>        
         <div
-          v-else-if="
-            !seleccionandoCarpeta &&
+          v-if="
             (!carpetas || !carpetas.length) &&
-            (!mostrarArchivos || !archivos || !archivos.length)
+            (!archivosFiltrados.length)
           "
-          class="w-full min-h-[30vh] flex flex-col space-y-4 justify-center items-center text-diminished"
+          class="
+            w-full
+            min-h-[30vh]
+            flex flex-col
+            space-y-4
+            justify-center
+            items-center
+            text-diminished
+          "
         >
-          <icon icon="folder-open" class="text-6xl opacity-25"/>
+          <icon icon="folder-open" class="text-6xl opacity-25" />
           <span>{{ placeholder }}</span>
         </div>
-        <list-transition group :duration="300"
+        <list-transition
+          group
+          :duration="300"
           :isFlexGrid="vista != 'listado'"
           v-else
           class="w-full"
@@ -78,7 +78,7 @@
             v-for="(subcarpeta, index) of carpetas"
             class="list-item"
             ref="carpetas"
-            :key="'carpeta-'+subcarpeta.id"
+            :key="'carpeta-' + subcarpeta.id"
             v-model="carpetas[index]"
             :boxClass="boxClass"
             :iconClass="iconClass"
@@ -86,41 +86,41 @@
             :subtextClass="subtextClass"
             :mostrarFecha="mostrarFecha"
             :mostrarTamano="mostrarTamano"
-            :mostrarControles="mostrarControles && !seleccionandoCarpeta && !subcarpeta.subirNivel"
+            :mostrarControles="mostrarControles &&!seleccionandoCarpeta"
             :seleccionando="seleccionando"
             :vista="vista"
             @click="$emit('click', $event)"
             @dragenter="dragging = false"
             @dragleave="dragging = true"
             @papelera="onPapelera"
-            @copiado="$emit('copiado', {...$event, ruta: carpeta.ruta})"
-            @cortado="$emit('cortado', {...$event, ruta: carpeta.ruta})"            
+            @copiado="$emit('copiado', { ...$event, ruta: carpeta.ruta })"
+            @cortado="$emit('cortado', { ...$event, ruta: carpeta.ruta })"
             @seleccionado="onCarpetaSeleccionada(subcarpeta.id)"
             @deseleccionado="onCarpetaDeseleccionada(subcarpeta.id)"
-          />          
-            <Archivo
-              v-for="(archivo, index) of archivosFiltrados"
-              class="list-item"
-              ref="archivos"
-              :key="'archivo-'+ (archivo.uploadId || archivo.id)"
-              v-model="archivos[index]"
-              :boxClass="boxClass"
-              :iconClass="iconClass"
-              :textClass="textClass"
-              :subtextClass="subtextClass"
-              :mostrarFecha="mostrarFecha"
-              :mostrarTamano="mostrarTamano"
-              :mostrarControles="mostrarControles && !seleccionandoCarpeta"
-              :seleccionando="seleccionando"
-              :vista="vista"
-              :carpeta="carpeta"
-              @abrir-carpeta="flexNavigateTo"
-              @seleccionado="onArchivoSeleccionado(archivo.id)"
-              @deseleccionado="onArchivoDeseleccionado(archivo.id)"
-              @papelera="onPapelera"
-              @copiado="$emit('copiado', {...$event, ruta: carpeta.ruta})"
-              @cortado="$emit('cortado', {...$event, ruta: carpeta.ruta})"
-            />          
+          />
+          <Archivo
+            v-for="(archivo, index) of archivosFiltrados"
+            class="list-item"
+            ref="archivos"
+            :key="'archivo-' + (archivo.uploadId || archivo.id)"
+            v-model="archivos[index]"
+            :boxClass="boxClass"
+            :iconClass="iconClass"
+            :textClass="textClass"
+            :subtextClass="subtextClass"
+            :mostrarFecha="mostrarFecha"
+            :mostrarTamano="mostrarTamano"
+            :mostrarControles="mostrarControles && !seleccionandoCarpeta"
+            :seleccionando="seleccionando"
+            :vista="vista"
+            :carpeta="carpeta"
+            @abrir-carpeta="flexNavigateTo"
+            @seleccionado="onArchivoSeleccionado(archivo.id)"
+            @deseleccionado="onArchivoDeseleccionado(archivo.id)"
+            @papelera="onPapelera"
+            @copiado="$emit('copiado', { ...$event, ruta: carpeta.ruta })"
+            @cortado="$emit('cortado', { ...$event, ruta: carpeta.ruta })"
+          />
         </list-transition>
       </div>
     </div>
@@ -134,13 +134,13 @@
       :textClass="textClass"
       :subtextClass="subtextClass"
       :mostrarTitulo="mostrarTitulo"
-      :mostrarControles="mostrarControles && carpeta.subirNivel"
+      :mostrarControles="mostrarControles"
       :mostrarTamano="mostrarTamano"
       :mostrarFecha="mostrarFecha"
       :mostrarDescripcion="mostrarDescripcion"
       :publishedAt="carpeta.publishedAt"
       :nombre="carpeta.nombreMostrar || carpeta.nombre"
-      :checkable="carpeta && carpeta.subirNivel"
+      :checkable="!!carpeta"
       :procesando="procesando"
       @click="flexNavigateTo(carpeta)"
       @opciones="mostrarMenu = $event"
@@ -154,8 +154,6 @@
             (vista == 'listado' ? 'text-6xl ' : 'text-8xl ') +
             (!carpeta.publishedAt
               ? 'pointer-events-none'
-              : seleccionando && carpeta.subirNivel
-              ? 'opacity-50 pointer-events-none'
               : seleccionando
               ? 'pointer-events-none'
               : 'cursor-pointer')
@@ -167,7 +165,7 @@
             class="absolute"
             :class="
               iconClass +
-              (carpeta.subirNivel && !seleccionando && carpeta.publishedAt
+              (!seleccionando && carpeta.publishedAt
                 ? ' group-hover:hidden'
                 : '') +
               (carpeta.publishedAt ? ' text-orange-200' : ' text-gray-500')
@@ -180,12 +178,7 @@
             :class="iconClass"
           />
           <icon
-            v-if="!seleccionando && carpeta.subirNivel"
-            icon="reply"
-            class="group-hover:-translate-x-1 scale-[25%] text-black absolute"
-          />
-          <icon
-            v-else-if="!seleccionando && carpeta.publishedAt"
+            v-else-if="!seleccionando"
             icon="folder-open"
             class="absolute hidden group-hover:block text-orange-200"
             :class="iconClass"
@@ -315,19 +308,27 @@ export default {
       return this.padre ? this.padre : this.carpeta ? this.carpeta.padre : null;
     },
     carpetas() {
-      return this.carpeta && typeof this.carpeta == 'object' && ('subcarpetas' in this.carpeta)?this.carpeta.subcarpetas:[]
+      return this.carpeta &&
+        typeof this.carpeta == "object" &&
+        "subcarpetas" in this.carpeta
+        ? this.carpeta.subcarpetas
+        : [];
     },
     archivos() {
-      return this.carpeta && typeof this.carpeta == 'object' && ('archivos' in this.carpeta)?this.carpeta.archivos:[]
+      return this.carpeta &&
+        typeof this.carpeta == "object" &&
+        "archivos" in this.carpeta
+        ? this.carpeta.archivos
+        : [];
     },
-    archivosFiltrados(){
-      return this.mostrarArchivos/*&&!this.seleccionandoCarpeta*/?this.archivos:[]
+    archivosFiltrados() {
+      return this.mostrarArchivos /*&&!this.seleccionandoCarpeta*/
+        ? this.archivos
+        : [];
     },
     menuItems() {
       const items = [];
       if (!this.carpeta) return items;
-
-      if (this.carpeta.subirNivel) return items;
 
       if (
         this.carpeta.publishedAt &&
@@ -468,26 +469,25 @@ export default {
     ) {
       console.warn("ES UN OBJETO DE TIPO CARPETA");
       this.carpeta = this.localValue;
-      toFetch = this.carpeta.id||this.carpeta.ruta
+      toFetch = this.carpeta.id || this.carpeta.ruta;
       this.cargando = false;
       //if ("lecturaUsuarios" in this.carpeta) return;
-      
+
       if (this.updateBreadcrumb) this._updateBreadcrumb(this.carpeta.ruta);
       this.$emit("carpeta", this.carpeta);
       //this.actualizarListado()
-      if(this.carpeta.actualizar) {        
-        if(!('subcarpetas' in this.carpeta)||!('archivos' in this.carpeta))
+      if (this.carpeta.actualizar) {
+        if (!("subcarpetas" in this.carpeta) || !("archivos" in this.carpeta))
           this.cargando = true;
-        if(!('padre' in this.carpeta)) {
-          const ruta = this.carpeta.ruta.substr(0, this.carpeta.ruta.lastIndexOf('/'))
-          if(ruta)
-          this.carpeta.padre = {ruta, publishedAt: 1}
+        if (!("padre" in this.carpeta)) {
+          const ruta = this.carpeta.ruta.substr(
+            0,
+            this.carpeta.ruta.lastIndexOf("/")
+          );
+          if (ruta) this.carpeta.padre = { ruta, publishedAt: 1 };
         }
-      }
-      else
-      return;
-    }
-    else this.cargando = true
+      } else return;
+    } else this.cargando = true;
 
     if (typeof this.localValue === "string") {
       if (this.updateBreadcrumb) this._updateBreadcrumb(this.localValue);
@@ -516,7 +516,7 @@ export default {
               subcarpetas: [],
               archivos: [],
             };
-            //this.actualizarListado()
+          //this.actualizarListado()
         } else {
           const carpeta = res.data[0];
           console.log("fetch result", carpeta);
@@ -524,8 +524,8 @@ export default {
             // this.$set(this, 'carpeta', carpeta)
             this.carpeta = carpeta;
             // la carpeta padre de las subcarpetas es la propia carpeta
-            for(const sc of carpeta.subcarpetas)
-              sc.padre = {...this.carpeta}
+            for (const sc of carpeta.subcarpetas)
+              sc.padre = { ...this.carpeta };
             //this.actualizarListado()
             // for(const k in carpeta)
             // this.$set(this.carpeta, k, carpeta[k])
@@ -544,8 +544,7 @@ export default {
       });
   },
   mounted() {
-    if (this.carpeta) 
-      this.$emit("carpeta", this.carpeta);       
+    if (this.carpeta) this.$emit("carpeta", this.carpeta);
   },
   methods: {
     /*actualizarListado(){
@@ -660,16 +659,20 @@ export default {
           //this.carpeta.nombre = response;
           console.log("antes de guardar", this.carpeta);
           await this.guardar(response);
-          console.log("despues de guardar", this.carpeta);
-          if (redireccionar) this.$router.replace(this.carpeta.ruta);
+          console.log("despues de guardar", this.carpeta);          
+          if (redireccionar)  {
+            // this.$router.replace(this.carpeta.ruta);
+            if (this.updateBreadcrumb) this._updateBreadcrumb(this.carpeta.ruta);
+            this.$emit("click", this.carpeta);
+          }
         },
       });
     },
     copiar() {
-      this.$emit('copiado', {tipo: 'carpeta', id: this.carpeta.id})
+      this.$emit("copiado", { tipo: "carpeta", id: this.carpeta.id });
     },
     cortar() {
-      this.$emit('cortado', {tipo: 'carpeta', id: this.carpeta.id})
+      this.$emit("cortado", { tipo: "carpeta", id: this.carpeta.id });
     },
     compartir() {},
     eliminar() {
@@ -900,7 +903,7 @@ export default {
 */
 
 .list-item {
-  list-style-type: none
+  list-style-type: none;
 }
 /*.list-item{
    display:inline-block;
