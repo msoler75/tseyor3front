@@ -27,7 +27,7 @@
         class="w-full py-5 px-4 h-full text-2xl surface"
       />
       <div v-else-if="carpeta" class="flex w-full flex-col justify-between">
-        <div class="surface pl-5 pr-0 xm:pr-2 sm:pl-2 sm:pr-2 py-3 flex items-center justify-start z-10 sticky top-[54px] sm:top-0">
+        <div class="surface pl-5 pr-0 xm:pr-2 sm:pl-2 sm:pr-2 py-3 flex items-center justify-start z-10 sticky top-[56px] sm:top-0">
           <span
             v-if="getpadre && !seleccionando"
             class="cursor-pointer pr-5 flex items-center"

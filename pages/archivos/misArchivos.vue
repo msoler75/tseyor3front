@@ -1,5 +1,5 @@
 <template>
-  <div class="py-5 px-4 sm:px-8 lg:px-10 xl:px-12">
+  <div class="xm:px-2 py-5 sm:px-8 lg:px-10 xl:px-12">
     <h3>Mis carpetas</h3>
     <ExploradorListado
       :carpetas="carpetas"

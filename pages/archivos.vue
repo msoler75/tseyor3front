@@ -79,6 +79,7 @@
       </div>
     </div>
     <div
+      ref="rightPanel"
       class="right-panel flex-grow surface w-full"
       :class="explorandoCarpeta ? 'explorador' : ''"
     >
@@ -512,6 +513,7 @@ export default {
   },
   watch: {
     "$route.path"(newValue) {
+      this.resetScroll()
       this._updateBreadcrumb(newValue);
     },
     loading(newValue) {
@@ -545,6 +547,13 @@ export default {
       if (this.carpeta)
         uploadFiles(this.carpeta, files, this.$strapi, this.$toast);
     },
+    resetScroll() {
+      const y = screen.width<640?51:screen.width<768?68:screen.width<1024?72:76
+      if(this.$refs.rightPanel)
+        this.$scrollTo(this.$refs.rightPanel, 0, {
+        offset: 7
+      } );
+    },
     onMenu(value) {
       if (screen.width < 640 && !this.viewMenu) {
         this.viewMenu = true;
@@ -558,10 +567,11 @@ export default {
       this.ultimoClick = ruta;
       this.$router.push(ruta);
       if (screen.width < 640) this.viewMenu = false;
+      this.resetScroll()
     },
     onRuta(obj) {
-      console.log("onRuta", obj);
-      this.$scrollTo(0, 500);
+      console.log("onRuta", obj);            
+      this.resetScroll()
       if (this.menuActual == "recientes") this.menuActual = "misArchivos";
       this.ultimoClick = null;
       this.seleccionando = false;
@@ -843,6 +853,22 @@ export default {
 
 .right-panel.explorador {
   grid-template-rows: 4rem 1fr;
+}
+
+.right-panel {
+  min-height: calc(100vh + 3px)
+}
+
+@screen xs {
+  .right-panel {
+    min-height: calc(100vh + 7px)
+  }
+}
+
+@screen sm {
+  .right-panel {
+    min-height: calc(100vh + 7px)
+  }
 }
 
 @screen lg {
