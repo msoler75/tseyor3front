@@ -53,12 +53,15 @@ export default {
     inputClassError(field) {
       return this.errors[field] ? 'border-4 border-red' : ''
     },
-    setErr(error) {
+    setErr(error) {      
       console.log('setErr', JSON.stringify(error))
+      if(typeof error =='string')
+      this.$set(this.errors, 'message', this.translateError(error))
+      else if(typeof error =='object') {
       console.log('errmess', error.message, this.translateError(error.message))
       let firstEl = null
       //if(response.error)
-      console.log('1')
+      // console.log('1')
       this.$set(this.errors, 'message', this.translateError(error.message))
       console.log('this.errors', this.errors)
       console.log('status', error.status)
@@ -81,6 +84,7 @@ export default {
           offset: -250
         })
       console.log('this.errors', this.errors)
+    }
     }
   }
 }

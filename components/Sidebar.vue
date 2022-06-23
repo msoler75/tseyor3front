@@ -118,7 +118,7 @@ export default {
   methods: {
     touchStart(event) {
       this.touchstartX = event.changedTouches[0].screenX
-      console.log(this.touchstartX)
+      // console.log(this.touchstartX)
     },
     touchEnd(event) {
       const touchendX = event.changedTouches[0].screenX;
@@ -126,7 +126,7 @@ export default {
         this.showSidebar = false
     },
     clickSideBar(item) {
-      console.log('clickSideBar', item)
+      // console.log('clickSideBar', item)
       this.currentTab = item.href;
       if(item.callback)
       {

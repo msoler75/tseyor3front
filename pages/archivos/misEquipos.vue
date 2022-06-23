@@ -16,7 +16,7 @@
       </div>
     </div>
     <div v-else>
-      <ExploradorListado :carpetas="[]" placeholder="No hay nada que mostrar" />
+      <ExploradorListado :carpetas="[]" placeholder="No hay nada que mostrar" iconholder="people-carry"/>
     </div>
   </div>
 </template>

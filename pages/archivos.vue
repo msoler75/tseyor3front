@@ -716,6 +716,14 @@ export default {
             console.log("PUSH", response.data);
             this.carpeta.archivos.push(response.data);
           }
+        })
+         .catch((e) => {
+          this.setErr(e)
+          reject()
+          /*console.log("ERRORRRR", {...e});
+          console.log(e.message)
+          console.log(e.code)
+          console.log(e.status)*/
         });
     },
     async moverCarpeta(id, carpetaId, reject) {
@@ -739,8 +747,13 @@ export default {
             this.carpeta.subcarpetas.push(response.data);
           }
         })
-        .catch((e) => {
-          console.log("ERRORRRR", e);
+          .catch((e) => {
+          this.setErr(e)
+          reject()
+          /*console.log("ERRORRRR", {...e});
+          console.log(e.message)
+          console.log(e.code)
+          console.log(e.status)*/
         });
     },
     async pegar() {

@@ -1,3 +1,9 @@
+CARPETAS
+
+permisos -> administrador Hereda? (manejo de herencia en subcarpetas para permisos de administracion)
+
+
+
 Filebrowser.org  
 vue file manager  https://codecanyon.net/item/vue-file-manager-with-laravel-backend/25815986
 

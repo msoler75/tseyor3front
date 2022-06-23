@@ -97,6 +97,7 @@ export default {
   },
 
   pageConfig(state) {
+    console.log('getPageConfig', state.pageConfig)
     return state.pageConfig
   },
 

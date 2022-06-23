@@ -256,27 +256,17 @@
 </template>
 
 <script>
-const PERMISOS_POR_DEFECTO = {
-  lecturaHereda: true,
-  lecturaAcceso: "Autenticados",
-  escrituraHereda: true,
-  escrituraAcceso: "Nadie",
-};
-
+import vmodel from "@/mixins/vmodel";
 import vSelect from "vue-select";
 import Fuse from "fuse.js";
 export default {
+  mixins: [vmodel],
   components: { vSelect },
   props: {
-    value: {},
     administracion: { type: Boolean, required: false, default: false },
   },
   data() {
     return {
-      localValue: {
-        ...PERMISOS_POR_DEFECTO,
-        ...this.value,
-      },
       options: [],
       mostrarModalLectura: false,
       mostrarModalEscritura: false,
@@ -286,25 +276,8 @@ export default {
       modo: "lectura",
     };
   },
-  computed: {
-    lecturaHereda() {
-      return this.localValue.lecturaHereda;
-    },
-    escrituraHereda() {
-      return this.localValue.escrituraHereda;
-    },
-    localValueJSON() {
-      return JSON.stringify(this.localValue);
-    },
-  },
   watch: {
-    localValueJSON(value) {
-      this.$emit("input", { ...this.localValue });
-    },
-    value(value) {
-      this.localValue = value;
-    },
-    lecturaHereda(newValue) {
+    'localValue.lecturaHereda'(newValue) {
       if (newValue) {
         const carpeta = this.localValue;
         const padre = carpeta.padre;
@@ -316,7 +289,7 @@ export default {
         }
       }
     },
-    escrituraHereda(newValue) {
+    'localValue.escrituraHereda'(newValue) {
       if (newValue) {
         const carpeta = this.localValue;
         const padre = carpeta.padre;

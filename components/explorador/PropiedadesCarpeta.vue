@@ -6,7 +6,7 @@
     :icon="icon"
   >
     <form
-      class="p-5 max-w-full space-y-4 overflow-y-auto"
+      class="p-5 max-w-full xm:max-w-[480px] space-y-4 overflow-y-auto"
       @submit.stop.prevent="accept"
     >
       <div v-if="administracion" class="space-y-2">
@@ -21,7 +21,12 @@
       </div>
 
       <div class="space-y-2 text-sm lg:text-base">
-        <table>
+        <table
+          class="block mx-auto overflow-x-auto whitespace-nowrap"
+          :style="{
+            'max-width': 'fit-content'
+          }"
+        >
           <tr v-if="!administracion">
             <td><label class="text-diminished mr-4">Nombre: </label></td>
             <td>
@@ -31,7 +36,9 @@
           <tr>
             <td><label class="text-diminished mr-4">Ubicada en: </label></td>
             <td>
-              <span>{{ carpetaLocal.ruta }}</span>
+              <span class="inline-block overflow-x-auto">{{
+                carpetaLocal.ruta
+              }}</span>
             </td>
           </tr>
           <tr>
@@ -103,8 +110,8 @@
 </template>
 
 <script>
+// v model para mostrar el modal
 import vmodel from "@/mixins/vmodel";
-// import carpetaLocal from "~/mixins/carpetaLocal";
 export default {
   mixins: [vmodel],
   props: {
@@ -117,7 +124,7 @@ export default {
       default: "Propiedades de carpeta",
     },
   },
-  data() {
+  data() {    
     const r = {
       // datos de carpetaLocal
       carpetaLocal: {
@@ -128,6 +135,11 @@ export default {
         ...this.carpeta,
       },
     };
+    // eliminamos campos innecesarios
+    delete r.carpetaLocal.padre
+    delete r.carpetaLocal.archivos
+    delete r.carpetaLocal.subcarpetas
+    // atención
     if (!r.carpetaLocal.lecturaUsuarios)
       console.warn("START: lecturaUsuarios = NULL");
     return r;
@@ -141,7 +153,7 @@ export default {
   },
   methods: {
     accept() {
-      console.log("--------- ACCEPT", JSON.stringify(this.carpetaLocal));
+      // console.log("--------- ACCEPT", JSON.stringify(this.carpetaLocal));
       if (!this.carpetaLocal.lecturaUsuarios)
         console.warn("accept: carpetaLocal.lecturaUsuarios = NULL");
       this.localValue = false;

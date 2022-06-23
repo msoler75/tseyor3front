@@ -24,9 +24,11 @@ export default {
     },
   },
   mounted() {
+    console.log('poppable mounted begin', this.$el)
     if (!this.$el.id) this.$el.id = "poppable---" + mc_counter++;
     document.body.addEventListener("click", this.handleOutclick);
     document.body.addEventListener("contextmenu", this.handleOutclick);
+    console.log('poppable mounted end')
   },
   destroy() {
     document.body.removeEventListener("click", this.handleOutclick);

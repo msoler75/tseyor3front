@@ -300,7 +300,7 @@ export default {
         .then((response) => {
           if (response.error)
             if (response.error) throw new Error(response.error.message);
-          // this.$emit("papelera", {archivo: });
+          this.$emit("borrado", {archivo: this.localValue});
           this.$set(this.localValue, "borrado", true);
           this.procesando = false;
         })

@@ -6,6 +6,7 @@
       :archivos="archivos"
       @click="$emit('click', $event)"
       placeholder="Sin actividad reciente"
+      iconholder="history"
       :padre="{ ruta: $route.path + '', publishedAt: 1 }"
       :vista="vista"
       @papelera="$emit('papelera', $event)"
@@ -16,7 +17,7 @@
 </template>
 
 <script>
-import {populateCarpeta, populateArchivo} from '@/assets/js/carpeta'
+import { populateCarpeta, populateArchivo } from "@/assets/js/carpeta";
 export default {
   middleware: ["logged"],
   props: {
@@ -29,15 +30,33 @@ export default {
         populate: {
           carpetasVisitadas: {
             populate: populateCarpeta,
+            filters: {
+              publishedAt: {
+                $null: false,
+              },
+            },
           },
           archivosVisitados: {
-            populate: {...populateArchivo, carpeta:'*'},
-          }
+            populate: { ...populateArchivo, carpeta: "*" },
+            filters: {
+              publishedAt: {
+                $null: false,
+              },
+              carpeta: {
+                publishedAt: {
+                  $null: false,
+                },
+              },
+            },
+          },
         },
         publicationState: "preview",
-        sort:["updatedAt"]
+        sort: ["updatedAt"],
       });
-      return { carpetas: response.carpetasVisitadas, archivos: response.archivosVisitados };
+      return {
+        carpetas: response.carpetasVisitadas,
+        archivos: response.archivosVisitados,
+      };
     } catch (e) {
       console.error(e);
       $error(503);

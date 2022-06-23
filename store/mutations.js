@@ -15,7 +15,7 @@ export default {
   },
 
   setPageConfig(state, payload) {
-    // console.log('setPageConfig', payload)
+    console.log('setPageConfig', payload)
     state.pageConfig = {
       breadcrumb: true,
       background: true,

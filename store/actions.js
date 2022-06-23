@@ -31,9 +31,13 @@ export default {
   },
   // page transition
   beforeEnter(store, el) {
-    // console.log('store.BeforeEnter...', el)
-    if (el.id == '__content')
-      el = el.firstChild
+    //console.log('___________________________store.BeforeEnter...', el)
+    if(el&&el.$el)
+      el = el.$el
+    //if (el.id == '__content')
+      //el = el.firstChild
+    //console.log('el', el)
+    if(!el) return
 
     const config = {}
     const pageConfigKeywords = [
@@ -53,7 +57,7 @@ export default {
       }
     }
 
-    // console.log('config', config)
+    //console.log('config', config)
     store.commit('setPageConfig', config)
     store.commit('updateBreadcrumb')
     store.commit('setTravelling', false)

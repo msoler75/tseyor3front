@@ -136,11 +136,14 @@ export default {
     }
   }, */
 
-  // created()
+  /*created() {
+    if(process.client)
+    this.$store.dispatch("beforeEnter", this.$refs["page"]);
+  },*/
   async mounted() {
     //this.actualizarUrlPerfil()
     // emulamos comportamiento de beforeEnter de transición de página
-    console.warn("page", this.$refs["page"].$el);
+    //console.log("_----------------------- page", this.$refs["page"]);
     this.$store.commit("setTravelling", false);
     this.$store.dispatch("beforeEnter", this.$refs["page"].$el);
     this.$store.commit("updateBreadcrumb");

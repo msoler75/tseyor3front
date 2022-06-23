@@ -27,7 +27,23 @@
         class="w-full py-5 px-4 h-full text-2xl surface"
       />
       <div v-else-if="carpeta" class="flex w-full flex-col justify-between">
-        <div class="surface pl-5 pr-0 xm:pr-2 sm:pl-2 sm:pr-2 py-3 flex items-center justify-start z-10 sticky top-[56px] sm:top-0">
+        <div
+          class="
+            surface
+            pl-5
+            pr-0
+            xm:pr-2
+            sm:pl-2 sm:pr-2
+            py-3
+            flex
+            items-center
+            justify-start
+            z-10
+            sticky
+            top-[56px]
+            sm:top-0
+          "
+        >
           <span
             v-if="getpadre && !seleccionando"
             class="cursor-pointer pr-5 flex items-center"
@@ -47,12 +63,9 @@
             :controls="mostrarControles && !seleccionando"
             @click="mostrarMenu = $event"
           />
-        </div>        
+        </div>
         <div
-          v-if="
-            (!carpetas || !carpetas.length) &&
-            (!archivosFiltrados.length)
-          "
+          v-if="(!carpetas || !carpetas.length) && !archivosFiltrados.length"
           class="
             w-full
             min-h-[30vh]
@@ -86,7 +99,7 @@
             :subtextClass="subtextClass"
             :mostrarFecha="mostrarFecha"
             :mostrarTamano="mostrarTamano"
-            :mostrarControles="mostrarControles &&!seleccionandoCarpeta"
+            :mostrarControles="mostrarControles && !seleccionandoCarpeta"
             :seleccionando="seleccionando"
             :vista="vista"
             @click="$emit('click', $event)"
@@ -477,6 +490,7 @@ export default {
       this.$emit("carpeta", this.carpeta);
       //this.actualizarListado()
       if (this.carpeta.actualizar) {
+        console.log('debe actualizar carpeta')
         if (!("subcarpetas" in this.carpeta) || !("archivos" in this.carpeta))
           this.cargando = true;
         if (!("padre" in this.carpeta)) {
@@ -494,7 +508,7 @@ export default {
     }
     console.warn("ES UN ID/RUTA");
 
-    console.log("go on");
+    console.log("go on", toFetch);
     await this.$strapi
       .find("carpetas", {
         filters: {
@@ -504,10 +518,10 @@ export default {
         },
         populate: populateCarpeta,
       })
-      .then((res) => {
-        console.log("myfetch result", res);
-        if (res.error) {
-          this.setErr(res.error);
+      .then((response) => {
+        console.log("myfetch result", response);
+        if (response.error) {
+          this.setErr(response.error);
           if (typeof toFetch === "string")
             this.carpeta = {
               nombre: "",
@@ -518,7 +532,7 @@ export default {
             };
           //this.actualizarListado()
         } else {
-          const carpeta = res.data[0];
+          const carpeta = response.data[0];
           console.log("fetch result", carpeta);
           if (carpeta) {
             // this.$set(this, 'carpeta', carpeta)
@@ -617,6 +631,7 @@ export default {
       this.$refs.elm.reset();
     },
     nueva() {
+      this.clearErrors();
       this.$prompt({
         response: "",
         message: "Nombre de la carpeta",
@@ -639,9 +654,8 @@ export default {
               this.procesando = false;
             })
             .catch((error) => {
-              let msg =
-                error && error.message ? error.message : "No se pudo crear";
-              this.$toast.error(this.translateError(msg));
+              this.setErr(error);
+              this.$toast.error(this.errors.message);
               this.procesando = false;
             });
         },
@@ -651,18 +665,19 @@ export default {
       const redireccionar = this.$route.path === this.carpeta.ruta;
       this.$prompt({
         message: "Nuevo nombre",
-        response: this.carpeta.nombre,
-        accepted: async (response) => {
+        response: "" + this.carpeta.nombre,
+        accepted: async (nuevoNombre) => {
           //const regex = new RegExp(this.carpeta.nombre + "$");
           //this.carpeta.ruta = this.carpeta.ruta.replace(regex, "");
           //this.carpeta.ruta += "/" + response;
           //this.carpeta.nombre = response;
           console.log("antes de guardar", this.carpeta);
-          await this.guardar(response);
-          console.log("despues de guardar", this.carpeta);          
-          if (redireccionar)  {
+          await this.guardar(nuevoNombre);
+          console.log("despues de guardar", this.carpeta);
+          if (redireccionar) {
             // this.$router.replace(this.carpeta.ruta);
-            if (this.updateBreadcrumb) this._updateBreadcrumb(this.carpeta.ruta);
+            if (this.updateBreadcrumb)
+              this._updateBreadcrumb(this.carpeta.ruta);
             this.$emit("click", this.carpeta);
           }
         },
@@ -688,31 +703,38 @@ export default {
       });
     },
     enviarAPapelera() {
+      this.clearErrors();
       this.procesando = true;
+      const date = new Date().toISOString()
       this.$strapi
         .update("carpetas", this.carpeta.id, {
-          publishedAt: null,
-          eliminadaPor: this.$strapi.user ? this.$strapi.user.id : null,
-          eliminadaEn: new Date().toISOString(),
+          publishedAt: null
         })
         .then((response) => {
           console.log("enviarAPapelera response", response);
           if (response.error) throw new Error(response.error.message);
-          this.carpeta.publishedAt = null;
-          console.log("borrando", this.carpeta.ruta);
+          this.actualizarCarpetaPapelera(this.carpeta, null, {...this.$strapi.user}, date)
+          console.log("borrando", this.carpeta.ruta);          
           this.$emit("papelera", { carpeta: { ...this.carpeta } });
           this.procesando = false;
         })
         .catch((error) => {
-          let msg =
-            error && error.message
-              ? error.message
-              : "No se pudo enviar a la papelera";
-          this.$toast.error(this.translateError(msg));
+          this.setErr(error);
+          this.$toast.error(this.errors.message);
           this.procesando = false;
         });
     },
+    actualizarCarpetaPapelera(carpeta, publishedAt,eliminadaEn,eliminadaPor) {
+      this.$set(carpeta, 'publishedAt', publishedAt)
+        this.$set(carpeta, 'eliminadaEn', eliminadaEn)
+        this.$set(carpeta, 'eliminadaPor', eliminadaPor)
+        // this.$emit("carpeta", { carpeta });
+        if('subcarpetas' in carpeta)
+          for(const sc of carpeta.subcarpetas)
+            this.actualizarCarpetaPapelera(sc, publishedAt,eliminadaEn,eliminadaPor)
+    },
     eliminarDefinitivamente() {
+      this.clearErrors();
       console.log("ruta actual", this.carpeta.ruta);
       let proximaRuta =
         this.modoNavegacion == "Route" && this.carpeta.ruta == this.$route.path
@@ -730,18 +752,18 @@ export default {
             this.$router.replace({ path: proximaRuta });
             if (this.updateBreadcrumb) this._updateBreadcrumb(proximaRuta);
           } else {
-            // this.$emit("papelera", {carpeta: {...this.carpeta}});
+            this.$emit("borrado", {carpeta: {...this.carpeta}});
             this.procesando = false;
           }
         })
         .catch((error) => {
-          let msg =
-            error && error.message ? error.message : "No se pudo eliminar";
-          this.$toast.error(this.translateError(msg));
+          this.setErr(error);
+          this.$toast.error(this.errors.message);
           this.procesando = false;
         });
     },
     restaurar() {
+      this.clearErrors();
       const date = new Date().toISOString();
       this.procesando = true;
       this.$strapi
@@ -749,25 +771,18 @@ export default {
           "carpetas",
           this.carpeta.id,
           {
-            publishedAt: date,
-            eliminadaPor: null,
-            eliminadaEn: null,
-          },
-          { populate: populateCarpeta }
+            publishedAt: date 
+          }
         )
         .then((response) => {
           console.log("restaurar response", response);
-          if (response.error)
-            if (response.error) throw new Error(response.error.message);
-          this.carpeta.publishedAt = date;
-          this.carpeta.eliminadaPor = null;
-          this.carpeta.eliminadaEn = null;
+          if (response.error) throw new Error(response.error.message);
+          this.actualizarCarpetaPapelera(this.carpeta, date, null, null)
           this.procesando = false;
         })
         .catch((error) => {
-          let msg =
-            error && error.message ? error.message : "No se pudo restaurar";
-          this.$toast.error(this.translateError(msg));
+          this.setErr(error);
+          this.$toast.error(this.errors.message);
           this.procesando = false;
         });
     },
@@ -794,8 +809,9 @@ export default {
 
     // guarda datos de la carpeta, o solo el nombre
     guardar(datos) {
+      this.clearErrors();
       this.procesando = true;
-      console.log("guardar carpeta", JSON.stringify(datos));
+      // console.log("guardar carpeta", JSON.stringify(datos));
       const carpeta = typeof datos === "object" ? datos : null;
       const nuevoNombre = typeof datos === "string" ? datos : null;
       const idCarpeta = carpeta ? carpeta.id : this.carpeta.id;
@@ -839,13 +855,28 @@ export default {
           if (response.error) throw new Error(response.error.message);
           const carpeta = response.data;
           for (const key in carpeta) this.$set(this.carpeta, key, carpeta[key]);
+          for (const sc of carpeta.subcarpetas)  {
+            if(sc.lecturaHereda)
+            {
+              this.$set(sc, 'lecturaAcceso', this.carpeta.lecturaAcceso)
+              this.$set(sc, 'lecturaGrupos',  {...this.carpeta.lecturaGrupos})
+              this.$set(sc, 'lecturaEquipos', {...this.carpeta.lecturaEquipos})
+              this.$set(sc, 'lecturaUsuarios', {...this.carpeta.lecturaUsuarios})
+            }
+            if(sc.escrituraHereda)
+            {
+              this.$set(sc, 'escrituraAcceso',this.carpeta.escrituraAcceso)
+              this.$set(sc, 'escrituraGrupos', {...this.carpeta.escrituraGrupos})
+              this.$set(sc, 'escrituraEquipos', {...this.carpeta.escrituraEquipos})
+              this.$set(sc, 'escrituraUsuarios', {...this.carpeta.escrituraUsuarios})
+            }
+          }
           if (!nuevoNombre) this.$toast.success("Carpeta guardada");
           this.procesando = false;
         })
         .catch((error) => {
-          let msg =
-            error && error.message ? error.message : "No se pudo guardar";
-          this.$toast.error(this.translateError(msg));
+          this.setErr(error);
+          this.$toast.error(this.errors.message);
           this.procesando = false;
         });
     },

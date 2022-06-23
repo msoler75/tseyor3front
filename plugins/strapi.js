@@ -65,7 +65,7 @@ export default ({
       }
       if (data && typeof data == 'object' && 'data' in data && 'meta' in data) {
         //for (const key in data)
-          //data[key] = key == 'data' ? this.transform(data[key]) : data[key]
+        //data[key] = key == 'data' ? this.transform(data[key]) : data[key]
         data.data = this.transform(data.data)
         //console.log('to', data)
         return data
@@ -75,7 +75,7 @@ export default ({
           data[key] = this.transform(data.attributes[key])
         delete data.attributes
       }
-      if (data && typeof data == 'object' && 'data' in data) { 
+      if (data && typeof data == 'object' && 'data' in data) {
         return this.transform(data.data)
       }
       //console.log('to', data)
@@ -131,10 +131,10 @@ export default ({
             "Content-Type": "application/json"
           }
         })
-        .then(res => res.json())
-        .then(x => {
-          console.log('FIND RESULT', x)
-          return this.transform(x)
+        .then(response => response.json())
+        .then(response => {
+          console.log('FIND RESULT', response)
+          return this.transform(response)
         })
     }
 
@@ -156,8 +156,12 @@ export default ({
             "Content-Type": "application/json"
           }
         })
-        .then(res => res.json())
-        .then(res => !res.error ? this.transform(res.data) : res)
+        .then(response => response.json())
+        .then(response => {
+          console.warn('FINDONE', response)
+          this.transform(response.data)          
+        })
+
     }
 
 
@@ -187,7 +191,7 @@ export default ({
             "Content-Type": "application/json"
           }
         })
-        .then(res => res.json())
+        .then(response => response.json())
         .then(r => r.meta ? r.meta.pagination.total : Array.isArray(r) ? r.length : r)
     }
 
@@ -211,7 +215,7 @@ export default ({
           })
         })
         .then(response => response.json())
-        .then(response=>this.transform(response))
+        .then(response => this.transform(response))
       /*return $axios.put(`/${collection}/${id}`, {
         data
       })*/
@@ -238,7 +242,7 @@ export default ({
           })
         })
         .then(response => response.json())
-        .then(response=>this.transform(response))
+        .then(response => this.transform(response))
     }
 
 
@@ -286,7 +290,7 @@ export default ({
           }
         })
         .then(response => response.json())
-        .then(response=>this.transform(response))
+        .then(response => this.transform(response))
     }
 
     async login(data) {
@@ -309,15 +313,15 @@ export default ({
           body: JSON.stringify(data)
         })
         .then(response => response.json())
-        .then(res => {
-          console.log('LOGIN RES', res)
-          if (!res.error) {
-            this.user = res.user
-            this.token = res.jwt
+        .then(response => {
+          console.log('LOGIN response', response)
+          if (!response.error) {
+            this.user = response.user
+            this.token = response.jwt
             this.setCookie('jwt', this.token)
           }
           this.fetchUser()
-          return res
+          return response
         })
     }
 
@@ -453,7 +457,8 @@ export default ({
           },
           body: data
         })
-        .then(res => res.json())
+        .then(response => response.json())
+        .then(response => this.transform(response))
     }
 
   }
