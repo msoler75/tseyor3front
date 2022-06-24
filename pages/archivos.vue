@@ -23,15 +23,7 @@
         shadow
       "
     >
-      <div
-        class="
-          flex
-          justify-between
-          items-start
-          sticky
-          top-0          
-        "
-      >
+      <div class="flex justify-between items-start sticky top-0">
         <div
           class="w-full overflow-y-auto"
           :class="borrando ? 'activar-papelera' : ''"
@@ -83,7 +75,20 @@
       class="right-panel flex-grow surface w-full"
       :class="explorandoCarpeta ? 'explorador' : ''"
     >
-      <div class="w-full px-1 xs:px-2 xm:px-4 sm:px-8 lg:px-10 xl:px-12 py-4 order-0 overflow-x-auto">
+      <div
+        class="
+          w-full
+          px-1
+          xs:px-2
+          xm:px-4
+          sm:px-8
+          lg:px-10
+          xl:px-12
+          py-4
+          order-0
+          overflow-x-auto
+        "
+      >
         <Breadcrumb
           v-if="explorandoCarpeta"
           class="text-sm mt-2"
@@ -137,7 +142,7 @@
           <div v-else-if="copiados.length">Elige la carpeta destino...</div>
 
           <Btn
-            v-if="seleccionados.length"
+            v-if="seleccionados.length && !seleccionadosCarpeta"
             class="btn-mini btn-gray text-sm"
             icon="copy"
             label="Copiar Seleccionados"
@@ -469,6 +474,11 @@ export default {
       if (!this.carpeta) return false;
       return tengoPermiso(this.carpeta, this.$strapi.user, "escritura");
     },
+    seleccionadosCarpeta() {
+      if (!this.seleccionando) return false;
+      for (const s of this.seleccionados) if (s.tipo == "carpeta") return true;
+      return false;
+    },
     seleccionadosMovibles() {
       if (!this.seleccionando) return false;
       for (const s of this.seleccionados) {
@@ -513,7 +523,7 @@ export default {
   },
   watch: {
     "$route.path"(newValue) {
-      this.resetScroll()
+      this.resetScroll();
       this._updateBreadcrumb(newValue);
     },
     loading(newValue) {
@@ -548,11 +558,18 @@ export default {
         uploadFiles(this.carpeta, files, this.$strapi, this.$toast);
     },
     resetScroll() {
-      const y = screen.width<640?51:screen.width<768?68:screen.width<1024?72:76
-      if(this.$refs.rightPanel)
+      const y =
+        screen.width < 640
+          ? 51
+          : screen.width < 768
+          ? 68
+          : screen.width < 1024
+          ? 72
+          : 76;
+      if (this.$refs.rightPanel)
         this.$scrollTo(this.$refs.rightPanel, 0, {
-        offset: 7
-      } );
+          offset: 7,
+        });
     },
     onMenu(value) {
       if (screen.width < 640 && !this.viewMenu) {
@@ -567,11 +584,11 @@ export default {
       this.ultimoClick = ruta;
       this.$router.push(ruta);
       if (screen.width < 640) this.viewMenu = false;
-      this.resetScroll()
+      this.resetScroll();
     },
     onRuta(obj) {
-      console.log("onRuta", obj);            
-      this.resetScroll()
+      console.log("onRuta", obj);
+      this.resetScroll();
       if (this.menuActual == "recientes") this.menuActual = "misArchivos";
       this.ultimoClick = null;
       this.seleccionando = false;
@@ -696,13 +713,13 @@ export default {
       this.copiando = false;
       this.copiados.splice(0, this.copiados.length);
     },
-    async moverArchivo(id, carpetaId, reject) {
+    async moverArchivo(id, reject) {
       await this.$strapi
         .update(
           "archivos",
           id,
           {
-            carpeta: carpetaId,
+            carpeta: this.carpeta.id,
           },
           {
             populate: populateArchivo,
@@ -717,22 +734,22 @@ export default {
             this.carpeta.archivos.push(response.data);
           }
         })
-         .catch((e) => {
-          this.setErr(e)
-          reject()
+        .catch((e) => {
+          this.setErr(e);
+          reject();
           /*console.log("ERRORRRR", {...e});
           console.log(e.message)
           console.log(e.code)
           console.log(e.status)*/
         });
     },
-    async moverCarpeta(id, carpetaId, reject) {
+    async moverCarpeta(id, reject) {
       await this.$strapi
         .update(
           "carpetas",
           id,
           {
-            padre: carpetaId,
+            padre: this.carpeta.id,
           },
           {
             populate: populateCarpeta,
@@ -747,9 +764,37 @@ export default {
             this.carpeta.subcarpetas.push(response.data);
           }
         })
-          .catch((e) => {
-          this.setErr(e)
-          reject()
+        .catch((e) => {
+          this.setErr(e);
+          reject();
+          /*console.log("ERRORRRR", {...e});
+          console.log(e.message)
+          console.log(e.code)
+          console.log(e.status)*/
+        });
+    },
+    async copiarArchivo(id, reject) {
+      await this.$strapi
+        .post(
+          `/archivos/copiar/${id}/${this.carpeta.id}`,
+          {},
+          {
+            populate: populateArchivo,
+          }
+        )
+        .then((response) => {
+          console.log("COPIAR RESPONSE", response);
+          if (response.error) {
+            this.setErr(response.error);
+            reject();
+          } else {
+            console.log("PUSH", response.data);
+            this.carpeta.archivos.push(response.data);
+          }
+        })
+        .catch((e) => {
+          this.setErr(e);
+          reject();
           /*console.log("ERRORRRR", {...e});
           console.log(e.message)
           console.log(e.code)
@@ -776,19 +821,20 @@ export default {
           for (const item of this.copiados) {
             if (this.esCortar) {
               if (item.tipo == "archivo")
-                await this.moverArchivo(item.id, this.carpeta.id, reject);
-              else await this.moverCarpeta(item.id, this.carpeta.id, reject);
+                await this.moverArchivo(item.id, reject);
+              else await this.moverCarpeta(item.id, reject);
             } else {
-              //...
+              if (item.tipo == "archivo")
+                await this.copiarArchivo(item.id, reject);
             }
             num++;
             const percent_completed = Math.floor(
               (100 * num) / this.copiados.length
             );
-            if(!this.thereErrors)
-            this.$toast.update(this.toastId, {
-              content: `${verbo}... ${percent_completed}%`,
-            });
+            if (!this.thereErrors)
+              this.$toast.update(this.toastId, {
+                content: `${verbo}... ${percent_completed}%`,
+              });
           }
           resolve("ok");
         })
@@ -810,12 +856,13 @@ export default {
             this.copiados.splice(0, this.copiados.length);
             //this.$toast.error("Ha habido un error");
             this.$toast.update(this.toastId, {
-              content: 'No se pudo completar la operación: '+this.errors.message,
+              content:
+                "No se pudo completar la operación: " + this.errors.message,
               options: {
                 type: "error",
                 icon: true,
                 // showCloseButtonOnHover: true,
-                closeButton: "button"                
+                closeButton: "button",
               },
             });
           });
@@ -869,18 +916,18 @@ export default {
 }
 
 .right-panel {
-  min-height: calc(100vh + 3px)
+  min-height: calc(100vh + 3px);
 }
 
 @screen xs {
   .right-panel {
-    min-height: calc(100vh + 7px)
+    min-height: calc(100vh + 7px);
   }
 }
 
 @screen sm {
   .right-panel {
-    min-height: calc(100vh + 7px)
+    min-height: calc(100vh + 7px);
   }
 }
 

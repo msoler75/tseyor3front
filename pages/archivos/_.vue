@@ -36,7 +36,7 @@ export default {
   },
   async asyncData({ route, store, $strapi, $error }) {
     try {
-      console.warn("async data _.vue");
+      console.warn("async data _.vue");      
       let carpeta = store.state.carpeta;
       if (!carpeta || typeof carpeta != "object") {
         const response = await $strapi.find("carpetas", {
@@ -47,6 +47,7 @@ export default {
         });
         if (response.error) return $error(response.error.status);
         carpeta = response.data[0];
+        //console.warn('RES', carpeta)
         // la carpeta padre de las subcarpetas es la propia carpeta
         if(carpeta)
             for(const sc of carpeta.subcarpetas)
@@ -58,7 +59,8 @@ export default {
         // la carpeta guardada en store es de un solo uso
         store.commit('setCarpeta', null)
       }
-      return {
+      
+      return {        
         carpeta: carpeta ? carpeta : route.path,
       };
     } catch (e) {

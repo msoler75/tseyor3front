@@ -68,14 +68,16 @@ export default {
             x.lecturaEquipos.length ||
             x.escrituraEquipos.length ||
             x.administracionUsuarios.length
-        );
+        )
+        .filter((v, i, a) => a.findIndex((x) => x.id != v.id && v.ruta.startsWith(x.ruta)) == -1);
 
       let compartidasContigo = response.carpetasLectura
         .concat(response.carpetasEscritura)
         .filter((x) => x.publishedAt)
         //unique
         .filter((v, i, a) => a.findIndex((x) => x.id == v.id) == i)
-        .filter((x) => !carpetasQueCompartes.find((z) => z.id == x.id));
+        .filter((x) => !carpetasQueCompartes.find((z) => z.id == x.id))
+        
 
       return { carpetasQueCompartes, compartidasContigo };
     } catch (e) {

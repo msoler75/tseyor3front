@@ -190,7 +190,7 @@ export default {
         });
         if (this.puedoBorrarlo)
           items.push({
-            label: "Cortar",
+            label: "Mover",
             icon: "cut",
             click: this.cortar,
           });

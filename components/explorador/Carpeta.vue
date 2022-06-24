@@ -5,7 +5,9 @@
     :dropAllowed="permisoEscritura"
     :class="
       (dragging ? 'bg-green' : '') +
-      (cargando || thereErrors ? ' max-h-[70vh] justify-center' : '')
+      (cargando || (erroresCargando && thereErrors)
+        ? ' max-h-[70vh] justify-center'
+        : '')
     "
     @dragstart.prevent=""
     @drop.prevent.stop="drop"
@@ -16,8 +18,8 @@
   >
     <div v-if="explorando" :class="vista == 'listado' ? '' : 'w-full'">
       <div
-        v-if="thereErrors"
-        class="flex h-full text-3xl justify-center items-center"
+        v-if="erroresCargando && thereErrors"
+        class="flex h-full text-3xl justify-center items-center py-12"
       >
         <span>{{ errors.message }}</span>
       </div>
@@ -30,6 +32,7 @@
         <div
           class="
             surface
+            !border-0
             pl-5
             pr-0
             xm:pr-2
@@ -308,6 +311,7 @@ export default {
       archivosSeleccionados: [],
       dragging: false,
       cargando: true,
+      erroresCargando: false,
       procesando: false,
       //carpetas: [],
       //archivos: [],
@@ -375,14 +379,14 @@ export default {
       }
       if (this.permisoEscritura) {
         if (this.carpeta.publishedAt) {
-          items.push({
+          /*items.push({
             label: "Copiar",
             icon: "copy",
             click: this.copiar,
-          });
+          });*/
           if (this.permisoAdministracion)
             items.push({
-              label: "Cortar",
+              label: "Mover",
               icon: "cut",
               click: this.cortar,
             });
@@ -490,7 +494,7 @@ export default {
       this.$emit("carpeta", this.carpeta);
       //this.actualizarListado()
       if (this.carpeta.actualizar) {
-        console.log('debe actualizar carpeta')
+        console.log("debe actualizar carpeta");
         if (!("subcarpetas" in this.carpeta) || !("archivos" in this.carpeta))
           this.cargando = true;
         if (!("padre" in this.carpeta)) {
@@ -508,6 +512,7 @@ export default {
     }
     console.warn("ES UN ID/RUTA");
 
+    this.erroresCargando = false;
     console.log("go on", toFetch);
     await this.$strapi
       .find("carpetas", {
@@ -521,7 +526,6 @@ export default {
       .then((response) => {
         console.log("myfetch result", response);
         if (response.error) {
-          this.setErr(response.error);
           if (typeof toFetch === "string")
             this.carpeta = {
               nombre: "",
@@ -530,11 +534,12 @@ export default {
               subcarpetas: [],
               archivos: [],
             };
+          throw new Error(response.error.message);
           //this.actualizarListado()
         } else {
           const carpeta = response.data[0];
           console.log("fetch result", carpeta);
-          if (carpeta) {
+          if (carpeta) {            
             // this.$set(this, 'carpeta', carpeta)
             this.carpeta = carpeta;
             // la carpeta padre de las subcarpetas es la propia carpeta
@@ -545,14 +550,15 @@ export default {
             // this.$set(this.carpeta, k, carpeta[k])
             this.$emit("carpeta", this.carpeta);
           } else {
-            this.setErr({ message: "Esta carpeta no existe" });
-            this.carpeta = null;
+            this.carpeta = null;            
+            throw new Error("Esta carpeta no existe" );
           }
         }
         this.cargando = false;
       })
       .catch((e) => {
-        console.error(e);
+        // console.error(e);
+        this.erroresCargando = true;
         this.setErr(e);
         this.cargando = false;
       });
@@ -705,16 +711,21 @@ export default {
     enviarAPapelera() {
       this.clearErrors();
       this.procesando = true;
-      const date = new Date().toISOString()
+      const date = new Date().toISOString();
       this.$strapi
         .update("carpetas", this.carpeta.id, {
-          publishedAt: null
+          publishedAt: null,
         })
         .then((response) => {
           console.log("enviarAPapelera response", response);
           if (response.error) throw new Error(response.error.message);
-          this.actualizarCarpetaPapelera(this.carpeta, null, {...this.$strapi.user}, date)
-          console.log("borrando", this.carpeta.ruta);          
+          this.actualizarCarpetaPapelera(
+            this.carpeta,
+            null,
+            { ...this.$strapi.user },
+            date
+          );
+          console.log("borrando", this.carpeta.ruta);
           this.$emit("papelera", { carpeta: { ...this.carpeta } });
           this.procesando = false;
         })
@@ -724,14 +735,19 @@ export default {
           this.procesando = false;
         });
     },
-    actualizarCarpetaPapelera(carpeta, publishedAt,eliminadaEn,eliminadaPor) {
-      this.$set(carpeta, 'publishedAt', publishedAt)
-        this.$set(carpeta, 'eliminadaEn', eliminadaEn)
-        this.$set(carpeta, 'eliminadaPor', eliminadaPor)
-        // this.$emit("carpeta", { carpeta });
-        if('subcarpetas' in carpeta)
-          for(const sc of carpeta.subcarpetas)
-            this.actualizarCarpetaPapelera(sc, publishedAt,eliminadaEn,eliminadaPor)
+    actualizarCarpetaPapelera(carpeta, publishedAt, eliminadaEn, eliminadaPor) {
+      this.$set(carpeta, "publishedAt", publishedAt);
+      this.$set(carpeta, "eliminadaEn", eliminadaEn);
+      this.$set(carpeta, "eliminadaPor", eliminadaPor);
+      // this.$emit("carpeta", { carpeta });
+      if ("subcarpetas" in carpeta)
+        for (const sc of carpeta.subcarpetas)
+          this.actualizarCarpetaPapelera(
+            sc,
+            publishedAt,
+            eliminadaEn,
+            eliminadaPor
+          );
     },
     eliminarDefinitivamente() {
       this.clearErrors();
@@ -752,7 +768,7 @@ export default {
             this.$router.replace({ path: proximaRuta });
             if (this.updateBreadcrumb) this._updateBreadcrumb(proximaRuta);
           } else {
-            this.$emit("borrado", {carpeta: {...this.carpeta}});
+            this.$emit("borrado", { carpeta: { ...this.carpeta } });
             this.procesando = false;
           }
         })
@@ -767,17 +783,13 @@ export default {
       const date = new Date().toISOString();
       this.procesando = true;
       this.$strapi
-        .update(
-          "carpetas",
-          this.carpeta.id,
-          {
-            publishedAt: date 
-          }
-        )
+        .update("carpetas", this.carpeta.id, {
+          publishedAt: date,
+        })
         .then((response) => {
           console.log("restaurar response", response);
           if (response.error) throw new Error(response.error.message);
-          this.actualizarCarpetaPapelera(this.carpeta, date, null, null)
+          this.actualizarCarpetaPapelera(this.carpeta, date, null, null);
           this.procesando = false;
         })
         .catch((error) => {
@@ -847,28 +859,36 @@ export default {
         .update(
           "carpetas",
           idCarpeta,
-          nuevoNombre ? { nombre: nuevoNombre } : carpeta,
-          { populate: populateCarpeta }
+          nuevoNombre ? { nombre: nuevoNombre } : carpeta
+          // { populate: populateCarpeta }
         )
         .then((response) => {
           console.log("response", response);
           if (response.error) throw new Error(response.error.message);
           const carpeta = response.data;
           for (const key in carpeta) this.$set(this.carpeta, key, carpeta[key]);
-          for (const sc of carpeta.subcarpetas)  {
-            if(sc.lecturaHereda)
-            {
-              this.$set(sc, 'lecturaAcceso', this.carpeta.lecturaAcceso)
-              this.$set(sc, 'lecturaGrupos',  {...this.carpeta.lecturaGrupos})
-              this.$set(sc, 'lecturaEquipos', {...this.carpeta.lecturaEquipos})
-              this.$set(sc, 'lecturaUsuarios', {...this.carpeta.lecturaUsuarios})
+          for (const sc of this.carpeta.subcarpetas) {
+            if (sc.lecturaHereda) {
+              this.$set(sc, "lecturaAcceso", this.carpeta.lecturaAcceso);
+              this.$set(sc, "lecturaGrupos", { ...this.carpeta.lecturaGrupos });
+              this.$set(sc, "lecturaEquipos", {
+                ...this.carpeta.lecturaEquipos,
+              });
+              this.$set(sc, "lecturaUsuarios", {
+                ...this.carpeta.lecturaUsuarios,
+              });
             }
-            if(sc.escrituraHereda)
-            {
-              this.$set(sc, 'escrituraAcceso',this.carpeta.escrituraAcceso)
-              this.$set(sc, 'escrituraGrupos', {...this.carpeta.escrituraGrupos})
-              this.$set(sc, 'escrituraEquipos', {...this.carpeta.escrituraEquipos})
-              this.$set(sc, 'escrituraUsuarios', {...this.carpeta.escrituraUsuarios})
+            if (sc.escrituraHereda) {
+              this.$set(sc, "escrituraAcceso", this.carpeta.escrituraAcceso);
+              this.$set(sc, "escrituraGrupos", {
+                ...this.carpeta.escrituraGrupos,
+              });
+              this.$set(sc, "escrituraEquipos", {
+                ...this.carpeta.escrituraEquipos,
+              });
+              this.$set(sc, "escrituraUsuarios", {
+                ...this.carpeta.escrituraUsuarios,
+              });
             }
           }
           if (!nuevoNombre) this.$toast.success("Carpeta guardada");

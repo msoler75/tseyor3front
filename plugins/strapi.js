@@ -445,20 +445,30 @@ export default ({
       return this.find(collection, this.filterByList(params))
     }
 
-    async put(route, data, params) {
+    async request(method, route, data, params) {
       const query = !params ? '' : typeof params === 'string' ? params : '?' + qs.stringify(params, {
         encodeValuesOnly: true,
       })
       return fetch(`${this.url}${route}${query}`, {
-          method: "PUT",
+          method,
           headers: {
             Authorization: `Bearer ${this.token}`,
             "Content-Type": "application/json"
           },
-          body: data
+          body: JSON.stringify({
+            data
+          })
         })
         .then(response => response.json())
         .then(response => this.transform(response))
+    }
+
+    async post(route, data, params) {
+      return this.request('POST', route, data, params)
+    }
+
+    async put(route, data, params) {
+      return this.request('PUT', route, data, params)
     }
 
   }
