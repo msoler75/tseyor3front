@@ -472,7 +472,7 @@ export default {
     },
     permisoAdministracion() {
       if (!this.carpeta) return false;
-      return tengoPermiso(this.carpeta, this.$strapi.user, "escritura");
+      return tengoPermiso(this.carpeta, this.$strapi.user, "administracion");
     },
     seleccionadosCarpeta() {
       if (!this.seleccionando) return false;

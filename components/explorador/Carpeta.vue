@@ -4,13 +4,13 @@
     v-model="dragging"
     :dropAllowed="permisoEscritura"
     :class="
-      (dragging ? 'bg-green' : '') +
+      (dragging ? 'bg-green-200' : '') +
       (cargando || (erroresCargando && thereErrors)
         ? ' max-h-[70vh] justify-center'
         : '')
     "
     @dragstart.prevent=""
-    @drop.prevent.stop="drop"
+    @dropped.stop="drop"
     @contextmenu.native.prevent="mostrarMenu = $event"
     :title="
       carpeta && !carpeta.publishedAt ? 'Esta carpeta está en la papelera' : ''
@@ -31,8 +31,7 @@
       <div v-else-if="carpeta" class="flex w-full flex-col justify-between">
         <div
           class="
-            surface
-            !border-0
+          !border-0
             pl-5
             pr-0
             xm:pr-2
@@ -46,6 +45,7 @@
             top-[56px]
             sm:top-0
           "
+          :class="dragging ? 'bg-green-200' : 'surface'"
         >
           <span
             v-if="getpadre && !seleccionando"
@@ -106,8 +106,6 @@
             :seleccionando="seleccionando"
             :vista="vista"
             @click="$emit('click', $event)"
-            @dragenter="dragging = false"
-            @dragleave="dragging = true"
             @papelera="onPapelera"
             @copiado="$emit('copiado', { ...$event, ruta: carpeta.ruta })"
             @cortado="$emit('cortado', { ...$event, ruta: carpeta.ruta })"
@@ -471,8 +469,8 @@ export default {
       //this.actualizarListado()
     },*/
     dragging(newValue) {
-      // if (newValue) this.$emit("dragenter");
-      // else this.$emit("dragleave");
+      if (newValue) this.$emit("dragenter");
+      else this.$emit("dragleave");
     },
   },
   async fetch() {
@@ -539,7 +537,7 @@ export default {
         } else {
           const carpeta = response.data[0];
           console.log("fetch result", carpeta);
-          if (carpeta) {            
+          if (carpeta) {
             // this.$set(this, 'carpeta', carpeta)
             this.carpeta = carpeta;
             // la carpeta padre de las subcarpetas es la propia carpeta
@@ -550,8 +548,8 @@ export default {
             // this.$set(this.carpeta, k, carpeta[k])
             this.$emit("carpeta", this.carpeta);
           } else {
-            this.carpeta = null;            
-            throw new Error("Esta carpeta no existe" );
+            this.carpeta = null;
+            throw new Error("Esta carpeta no existe");
           }
         }
         this.cargando = false;
@@ -799,16 +797,18 @@ export default {
         });
     },
     drop(e) {
-      /*const items = e.detail
+      const items = e.detail
         ? e.detail.dataTransfer.items
-        : e.dataTransfer.items;*/
-      /*var someFile = false
-      for (const item of items)
-        if (item.kind == 'file') someFile = true*/
-      const files = e.dataTransfer.files;
-
-      uploadFiles(this.carpeta, files, this.$strapi, this.$toast);
-
+        : e.dataTransfer.items;
+      var someFile = false;
+      for (const item of items) if (item.kind == "file") someFile = true;
+      console.log("DROP", e);
+      if (someFile) {
+        const files = e.detail
+          ? e.detail.dataTransfer.files
+          : e.dataTransfer.files;
+        uploadFiles(this.carpeta, files, this.$strapi, this.$toast);
+      }
       //this.$axios.post('/upload', formData
     },
     // comprueba si el usuario tiene acceso segun los permisos indicados

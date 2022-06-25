@@ -2,9 +2,9 @@
   <div
     ref="main"
     @dragover.prevent
-    @drop.prevent="drop"
-    @dragster-enter="dragenter"
-    @dragster-leave="dragleave"
+    @dragster-drop.stop="drop"
+    @dragster-enter.stop="dragenter"
+    @dragster-leave.stop="dragleave"
     @dragstart="dragstart"
   >
     <slot />
@@ -45,6 +45,7 @@ export default {
       this.fromHere = true;
     },
     dragenter(e) {
+      this.$emit('dragster-enter', e)
       if (this.fromHere) return;
       if (this.onlyFiles && !this.anyFile(e)) return;
       this.localValue = true;
@@ -57,7 +58,8 @@ export default {
       for (const item of items) if (item.kind == "file") someFile = true;
       return someFile;
     },
-    dragleave() {
+    dragleave(e) {
+      this.$emit('dragster-leave', e)
       this.localValue = false;
     },
     drop(e) {
@@ -79,7 +81,7 @@ export default {
           return;
         }
         if (this.onlyFiles && !this.anyFile(e)) return;
-        this.$emit("drop", e);
+        this.$emit("dropped", e);
       }
     },
     /*dragFile(e) {

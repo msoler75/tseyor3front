@@ -1,15 +1,15 @@
 <template>
-    <div ref="main" class="surface-0 w-full font-sans relative" @dragover.prevent @drop.stop.prevent="dropNone"    
-        @dragster-enter="dragenter" @dragster-leave="dragleave"
-        @dragstart="dragstart"
+    <div ref="main" class="surface-0 w-full font-sans relative" @xdragover.prevent @xdrop.stop.prevent="dropNone"    
+        @xdragster-enter="dragenter" @xdragster-leave="dragleave"
+        @xdragstart="dragstart"
         >
         <!-- https://stackoverflow.com/questions/63063312/why-doesnt-the-drop-event-work-for-me-in-vue  -->
 
         <Modal v-model="dragging" class="justify-center items-center" :closeable="false">
             <div ref="dropzone" pepito
                 class="border-dash text-center max-w-full max-h-full text-gray-700 m-4 py-20 px-4 sm:px-32 sm:py-24 lg:px-64 text-lg xm:tracking-wider flex flex-col space-y-4"
-                :class="prohibited ? 'prohibited' : inDropZone ? 'animated-dash' : ''" @dragster-enter.stop="zoneenter"
-                @dragster-leave.stop="zoneleave" @dragover.prevent @drop.stop.prevent="drop">
+                :class="prohibited ? 'prohibited' : inDropZone ? 'animated-dash' : ''" @xdragster-enter.stop="zoneenter"
+                @xdragster-leave.stop="zoneleave" @xdragover.prevent @drop.stop.prevent="drop">
                 <icon v-if="prohibited" icon="hand-paper" class="text-3xl text-red" />
                 <icon v-else icon="file" class="text-3xl" :class="inDropZone?'text-orange-500':''" />
                 <span v-if="prohibited" class="text-red">Tipo de archivo no permitido</span>
