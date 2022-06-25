@@ -1,0 +1,51 @@
+<svg class="spinner" viewBox="0 0 500 500" xmlns="http://www.w3.org/2000/svg">
+<style>
+svg.spinner {
+  max-width: 24px;
+}
+
+path {
+  animation: 8s linear infinite both circle-animation;
+  display: block;
+  width: 30px;
+  fill: transparent;
+  stroke: white;
+  stroke-linecap: round;
+  stroke-dasharray: 800, 8000;
+  stroke-dashoffset: 0;
+  stroke-width: 40px;
+  transform-origin: 50% 50%;
+}
+
+
+@keyframes circle-animation {
+  0%
+   {
+    stroke-dasharray: 8, 80000;
+    stroke-dashoffset: 0;
+  }
+  10% {
+    stroke-dasharray: 800, 8000;
+    stroke-dashoffset: -280;
+  }
+  
+
+50% {
+    stroke-dasharray: 800, 8000;
+    stroke-dashoffset: -3500;
+}
+
+95% {
+    stroke-dasharray: 400, 80000;
+stroke-dashoffset: -7700;
+}
+100% {
+    stroke-dasharray: 80, 80000;
+stroke-dashoffset: -8300;
+}
+}
+</style>
+  <g class="spw">  
+  <path d="M249,74 c245,1 230,353 3,349 c-236,1 -236,-346 -5,-350 l157,263 l-309,-1 l157,-262 c133,7 220,122 153,266 c-55,95 -227,127 -308,1 c-78,-183 72,-283 160,-264 c206,4 225,279 49,340 c-65,8 -161,14 -208,-82 l156,-260 l150,263 l-307,-3 c-86,-178 93,-281 158,-259 c231,-2 232,351 -2,347 c-233,-21 -187,-238 -141,-290 c132,-124 330,-44 312,143 c-55,211 -275,159 -326,62 l154,-259 l153,257 l-306,0 c-64,-113 -9,-253 150,-262 Z"/>
+  </g>
+</svg>
