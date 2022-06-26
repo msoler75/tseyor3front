@@ -10,6 +10,10 @@ export default ({
 
   class strapiv4extended extends strapiv4{
 
+    constructor(store) {
+        super(store)
+    }
+
     filterByIdSlug(id, params) {
       const {
         filters,
@@ -78,7 +82,7 @@ export default ({
 
   }
 
-  const strapi4ext = new strapiv4extended()
+  const strapiv4ext = new strapiv4extended(store)
 
   if (!$strapi)
     inject('strapi', strapiv4ext)

@@ -1,7 +1,8 @@
 export default class strapiv4 {
 
-  constructor() {
-    
+  constructor(store) {
+
+    this.store = store // optionally vuex store
     this.url = `${$config.strapiUrl}`
     this._user = null
     this._token = ''
@@ -166,17 +167,20 @@ export default class strapiv4 {
       })
   }
 
-  /** retrieve user from vuex store */
+  /** retrieve user from vuex store or locally */
   get user() {
-    return store.getters.user
+    return this.store?this.store.getters.user:this._user
   }
 
   /** save user to vuex store */
   set user(obj) {
-    store.commit(
+    if(this.store)
+    this.store.commit(
       "SET_USER",
       obj
     )
+    else
+    this._user = obj
   }
 
   /** get jwt token */
