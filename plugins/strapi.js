@@ -4,41 +4,15 @@ const qs = require('qs');
 export default ({
   $strapi,
   $config,
-  // $axios,
   store,
 }, inject) => {
 
 
   class strapiv4 {
     constructor() {
-      // $axios.defaults.baseURL = `${$config.strapiUrl}`
-
-      /* const strapi = this
-      $axios.onError((err) => {
-        const {
-          response
-        } = err
-        console.error('AXIOS.ONERROR', response)
-        // console.error(JSON.stringify(response))
-        if (!err) return
-        strapi.lastError = !response ? {
-            status: 502,
-            message: 'Error desconocido'
-          } :
-          response.data && response.data.error ? response.data.error :
-          response.status && response.message ? {
-            status: response.status,
-            message: response.message
-          } :
-          response ? response :
-          err
-      }) */
-
       this.url = `${$config.strapiUrl}`
       this._user = null
       this._token = ''
-      console.log('NEW STRAPI4!!', this)
-      // this.lastError = {}
       if (process.client) {
         const jwt = this.getCookie(document.cookie, 'jwt')
         if (jwt) {
@@ -48,13 +22,8 @@ export default ({
       }
     }
 
-
-    /* transformField(response) { 
-
-    }, */
-
+    /** Transform response removing 'attributes' and 'data' related fields */
     transform(data) {
-      // console.log('transform', data)
       if (Array.isArray(data)) {
         for (const key in data)
           data[key] = this.transform(data[key])
@@ -64,10 +33,7 @@ export default ({
         return data
       }
       if (data && typeof data == 'object' && 'data' in data && 'meta' in data) {
-        //for (const key in data)
-        //data[key] = key == 'data' ? this.transform(data[key]) : data[key]
         data.data = this.transform(data.data)
-        //console.log('to', data)
         return data
       }
       if (data && typeof data == 'object' && 'attributes' in data) {
@@ -78,10 +44,11 @@ export default ({
       if (data && typeof data == 'object' && 'data' in data) {
         return this.transform(data.data)
       }
-      //console.log('to', data)
       return data
     }
 
+
+    /** save cookie */
     setCookie(cname, cvalue, exdays) {
       const d = new Date();
       d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
@@ -89,11 +56,13 @@ export default ({
       document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
     }
 
+    /** remove cookie */
     removeCookie(cname) {
       let expires = "expires=Thu, 01 Jan 1970 00:00:01 GMT;";
       document.cookie = cname + "=;" + expires + ";path=/";
     }
 
+    /** get cookie */
     getCookie(cookieString, cname) {
       let name = cname + "=";
       let decodedCookie = decodeURIComponent(cookieString);
@@ -110,61 +79,75 @@ export default ({
       return "";
     }
 
-    // clearCookie()
-
-    async find(collection, params) {
+    /** main request function to strapi
+     * fn is optional function callback to process response
+     */
+    async request(method, route, data, params, fn) {
       const query = !params ? '' : typeof params === 'string' ? params : '?' + qs.stringify(params, {
         encodeValuesOnly: true,
       })
-      console.log('QUERY', `/${collection}${query}`, params, 'token=', this.token)
-      /*return $axios.get(`/${collection}${query}`)
-        .then(r => r.data)
-        .catch(err => {
-          return {
-            data: []
-          }
-        })*/
-      return fetch(`${this.url}/${collection}${query}`, {
-          method: "GET",
+      const headers = !data ? {} : data instanceof FormData ? {} : {
+        "Content-Type": "application/json"
+      }
+      const body = !data ? null : data instanceof FormData ? data : JSON.stringify({
+        data
+      })
+      return fetch(`${this.url}${route}${query}`, {
+          method,
           headers: {
-            Authorization: `Bearer ${this.token}`,
-            "Content-Type": "application/json"
-          }
+            ...headers,
+            Authorization: `Bearer ${this.token}`
+          },
+          body
         })
         .then(response => response.json())
-        .then(response => {
-          console.log('FIND RESULT', response)
-          return this.transform(response)
-        })
+        .then(response => fn ? fn(response) : this.transform(response))
     }
 
-    // parece que params no hace nada
-    async findOne(collection, id) {
-      console.log('QUERY', `/${collection}/${id}`, 'token=', this.token)
-      /*return $axios.get(`/${collection}/${id}`)
-        .then(r => r.data)
-        .catch(err => {
-          return {
-            data: []
-          }
-        })*/
+    /** primitive method GET */
+    async get(route, params) {
+      return this.request('GET', route, params)
+    }
 
-      return fetch(`${this.url}/${collection}/${id}`, {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${this.token}`,
-            "Content-Type": "application/json"
-          }
-        })
-        .then(response => response.json())
-        .then(response => {
-          console.warn('FINDONE', response)
-          this.transform(response.data)          
-        })
+    /** primitive method POST */
+    async post(route, data, params) {
+      return this.request('POST', route, data, params)
+    }
 
+    /** primitive method PUT */
+    async put(route, data, params) {
+      return this.request('PUT', route, data, params)
     }
 
 
+    // find, findOne, create, delete, upload methods
+
+    /** Core find method */
+    async find(collection, params) {
+      return this.get(`/${collection}`, params)
+    }
+
+    /** Core findOne method */
+    async findOne(collection, id, params) {
+      return this.get(`/${collection}/${id}`, params)
+    }
+
+    /** Core create method */
+    async create(collection, data, params) {
+      return this.post(`/${collection}`, data, params)
+    }
+
+    /** Core update method */
+    async update(collection, id, data, params) {
+      return this.request('PUT', `/${collection}/${id}`, data, params)
+    }
+
+    /** Core delete method */
+    async delete(collection, id) {
+      return this.request('DELETE', `/${collection}/${id}`)
+    }
+
+    /** Helper method to count results */
     async count(collection, paramsFilter) {
       const params = {
         fields: ['id'],
@@ -174,78 +157,12 @@ export default ({
         },
         ...paramsFilter
       }
-      const query = !params ? null : typeof params === 'string' ? params : '?' + qs.stringify(params, {
-        encodeValuesOnly: true,
-      })
-      console.log('COUNT QUERY', `/${collection}${query}`)
-      /* return $axios.get(`/${collection}${query}`)
-        .then(r => r.data.meta.pagination.total)
-        .catch(err => {
-          return 0
-        }) */
-
-      return fetch(`${this.url}/${collection}${query}`, {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${this.token}`,
-            "Content-Type": "application/json"
-          }
-        })
-        .then(response => response.json())
-        .then(r => r.meta ? r.meta.pagination.total : Array.isArray(r) ? r.length : r)
+      return this.request('GET', `/${collection}`, null, params, (r) => r.meta ? r.meta.pagination.total : Array.isArray(r) ? r.length : r)
     }
 
 
-    async update(collection, id, data, params) {
-      const query = !params ? '' : typeof params === 'string' ? params : '?' + qs.stringify(params, {
-        encodeValuesOnly: true,
-      })
-      console.log('QUERY', `/${collection}${query}/${id}${query}`, params, 'token=', this.token)
-      console.log('STRAPI.PUT', id, {
-        data
-      }, 'token=', this.token)
-      return fetch(`${this.url}/${collection}/${id}${query}`, {
-          method: "PUT",
-          headers: {
-            Authorization: `Bearer ${this.token}`,
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({
-            data
-          })
-        })
-        .then(response => response.json())
-        .then(response => this.transform(response))
-      /*return $axios.put(`/${collection}/${id}`, {
-        data
-      })*/
-    }
-
-
-    async create(collection, data, params) {
-      const query = !params ? '' : typeof params === 'string' ? params : '?' + qs.stringify(params, {
-        encodeValuesOnly: true,
-      })
-      console.log('QUERY', `/${collection}${query}`, params, 'token=', this.token)
-      console.log('STRAPI.CREATE', collection, data)
-      const headers = data instanceof FormData ? {} : {
-        "Content-Type": "application/json"
-      }
-      return fetch(`${this.url}/${collection}${query}`, {
-          method: "POST",
-          headers: {
-            ...headers,
-            Authorization: `Bearer ${this.token}`
-          },
-          body: data instanceof FormData ? data : JSON.stringify({
-            data
-          })
-        })
-        .then(response => response.json())
-        .then(response => this.transform(response))
-    }
-
-
+    /** upload files to upload plugin (with formData) 
+     * progress is an optional callback function */
     async upload(data, progress) {
       if (!(data instanceof FormData)) {
         console.error('Para el upload se requiere un FormData')
@@ -272,76 +189,30 @@ export default ({
       return this.create('upload', data)
     }
 
-    async delete(collection, id) {
-      /*return $axios.delete(`/${collection}/${id}`)
-        .then(r => {
-          console.log('RESULT DELETE', r)
-          return r
-        })
-        .catch(err => {
-          return null
-        })*/
 
-      return fetch(`${this.url}/${collection}/${id}`, {
-          method: "DELETE",
-          headers: {
-            Authorization: `Bearer ${this.token}`,
-            "Content-Type": "application/json"
-          }
-        })
-        .then(response => response.json())
-        .then(response => this.transform(response))
-    }
-
+    /** login to Strapi */
     async login(data) {
-      console.log('QUERY', `/auth/local}`, data)
-      /*return $axios.post(`/auth/local`, data)
-        .then(r => {
-          console.log('LOGGED', r.data)
-          this.token = r.data.jwt
-          return true
-        })
-        .catch(err => {
-          return false
-        })
-        */
-      return fetch(`${this.url}/auth/local`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify(data)
-        })
-        .then(response => response.json())
-        .then(response => {
-          console.log('LOGIN response', response)
-          if (!response.error) {
-            this.user = response.user
-            this.token = response.jwt
-            this.setCookie('jwt', this.token)
-          }
-          this.fetchUser()
-          return response
-        })
+      return this.request('POST', '/auth/local', data, null, (response) => {
+        if (!response.error) {
+          this.user = response.user
+          this.token = response.jwt
+          this.setCookie('jwt', this.token)
+        }
+        this.fetchUser()
+        return response
+      })
     }
 
+    /** Logout from strapi */
     async logout() {
       this.token = null
       this.user = null
       this.removeCookie('jwt')
-      // if(process.client) {}
     }
 
-
-
+    /** Get user data */
     async fetchUser() {
-      console.log('STRAPI.FETCHUSER')
-      /* return $axios.get(`/users/me`)
-        .then(r => {
-          console.log('USER FETCHED', r.data)
-          this.user = r.data
-          return r.data
-        }) */
+      // console.log('STRAPI.FETCHUSER')
       return this.find('users/me').then(user => {
           // console.warn('RET USER', user)
           if (!user.error) {
@@ -360,6 +231,7 @@ export default ({
       return store.getters.user
     }
 
+    /** save user to vuex store */
     set user(obj) {
       store.commit(
         "SET_USER",
@@ -367,18 +239,20 @@ export default ({
       )
     }
 
+    /** get jwt token */
     get token() {
       return this._token
     }
 
+    /** set jwt token */
     set token(token) {
       this._token = token
-      console.log('SET TOKEN', token)
-      /*$axios.defaults.headers.common = token && token != 'null' ? {
-        Authorization: `Bearer ${token}`
-      } : {} */
+      // console.log('SET TOKEN', token)
     }
 
+
+    // -----------------------------------------------------------------
+    /** from here, specific App Helper functions */
 
     filterByIdSlug(id, params) {
       const {
@@ -445,31 +319,6 @@ export default ({
       return this.find(collection, this.filterByList(params))
     }
 
-    async request(method, route, data, params) {
-      const query = !params ? '' : typeof params === 'string' ? params : '?' + qs.stringify(params, {
-        encodeValuesOnly: true,
-      })
-      return fetch(`${this.url}${route}${query}`, {
-          method,
-          headers: {
-            Authorization: `Bearer ${this.token}`,
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({
-            data
-          })
-        })
-        .then(response => response.json())
-        .then(response => this.transform(response))
-    }
-
-    async post(route, data, params) {
-      return this.request('POST', route, data, params)
-    }
-
-    async put(route, data, params) {
-      return this.request('PUT', route, data, params)
-    }
 
   }
 
@@ -477,8 +326,5 @@ export default ({
 
   if (!$strapi)
     inject('strapi', strapi4)
-  // inject('user', s4.user)
-  // inject('findId', filterByIdSlug)
-  // inject('findList', filterByList)
 
 }

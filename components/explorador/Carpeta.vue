@@ -2,6 +2,7 @@
   <Droppable
     class="select-none relative"
     v-model="dragging"
+    onlyFiles="true"
     :dropAllowed="permisoEscritura"
     :class="
       (dragging ? 'bg-green-200' : '') +
@@ -797,19 +798,10 @@ export default {
         });
     },
     drop(e) {
-      const items = e.detail
-        ? e.detail.dataTransfer.items
-        : e.dataTransfer.items;
-      var someFile = false;
-      for (const item of items) if (item.kind == "file") someFile = true;
-      console.log("DROP", e);
-      if (someFile) {
-        const files = e.detail
+       const files = e.detail
           ? e.detail.dataTransfer.files
           : e.dataTransfer.files;
         uploadFiles(this.carpeta, files, this.$strapi, this.$toast);
-      }
-      //this.$axios.post('/upload', formData
     },
     // comprueba si el usuario tiene acceso segun los permisos indicados
     tengoPermiso(modo) {
