@@ -101,7 +101,7 @@ export default {
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
   plugins: [
     // '~plugins/axios',
-    '~plugins/strapi.js',
+    '~plugins/strapiplugin.js',
     '~plugins/global.js',
     '~plugins/borradores.js',
     {
