@@ -2,10 +2,10 @@ const qs = require('qs');
 
 class strapiv4 {
 
-  constructor(store) {
+  constructor(strapiUrl, store) {
 
     this.store = store // optionally vuex store
-    this.url = `${$config.strapiUrl}`
+    this.url = strapiUrl
     this._user = null
     this._token = ''
     if (process.client) {
