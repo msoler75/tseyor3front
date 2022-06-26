@@ -1,4 +1,6 @@
-export default class strapiv4 {
+const qs = require('qs');
+
+class strapiv4 {
 
   constructor(store) {
 
@@ -252,3 +254,6 @@ export default class strapiv4 {
   }
 
 }
+
+
+export default strapiv4
